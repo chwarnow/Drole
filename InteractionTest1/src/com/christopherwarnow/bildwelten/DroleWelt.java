@@ -31,11 +31,12 @@ public class DroleWelt {
 	private VerletPhysics physics;
 	private VerletParticle head;
 	
+	private float randomOffset = 0;
+	
 	public DroleWelt(PApplet parent, int particleAmount, float dimension) {
 		this.parent = parent;
 		this.particleAmount = particleAmount;
 		this.sphereSize = (dimension==0) ? 600.0f : dimension;
-		System.out.println("dimension: " + dimension);
 		
 		init();
 	}
@@ -44,6 +45,8 @@ public class DroleWelt {
 	 * create a swarm of spring-connected verlet physics particles that are constrained on a sphere
 	 */
 	private void init() {
+		
+		randomOffset = parent.random(-1000, 1000);
 		
 		// create drole particles
 		particles = new Drole[particleAmount];
@@ -90,15 +93,16 @@ public class DroleWelt {
 	 */
 	public void update() {
 		// update particle movement
+		float myOffset = parent.frameCount + randomOffset;
 		head.set(
-				parent.noise(parent.frameCount*(.005f + parent.cos(parent.frameCount*.01f)*.00f))*parent.width-parent.width/2,
-				parent.noise(parent.frameCount*.005f + parent.cos(parent.frameCount*.01f)*.05f)*parent.height-parent.height/2,
-				parent.noise(parent.frameCount*.01f + 100)*parent.width-parent.width/2
+				parent.noise(myOffset*(.005f + parent.cos(myOffset*.01f)*.00f))*parent.width-parent.width/2,
+				parent.noise(myOffset*.005f + parent.cos(myOffset*.01f)*.05f)*parent.height-parent.height/2,
+				parent.noise(myOffset*.01f + 100)*parent.width-parent.width/2
 		);
 		physics.particles.get(10).set(
-				parent.noise(-parent.frameCount*(.005f + parent.cos(parent.frameCount*.001f)*.005f))*parent.width-parent.width/2,
-				parent.noise(-parent.frameCount*.005f + parent.cos(parent.frameCount*.001f)*.005f)*parent.height-parent.height/2,
-				parent.noise(-parent.frameCount*.01f + 100)*parent.width-parent.width/2);
+				parent.noise(-myOffset*(.005f + parent.cos(myOffset*.001f)*.005f))*parent.width-parent.width/2,
+				parent.noise(-myOffset*.005f + parent.cos(myOffset*.001f)*.005f)*parent.height-parent.height/2,
+				parent.noise(-myOffset*.01f + 100)*parent.width-parent.width/2);
 
 		// also apply sphere constraint to head
 		// this needs to be done manually because if this particle is locked
