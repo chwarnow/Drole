@@ -121,13 +121,11 @@ public class Globe extends Drawable {
 		}
 		
 		// draw a menu item circle
-		System.out.println(rotation);
 		// about .9 <>1.2
 		float startRotation = .9f;
 		float endRotation = 1.2f;
 		for(int i=0;i<droleAmount;i++) {
 			float myRotation = menuRotation - 3.1414f*.5f + i*.3f;
-			System.out.println(i + " " + parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation));
 			
 			if(parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation) < .05f) {
 				parent.g.fill(55,0,0);
