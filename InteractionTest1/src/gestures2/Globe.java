@@ -11,7 +11,10 @@ package gestures2;
  */
 
 
+import java.util.Iterator;
+
 import com.christopherwarnow.bildwelten.DroleWelt;
+import com.christopherwarnow.bildwelten.Drole;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
