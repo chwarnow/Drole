@@ -79,7 +79,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	
 	/* Globe */
 	private PImage globeTexture;
-	private PVector globePosition = new PVector(0, -900, -1000);
+	private PVector globePosition = new PVector(0, -900, 0);
 	private PVector globeSize = new PVector(900, 100, 100);
 	private Globe globe;
 
@@ -153,15 +153,15 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 		holdingTarget = new PositionTarget(this, "HOLDING_TARGET", context, holdingTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
 		targetDetection.targets.add(holdingTarget);
 		
-		/*
 		TargetSphere rotationTargetShapeSphere = new TargetSphere(0, 200, 0, 700);
 		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeSphere, SimpleOpenNI.SKEL_LEFT_HAND, SimpleOpenNI.SKEL_RIGHT_HAND);
 		targetDetection.targets.add(rotationTarget);
-		*/
-		
-		TargetBox3D rotationTargetShapeBox = new TargetBox3D(0, 200, -200, 1200, 400, 600);
-		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeBox, SimpleOpenNI.SKEL_LEFT_HAND, SimpleOpenNI.SKEL_TORSO);
+
+		/*
+		TargetBox3D rotationTargetShapeBox = new TargetBox3D(0, 200, 0, 1200, 1000, 1000);
+		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
 		targetDetection.targets.add(rotationTarget);
+		*/
 	}
 	
 	private void setupGlobe() {
@@ -176,15 +176,11 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	}
 
 	private void setViewAlpha() {
-		horizontalViewAlpha = atan(abs(head.x - globePosition.x)
-				/ abs(head.z - globePosition.z));
-		horizontalViewAlpha = (head.x <= globePosition.x) ? horizontalViewAlpha
-				: -horizontalViewAlpha;
+		horizontalViewAlpha = atan(abs(head.x - globePosition.x) / abs(head.z - globePosition.z));
+		horizontalViewAlpha = (head.x <= globePosition.x) ? horizontalViewAlpha : -horizontalViewAlpha;
 
-		verticalViewAlpha = atan(abs(head.x - globePosition.x)
-				/ abs(head.y - globePosition.y));
-		verticalViewAlpha = (head.y <= globePosition.y) ? verticalViewAlpha
-				: -verticalViewAlpha;
+		verticalViewAlpha = atan(abs(head.x - globePosition.x) / abs(head.y - globePosition.y));
+		verticalViewAlpha = (head.y <= globePosition.y) ? verticalViewAlpha : -verticalViewAlpha;
 	}
 
 	private void drawLine(PVector p1, PVector p2) {
@@ -204,12 +200,12 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private void drawOffCenterVectors(PVector pe) {
 		pushStyle();
 		pushMatrix();
-		stroke(0, 200, 200);
-		drawLine(pe, pa);
-		drawLine(pe, pb);
-		drawLine(pe, pc);
-		drawLine(pe, pd);
-		strokeWeight(1);
+			stroke(0, 200, 200);
+			drawLine(pe, pa);
+			drawLine(pe, pb);
+			drawLine(pe, pc);
+			drawLine(pe, pd);
+			strokeWeight(1);
 		popMatrix();
 		popStyle();
 	}
@@ -219,12 +215,10 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 		pa = realScreenPos;
 
 		// Lower right corner of our screen in real-world-coords (mm)
-		pb = new PVector(realScreenPos.x + realScreenDim.x, realScreenPos.y,
-				realScreenPos.z);
+		pb = new PVector(realScreenPos.x + realScreenDim.x, realScreenPos.y, realScreenPos.z);
 
 		// Upper left corner of our screen in real-world-coords (mm)
-		pc = new PVector(realScreenPos.x, realScreenPos.y + realScreenDim.y,
-				realScreenPos.z);
+		pc = new PVector(realScreenPos.x, realScreenPos.y + realScreenDim.y, realScreenPos.z);
 
 		// Upper right corner of our screen in real-world-coords (mm)
 		pd = new PVector(pb.x, pc.y, realScreenPos.z);
@@ -447,7 +441,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 					dHandA /= rightHandSampling.length;
 					
 					println(dHandA);
-					globe.rotation = map(dHandA, 0, 800, 0, TWO_PI);
+					globe.rotation = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
 				}				
 			}
 		}

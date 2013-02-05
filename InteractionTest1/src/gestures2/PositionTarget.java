@@ -69,7 +69,7 @@ public class PositionTarget {
 					enterRequested = true;
 					exitRequested = false;
 					timeSinceChangeRequest = ctime;
-	//				System.out.println("Enter requested!");
+//					System.out.println("Enter requested! "+name);
 				} 
 				if(exitRequested) exitRequested = false;
 			} else {
