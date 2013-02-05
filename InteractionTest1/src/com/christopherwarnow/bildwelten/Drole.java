@@ -7,7 +7,7 @@ public class Drole {
 	private PVector p;
 	private float sphereSize;
 	private int id;
-	private int stepsAmount = 50;
+	private int stepsAmount = 30;
 	private PVector[] oldPositions;
 	private PVector xyzPos = new PVector();
 	private PApplet parent;
@@ -55,7 +55,8 @@ public class Drole {
 		parent.g.noFill();
 		// parent.g.stroke(100, 0, 0, 100);
 		for (int i=1;i<stepsAmount;i++) {
-			float strokeSize= parent.noise(oldPositions[i].y*.05f)*5;//atan2(oldPositions[i-1].y - oldPositions[i].y, oldPositions[i-1].x - oldPositions[i].y);
+			// parent.g.stroke(255);
+			float strokeSize= parent.noise(i*.05f)*4;//parent.noise(oldPositions[i].y*.05f)*4;//atan2(oldPositions[i-1].y - oldPositions[i].y, oldPositions[i-1].x - oldPositions[i].y);
 /*
 			float particleZ = parent.modelZ(oldPositions[i].x, oldPositions[i].y, oldPositions[i].z);		
 			parent.g.stroke(

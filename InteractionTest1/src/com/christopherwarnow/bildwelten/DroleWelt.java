@@ -26,7 +26,7 @@ public class DroleWelt {
 	private Drole[] particles;
 
 	private float sphereSize = 120;
-	private int REST_LENGTH=4;
+	private int REST_LENGTH=8;
 
 	private VerletPhysics physics;
 	private VerletParticle head;
@@ -80,8 +80,8 @@ public class DroleWelt {
 			p.addConstraint(sphereB);
 			physics.addParticle(p);
 			if (prev!=null) {
-				physics.addSpring(new VerletSpring(prev, p, REST_LENGTH*5, 0.005f));
-				physics.addSpring(new VerletSpring(physics.particles.get((int)parent.random(i)), p, REST_LENGTH*20, 0.00001f + i*.0005f));
+				physics.addSpring(new VerletSpring(prev, p, REST_LENGTH*5, 0.0005f));
+				physics.addSpring(new VerletSpring(physics.particles.get((int)parent.random(i)), p, REST_LENGTH*20, 0.00001f + i*.00001f));
 			}
 			prev=p;
 		}
@@ -126,7 +126,7 @@ public class DroleWelt {
 	public void draw() {
 		// TODO: set color
 		if(isActive) parent.g.stroke(255, 0, 0);
-		else parent.g.stroke(255);
+		else parent.g.stroke(255, 50);
 		
 		parent.g.pushMatrix();
 		for (int i=0;i<particleAmount;i++) {

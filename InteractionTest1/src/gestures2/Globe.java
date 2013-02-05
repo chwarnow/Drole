@@ -49,7 +49,7 @@ public class Globe extends Drawable {
 	
 	// ------ drole particles on sphere ------
 	private int droleAmount = 5;
-	private int drolesPerWelt = 50;
+	private int drolesPerWelt = 100;
 	private DroleWelt[] droles;
 	
 	// ------ hotspots for a menu to choose bildwelten
