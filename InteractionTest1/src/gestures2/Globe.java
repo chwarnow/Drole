@@ -18,6 +18,8 @@ public class Globe extends Drawable {
 
 	public float rotation 		= 0;
 	public float rotationSpeed = 0.04f;
+	private float smoothedRotation = 0;
+	private float smoothedRotationSpeed = .3f;
 
 
 	// ------ drole particles on sphere ------
@@ -41,6 +43,8 @@ public class Globe extends Drawable {
 		super.update();
 		// rotation += rotationSpeed;
 
+		smoothedRotation += (rotation - smoothedRotation) + smoothedRotationSpeed;
+		
 		for(DroleWelt droleWelt:droles) {
 			droleWelt.update();
 		}
@@ -57,7 +61,7 @@ public class Globe extends Drawable {
 		// position, scale, rotation and dimension must be respected!
 		parent.g.translate(position.x, position.y+PApplet.map(fade, 0, 1, 0, 0), position.z);
 		parent.g.scale(scale.x, scale.y, scale.z);
-		parent.g.rotateY(rotation);
+		parent.g.rotateY(smoothedRotation);//rotation);
 
 		/* ACTUAL APPEARANCE OF THE OBJECT */
 		parent.g.pointLight(255, 255, 255, position.x+500, position.y+1000, position.z+500);
