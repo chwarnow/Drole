@@ -1,0 +1,15 @@
+image=Tapete01,0,0,192,0,192,1080,0,1080,locked,Kanal-Tapete-01.jpg
+image=Tapete02,192,0,384,0,384,1080,192,1080,locked,Kanal-Tapete-02.jpg
+image=Tapete03,384,0,576,0,576,1080,384,1080,locked,Kanal-Tapete-03.jpg
+image=Tapete04,576,0,768,0,768,1080,576,1080,locked,Kanal-Tapete-04.jpg
+image=Tapete05,768,0,960,0,960,1080,768,1080,locked,Kanal-Tapete-05.jpg
+image=Tapete06,960,0,1152,0,1152,1080,960,1080,locked,Kanal-Tapete-06.jpg
+image=Tapete07,1152,0,1344,0,1344,1080,1152,1080,locked,Kanal-Tapete-07.jpg
+image=Tapete08,1344,0,1536,0,1536,1080,1344,1080,locked,Kanal-Tapete-08.jpg
+image=Tapete09,1536,0,1728,0,1728,1080,1536,1080,locked,Kanal-Tapete-09.jpg
+image=Tapete10,1728,0,1920,0,1920,1080,1728,1080,locked,Kanal-Tapete-10.jpg
+image=Info,1397,395,2009,395,2009,955,1397,955,editable,Kanal-Info.png
+image=Schrank,734,422,1237,421,1250,1139,707,1139,editable,Kanal-Schrank.png
+image=Lampe,862,-31,1432,-31,1432,365,862,365,editable,Kanal-Lampe.png
+image=Yucca,326,558,658,558,658,1294,326,1294,editable,Kanal-Yucca.png
+video=TrafficVid,1353,787,1806,803,1800,982,1433,975,editable,traffic.mov

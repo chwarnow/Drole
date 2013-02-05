@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/10811/trunk/processing/core/src/processing/event
+END
+Event.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/10418/trunk/processing/core/src/processing/event/Event.java
+END
+TouchEvent.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/10732/trunk/processing/core/src/processing/event/TouchEvent.java
+END
+KeyEvent.java
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/!svn/ver/10450/trunk/processing/core/src/processing/event/KeyEvent.java
+END
+MouseEvent.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/!svn/ver/10811/trunk/processing/core/src/processing/event/MouseEvent.java
+END

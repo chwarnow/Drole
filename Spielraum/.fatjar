@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Tue Jul 03 20:28:55 CEST 2012
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=/Users/perfectdk/Downloads/test.jar
+manifest.mergeall=true
+manifest.mainclass=xx.codeflower.spielraum.motion.MApplet
+manifest.file=<createnew>
+jarname.isextern=true
+onejar.expand=
+excludes=<po|Spielraum>~fhp/;<po|Spielraum>~java.policy.applet;<jar|gluegen-rt-natives-macosx-universal.jar>;<jar|jogl-all-natives-macosx-universal.jar>
+includes=<inc|Spielraum/data>
