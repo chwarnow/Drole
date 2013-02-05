@@ -53,13 +53,14 @@ public class Drole {
 
 	public void draw() {
 		parent.g.noFill();
-		parent.g.stroke(0);
+		parent.g.stroke(255);
 		for (int i=1;i<stepsAmount;i++) {
 			float strokeSize= parent.noise(oldPositions[i].y*.1f)*5;//atan2(oldPositions[i-1].y - oldPositions[i].y, oldPositions[i-1].x - oldPositions[i].y);
+			/*
 			parent.g.stroke(
 					0,
 					parent.max(100, (parent.modelZ(oldPositions[i].x, oldPositions[i].y, oldPositions[i].z) + sphereSize)));
-
+*/
 			parent.g.strokeWeight(3);//parent.abs(strokeSize));
 			parent.g.beginShape();
 			parent.g.vertex(oldPositions[i-1].x, oldPositions[i-1].y, oldPositions[i-1].z);

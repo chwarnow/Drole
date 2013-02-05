@@ -10,9 +10,8 @@ package gestures2;
  * 
  */
 
-import java.util.Iterator;
 
-import com.christopherwarnow.bildwelten.Drole;
+import com.christopherwarnow.bildwelten.DroleWelt;
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -52,6 +51,10 @@ public class Globe extends Drawable {
 
 	private VerletPhysics physics;
 	private VerletParticle head;
+	private int droleAmount = 5;
+	private int drolesPerWelt = 50;
+	private DroleWelt[] droles;
+	private DroleWelt droleA, droleB;
 
 	public Globe(PApplet parent, PVector position, PVector dimension, PImage globeTexture) {
 		super(parent);
@@ -63,6 +66,12 @@ public class Globe extends Drawable {
 		
 		this.globeTexture = globeTexture;
 		initializeSphere(sDetail);
+
+		// generate drole swarms
+		droles = new DroleWelt[droleAmount];
+		for(int i=0;i<droleAmount;i++) {
+			droles[i] = new DroleWelt(parent, drolesPerWelt, dimension.x);
+		}
 	}
 
 	@Override
@@ -70,7 +79,9 @@ public class Globe extends Drawable {
 		super.update();
 		// rotation += rotationSpeed;
 
-		updateMenuSphere();
+		for(DroleWelt droleWelt:droles) {
+			droleWelt.update();
+		}
 	}
 
 	@Override
@@ -105,7 +116,10 @@ public class Globe extends Drawable {
 		/* END APPEARANCE */
 
 		// draw the droles
-		drawMenuSphere();
+
+		for(DroleWelt droleWelt:droles) {
+			droleWelt.draw();
+		}
 
 		parent.g.popMatrix();
 
