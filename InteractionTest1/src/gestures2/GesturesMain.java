@@ -79,7 +79,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	
 	/* Globe */
 	private PImage globeTexture;
-	private PVector globePosition = new PVector(0, -900, 0);
+	private PVector globePosition = new PVector(0, -900, -1000);
 	private PVector globeSize = new PVector(900, 100, 100);
 	private Globe globe;
 
@@ -97,8 +97,12 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	
 	private float usersArmLength = 0;
 
-	private float[] handSampling = new float[30];
-	private short handSamplingIndex = 0;
+	private float[] leftHandSampling 		= new float[10];
+	private short leftHandSamplingIndex 	= 0;
+	private float[] rightHandSampling 		= new float[10];
+	private short rightHandSamplingIndex 	= 0;	
+	
+	private float rotationMapStart, rotationMapEnd;
 	
 	public void setup() {
 		size(1080, 1080, OPENGL);
@@ -149,8 +153,14 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 		holdingTarget = new PositionTarget(this, "HOLDING_TARGET", context, holdingTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
 		targetDetection.targets.add(holdingTarget);
 		
+		/*
 		TargetSphere rotationTargetShapeSphere = new TargetSphere(0, 200, 0, 700);
 		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeSphere, SimpleOpenNI.SKEL_LEFT_HAND, SimpleOpenNI.SKEL_RIGHT_HAND);
+		targetDetection.targets.add(rotationTarget);
+		*/
+		
+		TargetBox3D rotationTargetShapeBox = new TargetBox3D(0, 200, -200, 1200, 400, 600);
+		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeBox, SimpleOpenNI.SKEL_LEFT_HAND, SimpleOpenNI.SKEL_TORSO);
 		targetDetection.targets.add(rotationTarget);
 	}
 	
@@ -184,7 +194,9 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private void updateHead() {
 		if (context.isTrackingSkeleton(1)) {
 			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_HEAD, head);
+//			println(head.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
 			head.y = realScreenPos.y + (realScreenDim.y / 2f);
+//			head.y -= 1100;
 			head.x *= -1;
 		}
 	}
@@ -346,14 +358,13 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 
 			targetDetection.check();
 			
-			/*
 			pushStyle();
 			stroke(0, 200, 0);
 			noFill();
 				for(PositionTarget pt : targetDetection.targets) pt.drawTarget(g);
 			popStyle();
-			*/			
 			
+			/*
 			if(rotationTarget.inTarget()) {
 				noFill();
 				stroke(200, 200, 0);
@@ -367,6 +378,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 				println(PVector.angleBetween(leftHand, rightHand));
 				globe.rotation = PVector.angleBetween(leftHand, rightHand);
 			}
+			*/
 			
 			// draw the kinect cam
 			context.drawCamFrustum();
@@ -413,16 +425,14 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 					usersArmLength = leftHand.dist(leftElbow)+leftElbow.dist(leftShoulder);
 					System.out.println("Users arm length is: "+usersArmLength+" mm.");
 					
-					for(int i = 0; i < handSampling.length; i++) handSampling[i] = 0;
+					for(int i = 0; i < leftHandSampling.length; i++) leftHandSampling[i] = 0;
 				}
 				
-				handSampling[handSamplingIndex++] = abs(leftHand.z-leftShoulder.z);
-				if(handSamplingIndex == handSampling.length) handSamplingIndex = 0;
-				
+				leftHandSampling[leftHandSamplingIndex++] = abs(leftHand.z-leftShoulder.z);
+				if(leftHandSamplingIndex == leftHandSampling.length) leftHandSamplingIndex = 0;				
 				float dHandZ = 0;
-				
-				for(int i = 0; i < handSampling.length; i++) dHandZ += handSampling[i];
-				dHandZ /= handSampling.length;
+				for(int i = 0; i < leftHandSampling.length; i++) dHandZ += leftHandSampling[i];
+				dHandZ /= leftHandSampling.length;
 				
 //				println(dHandZ+" : "+usersArmLength);
 				
@@ -430,7 +440,14 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 				globe.easeToScale(new PVector(newScale, newScale, newScale), 300);
 				
 				if(rotationTarget.inTarget()) {
-					globe.rotation = map(PVector.angleBetween(leftHand, rightHand), 0, 0.3f, 0, 1);
+					rightHandSampling[rightHandSamplingIndex++] = rightHand.x;
+					if(rightHandSamplingIndex == rightHandSampling.length) rightHandSamplingIndex = 0;				
+					float dHandA = 0;
+					for(int i = 0; i < rightHandSampling.length; i++) dHandA += rightHandSampling[i];
+					dHandA /= rightHandSampling.length;
+					
+					println(dHandA);
+					globe.rotation = map(dHandA, 0, 800, 0, TWO_PI);
 				}				
 			}
 		}
@@ -750,6 +767,10 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 		if(name == "ROTATION_TARGET" && holdingTarget.inTarget()) {
 			switchMode(ROTATING);
 			globe.rotationSpeed = 0.0f;
+			PVector rightHand = new PVector(0, 0, 0);
+			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, rightHand);
+			rotationMapStart = rightHand.x - 600;
+			rotationMapStart = rightHand.x + 600;
 		}
 	}
 
