@@ -34,7 +34,7 @@ public class DroleWelt {
 	public DroleWelt(PApplet parent, int particleAmount, float dimension) {
 		this.parent = parent;
 		this.particleAmount = particleAmount;
-		this.sphereSize = (dimension==0) ? 300.0f : dimension;
+		this.sphereSize = (dimension==0) ? 600.0f : dimension;
 		System.out.println("dimension: " + dimension);
 		
 		init();

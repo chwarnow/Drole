@@ -21,12 +21,19 @@ public class Globe extends Drawable {
 
 
 	// ------ drole particles on sphere ------
-	private DroleWelt droleA;
+	private int droleAmount = 5;
+	private int drolesPerWelt = 50;
+	private DroleWelt[] droles;
+	private DroleWelt droleA, droleB;
 
 	public Globe(PApplet parent) {
 		super(parent);
 
-		droleA = new DroleWelt(parent, 100, dimension.x);
+		// generate drole swarms
+		droles = new DroleWelt[droleAmount];
+		for(int i=0;i<droleAmount;i++) {
+			droles[i] = new DroleWelt(parent, drolesPerWelt, dimension.x);
+		}
 	}
 
 	@Override
@@ -34,7 +41,9 @@ public class Globe extends Drawable {
 		super.update();
 		// rotation += rotationSpeed;
 
-		droleA.update();
+		for(DroleWelt droleWelt:droles) {
+			droleWelt.update();
+		}
 	}
 
 	@Override
@@ -68,7 +77,10 @@ public class Globe extends Drawable {
 		/* END APPEARANCE */
 
 		// draw the droles
-		droleA.draw();
+
+		for(DroleWelt droleWelt:droles) {
+			droleWelt.draw();
+		}
 
 		parent.g.popMatrix();
 
