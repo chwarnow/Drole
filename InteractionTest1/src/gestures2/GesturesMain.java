@@ -2,6 +2,7 @@ package gestures2;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
 import processing.event.MouseEvent;
@@ -26,7 +27,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private Image logoGrey;
 	private Image logoColor;
 	private Ellipse logoBG;
-
+	
 	private int background = color(27);
 //	private Image background;
 
@@ -75,8 +76,11 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private PVector vc = new PVector();
 
 	private PVector head = new PVector(0, 0, 3000);
-	private PVector globePosition = new PVector(0, -900, -1800);
-	private PVector globeSize = new PVector(1700, 100, 100);
+	
+	/* Globe */
+	private PImage globeTexture;
+	private PVector globePosition = new PVector(0, -900, 0);
+	private PVector globeSize = new PVector(900, 100, 100);
 	private Globe globe;
 
 	private float horizontalViewAlpha = 0.0f;
@@ -107,7 +111,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 			exit();
 			return;
 		}
-
+		
 		// enable skeleton generation for all joints
 		context.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
 
@@ -151,9 +155,8 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	}
 	
 	private void setupGlobe() {
-		globe = new Globe(this);
-		globe.position(globePosition);
-		globe.dimension(globeSize);
+		globeTexture = loadImage("data/images/Karte_1.jpg");
+		globe = new Globe(this, globePosition, globeSize, globeTexture);
 	}
 
 	private void setupLogo() {
@@ -382,7 +385,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 			calcOffCenterProjection(head);
 			setOffCenterProjection(head);
 
-			drawOffCenterVectors(head);
+			//drawOffCenterVectors(head);
 
 			// Draw our holo object
 			drawMainScene();
@@ -829,7 +832,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-			"--present", 
+			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 			"--display=1",
