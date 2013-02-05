@@ -18,8 +18,6 @@ public class TargetBox3D extends TargetShape {
 	public boolean contains(PVector point) {
 		this.point = point.get();
 		
-		System.out.println("Checking "+point);
-		
 		//Check if the point is less than max and greater than min
 	    return point.x > position.x && point.x < (position.x+dimension.x) &&
 	    	   point.y > position.y && point.y < (position.y+dimension.y) &&

@@ -92,9 +92,10 @@ public class Globe extends Drawable {
 
 		parent.g.pushMatrix();
 		// position, scale, rotation and dimension must be respected!
-		parent.g.translate(position.x, position.y+PApplet.map(fade, 0, 1, 0, 0), position.z);
+		parent.g.translate(position.x, position.y, position.z);
 		parent.g.scale(scale.x, scale.y, scale.z);
 		parent.g.rotateY(smoothedRotation);//rotation);
+//		parent.g.rotateY(rotation);
 
 		/* ACTUAL APPEARANCE OF THE OBJECT */
 //		parent.g.pointLight(255, 255, 255, position.x+500, position.y+1000, position.z+500);
@@ -121,13 +122,14 @@ public class Globe extends Drawable {
 		}
 		
 		// draw a menu item circle
-		System.out.println(rotation);
+		//System.out.println(rotation);
 		// about .9 <>1.2
+		
 		float startRotation = .9f;
 		float endRotation = 1.2f;
 		for(int i=0;i<droleAmount;i++) {
 			float myRotation = menuRotation - 3.1414f*.5f + i*.3f;
-			System.out.println(i + " " + parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation));
+//			System.out.println(i + " " + parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation));
 			
 			if(parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation) < .05f) {
 				parent.g.fill(55,0,0);
@@ -145,7 +147,7 @@ public class Globe extends Drawable {
 			parent.g.ellipse(0,0, 100, 100);
 			parent.g.popMatrix();
 		}
-		
+	
 		parent.g.popMatrix();
 
 //		parent.g.noLights();
