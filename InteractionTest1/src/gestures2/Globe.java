@@ -65,7 +65,7 @@ public class Globe extends Drawable {
 
 		parent.g.pushMatrix();
 		// position, scale, rotation and dimension must be respected!
-		parent.g.translate(position.x, position.y+PApplet.map(fade, 0, 1, 190, 0), position.z);
+		parent.g.translate(position.x, position.y+PApplet.map(fade, 0, 1, 0, 0), position.z);
 		parent.g.scale(scale.x, scale.y, scale.z);
 		parent.g.rotateY(rotation);
 

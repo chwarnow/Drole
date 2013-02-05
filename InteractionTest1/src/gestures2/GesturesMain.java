@@ -43,8 +43,8 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private PVector bodyDir = new PVector();
 
 	// Real World Screen Dimensions
-	private PVector realScreenDim = new PVector(300, 300, 0);
-	private PVector realScreenPos = new PVector(-150, 40, -165);
+	private PVector realScreenDim = new PVector(1800, 1800, 0);
+	private PVector realScreenPos = new PVector(-900, -1855, 0);
 
 	// Real World Screen Positions
 	private PVector pa = new PVector();
@@ -65,7 +65,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private float d = 0;
 
 	private float n = 0.1f;
-	private float f = 4000f;
+	private float f = 15000f;
 
 	// Screen corner vectors
 	private PVector va = new PVector();
@@ -75,8 +75,8 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private PVector vc = new PVector();
 
 	private PVector head = new PVector(0, 0, 3000);
-	private PVector globePosition = new PVector(0, 260, -300);
-	private PVector globeSize = new PVector(120, 200, 200);
+	private PVector globePosition = new PVector(0, -900, -1800);
+	private PVector globeSize = new PVector(1700, 100, 100);
 	private Globe globe;
 
 	private float horizontalViewAlpha = 0.0f;
@@ -311,7 +311,11 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 			rotateX(rotX);
 			rotateY(rotY);
 			scale(zoomF);
-
+			
+			drawRealWorldScreen();
+			
+			drawMainScene();
+			
 			int[] depthMap = context.depthMap();
 			int steps = 3; // to speed up the drawing, draw every third point
 			int index;
@@ -746,6 +750,69 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 		}
 	}
 
+	private void drawRealWorldScreen() {
+		pushStyle();
+		pushMatrix();
+			stroke(200, 0, 0);
+			noFill();
+			beginShape();
+				
+				/*
+				println("Positions");
+				
+				println(pa);
+				println(pb);
+				println(pc);
+				println(pd);
+				
+				println("Orthos");
+				
+				println(vr);
+				println(vu);
+				println(vn);
+				*/
+
+				vertex(pc.x, pc.y, pc.z); // Upper Left Corner of Screen	
+				vertex(pd.x, pd.y, pd.z); // Upper Right Corner of Screen
+				vertex(pb.x, pb.y, pb.z); // Lower Right Corner of Screen
+				vertex(pa.x, pa.y, pa.z); // Lower Left Corner of Screen
+			endShape();
+			
+			// Draw Real World Screen Orthonormal
+			PVector ox = vr.get();
+			ox.mult(200);
+			
+			PVector oy = vu.get();
+			oy.mult(200);
+			
+			PVector oz = vn.get();
+			oz.mult(200);
+			
+			stroke(255, 200, 200);
+			line(pa.x, pa.y, pa.z, pa.x+ox.x, pa.y+ox.y, pa.z+ox.z);
+			line(pa.x, pa.y, pa.z, pa.x+oy.x, pa.y+oy.y, pa.z+oy.z);
+			line(pa.x, pa.y, pa.z, pa.x+oz.x, pa.y+oz.y, pa.z+oz.z);
+			
+			strokeWeight(1);
+			
+			// Draw Screen-Space Origin
+			pushMatrix();
+				noStroke();
+				fill(0, 0, 200);
+				
+				translate(head.x, head.y, pa.z);
+				ellipse(0, 0, 20, 20);
+			popMatrix();
+			
+			pushMatrix();
+				translate(-head.x, -head.y, -head.z);
+				ellipse(0, 0, 20, 20);
+			popMatrix();
+			
+		popStyle();
+		popMatrix();
+	}
+	
 	@Override
 	public void jointLeftTarget(String name) {
 		println("Joint left " + name);
