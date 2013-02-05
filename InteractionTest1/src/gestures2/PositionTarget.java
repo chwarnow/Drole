@@ -110,7 +110,8 @@ public class PositionTarget {
 	}
 	
 	public void drawTarget(PGraphics g) {
-		if(inTarget) target.draw(g);
+//		if(inTarget) target.draw(g);
+		target.draw(g);
 	}
 	
 	public boolean inTarget() {
