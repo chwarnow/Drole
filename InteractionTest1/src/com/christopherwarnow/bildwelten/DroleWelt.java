@@ -26,17 +26,18 @@ public class DroleWelt {
 	private Drole[] particles;
 
 	private float sphereSize = 120;
-	private int REST_LENGTH=3;
+	private int REST_LENGTH=4;
 
 	private VerletPhysics physics;
 	private VerletParticle head;
 	
 	private float randomOffset = 0;
+	private boolean isActive = false;
 	
 	public DroleWelt(PApplet parent, int particleAmount, float dimension) {
 		this.parent = parent;
 		this.particleAmount = particleAmount;
-		this.sphereSize = (dimension==0) ? 600.0f : dimension;
+		this.sphereSize = (dimension==0) ? 600.0f : dimension*.5f;
 		
 		init();
 	}
@@ -92,40 +93,49 @@ public class DroleWelt {
 	 * let the particles wander by setting position of certain particles
 	 */
 	public void update() {
-		// update particle movement
-		float myOffset = parent.frameCount + randomOffset;
-		head.set(
-				parent.noise(myOffset*(.005f + parent.cos(myOffset*.01f)*.00f))*parent.width-parent.width/2,
-				parent.noise(myOffset*.005f + parent.cos(myOffset*.01f)*.05f)*parent.height-parent.height/2,
-				parent.noise(myOffset*.01f + 100)*parent.width-parent.width/2
-		);
-		physics.particles.get(10).set(
-				parent.noise(-myOffset*(.005f + parent.cos(myOffset*.001f)*.005f))*parent.width-parent.width/2,
-				parent.noise(-myOffset*.005f + parent.cos(myOffset*.001f)*.005f)*parent.height-parent.height/2,
-				parent.noise(-myOffset*.01f + 100)*parent.width-parent.width/2);
-
-		// also apply sphere constraint to head
-		// this needs to be done manually because if this particle is locked
-		// it won't be updated automatically
-		head.applyConstraints();
-		// physics.particles.get(10).applyConstraints();
-
-		// update sim
-		physics.update();
-		// then all particles as dots
-		int index=0;
-		for (Iterator i=physics.particles.iterator(); i.hasNext();) {
-			VerletParticle p=(VerletParticle)i.next();
-			particles[index++].addPosition(p.x, p.y, p.z);
+		if(!isActive) {
+			// update particle movement
+			float myOffset = parent.frameCount + randomOffset;
+			head.set(
+					parent.noise(myOffset*(.005f + parent.cos(myOffset*.01f)*.00f))*parent.width-parent.width/2,
+					parent.noise(myOffset*.005f + parent.cos(myOffset*.01f)*.05f)*parent.height-parent.height/2,
+					parent.noise(myOffset*.01f + 100)*parent.width-parent.width/2
+			);
+			physics.particles.get(10).set(
+					parent.noise(-myOffset*(.005f + parent.cos(myOffset*.001f)*.005f))*parent.width-parent.width/2,
+					parent.noise(-myOffset*.005f + parent.cos(myOffset*.001f)*.005f)*parent.height-parent.height/2,
+					parent.noise(-myOffset*.01f + 100)*parent.width-parent.width/2);
+	
+			// also apply sphere constraint to head
+			// this needs to be done manually because if this particle is locked
+			// it won't be updated automatically
+			head.applyConstraints();
+			// physics.particles.get(10).applyConstraints();
 		}
+			// update sim
+			physics.update();
+			// then all particles as dots
+			int index=0;
+			for (Iterator i=physics.particles.iterator(); i.hasNext();) {
+				VerletParticle p=(VerletParticle)i.next();
+				particles[index++].addPosition(p.x, p.y, p.z);
+			}
+		
 	}
 
 	public void draw() {
 		// TODO: set color
+		if(isActive) parent.g.stroke(255, 0, 0);
+		else parent.g.stroke(255);
+		
 		parent.g.pushMatrix();
 		for (int i=0;i<particleAmount;i++) {
 			particles[i].draw();
 		}
 		parent.g.popMatrix();
+	}
+	
+	public void isActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 }

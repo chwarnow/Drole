@@ -33,7 +33,7 @@ public class Globe extends Drawable {
 	public float rotation 		= 0;
 	public float rotationSpeed = 0.04f;
 	private float smoothedRotation = 0;
-	private float smoothedRotationSpeed = .3f;
+	private float smoothedRotationSpeed = .1f;
 
 	public PImage globeTexture;
 
@@ -48,26 +48,18 @@ public class Globe extends Drawable {
 
 	
 	// ------ drole particles on sphere ------
-	private int particleAmount = 500;
-	private Drole[] particles;
-
-	private int NUM_PARTICLES = 100;
-	private int REST_LENGTH=3;
-
-	private VerletPhysics physics;
-	private VerletParticle head;
 	private int droleAmount = 5;
 	private int drolesPerWelt = 50;
 	private DroleWelt[] droles;
-	private DroleWelt droleA, droleB;
+	
+	// ------ hotspots for a menu to choose bildwelten
+	private float menuRotation = 0;
 
 	public Globe(PApplet parent, PVector position, PVector dimension, PImage globeTexture) {
 		super(parent);
 
 		position(position);
 		dimension(dimension);
-		
-		initMenuSphere();
 		
 		this.globeTexture = globeTexture;
 		initializeSphere(sDetail);
@@ -84,7 +76,7 @@ public class Globe extends Drawable {
 		super.update();
 		// rotation += rotationSpeed;
 
-		smoothedRotation += (rotation - smoothedRotation) + smoothedRotationSpeed;
+		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
 		for(DroleWelt droleWelt:droles) {
 			droleWelt.update();
@@ -127,97 +119,38 @@ public class Globe extends Drawable {
 		for(DroleWelt droleWelt:droles) {
 			droleWelt.draw();
 		}
-
+		
+		// draw a menu item circle
+		System.out.println(rotation);
+		// about .9 <>1.2
+		float startRotation = .9f;
+		float endRotation = 1.2f;
+		for(int i=0;i<droleAmount;i++) {
+			float myRotation = menuRotation - 3.1414f*.5f + i*.3f;
+			System.out.println(i + " " + parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation));
+			
+			if(parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation) < .05f) {
+				parent.g.fill(55,0,0);
+				droles[i].isActive(true);
+			} else {
+				parent.g.noFill();
+				droles[i].isActive(false);
+			}
+			parent.g.stroke(50,0,0);
+			parent.g.strokeWeight(1);
+			
+			parent.g.pushMatrix();
+			parent.g.rotateY(myRotation);
+			parent.g.translate(0, 0, dimension.x*.5f);
+			parent.g.ellipse(0,0, 100, 100);
+			parent.g.popMatrix();
+		}
+		
 		parent.g.popMatrix();
 
 //		parent.g.noLights();
 
 		parent.g.popStyle();
-	}
-
-	/**
-	 * create a swarm of spring-connected verlet physics particles that are constrained on a sphere
-	 */
-	private void initMenuSphere() {
-		
-		// create drole particles
-		particles = new Drole[particleAmount];
-
-		// create particles
-		for (int i=0;i<NUM_PARTICLES;i++) {
-			particles[i] = new Drole( parent,
-					new PVector(
-							parent.random(-3.1414f, 3.1414f),
-							parent.random(-3.1414f, 3.1414f),
-							parent.random(-3.1414f, 3.1414f)),
-							dimension.x,
-							i);
-		}
-
-		// create collision sphere at origin, replace OUTSIDE with INSIDE to keep particles inside the sphere
-		ParticleConstraint sphereA=new SphereConstraint(new Sphere(new Vec3D(), dimension.x), SphereConstraint.OUTSIDE);
-		ParticleConstraint sphereB=new SphereConstraint(new Sphere(new Vec3D(), dimension.x*1.1f), SphereConstraint.INSIDE);
-		physics=new VerletPhysics();
-		// weak gravity along Y axis
-		physics.addBehavior(new GravityBehavior(new Vec3D(0, 0.01f, 0)));
-		// set bounding box to 110% of sphere radius
-		physics.setWorldBounds(new AABB(new Vec3D(), new Vec3D(dimension.x, dimension.x, dimension.x).scaleSelf(1.1f)));
-		VerletParticle prev=null;
-		for (int i=0; i<NUM_PARTICLES; i++) {
-			// create particles at random positions outside sphere
-			VerletParticle p=new VerletParticle(Vec3D.randomVector().scaleSelf(dimension.x*2));
-			// set sphere as particle constraint
-			p.addConstraint(sphereA);
-			p.addConstraint(sphereB);
-			physics.addParticle(p);
-			if (prev!=null) {
-				physics.addSpring(new VerletSpring(prev, p, REST_LENGTH*5, 0.005f));
-				physics.addSpring(new VerletSpring(physics.particles.get((int)parent.random(i)), p, REST_LENGTH*20, 0.00001f + i*.0005f));
-			}
-			prev=p;
-		}
-		head=physics.particles.get(0);
-		head.lock();
-	}
-
-	/**
-	 * let the particles wander by setting position of certain particles
-	 */
-	private void updateMenuSphere() {
-		// update particle movement
-		head.set(
-				parent.noise(parent.frameCount*(.005f + parent.cos(parent.frameCount*.01f)*.00f))*parent.width-parent.width/2,
-				parent.noise(parent.frameCount*.005f + parent.cos(parent.frameCount*.01f)*.05f)*parent.height-parent.height/2,
-				parent.noise(parent.frameCount*.01f + 100)*parent.width-parent.width/2
-		);
-		physics.particles.get(10).set(
-				parent.noise(-parent.frameCount*(.005f + parent.cos(parent.frameCount*.001f)*.005f))*parent.width-parent.width/2,
-				parent.noise(-parent.frameCount*.005f + parent.cos(parent.frameCount*.001f)*.005f)*parent.height-parent.height/2,
-				parent.noise(-parent.frameCount*.01f + 100)*parent.width-parent.width/2);
-
-		// also apply sphere constraint to head
-		// this needs to be done manually because if this particle is locked
-		// it won't be updated automatically
-		head.applyConstraints();
-		// physics.particles.get(10).applyConstraints();
-
-		// update sim
-		physics.update();
-		// then all particles as dots
-		int index=0;
-		for (Iterator i=physics.particles.iterator(); i.hasNext();) {
-			VerletParticle p=(VerletParticle)i.next();
-			particles[index++].addPosition(p.x, p.y, p.z);
-		}
-	}
-
-	private void drawMenuSphere() {
-		parent.g.pushMatrix();
-		parent.g.stroke(0);
-		for (int i=0;i<NUM_PARTICLES;i++) {
-			particles[i].draw();
-		}
-		parent.g.popMatrix();
 	}
 
 	private void initializeSphere(int res)
