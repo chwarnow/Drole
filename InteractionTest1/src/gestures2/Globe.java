@@ -75,7 +75,6 @@ public class Globe extends Drawable {
 	public void update() {
 		super.update();
 		// rotation += rotationSpeed;
-
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
 		for(DroleWelt droleWelt:droles) {
@@ -92,6 +91,12 @@ public class Globe extends Drawable {
 
 		parent.g.pushMatrix();
 		// position, scale, rotation and dimension must be respected!
+		/*
+		System.out.println(position.toString());
+		System.out.println(scale.toString());
+		System.out.println(rotation+" : "+smoothedRotation);
+		*/
+		
 		parent.g.translate(position.x, position.y, position.z);
 		parent.g.scale(scale.x, scale.y, scale.z);
 		parent.g.rotateY(smoothedRotation);//rotation);

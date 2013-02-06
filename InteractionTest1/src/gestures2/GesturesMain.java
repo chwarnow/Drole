@@ -83,6 +83,9 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private PVector globeSize = new PVector(900, 100, 100);
 	private Globe globe;
 
+	/* Skybox */
+	private PImage backgroundImage;
+	
 	private float horizontalViewAlpha = 0.0f;
 	private float verticalViewAlpha = 0.0f;
 
@@ -102,7 +105,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	private float[] rightHandSampling 		= new float[10];
 	private short rightHandSamplingIndex 	= 0;	
 	
-	private float rotationMapStart, rotationMapEnd;
+	private float rotationMapStart = 0, rotationMapEnd = 0;
 	
 	public void setup() {
 		size(1080, 1080, OPENGL);
@@ -137,6 +140,8 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 		setupLogo();
 
 		setupGlobe();
+		
+		backgroundImage = loadImage("images/Backplate_small.jpg");
 	}
 
 	private void switchMode(String MODE) {
@@ -439,9 +444,10 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 					float dHandA = 0;
 					for(int i = 0; i < rightHandSampling.length; i++) dHandA += rightHandSampling[i];
 					dHandA /= rightHandSampling.length;
-					
-					println(dHandA);
-					globe.rotation = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
+						
+	//				println(dHandA);
+					float rot = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
+					if(!Float.isInfinite(rot) && !Float.isNaN(rot)) globe.rotation = rot;  
 				}				
 			}
 		}
@@ -745,6 +751,28 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 	public void drawMainScene() {
 		globe.update();
 		globe.draw();
+		
+		/*
+		pushMatrix();
+			noStroke();
+			fill(0, 0, 120);
+			texture(backgroundImage);
+			box(5000, 5000, 5000);
+		popMatrix();
+		
+		
+		pushMatrix();
+			translate(0, 0, 0);
+			rotateY(radians(180));
+			beginShape();
+				texture(backgroundImage);
+				vertex(-1000, 	-1800, 0, 0, backgroundImage.height);
+				vertex(-1000, 		0, 0, 0, 0);
+				vertex(1000, 		0, 0, backgroundImage.width, 0);
+				vertex(1000, 	-1800, 0, backgroundImage.width, backgroundImage.height);
+			endShape(CLOSE);
+		popMatrix();
+		*/
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -753,19 +781,6 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 
 		lastMouseX = mouseX;
 		lastMouseY = mouseY;
-	}
-
-	@Override
-	public void jointEnteredTarget(String name) {
-		println("Joint in " + name);
-		if(name == "ROTATION_TARGET" && holdingTarget.inTarget()) {
-			switchMode(ROTATING);
-			globe.rotationSpeed = 0.0f;
-			PVector rightHand = new PVector(0, 0, 0);
-			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, rightHand);
-			rotationMapStart = rightHand.x - 600;
-			rotationMapStart = rightHand.x + 600;
-		}
 	}
 
 	private void drawRealWorldScreen() {
@@ -829,6 +844,19 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 			
 		popStyle();
 		popMatrix();
+	}
+	
+	@Override
+	public void jointEnteredTarget(String name) {
+		println("Joint in " + name);
+		if(name == "ROTATION_TARGET" && holdingTarget.inTarget()) {
+			switchMode(ROTATING);
+			globe.rotationSpeed = 0.0f;
+			PVector rightHand = new PVector(0, 0, 0);
+			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, rightHand);
+			rotationMapStart = rightHand.x - 600;
+			rotationMapStart = rightHand.x + 600;
+		}
 	}
 	
 	@Override
