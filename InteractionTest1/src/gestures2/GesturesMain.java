@@ -445,7 +445,7 @@ public class GesturesMain extends PApplet implements PositionTargetListener {
 					for(int i = 0; i < rightHandSampling.length; i++) dHandA += rightHandSampling[i];
 					dHandA /= rightHandSampling.length;
 						
-	//				println(dHandA);
+//					println(dHandA);
 					float rot = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
 					if(!Float.isInfinite(rot) && !Float.isNaN(rot)) globe.rotation = rot;  
 				}				
