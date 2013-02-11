@@ -12,6 +12,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/toxiclibs/toxiclibscore.jar"/>
 	<classpathentry kind="lib" path="lib/toxiclibs/verletphysics.jar"/>
-	<classpathentry kind="lib" path="lib/peasycam.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
