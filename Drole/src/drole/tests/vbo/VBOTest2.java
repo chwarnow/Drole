@@ -3,47 +3,41 @@ package drole.tests.vbo;
 import javax.media.opengl.GL2;
 
 import processing.core.PApplet;
-import processing.core.PShape;
 import processing.opengl.PGraphicsOpenGL;
 
 public class VBOTest2 extends PApplet {
 
 	private static final long serialVersionUID = 1L;
 	
-	private PShape particles;
-	
-	private float spawnDim = 3000;
+	private float spawnDim = 500;
 	
 	private GL2 gl; 
 	private PGraphicsOpenGL pgl;
 	
-	private double[] vertices = new double[30000];
+	private float[][] vertices = new float[20][100000];
+	
+	private VBO vbo;
 	
 	public void setup() {
 		size(1200, 720, OPENGL);
 		
-		//hint(DISABLE_OPENGL_2X_SMOOTH);
-		//hint(ENABLE_OPENGL_4X_SMOOTH);
+		pgl = (PGraphicsOpenGL) g;  // g may change
+		gl = pgl.beginPGL().gl.getGL2(); 
 		
 		// Begin creation
 		print("Begin creation ... ");
-		particles = createShape();
-
-		particles.beginShape(POINTS);
-			particles.noStroke();
-			
-			particles.stroke(random(255), 0, random(255));
-			particles.strokeWeight(10);
-			
-			for(int i = 0; i < 10000; i++) {
-				vertices[i] = random(-spawnDim, spawnDim);
+		
+		for(int j = 0; j < 20; j++) {
+			for(int i = 0; i < 100000; i++) {
+				vertices[j][i] = random(-spawnDim, spawnDim);
 				//particles.vertex(random(-spawnDim, spawnDim), random(-spawnDim, spawnDim), random(-spawnDim, spawnDim));
 			}
-			
-		particles.endShape();
+		}
+		
 		println("done!");
 		
-		
+		vbo = new VBO(100000, gl);
+		vbo.updateVertices(vertices[(int)random(19)]);
 		
 		lights();
 	}
@@ -51,15 +45,15 @@ public class VBOTest2 extends PApplet {
 	public void draw() {
 		background(20);
 		
-		translate(width/2, height/2, -8000);
-		rotateY(frameCount/100f);
-		rotateX(frameCount/100f);
-		rotateZ(frameCount/100f);
+		gl.glPushMatrix();
+			gl.glTranslatef(width/2f, height/2f, -1000);
+			gl.glRotatef(frameCount/2f, 1, 1, 1);
 			
-			shape(particles);
-			
-			pointLight(0, 200, 200, 100, 100, 100);
-			
+			vbo.updateVertices(vertices[(int)random(19)]);
+			vbo.render(GL2.GL_QUADS);
+		
+		gl.glPopMatrix();
+		
 		if(frameCount%100 == 0) println(frameRate);
 	}
 
