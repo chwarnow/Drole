@@ -15,6 +15,8 @@ import java.util.Iterator;
 
 import com.christopherwarnow.bildwelten.DroleWelt;
 import com.christopherwarnow.bildwelten.Drole;
+import com.christopherwarnow.bildwelten.SpherePrimitive;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
@@ -54,6 +56,13 @@ public class Globe extends Drawable {
 	
 	// ------ hotspots for a menu to choose bildwelten
 	private float menuRotation = 0;
+	
+	// ------ cube sphere ------
+	PImage cubeTex;
+	SpherePrimitive cubeEnvironment;
+	
+	// ------ circular mask ------
+	PImage circularMask;
 
 	public Globe(PApplet parent, PVector position, PVector dimension, PImage globeTexture) {
 		super(parent);
@@ -69,12 +78,19 @@ public class Globe extends Drawable {
 		for(int i=0;i<droleAmount;i++) {
 			droles[i] = new DroleWelt(parent, drolesPerWelt, dimension.x);
 		}
+		
+		// cube environment
+		cubeTex = parent.loadImage("data/images/boxTexture.jpg");
+		cubeEnvironment = new SpherePrimitive(parent, new PVector(), 1500, cubeTex, 32);
+		
+		// circular mask
+		circularMask = parent.loadImage("data/images/circularMaskWhite.png");
 	}
 
 	@Override
 	public void update() {
 		super.update();
-		// rotation += rotationSpeed;
+		//rotation += rotationSpeed;
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
 		for(DroleWelt droleWelt:droles) {
@@ -83,8 +99,9 @@ public class Globe extends Drawable {
 	}
 
 	@Override
-	public void draw() {
+	public void draw() {		
 		parent.g.pushStyle();
+		
 //		parent.g.lights();
 
 		//parent.g.tint(255, PApplet.map(fade, 0, 1, 0, 255));	
@@ -109,6 +126,72 @@ public class Globe extends Drawable {
 		parent.g.noStroke();
 		parent.g.fill(200);
 
+		// render the cube scene
+		parent.g.tint(255, 255);
+		
+		// box
+		
+		// front
+		float mainSize = 3000;
+		/*
+		parent.g.pushMatrix();
+		parent.g.translate(-mainSize/2, -mainSize/2, mainSize/2);
+		parent.image(circularMask, 0, 0, mainSize, mainSize);
+		parent.g.popMatrix();
+		*/
+		
+		// back
+		parent.g.pushStyle();
+		parent.g.imageMode(parent.CORNER);
+		
+		parent.g.pushMatrix();
+		
+		parent.g.translate(0, 0, -mainSize*.75f);
+		
+		parent.g.pushMatrix();
+		parent.g.translate(-mainSize/2, -mainSize/2, -mainSize/2);
+		parent.image(cubeTex, 0, 0, mainSize, mainSize);
+		parent.g.popMatrix();
+		
+		//left
+		parent.g.pushMatrix();
+		parent.g.translate(-mainSize/2, -mainSize/2, mainSize/2);
+		parent.g.rotateY(parent.HALF_PI);
+		parent.image(cubeTex, 0, 0, mainSize, mainSize);
+		parent.g.popMatrix();
+		
+		//right
+		parent.g.pushMatrix();
+		parent.g.translate(mainSize/2, -mainSize/2, mainSize/2);
+		parent.g.rotateY(parent.HALF_PI);
+		parent.image(cubeTex, 0, 0, mainSize, mainSize);
+		parent.g.popMatrix();
+		
+		//top
+		parent.g.pushMatrix();
+		parent.g.translate(-mainSize/2, -mainSize/2, -mainSize/2);
+		parent.g.rotateX(parent.HALF_PI);
+		parent.image(cubeTex, 0, 0, mainSize, mainSize);
+		parent.g.popMatrix();
+		
+		//bottom
+		parent.g.pushMatrix();
+		parent.g.translate(-mainSize/2, mainSize/2, -mainSize/2);
+		parent.g.rotateX(parent.HALF_PI);
+		parent.image(cubeTex, 0, 0, mainSize, mainSize);
+		parent.g.popMatrix();
+		
+		parent.g.popMatrix();
+		
+		parent.g.popStyle();
+		
+		//parent.hint(parent.ENABLE_DEPTH_TEST);
+		/*
+		parent.g.pushMatrix();
+		parent.g.translate(0, 0, -1500);
+		cubeEnvironment.draw();
+		parent.g.popMatrix();
+		*/
 		// dimension must be respected!
 		parent.g.tint(255, 255);
 		texturedSphere(dimension.x, globeTexture);
@@ -121,7 +204,7 @@ public class Globe extends Drawable {
 		/* END APPEARANCE */
 
 		// draw the droles
-
+		/*
 		for(DroleWelt droleWelt:droles) {
 			droleWelt.draw();
 		}
@@ -153,7 +236,7 @@ public class Globe extends Drawable {
 			parent.g.ellipse(0,0, 100, 100);
 			parent.g.popMatrix();
 		}
-	
+	*/
 		parent.g.popMatrix();
 
 //		parent.g.noLights();
