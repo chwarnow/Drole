@@ -1,2 +1,0 @@
-image=TapeteBG,896,503,1396,503,1396,1003,896,1003,editable,Glow.png
-video=Rauschen,1068,688,1244,688,1244,809,1068,809,editable,Rauschen.mov

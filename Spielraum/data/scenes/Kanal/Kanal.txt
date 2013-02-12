@@ -1,7 +1,0 @@
-image=TapeteBG,0,0,1920,0,1920,1080,0,1080,locked,Kanal-Tapete.jpg
-image=Lampe,493,-120,1063,-120,1063,276,493,276,editable,Kanal-Lampe.png
-image=Info,877,275,1389,275,1389,744,877,744,editable,Kanal-Info.png
-image=Bild,280,298,398,298,398,534,280,534,editable,Kanal-Bild.png
-image=Yucca,53,434,379,434,379,1052,53,1052,editable,Kanal-Yucca.png
-image=Schrank,382,376,866,369,866,1017,380,1021,editable,Kanal-Schrank.png
-video=Fernseher,1061,695,1232,693,1232,814,1056,814,editable,Kanal-Fernseher.mov
