@@ -23,6 +23,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
+	private boolean FREEMODE			= false;
+	
 	/* GUI */
 	private Image logoGrey;
 	private Image logoColor;
@@ -114,13 +116,12 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 		// enable depthMap generation
 		if (context.enableDepth() == false) {
-			println("Can't open the depthMap, maybe the camera is not connected!");
-			exit();
-			return;
+			println("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
+			FREEMODE = true;
 		}
 		
 		// enable skeleton generation for all joints
-		context.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
+		if(!FREEMODE) context.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
 
 		stroke(255, 255, 255);
 		smooth();
@@ -135,15 +136,26 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		
 		calcRealWorldScreenSetup();
 
-		setupGestureDetection();
+		initHead();
+		
+		if(!FREEMODE) setupGestureDetection();
 
 		setupLogo();
 
 		setupGlobe();
 		
 		backgroundImage = loadImage("images/Backplate_small.jpg");
+		
+		if(FREEMODE) {
+			globe.fadeIn(100);
+			switchMode(LIVE);
+		}
 	}
 
+	private void initHead() {
+		head = new PVector(realScreenPos.x+(realScreenDim.x/2f), realScreenPos.y+(realScreenDim.y/2f), 3000);
+	}
+	
 	private void switchMode(String MODE) {
 		if(this.MODE != FORCED_DEBUG) {
 			println("Switching MODE from '" + this.MODE + "' to '" + MODE + "'");
@@ -305,7 +317,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		// update the cam
 		context.update();
 
-		updateHead();
+		if(!FREEMODE) updateHead();
 
 		setViewAlpha();
 
@@ -330,38 +342,39 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			
 			drawMainScene();
 			
-			int[] depthMap = context.depthMap();
-			int steps = 3; // to speed up the drawing, draw every third point
-			int index;
-			PVector realWorldPoint;
-
-			strokeWeight(1);
-			stroke(100);
-			for (int y = 0; y < context.depthHeight(); y += steps) {
-				for (int x = 0; x < context.depthWidth(); x += steps) {
-					index = x + y * context.depthWidth();
-					if (depthMap[index] > 0) {
-						// draw the projected point
-						realWorldPoint = context.depthMapRealWorld()[index];
-						point(realWorldPoint.x, realWorldPoint.y, realWorldPoint.z);
+			if(!FREEMODE) { 
+				int[] depthMap = context.depthMap();
+				int steps = 3; // to speed up the drawing, draw every third point
+				int index;
+				PVector realWorldPoint;
+	
+				strokeWeight(1);
+				stroke(100);
+				for (int y = 0; y < context.depthHeight(); y += steps) {
+					for (int x = 0; x < context.depthWidth(); x += steps) {
+						index = x + y * context.depthWidth();
+						if (depthMap[index] > 0) {
+							// draw the projected point
+							realWorldPoint = context.depthMapRealWorld()[index];
+							point(realWorldPoint.x, realWorldPoint.y, realWorldPoint.z);
+						}
 					}
 				}
+	
+				// draw the skeleton if it's available
+				int[] userList = context.getUsers();
+				for(int i = 0; i < userList.length; i++) {
+					if(context.isTrackingSkeleton(userList[i])) drawSkeleton(userList[i]);
+				}
+	
+				targetDetection.check();
+				
+				pushStyle();
+				stroke(0, 200, 0);
+				noFill();
+					for(PositionTarget pt : targetDetection.targets) pt.drawTarget(g);
+				popStyle();
 			}
-
-			// draw the skeleton if it's available
-			int[] userList = context.getUsers();
-			for (int i = 0; i < userList.length; i++) {
-				if (context.isTrackingSkeleton(userList[i]))
-					drawSkeleton(userList[i]);
-			}
-
-			targetDetection.check();
-			
-			pushStyle();
-			stroke(0, 200, 0);
-			noFill();
-				for(PositionTarget pt : targetDetection.targets) pt.drawTarget(g);
-			popStyle();
 			
 			/*
 			if(rotationTarget.inTarget()) {
@@ -383,11 +396,10 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			context.drawCamFrustum();
 		}
 
-		if (MODE == LOGO || MODE == LOGO2 || MODE == TRANSIT_TO_LIVE)
-			drawLogo();
-
-		if (MODE == TRANSIT_TO_LIVE && logoBG.mode() == Drawable.OFF_SCREEN)
-			switchMode(LIVE);
+		if (MODE == LOGO || MODE == LOGO2 || MODE == TRANSIT_TO_LIVE) drawLogo();
+		
+		if (MODE == TRANSIT_TO_LIVE && logoBG.mode() == Drawable.OFF_SCREEN) switchMode(LIVE);
+		
 		if (MODE == TRANSIT_FROM_LIVE && globe.mode() == Drawable.OFF_SCREEN) backToLogo();
 
 		if (MODE == LIVE || MODE == TRANSIT_FROM_LIVE || MODE == ZOOMING || MODE == ROTATING) {
@@ -404,51 +416,53 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			// Draw Real World Screen
 			// drawRealWorldScreen();
 
-			targetDetection.check();
-			
-			if(holdingTarget.inTarget()) {
-				// If the arm wasn't mesured yet!
-				// Lets mesure the users arm length to map it to the scaling of our globe
-				PVector leftHand 		= new PVector(0, 0, 0);
-				PVector rightHand 		= new PVector(0, 0, 0);
-				PVector leftElbow 		= new PVector(0, 0, 0);
-				PVector leftShoulder 	= new PVector(0, 0, 0);
-				PVector torso		 	= new PVector(0, 0, 0);
-				context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, leftHand);
-				context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_LEFT_HAND, rightHand);
-				context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_ELBOW, leftElbow);
-				context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_SHOULDER, leftShoulder);
-				context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_TORSO, torso);
+			if(!FREEMODE) {
+				targetDetection.check();
 				
-				if(usersArmLength == 0) {
-					usersArmLength = leftHand.dist(leftElbow)+leftElbow.dist(leftShoulder);
-					System.out.println("Users arm length is: "+usersArmLength+" mm.");
+				if(holdingTarget.inTarget()) {
+					// If the arm wasn't mesured yet!
+					// Lets mesure the users arm length to map it to the scaling of our globe
+					PVector leftHand 		= new PVector(0, 0, 0);
+					PVector rightHand 		= new PVector(0, 0, 0);
+					PVector leftElbow 		= new PVector(0, 0, 0);
+					PVector leftShoulder 	= new PVector(0, 0, 0);
+					PVector torso		 	= new PVector(0, 0, 0);
+					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, leftHand);
+					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_LEFT_HAND, rightHand);
+					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_ELBOW, leftElbow);
+					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_SHOULDER, leftShoulder);
+					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_TORSO, torso);
 					
-					for(int i = 0; i < leftHandSampling.length; i++) leftHandSampling[i] = 0;
-				}
-				
-				leftHandSampling[leftHandSamplingIndex++] = abs(leftHand.z-leftShoulder.z);
-				if(leftHandSamplingIndex == leftHandSampling.length) leftHandSamplingIndex = 0;				
-				float dHandZ = 0;
-				for(int i = 0; i < leftHandSampling.length; i++) dHandZ += leftHandSampling[i];
-				dHandZ /= leftHandSampling.length;
-				
-//				println(dHandZ+" : "+usersArmLength);
-				
-				float newScale = map(dHandZ, 0, usersArmLength, 3f, 0.1f);
-				globe.easeToScale(new PVector(newScale, newScale, newScale), 300);
-				
-				if(rotationTarget.inTarget()) {
-					rightHandSampling[rightHandSamplingIndex++] = rightHand.x;
-					if(rightHandSamplingIndex == rightHandSampling.length) rightHandSamplingIndex = 0;				
-					float dHandA = 0;
-					for(int i = 0; i < rightHandSampling.length; i++) dHandA += rightHandSampling[i];
-					dHandA /= rightHandSampling.length;
+					if(usersArmLength == 0) {
+						usersArmLength = leftHand.dist(leftElbow)+leftElbow.dist(leftShoulder);
+						System.out.println("Users arm length is: "+usersArmLength+" mm.");
 						
-//					println(dHandA);
-					float rot = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
-					if(!Float.isInfinite(rot) && !Float.isNaN(rot)) globe.rotation = rot;  
-				}				
+						for(int i = 0; i < leftHandSampling.length; i++) leftHandSampling[i] = 0;
+					}
+					
+					leftHandSampling[leftHandSamplingIndex++] = abs(leftHand.z-leftShoulder.z);
+					if(leftHandSamplingIndex == leftHandSampling.length) leftHandSamplingIndex = 0;				
+					float dHandZ = 0;
+					for(int i = 0; i < leftHandSampling.length; i++) dHandZ += leftHandSampling[i];
+					dHandZ /= leftHandSampling.length;
+					
+	//				println(dHandZ+" : "+usersArmLength);
+					
+					float newScale = map(dHandZ, 0, usersArmLength, 3f, 0.1f);
+					globe.easeToScale(new PVector(newScale, newScale, newScale), 300);
+					
+					if(rotationTarget.inTarget()) {
+						rightHandSampling[rightHandSamplingIndex++] = rightHand.x;
+						if(rightHandSamplingIndex == rightHandSampling.length) rightHandSamplingIndex = 0;				
+						float dHandA = 0;
+						for(int i = 0; i < rightHandSampling.length; i++) dHandA += rightHandSampling[i];
+						dHandA /= rightHandSampling.length;
+							
+	//					println(dHandA);
+						float rot = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
+						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) globe.rotation = rot;  
+					}
+				}
 			}
 		}
 	}
@@ -577,14 +591,12 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 	public void onExitUser(int userId) {
 		println("onExitUser - userId: " + userId);
-		if (userId == 1)
-			backToLogo();
+		if(userId == 1) backToLogo();
 	}
 
 	public void onReEnterUser(int userId) {
 		println("onReEnterUser - userId: " + userId);
-		if (userId == 1)
-			switchToLive();
+		if(userId == 1) switchToLive();
 	}
 
 	public void onStartCalibration(int userId) {
@@ -592,8 +604,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	public void onEndCalibration(int userId, boolean successfull) {
-		println("onEndCalibration - userId: " + userId + ", successfull: "
-				+ successfull);
+		println("onEndCalibration - userId: " + userId + ", successfull: " + successfull);
 
 		if (successfull) {
 			println("  User calibrated !!!");
