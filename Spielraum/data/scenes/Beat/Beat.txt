@@ -1,8 +1,0 @@
-image=TapeteBG,0,0,1920,0,1920,1080,0,1080,locked,Beat-Tapete.jpg
-image=Lampe,727,-44,981,-44,981,216,727,216,editable,Beat-Lampe.png
-image=Doors,200,469,368,465,349,691,183,691,editable,Beat-Doors.png
-image=Info,880,246,1392,246,1392,715,880,715,editable,Beat-Info.png
-image=Klaus,485,141,665,142,693,308,492,318,editable,Beat-Klaus.png
-image=Schrank,371,377,870,378,873,1021,373,1017,editable,Beat-Schrank.png
-image=Arzte,103,306,326,306,326,499,103,499,editable,Beat-Arzte.png
-video=Fernseher,1063,690,1239,690,1239,811,1063,811,editable,Beat-Fernseher.mov

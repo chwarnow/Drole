@@ -10,7 +10,7 @@ import processing.core.PApplet;
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PShader;
 
-public class CodeAntiCodeShaderExample extends PApplet {
+public class CodeAntiCodeShaderExample2 extends PApplet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,7 @@ public class CodeAntiCodeShaderExample extends PApplet {
 	FloatBuffer vertData;
 	FloatBuffer colorData;
 
-	private int numVertices = 100;
+	private int numVertices = 1000;
 	
 	private float dim = 1000;
 	
@@ -57,34 +57,43 @@ public class CodeAntiCodeShaderExample extends PApplet {
 		
 		colorData.position(0);
 		vertData.position(0);
+		
+		lights();
 	}
 
 	public void draw() {
+		pgl = (PGraphicsOpenGL) g; // g may change
+		gl = pgl.beginPGL().gl.getGL2();
+		
 		background(0);
 
 		// The geometric transformations will be automatically passed
 		// to the shader.
-		translate(0, 0, -5000);
+		translate(width/2, height/2, -2000);
 		rotate(frameCount * 0.01f, width, height, 0);
 
+		pointLight(200, 0, 0, 0, 0, 1000);
+		
 		// Update the geometry hold by the buffer objects
-		flatShader.bind();
-
-		vertLoc = gl.glGetAttribLocation(flatShader.glProgram, "inVertex");
-		colorLoc = gl.glGetAttribLocation(flatShader.glProgram, "inColor");
-
-		gl.glEnableVertexAttribArray(vertLoc);
-		gl.glEnableVertexAttribArray(colorLoc);
-
-		gl.glVertexAttribPointer(vertLoc, 4, GL2.GL_FLOAT, false, 0, vertData);
-		gl.glVertexAttribPointer(colorLoc, 4, GL2.GL_FLOAT, false, 0, colorData);
-
-		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, numVertices);
-
-		gl.glDisableVertexAttribArray(vertLoc);
-		gl.glDisableVertexAttribArray(colorLoc);
-
-		flatShader.unbind();
+		pgl.beginPGL();
+			flatShader.bind();
+		
+			vertLoc = gl.glGetAttribLocation(flatShader.glProgram, "inVertex");
+			colorLoc = gl.glGetAttribLocation(flatShader.glProgram, "inColor");
+	
+			gl.glEnableVertexAttribArray(vertLoc);
+			gl.glEnableVertexAttribArray(colorLoc);
+	
+			gl.glVertexAttribPointer(vertLoc, 3, GL2.GL_FLOAT, false, 0, vertData);
+			gl.glVertexAttribPointer(colorLoc, 4, GL2.GL_FLOAT, false, 0, colorData);
+	
+			gl.glDrawArrays(GL2.GL_TRIANGLES, 0, numVertices);
+	
+			gl.glDisableVertexAttribArray(vertLoc);
+			gl.glDisableVertexAttribArray(colorLoc);
+	
+			flatShader.unbind();
+	
 		pgl.endPGL();
 	}
 
