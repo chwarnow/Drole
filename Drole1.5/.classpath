@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/toxiclibs/toxiclibscore.jar"/>
+	<classpathentry kind="lib" path="lib/toxiclibs/verletphysics.jar"/>
+	<classpathentry kind="lib" path="lib/SimpleOpenNI.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/GLGraphics.jar"/>
+	<classpathentry kind="lib" path="lib/opengl/gluegen-rt.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib/opengl"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/opengl/jogl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib/opengl/macosx"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/opengl/opengl.jar"/>
+	<classpathentry kind="lib" path="lib/core.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
