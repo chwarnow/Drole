@@ -27,7 +27,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= false;
+	private boolean FREEMODE			= true;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -161,6 +161,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			globe.fadeIn(100);
 			switchMode(LIVE);
 		}
+		
 	}
 
 	private void initHead() {
@@ -193,7 +194,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	private void setupRoom() {
-		room = new Room(this, "data/room/test/PalldioPalace_extern");
+		room = new Room(this, "data/room/drolebox2/panorama03.");
+		room.position(0, -955, 0);
 	}
 	
 	private void setupGlobe() {
@@ -717,8 +719,11 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		case 'g':
 			switchToLive();
 			break;
+		case 'r': 
+			if(!globe.getRibbons().get(0).isPivoting()) globe.getRibbons().get(0).createPivotAt(0, 0, -200);
+			else globe.getRibbons().get(0).deletePivot();
 		}
-
+		
 		switch (keyCode) {
 		case LEFT:
 			rotY += 0.1f;
@@ -775,35 +780,16 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	public void drawMainScene() {
-		imageMode(CORNERS);
-		textureMode(NORMALIZED);
-		tint(255, 255);
-		room.draw();
-		
-		globe.update();
-		globe.draw();
-		
-		/*
 		pushMatrix();
-			noStroke();
-			fill(0, 0, 120);
-			texture(backgroundImage);
-			box(5000, 5000, 5000);
-		popMatrix();
+		pushStyle();
 		
+			room.draw();
+			
+			globe.update();
+			globe.draw();
 		
-		pushMatrix();
-			translate(0, 0, 0);
-			rotateY(radians(180));
-			beginShape();
-				texture(backgroundImage);
-				vertex(-1000, 	-1800, 0, 0, backgroundImage.height);
-				vertex(-1000, 		0, 0, 0, 0);
-				vertex(1000, 		0, 0, backgroundImage.width, 0);
-				vertex(1000, 	-1800, 0, backgroundImage.width, backgroundImage.height);
-			endShape(CLOSE);
 		popMatrix();
-		*/
+		popStyle();
 	}
 
 	public void mouseDragged(MouseEvent e) {
@@ -906,7 +892,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-			"--present",
+//			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 			"--display=1",

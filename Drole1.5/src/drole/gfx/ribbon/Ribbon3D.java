@@ -71,18 +71,25 @@ class Ribbon3D {
 		parent.endShape();
 	}
 
-	public void drawLineRibbon(int theStrokeCol, float theWidth) {
+	public void drawStrokeRibbon(float color, float width) {
 		// draw the ribbons with lines
-		parent.noFill();
-		parent.strokeWeight(theWidth);
-		parent.stroke(theStrokeCol);
-		parent.beginShape();
-		for (int i = 0; i < numJoints; i++) {
-			parent.vertex(joints[i].x, joints[i].y, joints[i].z);
-		}
-		parent.endShape();
+		parent.pushMatrix();
+		parent.pushStyle();
+		
+			parent.noFill();
+			parent.strokeWeight(width);
+			parent.stroke(color);
+			
+			parent.beginShape(PApplet.LINES);
+				for (int i = 0; i < numJoints; i++) {
+					parent.vertex(joints[i].x, joints[i].y, joints[i].z);
+				}
+			parent.endShape();
+			
+		parent.popMatrix();
+		parent.popStyle();
 	}
-
+	
 	public int getVertexCount() {
 		return numJoints;
 	}

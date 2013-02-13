@@ -8,18 +8,46 @@ import processing.core.PVector;
 
 public class Room extends Drawable {
 	
-	private float p = 40000;   // half skybox size
-	private float m = -p;
+	private float p = 3000;
+	private float m = p/2f;
+	
 	// create cube edges
-	private PVector P000 = new PVector (m,m,m);
-	private PVector P010 = new PVector (m,p,m);
-	private PVector P110 = new PVector (p,p,m);
-	private PVector P100 = new PVector (p,m,m);
-	private PVector P001 = new PVector (m,m,p);
-	private PVector P011 = new PVector (m,p,p);
-	private PVector P111 = new PVector (p,p,p);
-	private PVector P101 = new PVector (p,m,p);
-	private PImage tex1,tex2,tex3,tex4,tex5,tex6;   // texture images
+	// Left
+	private PVector l1 	= new PVector(-m, -m, 0);
+	private PVector l2 	= new PVector(-m, -m, -p);
+	private PVector l3 	= new PVector(-m, m, -p);
+	private PVector l4 	= new PVector(-m, m, 0);
+	private PVector ln  = new PVector(-1, 0, 0);
+	
+	// Right
+	private PVector r1 = new PVector(m, -m, 0);
+	private PVector r2 = new PVector(m, -m, -p);
+	private PVector r3 = new PVector(m, m, -p);
+	private PVector r4 = new PVector(m, m, 0);
+	private PVector rn = new PVector(1, 0, 0);
+
+	// Top
+	private PVector t1 = new PVector(-m, -m, 0);
+	private PVector t2 = new PVector(m, -m, 0);
+	private PVector t3 = new PVector(m, -m, -p);
+	private PVector t4 = new PVector(-m, -m, -p);
+	private PVector tn = new PVector(0, -1, 0);
+
+	// Bottom
+	private PVector b1 = new PVector(-m, m, 0);
+	private PVector b2 = new PVector(m, m, 0);
+	private PVector b3 = new PVector(m, m, -p);
+	private PVector b4 = new PVector(-m, m, -p);
+	private PVector bn = new PVector(0, 1, 0);
+
+	// Back
+	private PVector f1 = new PVector(-m, -m, -p);
+	private PVector f2 = new PVector(m, -m, -p);
+	private PVector f3 = new PVector(m, m, -p);
+	private PVector f4 = new PVector(-m, m, -p);
+	private PVector fn = new PVector(0, 0, -1);
+	
+	private PImage frontTex, backTex, leftTex, rightTex, bottomTex, topTex;   // texture images
 	
 	public Room(PApplet parent, String fileBasename) {
 		super(parent);
@@ -29,32 +57,33 @@ public class Room extends Drawable {
 	
 	// load six skybox images as cube texture
 	void loadSkybox(String skyboxName, String fExt) {
-		tex1 = parent.loadImage(skyboxName + "_front" + fExt);
-		tex2 = parent.loadImage(skyboxName + "_back" + fExt);
-		tex3 = parent.loadImage(skyboxName + "_left" + fExt);
-		tex4 = parent.loadImage(skyboxName + "_right" + fExt);
-		tex5 = parent.loadImage(skyboxName + "_base" + fExt);
-		tex6 = parent.loadImage(skyboxName + "_top" + fExt);
+		frontTex 	= parent.loadImage(skyboxName + "front" + fExt);
+		backTex 	= parent.loadImage(skyboxName + "back" + fExt);
+		leftTex 	= parent.loadImage(skyboxName + "left" + fExt);
+		rightTex 	= parent.loadImage(skyboxName + "right" + fExt);
+		bottomTex 	= parent.loadImage(skyboxName + "bottom" + fExt);
+		topTex 		= parent.loadImage(skyboxName + "top" + fExt);
 	}
 	
 	// Assign six texture to the six cube faces
 	private void TexturedCube() {
-		TexturedCubeSide(P100, P000, P010, P110, tex1);   // -Z "front" face
-		TexturedCubeSide(P001, P101, P111, P011, tex2);   // +Z "back" face
-		TexturedCubeSide(P000, P001, P011, P010, tex3);   // -X "left" face
-		TexturedCubeSide(P101, P100, P110, P111, tex4);   // +X "right" face
-		TexturedCubeSide(P110, P010, P011, P111, tex5);   // +Y "base" face
-		TexturedCubeSide(P101, P001, P000, P100, tex6);   // -Y "top" face
+		TexturedCubeSide(l1, l2, l3, l4, ln, leftTex);
+		TexturedCubeSide(r1, r2, r3, r4, rn, rightTex);
+		TexturedCubeSide(t1, t2, t3, t4, tn, topTex);
+		TexturedCubeSide(b1, b2, b3, b4, bn, bottomTex);
+		TexturedCubeSide(f1, f2, f3, f4, fn, backTex);
 	}
 	
 	// create a cube side given by 4 edge vertices and a texture
-	private void TexturedCubeSide(PVector P1, PVector P2, PVector P3, PVector P4, PImage tex) {
+	private void TexturedCubeSide(PVector P1, PVector P2, PVector P3, PVector P4, PVector normal, PImage tex) {
 		parent.beginShape(PGraphics.QUADS);
 			parent.texture(tex);
-			parent.vertex(P1.x, P1.y, P1.z, 1, 0);
-			parent.vertex(P2.x, P2.y, P2.z, 0, 0);
-			parent.vertex(P3.x, P3.y, P3.z, 0, 1);
-			parent.vertex(P4.x, P4.y, P4.z, 1, 1);
+			parent.normal(normal.x, normal.y, normal.z);
+			System.out.println(normal);
+			parent.vertex(P1.x, P1.y, P1.z, 0, 0);
+			parent.vertex(P2.x, P2.y, P2.z, 1, 0);
+			parent.vertex(P3.x, P3.y, P3.z, 1, 1);
+			parent.vertex(P4.x, P4.y, P4.z, 0, 1);
 		parent.endShape();
 	}
 	
@@ -63,7 +92,19 @@ public class Room extends Drawable {
 		parent.pushStyle();
 		parent.pushMatrix();
 			
+			parent.noFill();
+			parent.noStroke();
+			
+			parent.lights();
+			
 			parent.translate(position.x, position.y, position.z);
+			
+			parent.pointLight(255, 255, 204, 0, 0, 0);
+			
+			parent.textureMode(PApplet.CORNERS);
+			
+			parent.fill(255);
+			parent.noStroke();
 			
 			TexturedCube();
 		

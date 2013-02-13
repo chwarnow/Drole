@@ -10,7 +10,9 @@ package drole;
  * 
  */
 
-import drole.gfx.ribbon.RibbonHandler;
+import java.util.ArrayList;
+
+import drole.gfx.ribbon.RibbonGroup;
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -23,9 +25,9 @@ public class RibbonGlobe extends Drawable {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 
-	private int 			numRibbonHandler 	= 5;
-	private RibbonHandler[] ribbons 			= new RibbonHandler[numRibbonHandler];
-	private float[] 		ribbonSeeds 		= new float[numRibbonHandler];
+	private int numRibbonHandler 				= 1;
+	private ArrayList<RibbonGroup> ribbons 		= new ArrayList<RibbonGroup>();
+	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 
 	public RibbonGlobe(PApplet parent, PVector position, PVector dimension, PImage globeTexture) {
 		super(parent);
@@ -34,16 +36,20 @@ public class RibbonGlobe extends Drawable {
 		dimension(dimension);
 		
 		for(int i = 0; i < numRibbonHandler; i++) {
-			ribbons[i] 	= new RibbonHandler(parent, dimension.x, 10, 100, 100);
+			ribbons.add(new RibbonGroup(parent, dimension.x, 100, 20, 100));
 		}
 	}
 
+	public ArrayList<RibbonGroup> getRibbons() {
+		return ribbons;
+	}
+	
 	@Override
 	public void update() {
 		super.update();
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
-		for(RibbonHandler r : ribbons) r.update();
+		for(RibbonGroup r : ribbons) r.update();
 	}
 
 	@Override
@@ -59,7 +65,8 @@ public class RibbonGlobe extends Drawable {
 			parent.fill(200);
 			parent.noStroke();
 			
-			for(RibbonHandler r : ribbons) r.draw();
+//			for(RibbonGroup r : ribbons) r.draw();
+			for(RibbonGroup r : ribbons) r.drawAsLines();
 		
 		parent.g.popMatrix();
 		parent.g.popStyle();
