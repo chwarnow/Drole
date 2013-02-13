@@ -1,6 +1,12 @@
 package drole.tests.menu;
 
+import javax.media.opengl.GL;
+
+import com.christopherwarnow.bildwelten.HatchingFabric;
+
 import codeanticode.glgraphics.GLConstants;
+import codeanticode.glgraphics.GLGraphics;
+import codeanticode.glgraphics.GLTexture;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PShape;
@@ -17,17 +23,21 @@ public class BoxHatchTest extends PApplet {
 	float ai = TWO_PI/3;//angle increment
 	float r  = 300;//overall radius
 	float ro = 150;//random offset
-
-	PVector n;//normal
-	Ray r1;
 	
 	PFont font;
-
+	GLTexture optikAkteur;
+	
+	HatchingFabric fabric;
+	
 	public void setup() {
 		size(1200, 720, GLConstants.GLGRAPHICS);
 		
 		font = loadFont("data/fonts/HoeflerText-Regular-48.vlw");
 		textFont(font);
+		
+		optikAkteur = new GLTexture(this, "data/images/optikAkteur.png");
+		
+		fabric = new HatchingFabric(this, "data/images/optikFahne.png", 10, 20, 1.0f, .13f);
 	}
 
 	public void draw() {
@@ -147,6 +157,9 @@ public class BoxHatchTest extends PApplet {
 		
 		
 		// texts
+		GLGraphics renderer = (GLGraphics)g;
+		renderer.gl.glActiveTexture(GL.GL_TEXTURE0);
+		
 		float textOffset = 13;
 		noStroke();
 		fill(0);
@@ -173,12 +186,12 @@ public class BoxHatchTest extends PApplet {
 		popMatrix();
 		
 		pushMatrix();
-		translate(pointG.x, pointG.y, pointG.z);
+		translate(pointG.x-textOffset, pointG.y, pointG.z);
 		text("G", 0, 0);
 		popMatrix();
 		
 		pushMatrix();
-		translate(pointH.x, pointH.y, pointH.z);
+		translate(pointH.x-textOffset, pointH.y, pointH.z);
 		text("H", 0, 0);
 		popMatrix();
 		
@@ -212,6 +225,21 @@ public class BoxHatchTest extends PApplet {
 		text("R", 0, 0);
 		popMatrix();
 		
+		// sehender akteur
+		
+		pushMatrix();
+		translate(pointG.x-40, pointG.y-12, pointG.z);
+		scale(.455f);
+		image(optikAkteur, 0, 0);
+		popMatrix();
+		
+		// fabric
+		pushMatrix();
+		translate(rectSize*.5f, 0, 0);
+		fabric.draw();
+
+		popMatrix();
+		
 		popMatrix();
 	}
 	
@@ -231,7 +259,7 @@ public class BoxHatchTest extends PApplet {
 		c.div(3.0f);
 		PVector cb = PVector.sub(face[2],face[1]);
 		PVector ab = PVector.sub(face[0],face[1]);
-		n = cb.cross(ab);//compute normal
+		PVector n = cb.cross(ab);//compute normal
 		
 		PVector P2SubP1 = PVector.sub(r.end,r.start);
 		PVector P3SubP1 = PVector.sub(face[0],r.start);
