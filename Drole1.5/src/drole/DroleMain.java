@@ -2,8 +2,11 @@ package drole;
 
 import java.awt.event.MouseEvent;
 
+import drole.gfx.room.Room;
+
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
@@ -69,7 +72,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private float d = 0;
 
 	private float n = 0.1f;
-	private float f = 15000f;
+	private float f = 100000f;
 
 	// Screen corner vectors
 	private PVector va = new PVector();
@@ -84,10 +87,10 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private PImage globeTexture;
 	private PVector globePosition = new PVector(0, -900, 0);
 	private PVector globeSize = new PVector(900, 100, 100);
-	private Globe globe;
+	private RibbonGlobe globe;
 
 	/* Skybox */
-	private PImage backgroundImage;
+	private Room room;
 	
 	private float horizontalViewAlpha = 0.0f;
 	private float verticalViewAlpha = 0.0f;
@@ -111,14 +114,21 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private float rotationMapStart = 0, rotationMapEnd = 0;
 	
 	public void setup() {
-		size(1080, 1080, OPENGL);
-
-		context = new SimpleOpenNI(this);
+		size(1080, 1080, PGraphics.OPENGL);
+		
+/*
+		String executionPath = System.getProperty("user.dir");
+		System.out.println("Executing at => "+executionPath.replace("\\", "/"));		
+*/
+		
+		if(!FREEMODE) context = new SimpleOpenNI(this);
 
 		// enable depthMap generation
-		if (context.enableDepth() == false) {
-			println("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
-			FREEMODE = true;
+		if(!FREEMODE) {
+			if(context.enableDepth() == false) {
+				println("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
+				FREEMODE = true;
+			}
 		}
 		
 		// enable skeleton generation for all joints
@@ -143,9 +153,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 		setupLogo();
 
-		setupGlobe();
+		setupRoom();
 		
-		backgroundImage = loadImage("images/Backplate_small.jpg");
+		setupGlobe();
 		
 		if(FREEMODE) {
 			globe.fadeIn(100);
@@ -181,10 +191,14 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		targetDetection.targets.add(rotationTarget);
 		*/
 	}
+
+	private void setupRoom() {
+		room = new Room(this, "data/room/test/PalldioPalace_extern");
+	}
 	
 	private void setupGlobe() {
 		globeTexture = loadImage("data/images/Karte_1.jpg");
-		globe = new Globe(this, globePosition, globeSize, globeTexture);
+		globe = new RibbonGlobe(this, globePosition, globeSize, globeTexture);
 	}
 
 	private void setupLogo() {
@@ -316,7 +330,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 	public void draw() {
 		// update the cam
-		context.update();
+		if(!FREEMODE) context.update();
 
 		if(!FREEMODE) updateHead();
 
@@ -394,7 +408,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			*/
 			
 			// draw the kinect cam
-			context.drawCamFrustum();
+			if(!FREEMODE) context.drawCamFrustum();
 		}
 
 		if (MODE == LOGO || MODE == LOGO2 || MODE == TRANSIT_TO_LIVE) drawLogo();
@@ -761,6 +775,11 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	public void drawMainScene() {
+		imageMode(CORNERS);
+		textureMode(NORMALIZED);
+		tint(255, 255);
+		room.draw();
+		
 		globe.update();
 		globe.draw();
 		
