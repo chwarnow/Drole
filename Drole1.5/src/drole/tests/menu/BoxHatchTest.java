@@ -1,6 +1,7 @@
 package drole.tests.menu;
 
 import codeanticode.glgraphics.GLConstants;
+import codeanticode.glgraphics.GLTexture;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PShape;
@@ -22,12 +23,15 @@ public class BoxHatchTest extends PApplet {
 	Ray r1;
 	
 	PFont font;
-
+	GLTexture optikAkteur;
+	
 	public void setup() {
 		size(1200, 720, GLConstants.GLGRAPHICS);
 		
 		font = loadFont("data/fonts/HoeflerText-Regular-48.vlw");
 		textFont(font);
+		
+		optikAkteur = new GLTexture(this, "data/images/optikAkteur.png");
 	}
 
 	public void draw() {
@@ -173,12 +177,12 @@ public class BoxHatchTest extends PApplet {
 		popMatrix();
 		
 		pushMatrix();
-		translate(pointG.x, pointG.y, pointG.z);
+		translate(pointG.x-textOffset, pointG.y, pointG.z);
 		text("G", 0, 0);
 		popMatrix();
 		
 		pushMatrix();
-		translate(pointH.x, pointH.y, pointH.z);
+		translate(pointH.x-textOffset, pointH.y, pointH.z);
 		text("H", 0, 0);
 		popMatrix();
 		
@@ -210,6 +214,13 @@ public class BoxHatchTest extends PApplet {
 		pushMatrix();
 		translate(pointR.x, pointR.y, pointR.z);
 		text("R", 0, 0);
+		popMatrix();
+		
+		// sehender akteur
+		pushMatrix();
+		translate(pointG.x-40, pointG.y-12, pointG.z);
+		scale(.455f);
+		image(optikAkteur, 0, 0);
 		popMatrix();
 		
 		popMatrix();
