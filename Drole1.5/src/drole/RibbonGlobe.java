@@ -56,6 +56,8 @@ public class RibbonGlobe extends Drawable {
 			parent.g.rotateY(smoothedRotation);
 			
 			parent.g.tint(255, 255);
+			parent.fill(200);
+			parent.noStroke();
 			
 			for(RibbonHandler r : ribbons) r.draw();
 		

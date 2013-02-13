@@ -8,7 +8,7 @@ import processing.core.PVector;
 
 public class Room extends Drawable {
 	
-	private float p = 5000;   // half skybox size
+	private float p = 40000;   // half skybox size
 	private float m = -p;
 	// create cube edges
 	private PVector P000 = new PVector (m,m,m);

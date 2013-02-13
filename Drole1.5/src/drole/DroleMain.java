@@ -6,6 +6,7 @@ import drole.gfx.room.Room;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
@@ -113,10 +114,12 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private float rotationMapStart = 0, rotationMapEnd = 0;
 	
 	public void setup() {
-		size(1080, 1080, OPENGL);
-
+		size(1080, 1080, PGraphics.OPENGL);
+		
+/*
 		String executionPath = System.getProperty("user.dir");
 		System.out.println("Executing at => "+executionPath.replace("\\", "/"));		
+*/
 		
 		if(!FREEMODE) context = new SimpleOpenNI(this);
 
