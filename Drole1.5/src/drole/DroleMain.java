@@ -2,6 +2,8 @@ package drole;
 
 import java.awt.event.MouseEvent;
 
+import drole.gfx.room.Room;
+
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -24,7 +26,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= true;
+	private boolean FREEMODE			= false;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -69,7 +71,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private float d = 0;
 
 	private float n = 0.1f;
-	private float f = 15000f;
+	private float f = 100000f;
 
 	// Screen corner vectors
 	private PVector va = new PVector();
@@ -87,7 +89,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private RibbonGlobe globe;
 
 	/* Skybox */
-	private PImage backgroundImage;
+	private Room room;
 	
 	private float horizontalViewAlpha = 0.0f;
 	private float verticalViewAlpha = 0.0f;
@@ -113,6 +115,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	public void setup() {
 		size(1080, 1080, OPENGL);
 
+		String executionPath = System.getProperty("user.dir");
+		System.out.println("Executing at => "+executionPath.replace("\\", "/"));		
+		
 		if(!FREEMODE) context = new SimpleOpenNI(this);
 
 		// enable depthMap generation
@@ -145,9 +150,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 		setupLogo();
 
-		setupGlobe();
+		setupRoom();
 		
-		backgroundImage = loadImage("images/Backplate_small.jpg");
+		setupGlobe();
 		
 		if(FREEMODE) {
 			globe.fadeIn(100);
@@ -182,6 +187,10 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
 		targetDetection.targets.add(rotationTarget);
 		*/
+	}
+
+	private void setupRoom() {
+		room = new Room(this, "data/room/test/PalldioPalace_extern");
 	}
 	
 	private void setupGlobe() {
@@ -763,6 +772,11 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	public void drawMainScene() {
+		imageMode(CORNERS);
+		textureMode(NORMALIZED);
+		tint(255, 255);
+		room.draw();
+		
 		globe.update();
 		globe.draw();
 		
@@ -889,7 +903,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-//			"--present",
+			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 			"--display=1",

@@ -18,21 +18,25 @@ public class RibbonHandler {
 
 	private PApplet parent;
 	
+	private float seed;
 	private int numRibbons;
 	private int numJointsPerRibbon;
-	private float sphereSize = 300;
+	private float sphereSize;
 	
 	private Ribbon3D[] particles;
 
 	private VerletPhysics physics;
 	private VerletParticle head;
-	private int REST_LENGTH = 10;
-
-	public RibbonHandler(PApplet parent, int numRibbons, int numJointsPerRibbon) {
+	private int REST_LENGTH;
+	
+	public RibbonHandler(PApplet parent, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
 		this.parent				= parent;
+		this.seed				= parent.random(1000);
 		this.numRibbons			= numRibbons;
 		this.numJointsPerRibbon	= numJointsPerRibbon;
-		
+		this.sphereSize			= sphereSize;
+		this.REST_LENGTH		= REST_LENGTH;
+
 		// create drole particles
 		particles = new Ribbon3D[numRibbons];
 
@@ -82,15 +86,16 @@ public class RibbonHandler {
 		head.lock();
 	}
 
-	public void draw() {
+	public void update() {
+		seed++;
+		
 		// update particle movement
-		head.set(parent.noise(parent.frameCount * (.005f + PApplet.cos(parent.frameCount * .001f) * .005f)) * parent.width -parent. width / 2, parent.noise(parent.frameCount * .005f + PApplet.cos(parent.frameCount * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(parent.frameCount * .01f + 100) * parent.width - parent.width / 2);
-		physics.particles.get(physics.particles.size() - 1).set(parent.noise(parent.frameCount * (.005f + PApplet.cos(parent.frameCount * .001f) * .005f)) * parent.width - parent.width / 2, parent.noise(parent.frameCount * .005f + PApplet.cos(parent.frameCount * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(parent.frameCount * .01f + 100) * parent.width - parent.width / 2);
+		head.set(parent.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * parent.width -parent. width / 2, parent.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(seed * .01f + 100) * parent.width - parent.width / 2);
+		physics.particles.get(physics.particles.size() - 1).set(parent.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * parent.width - parent.width / 2, parent.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(seed * .01f + 100) * parent.width - parent.width / 2);
 
 		// also apply sphere constraint to head
 		// this needs to be done manually because if this particle is locked
 		// it won't be updated automatically
-		
 		head.applyConstraints();
 		
 		// update sim
@@ -102,8 +107,9 @@ public class RibbonHandler {
 		for (VerletParticle p : physics.particles) {
 			particles[index++].update(p.x, p.y, p.z);
 		}
-		
-		// draw drole particles
+	}
+	
+	public void draw() {
 		for (int i = 0; i < numRibbons; i++) {
 			particles[i].drawMeshRibbon(30);
 		}

@@ -18,12 +18,14 @@ import processing.core.PVector;
 
 public class RibbonGlobe extends Drawable {
 	
-	public float rotation 		= 0;
-	public float rotationSpeed = 0.04f;
-	private float smoothedRotation = 0;
-	private float smoothedRotationSpeed = .1f;
+	public float rotation 						= 0;
+	public float rotationSpeed 					= 0.04f;
+	private float smoothedRotation 				= 0;
+	private float smoothedRotationSpeed 		= .1f;
 
-	private RibbonHandler ribbons;
+	private int 			numRibbonHandler 	= 5;
+	private RibbonHandler[] ribbons 			= new RibbonHandler[numRibbonHandler];
+	private float[] 		ribbonSeeds 		= new float[numRibbonHandler];
 
 	public RibbonGlobe(PApplet parent, PVector position, PVector dimension, PImage globeTexture) {
 		super(parent);
@@ -31,13 +33,17 @@ public class RibbonGlobe extends Drawable {
 		position(position);
 		dimension(dimension);
 		
-		ribbons = new RibbonHandler(parent, 10, 10);
+		for(int i = 0; i < numRibbonHandler; i++) {
+			ribbons[i] 	= new RibbonHandler(parent, dimension.x, 10, 100, 100);
+		}
 	}
 
 	@Override
 	public void update() {
 		super.update();
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
+		
+		for(RibbonHandler r : ribbons) r.update();
 	}
 
 	@Override
@@ -49,9 +55,9 @@ public class RibbonGlobe extends Drawable {
 			parent.g.scale(scale.x, scale.y, scale.z);
 			parent.g.rotateY(smoothedRotation);
 			
-			// dimension must be respected!
 			parent.g.tint(255, 255);
-			ribbons.draw();
+			
+			for(RibbonHandler r : ribbons) r.draw();
 		
 		parent.g.popMatrix();
 		parent.g.popStyle();
