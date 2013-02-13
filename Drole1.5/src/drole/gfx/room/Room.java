@@ -8,7 +8,7 @@ import processing.core.PVector;
 
 public class Room extends Drawable {
 	
-	private float p = 3000;
+	private float p = 1800;
 	private float m = p/2f;
 	
 	// create cube edges
@@ -105,6 +105,7 @@ public class Room extends Drawable {
 			
 			parent.fill(255);
 			parent.noStroke();
+			parent.tint(255, 255);
 			
 			TexturedCube();
 		

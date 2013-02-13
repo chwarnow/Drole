@@ -5,6 +5,8 @@ import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
 import drole.Drawable;
+import drole.gfx.ribbon.RibbonGroup;
+
 import com.christopherwarnow.bildwelten.utils.Ray;
 
 public class BildweltOptik extends Drawable {
@@ -19,10 +21,17 @@ public class BildweltOptik extends Drawable {
 	PFont font;
 	GLTexture optikAkteur;
 	
+	public float rotation 						= 0;
+	private float smoothedRotation 				= 0;
+	private float smoothedRotationSpeed 		= .1f;
+	
 	public BildweltOptik(PApplet parent) {
 		super(parent);
 		// TODO Auto-generated constructor stub
 		this.parent = parent;
+		
+		position(position);
+		dimension(dimension);
 		
 		font = parent.loadFont("data/fonts/HoeflerText-Regular-48.vlw");
 		parent.textFont(font);
@@ -31,18 +40,33 @@ public class BildweltOptik extends Drawable {
 	}
 
 	@Override
+	public void update() {
+		super.update();
+		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
+	}
+	
+	@Override
 	public void draw() {
-		
+		parent.g.pushStyle();
+		parent.g.pushMatrix();
+
+			parent.g.translate(position.x, position.y-700, position.z);
+			parent.g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
+			parent.g.rotateY(smoothedRotation);
+			
 		float rectSize = 500;
 
+		parent.tint(255);
 		parent.stroke(105, 90, 97);
 		parent.fill(199, 186, 177);
 
+		parent.imageMode(parent.CORNERS);
+		
 		parent.pushMatrix();
-		parent.translate(parent.width/2, parent.height/2+200 - fade*500);
+		// parent.translate(parent.width/2, parent.height/2+200 - fade*500);
 		// TODO:use parent rotation
-		parent.rotateY(parent.radians(parent.mouseX));
-		parent.rotateZ(.1f + parent.radians(-parent.mouseY)*.05f);
+		// parent.rotateY(parent.radians(parent.mouseX));
+		// parent.rotateZ(.1f + parent.radians(-parent.mouseY)*.05f);
 		
 		//floor
 		parent.pushMatrix();		
@@ -219,6 +243,9 @@ public class BildweltOptik extends Drawable {
 		parent.popMatrix();
 		
 		parent.popMatrix();
+		
+		parent.g.popStyle();
+		parent.g.popMatrix();
 		
 	}
 	

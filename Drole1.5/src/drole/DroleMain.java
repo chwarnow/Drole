@@ -2,6 +2,8 @@ package drole;
 
 import java.awt.event.MouseEvent;
 
+import com.christopherwarnow.bildwelten.BildweltOptik;
+
 import drole.gfx.room.Room;
 
 import processing.core.PApplet;
@@ -27,7 +29,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= true;
+	private boolean FREEMODE			= false;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -113,6 +115,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	private float rotationMapStart = 0, rotationMapEnd = 0;
 	
+	private BildweltOptik testOptik;
+	
 	public void setup() {
 		size(1080, 1080, PGraphics.OPENGL);
 		
@@ -195,12 +199,16 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 	private void setupRoom() {
 		room = new Room(this, "data/room/drolebox2/panorama03.");
-		room.position(0, -955, 0);
+		room.position(0, -950, 0);
 	}
 	
 	private void setupGlobe() {
 		globeTexture = loadImage("data/images/Karte_1.jpg");
 		globe = new RibbonGlobe(this, globePosition, globeSize, globeTexture);
+		globe.scale(.5f, .5f, .5f);
+		
+		// testwise optik scene
+		testOptik = new BildweltOptik(this);
 	}
 
 	private void setupLogo() {
@@ -226,7 +234,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_HEAD, head);
 //			println(head.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
 			head.y = realScreenPos.y + (realScreenDim.y / 2f);
-//			head.y -= 1100;
+//			head.y *= -1;
 			head.x *= -1;
 		}
 	}
@@ -786,7 +794,11 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			room.draw();
 			
 			globe.update();
-			globe.draw();
+			//globe.draw();
+			
+			// testwise optik scene
+			testOptik.update();
+			testOptik.draw();
 		
 		popMatrix();
 		popStyle();

@@ -65,8 +65,8 @@ public class RibbonGlobe extends Drawable {
 			parent.fill(200);
 			parent.noStroke();
 			
-//			for(RibbonGroup r : ribbons) r.draw();
-			for(RibbonGroup r : ribbons) r.drawAsLines();
+			for(RibbonGroup r : ribbons) r.draw();
+//			for(RibbonGroup r : ribbons) r.drawAsLines();
 		
 		parent.g.popMatrix();
 		parent.g.popStyle();
