@@ -3,7 +3,7 @@ package drole.tests.menu;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-class TestDrole {
+class RibbonHandler {
 	  PVector p;
 	  float sphereSize;
 	  int id;
@@ -12,7 +12,7 @@ class TestDrole {
 	  PVector xyzPos = new PVector();
 	  Ribbon3d ribbon;
 	  int myColor;
-	  TestDrole(PApplet parent, PVector p, float sphereSize, int id, int myColor) {
+	  RibbonHandler(PApplet parent, PVector p, float sphereSize, int id, int myColor) {
 	    this.p = p;
 	    this.sphereSize = sphereSize;
 	    this.id = id;

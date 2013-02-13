@@ -24,7 +24,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= false;
+	private boolean FREEMODE			= true;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -84,7 +84,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private PImage globeTexture;
 	private PVector globePosition = new PVector(0, -900, 0);
 	private PVector globeSize = new PVector(900, 100, 100);
-	private Globe globe;
+	private RibbonGlobe globe;
 
 	/* Skybox */
 	private PImage backgroundImage;
@@ -113,12 +113,14 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	public void setup() {
 		size(1080, 1080, OPENGL);
 
-		context = new SimpleOpenNI(this);
+		if(!FREEMODE) context = new SimpleOpenNI(this);
 
 		// enable depthMap generation
-		if (context.enableDepth() == false) {
-			println("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
-			FREEMODE = true;
+		if(!FREEMODE) {
+			if(context.enableDepth() == false) {
+				println("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
+				FREEMODE = true;
+			}
 		}
 		
 		// enable skeleton generation for all joints
@@ -184,7 +186,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	private void setupGlobe() {
 		globeTexture = loadImage("data/images/Karte_1.jpg");
-		globe = new Globe(this, globePosition, globeSize, globeTexture);
+		globe = new RibbonGlobe(this, globePosition, globeSize, globeTexture);
 	}
 
 	private void setupLogo() {
@@ -316,7 +318,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 	public void draw() {
 		// update the cam
-		context.update();
+		if(!FREEMODE) context.update();
 
 		if(!FREEMODE) updateHead();
 
@@ -394,7 +396,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			*/
 			
 			// draw the kinect cam
-			context.drawCamFrustum();
+			if(!FREEMODE) context.drawCamFrustum();
 		}
 
 		if (MODE == LOGO || MODE == LOGO2 || MODE == TRANSIT_TO_LIVE) drawLogo();
@@ -887,7 +889,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-			"--present",
+//			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 			"--display=1",
