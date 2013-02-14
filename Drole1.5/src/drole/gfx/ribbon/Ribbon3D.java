@@ -22,7 +22,7 @@ import processing.core.PVector;
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-class Ribbon3D {
+public class Ribbon3D {
 
 	private int numJoints; // how many points has the ribbon
 
@@ -98,5 +98,4 @@ class Ribbon3D {
 	public PVector[] getVertices() {
 		return joints;
 	}
-
 }
