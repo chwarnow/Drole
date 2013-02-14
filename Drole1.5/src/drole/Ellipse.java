@@ -8,7 +8,7 @@ public class Ellipse extends Drawable {
 	  public float w, h;
 	  public int tcolor;
 	  
-	  public Ellipse(PApplet parent, float w, float h, int tcolor) {
+	  public Ellipse(DroleMain parent, float w, float h, int tcolor) {
 	    super(parent);
 	    this.w = w;
 	    this.h = h;

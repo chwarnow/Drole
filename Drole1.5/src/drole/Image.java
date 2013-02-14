@@ -8,7 +8,7 @@ public class Image extends Drawable {
 
 	private PImage image;
 
-	public Image(PApplet parent, String file) {
+	public Image(DroleMain parent, String file) {
 		super(parent);
 		image = parent.loadImage(file);
 	}

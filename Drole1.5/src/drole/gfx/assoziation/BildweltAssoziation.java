@@ -1,7 +1,7 @@
 package drole.gfx.assoziation;
 
 import codeanticode.glgraphics.GLGraphics;
-import processing.core.PApplet;
+import drole.DroleMain;
 import drole.engine.Drawable;
 
 public class BildweltAssoziation extends Drawable {
@@ -13,7 +13,7 @@ public class BildweltAssoziation extends Drawable {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 	
-	public BildweltAssoziation(PApplet parent) {
+	public BildweltAssoziation(DroleMain parent) {
 		super(parent);
 		
 		scale(4.0f, 4.0f, 4.0f);
