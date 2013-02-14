@@ -1,10 +1,21 @@
 package drole;
 
-import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
 
+import drole.engine.Drawable;
+import drole.engine.Drawlist;
+import drole.engine.Engine;
+import drole.engine.optik.OffCenterOptik;
+import drole.engine.optik.StdOptik;
 import drole.gfx.room.Room;
+import drole.settings.Settings;
+import drole.tracking.PositionTarget;
+import drole.tracking.PositionTargetListener;
+import drole.tracking.TargetBox3D;
+import drole.tracking.TargetDetection;
+import drole.tracking.TargetSphere;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -51,53 +62,36 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private PVector bodyCenter = new PVector();
 	private PVector bodyDir = new PVector();
 
-	// Real World Screen Dimensions
-	private PVector realScreenDim = new PVector(1800, 1800, 0);
-	private PVector realScreenPos = new PVector(-900, -1855, 0);
-
-	// Real World Screen Positions
-	private PVector pa = new PVector();
-	private PVector pb = new PVector();
-	private PVector pc = new PVector();
-	private PVector pd = new PVector();
-
-	// Real World Screen Orthonormal Basis
-	private PVector vr = new PVector();
-	private PVector vu = new PVector();
-	private PVector vn = new PVector();
-
-	// Description of the frustum
-	private float l = 0;
-	private float r = 0;
-	private float b = 0;
-	private float t = 0;
-	private float d = 0;
-
-	private float n = 0.1f;
-	private float f = 100000f;
-
-	// Screen corner vectors
-	private PVector va = new PVector();
-	// up vector
-	private PVector vb = new PVector();
-	// z
-	private PVector vc = new PVector();
-
+	/* Users Head */
 	private PVector head = new PVector(0, 0, 3000);
+	
+	/* Logging */
+	private ArrayList<String> logs = new ArrayList<String>();
+	private boolean newLine = true;
+	
+	/* Engine */
+	private Engine engine;
+	
+	/* Optiks */
+	private OffCenterOptik offCenterOptik;
+	
+	/* Drawlists */
+	private Drawlist overlayDrawlist;
+	private Drawlist roomDrawlist;
+	private Drawlist menuDrawlist;
+	private Drawlist optikWorldDrawlist;
+	
+	/* Skybox */
+	private Room room;
 	
 	/* Globe */
 	private PImage globeTexture;
 	private PVector globePosition = new PVector(0, -900, 0);
 	private PVector globeSize = new PVector(900, 100, 100);
 	private RibbonGlobe globe;
-
-	/* Skybox */
-	private Room room;
 	
 	private float horizontalViewAlpha = 0.0f;
 	private float verticalViewAlpha = 0.0f;
-
-	private float lastMouseX = 0.0f, lastMouseY = 0.0f;
 
 	private PFont mainFont;
 
@@ -120,64 +114,99 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	public void setup() {
 		size(1080, 1080, PGraphics.OPENGL);
 		
-/*
-		String executionPath = System.getProperty("user.dir");
-		System.out.println("Executing at => "+executionPath.replace("\\", "/"));		
-*/
+		logLn("Starting Drole!");
+		logLn("Executing at : '"+System.getProperty("user.dir").replace("\\", "/")+"'");
+		
+		logLn("Initializing Engine ...");
+			engine = new Engine(this);
+			
+			engine.addOptik("std", new StdOptik(this));
+			engine.activateOptik("std");
+			
+			offCenterOptik = new OffCenterOptik(
+				this,
+				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM,
+				Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM,
+				Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM,
+				Settings.REAL_SCREEN_POSITION_X_MM,
+				Settings.REAL_SCREEN_POSITION_Y_MM,
+				Settings.REAL_SCREEN_POSITION_Z_MM
+			);
+			
+			overlayDrawlist = new Drawlist(this);
+			engine.addDrawlist("Overlay", overlayDrawlist);
+		logLn("Engine is setup!");
+			
+		/* FONTS */
+		mainFont = createFont("Helvetica", 12);
+		textFont(mainFont);
+		
+		/* KINECT */
+		if(FREEMODE) logLn("We are using forced FREEMODE!");
+		else logLn("FREEMODE was NOT forced, checking the kinect!");
 		
 		if(!FREEMODE) context = new SimpleOpenNI(this);
 
 		// enable depthMap generation
 		if(!FREEMODE) {
 			if(context.enableDepth() == false) {
-				println("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
+				logLn("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
 				FREEMODE = true;
 			}
 		}
 		
 		// enable skeleton generation for all joints
 		if(!FREEMODE) context.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
-
-		stroke(255, 255, 255);
-		smooth();
-
-		lastMouseX = mouseX;
-		lastMouseY = mouseY;
-
-		mainFont = createFont("Helvetica", 12);
-		textFont(mainFont);
-
-//		background = new Image(this, "images/background.png");
-		
-		calcRealWorldScreenSetup();
-
-		initHead();
 		
 		if(!FREEMODE) setupGestureDetection();
 
+		/* CONTENT */
 		setupLogo();
-
+		
 		setupRoom();
 		
-		setupGlobe();
+		setupMenu();
 		
+		setupOptikWorld();
+		
+		/* START */
 		if(FREEMODE) {
-			globe.fadeIn(100);
+			menuDrawlist.fadeAllIn(500);
 			switchMode(LIVE);
 		}
 		
 	}
+	
+	private void truncateLog() {
+		if(logs.size() > Settings.MAX_LOG_ENTRYS) logs.remove(0);
+	}
+	
+	public void logLn(String msg) {
+		logs.add(msg);
+		println(msg);
+		newLine = true;
+		truncateLog();
+	}
 
-	private void initHead() {
-		head = new PVector(realScreenPos.x+(realScreenDim.x/2f), realScreenPos.y+(realScreenDim.y/2f), 3000);
+	public void log(String msg) {
+		if(newLine) {
+			logs.add(msg);
+		} else {
+			String newLog = logs.get(logs.size()-1)+msg;
+			logs.set(logs.size()-1, newLog);
+		}
+		
+		print(msg);
+		newLine = false;
+		truncateLog();
 	}
 	
 	private void switchMode(String MODE) {
 		if(this.MODE != FORCED_DEBUG) {
-			println("Switching MODE from '" + this.MODE + "' to '" + MODE + "'");
+			logLn("Switching MODE from '" + this.MODE + "' to '" + MODE + "'");
 			this.MODE = MODE;
 		} else {
-			println("Switching MODE from '" + this.MODE + "' to '" + MODE + "' DENIED!");
+			logLn("Switching MODE from '" + this.MODE + "' to '" + MODE + "' DENIED!");
 		}
 	}
 
@@ -198,17 +227,38 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	private void setupRoom() {
+		logLn("Initializing Room ...");
+		roomDrawlist = new Drawlist(this);
+		
 		room = new Room(this, "data/room/drolebox2/panorama03.");
 		room.position(0, -950, 0);
+		
+		roomDrawlist.add(room);
+		
+		engine.addDrawlist("Room", roomDrawlist);
 	}
 	
-	private void setupGlobe() {
+	private void setupMenu() {
+		logLn("Initializing Menu ...");
+		menuDrawlist = new Drawlist(this);
+		
 		globeTexture = loadImage("data/images/Karte_1.jpg");
 		globe = new RibbonGlobe(this, globePosition, globeSize, globeTexture);
 		globe.scale(.5f, .5f, .5f);
 		
+		menuDrawlist.add(globe);
+		
+		engine.addDrawlist("Menu", menuDrawlist);
+	}	
+	
+	private void setupOptikWorld() {
 		// testwise optik scene
 		testOptik = new BildweltOptik(this);
+		optikWorldDrawlist = new Drawlist(this);
+		optikWorldDrawlist.add(testOptik);
+		
+		optikWorldDrawlist.hideAll();
+		engine.addDrawlist("OptikWorld", optikWorldDrawlist);
 	}
 
 	private void setupLogo() {
@@ -225,117 +275,12 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		verticalViewAlpha = (head.y <= globePosition.y) ? verticalViewAlpha : -verticalViewAlpha;
 	}
 
-	private void drawLine(PVector p1, PVector p2) {
-		line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
-	}
-
 	private void updateHead() {
-		if (context.isTrackingSkeleton(1)) {
-			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_HEAD, head);
-//			println(head.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
-			head.y = realScreenPos.y + (realScreenDim.y / 2f);
-//			head.y *= -1;
-			head.x *= -1;
+		if(context.isTrackingSkeleton(1)) {
+			PVector thead = new PVector();
+			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_HEAD, thead);
+			head = offCenterOptik.updateHeadPosition(thead);
 		}
-	}
-
-	private void drawOffCenterVectors(PVector pe) {
-		pushStyle();
-		pushMatrix();
-			stroke(0, 200, 200);
-			drawLine(pe, pa);
-			drawLine(pe, pb);
-			drawLine(pe, pc);
-			drawLine(pe, pd);
-			strokeWeight(1);
-		popMatrix();
-		popStyle();
-	}
-
-	public void calcRealWorldScreenSetup() {
-		// Lower left corner of our screen in real-world-coords (mm)
-		pa = realScreenPos;
-
-		// Lower right corner of our screen in real-world-coords (mm)
-		pb = new PVector(realScreenPos.x + realScreenDim.x, realScreenPos.y, realScreenPos.z);
-
-		// Upper left corner of our screen in real-world-coords (mm)
-		pc = new PVector(realScreenPos.x, realScreenPos.y + realScreenDim.y, realScreenPos.z);
-
-		// Upper right corner of our screen in real-world-coords (mm)
-		pd = new PVector(pb.x, pc.y, realScreenPos.z);
-
-		// Orthonormal basis of our screen space
-		// right vector
-		vr = new PVector();
-		// up vector
-		vu = new PVector();
-		// z
-		vn = new PVector();
-
-		// Compute an orthonormal basis for the screen
-		PVector.sub(pb, pa, vr);
-		PVector.sub(pc, pa, vu);
-
-		vr.normalize();
-		vu.normalize();
-		PVector.cross(vr, vu, vn);
-		vn.normalize();
-	}
-
-	private void calcOffCenterProjection(PVector pe) {
-		// println(pe);
-
-		// Compute the screen corner vectors.
-
-		PVector.sub(pa, pe, va);
-		PVector.sub(pb, pe, vb);
-		PVector.sub(pc, pe, vc);
-
-		// println("va");
-		// println(va);
-		// println("vb");
-		// println(vb);
-		// println("vc");
-		// println(vc);
-
-		// Find the distance from the eye to screen plane
-
-		d = -PVector.dot(va, vn);
-
-		// println("d: "+d);
-
-		// Find the extend of the perpendicular projection.
-
-		l = PVector.dot(vr, va) * n / d;
-		r = PVector.dot(vr, vb) * n / d;
-		b = PVector.dot(vu, va) * n / d;
-		t = PVector.dot(vu, vc) * n / d;
-	}
-
-	private void setOffCenterProjection(PVector pe) {
-		// Load the perpendicular projection.
-
-		g.resetMatrix();
-
-		g.frustum(l, r, b, t, n, f);
-
-		// println(l+":"+r+":"+b+":"+t+":"+n+":"+f);
-
-		// Rotate the projection to be non-perpendicular.
-
-		// Final projection matrix
-
-		PMatrix3D M = new PMatrix3D(
-			vr.x, vr.y, vr.z, 0.0f,
-			vu.x, vu.y, vu.z, 0.0f,
-			vn.x, vn.y, vn.z, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		);
-
-		g.applyMatrix(M);
-
-		g.translate(-pe.x, -pe.y, -pe.z);
 	}
 
 	public void draw() {
@@ -430,8 +375,10 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		if (MODE == LIVE || MODE == TRANSIT_FROM_LIVE || MODE == ZOOMING || MODE == ROTATING) {
 			background(background);
 
-			calcOffCenterProjection(head);
-			setOffCenterProjection(head);
+			engine.activateOptik("OffCenter");
+			if(!FREEMODE) offCenterOptik.updateHeadPosition(head);
+			offCenterOptik.calculate();
+			offCenterOptik.set();
 
 			//drawOffCenterVectors(head);
 
@@ -728,8 +675,17 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			switchToLive();
 			break;
 		case 'r': 
-			if(!globe.getRibbons().get(0).isPivoting()) globe.getRibbons().get(0).createPivotAt(0, 0, -200);
-			else globe.getRibbons().get(0).deletePivot();
+			if(!globe.getRibbons().get(0).isPivoting()) {
+				globe.getRibbons().get(0).createPivotAt(0, 0, -200);
+				
+				menuDrawlist.fadeAllOut(100);
+				optikWorldDrawlist.fadeAllIn(100);
+			} else {
+				globe.getRibbons().get(0).deletePivot();
+				
+				menuDrawlist.fadeAllIn(100);
+				optikWorldDrawlist.fadeAllOut(100);
+			}
 		}
 		
 		switch (keyCode) {
@@ -791,88 +747,21 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		pushMatrix();
 		pushStyle();
 		
-			room.draw();
-			
-			globe.update();
-			//globe.draw();
-			
-			// testwise optik scene
-			testOptik.update();
-			testOptik.draw();
+			engine.update("Room");
+			engine.draw("Room");
 		
+			engine.update("Menu");
+			engine.draw("Menu");
+
+			engine.update("OptikWorld");
+			engine.draw("OptikWorld");
+			
 		popMatrix();
 		popStyle();
-	}
-
-	public void mouseDragged(MouseEvent e) {
-		rotY += (mouseX - lastMouseX) / 10f;
-		// rotY += (mouseY - lastMouseY);
-
-		lastMouseX = mouseX;
-		lastMouseY = mouseY;
 	}
 
 	private void drawRealWorldScreen() {
-		pushStyle();
-		pushMatrix();
-			stroke(200, 0, 0);
-			noFill();
-			beginShape();
-				
-				/*
-				println("Positions");
-				
-				println(pa);
-				println(pb);
-				println(pc);
-				println(pd);
-				
-				println("Orthos");
-				
-				println(vr);
-				println(vu);
-				println(vn);
-				*/
-
-				vertex(pc.x, pc.y, pc.z); // Upper Left Corner of Screen	
-				vertex(pd.x, pd.y, pd.z); // Upper Right Corner of Screen
-				vertex(pb.x, pb.y, pb.z); // Lower Right Corner of Screen
-				vertex(pa.x, pa.y, pa.z); // Lower Left Corner of Screen
-			endShape();
-			
-			// Draw Real World Screen Orthonormal
-			PVector ox = vr.get();
-			ox.mult(200);
-			
-			PVector oy = vu.get();
-			oy.mult(200);
-			
-			PVector oz = vn.get();
-			oz.mult(200);
-			
-			stroke(255, 200, 200);
-			line(pa.x, pa.y, pa.z, pa.x+ox.x, pa.y+ox.y, pa.z+ox.z);
-			line(pa.x, pa.y, pa.z, pa.x+oy.x, pa.y+oy.y, pa.z+oy.z);
-			line(pa.x, pa.y, pa.z, pa.x+oz.x, pa.y+oz.y, pa.z+oz.z);
-			
-			strokeWeight(1);
-			
-			// Draw Screen-Space Origin
-			pushMatrix();
-				noStroke();
-				fill(0, 0, 200);
-				
-				translate(head.x, head.y, pa.z);
-				ellipse(0, 0, 20, 20);
-			popMatrix();
-			
-			pushMatrix();
-				translate(-head.x, -head.y, -head.z);
-				ellipse(0, 0, 20, 20);
-			popMatrix();
-			
-		popStyle();
-		popMatrix();
+		offCenterOptik.drawRealWorldScreen();
 	}
 	
 	@Override
