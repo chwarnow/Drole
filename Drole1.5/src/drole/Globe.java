@@ -66,7 +66,7 @@ public class Globe extends Drawable {
 	// ------ circular mask ------
 	PImage circularMask;
 
-	public Globe(PApplet parent, PVector position, PVector dimension, PImage globeTexture) {
+	public Globe(DroleMain parent, PVector position, PVector dimension, PImage globeTexture) {
 		super(parent);
 
 		position(position);

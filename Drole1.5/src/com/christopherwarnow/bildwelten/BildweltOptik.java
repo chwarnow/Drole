@@ -4,14 +4,13 @@ import codeanticode.glgraphics.GLTexture;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
+import drole.DroleMain;
 import drole.engine.Drawable;
 import drole.gfx.ribbon.RibbonGroup;
 
 import com.christopherwarnow.bildwelten.utils.Ray;
 
 public class BildweltOptik extends Drawable {
-
-	PApplet parent;
 	
 	PVector[] face = new PVector[3];
 	float ai = PApplet.TWO_PI/3;//angle increment
@@ -25,7 +24,7 @@ public class BildweltOptik extends Drawable {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 	
-	public BildweltOptik(PApplet parent) {
+	public BildweltOptik(DroleMain parent) {
 		super(parent);
 		// TODO Auto-generated constructor stub
 		this.parent = parent;
@@ -55,7 +54,9 @@ public class BildweltOptik extends Drawable {
 			parent.g.rotateY(smoothedRotation);
 			
 		float rectSize = 500;
-
+		
+		parent.startShader("JustColor");
+		
 		parent.tint(255);
 		parent.stroke(105, 90, 97);
 		parent.fill(199, 186, 177);
@@ -169,6 +170,12 @@ public class BildweltOptik extends Drawable {
 		parent.popMatrix();
 		
 		
+		parent.stopShader();
+		
+		parent.startShader("ColorAndTexture");
+		
+		parent.fill(0);
+		
 		// texts
 		float textOffset = 13;
 		parent.noStroke();
@@ -234,6 +241,7 @@ public class BildweltOptik extends Drawable {
 		parent.translate(pointR.x, pointR.y, pointR.z);
 		parent.text("R", 0, 0);
 		parent.popMatrix();
+		
 		
 		// sehender akteur
 		parent.pushMatrix();

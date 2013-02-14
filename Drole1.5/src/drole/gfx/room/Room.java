@@ -1,5 +1,6 @@
 package drole.gfx.room;
 
+import drole.DroleMain;
 import drole.engine.Drawable;
 import processing.core.PApplet;
 import processing.core.PGraphics;
@@ -49,7 +50,7 @@ public class Room extends Drawable {
 	
 	private PImage backTex, leftTex, rightTex, bottomTex, topTex;   // texture images
 	
-	public Room(PApplet parent, String fileBasename) {
+	public Room(DroleMain parent, String fileBasename) {
 		super(parent);
 		
 		loadSkybox(fileBasename, ".jpg");
@@ -89,7 +90,9 @@ public class Room extends Drawable {
 	public void draw() {
 		parent.pushStyle();
 		parent.pushMatrix();
-			
+		
+			parent.startShader("ColorAndTexture");
+		
 			parent.noFill();
 			parent.noStroke();
 			
@@ -107,6 +110,8 @@ public class Room extends Drawable {
 			
 			TexturedCube();
 		
+			parent.stopShader();
+			
 		parent.popMatrix();
 		parent.popStyle();
 	}

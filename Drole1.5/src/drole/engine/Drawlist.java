@@ -2,13 +2,13 @@ package drole.engine;
 
 import java.util.ArrayList;
 
-import processing.core.PApplet;
+import drole.DroleMain;
 
 public class Drawlist extends Drawable {
 
 	private ArrayList<Drawable> drawables = new ArrayList<Drawable>();
 	
-	public Drawlist(PApplet parent) {
+	public Drawlist(DroleMain parent) {
 		super(parent);
 	}
 

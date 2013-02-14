@@ -2,6 +2,8 @@ package drole;
 
 import java.util.ArrayList;
 
+import codeanticode.glgraphics.GLConstants;
+
 import com.christopherwarnow.bildwelten.BildweltOptik;
 
 import drole.engine.Drawable;
@@ -9,6 +11,8 @@ import drole.engine.Drawlist;
 import drole.engine.Engine;
 import drole.engine.optik.OffCenterOptik;
 import drole.engine.optik.StdOptik;
+import drole.engine.shader.ColorAndTextureShader;
+import drole.engine.shader.JustColorShader;
 import drole.gfx.room.Room;
 import drole.settings.Settings;
 import drole.tracking.PositionTarget;
@@ -40,7 +44,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= false;
+	private boolean FREEMODE			= true;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -69,11 +73,19 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private ArrayList<String> logs = new ArrayList<String>();
 	private boolean newLine = true;
 	
+	/* Mask */
+	private PImage mask;
+	
 	/* Engine */
 	private Engine engine;
 	
 	/* Optiks */
 	private OffCenterOptik offCenterOptik;
+	private StdOptik stdOptik;
+	
+	/* Shader */
+	private JustColorShader justColorShader;
+	private ColorAndTextureShader colorAndTextureShader;
 	
 	/* Drawlists */
 	private Drawlist overlayDrawlist;
@@ -112,16 +124,25 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private BildweltOptik testOptik;
 	
 	public void setup() {
-		size(1080, 1080, PGraphics.OPENGL);
+		size(1080, 1080, GLConstants.GLGRAPHICS);
 		
 		logLn("Starting Drole!");
 		logLn("Executing at : '"+System.getProperty("user.dir").replace("\\", "/")+"'");
 		
 		logLn("Initializing Engine ...");
+			mask = loadImage("data/images/drole-mask.png");
+		
 			engine = new Engine(this);
 			
-			engine.addOptik("std", new StdOptik(this));
-			engine.activateOptik("std");
+			justColorShader = new JustColorShader(this);
+			engine.addShader("JustColor", justColorShader);
+			
+			colorAndTextureShader = new ColorAndTextureShader(this);
+			engine.addShader("ColorAndTexture", colorAndTextureShader);
+			
+			stdOptik = new StdOptik(this);
+			engine.addOptik("Std", stdOptik);
+			engine.activateOptik("Std");
 			
 			offCenterOptik = new OffCenterOptik(
 				this,
@@ -132,6 +153,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 				Settings.REAL_SCREEN_POSITION_Y_MM,
 				Settings.REAL_SCREEN_POSITION_Z_MM
 			);
+			
+			engine.addOptik("OffCenter", offCenterOptik);
 			
 			overlayDrawlist = new Drawlist(this);
 			engine.addDrawlist("Overlay", overlayDrawlist);
@@ -201,6 +224,14 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		truncateLog();
 	}
 	
+	public void startShader(String name) {
+		engine.startShader(name);
+	}
+	
+	public void stopShader() {
+		engine.stopShader();
+	}
+	
 	private void switchMode(String MODE) {
 		if(this.MODE != FORCED_DEBUG) {
 			logLn("Switching MODE from '" + this.MODE + "' to '" + MODE + "'");
@@ -252,6 +283,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}	
 	
 	private void setupOptikWorld() {
+		logLn("Initializing world 'Optik' ...");
+		
 		// testwise optik scene
 		testOptik = new BildweltOptik(this);
 		optikWorldDrawlist = new Drawlist(this);
@@ -375,10 +408,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		if (MODE == LIVE || MODE == TRANSIT_FROM_LIVE || MODE == ZOOMING || MODE == ROTATING) {
 			background(background);
 
-			engine.activateOptik("OffCenter");
 			if(!FREEMODE) offCenterOptik.updateHeadPosition(head);
-			offCenterOptik.calculate();
-			offCenterOptik.set();
+			
+			engine.activateOptik("OffCenter");
 
 			//drawOffCenterVectors(head);
 
@@ -387,7 +419,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 			// Draw Real World Screen
 			// drawRealWorldScreen();
-
+			
 			if(!FREEMODE) {
 				targetDetection.check();
 				
@@ -793,7 +825,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-			"--present",
+//			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 			"--display=1",

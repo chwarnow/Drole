@@ -94,7 +94,7 @@ public class OffCenterOptik extends Optik {
 	}
 	
 	@Override
-	public void calculate() {
+	public void calculate() {		
 		// logLn(pe);
 
 		// Compute the screen corner vectors.

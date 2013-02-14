@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import drole.engine.Drawable;
 import drole.gfx.ribbon.RibbonGroup;
 
-import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
@@ -30,7 +29,7 @@ public class RibbonGlobe extends Drawable {
 	private ArrayList<RibbonGroup> ribbons 		= new ArrayList<RibbonGroup>();
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 
-	public RibbonGlobe(PApplet parent, PVector position, PVector dimension, PImage globeTexture) {
+	public RibbonGlobe(DroleMain parent, PVector position, PVector dimension, PImage globeTexture) {
 		super(parent);
 
 		position(position);
@@ -58,6 +57,8 @@ public class RibbonGlobe extends Drawable {
 		parent.g.pushStyle();
 		parent.g.pushMatrix();
 
+			parent.startShader("JustColor");
+		
 			parent.g.translate(position.x, position.y, position.z);
 			parent.g.scale(scale.x, scale.y, scale.z);
 			parent.g.rotateY(smoothedRotation);
@@ -68,6 +69,8 @@ public class RibbonGlobe extends Drawable {
 			for(RibbonGroup r : ribbons) r.draw();
 //			for(RibbonGroup r : ribbons) r.drawAsLines();
 		
+			parent.stopShader();
+			
 		parent.g.popMatrix();
 		parent.g.popStyle();
 	}

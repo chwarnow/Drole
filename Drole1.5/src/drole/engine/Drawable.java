@@ -1,5 +1,6 @@
 package drole.engine;
 
+import drole.DroleMain;
 import penner.easing.Quad;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -16,7 +17,7 @@ public abstract class Drawable {
 	private float fadeTime = 1;
 	private float currentFadeTime = 1;
 
-	protected PApplet parent;
+	protected DroleMain parent;
 
 	protected float fade = 1;
 	public boolean 	visible = true;
@@ -38,7 +39,7 @@ public abstract class Drawable {
 	private long 		scaleEaseMillis		=	0;
 	private long 		scaleEaseTime		=	0;
 
-	public Drawable(PApplet parent) {
+	public Drawable(DroleMain parent) {
 		this.parent = parent;
 	}
 

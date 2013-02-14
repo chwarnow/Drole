@@ -19,6 +19,7 @@ public class StdOptik extends Optik {
 	public void set() {
 		p.resetMatrix();
 		p.perspective(PApplet.PI/3.0f, p.width/p.height, cameraZ/10.0f, cameraZ*10.0f);
+//		p.ortho();
 	}
 
 }
