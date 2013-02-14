@@ -4,7 +4,7 @@ import codeanticode.glgraphics.GLTexture;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
-import drole.Drawable;
+import drole.engine.Drawable;
 import drole.gfx.ribbon.RibbonGroup;
 
 import com.christopherwarnow.bildwelten.utils.Ray;
@@ -50,7 +50,7 @@ public class BildweltOptik extends Drawable {
 		parent.g.pushStyle();
 		parent.g.pushMatrix();
 
-			parent.g.translate(position.x, position.y-700, position.z);
+			parent.g.translate(position.x, position.y-(fade*700), position.z);
 			parent.g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
 			parent.g.rotateY(smoothedRotation);
 			

@@ -12,6 +12,7 @@ package drole;
 
 import java.util.ArrayList;
 
+import drole.engine.Drawable;
 import drole.gfx.ribbon.RibbonGroup;
 
 import processing.core.PApplet;
@@ -61,8 +62,7 @@ public class RibbonGlobe extends Drawable {
 			parent.g.scale(scale.x, scale.y, scale.z);
 			parent.g.rotateY(smoothedRotation);
 			
-			parent.g.tint(255, 255);
-			parent.fill(200);
+			parent.fill(200, 200, 200, fade*255);
 			parent.noStroke();
 			
 			for(RibbonGroup r : ribbons) r.draw();

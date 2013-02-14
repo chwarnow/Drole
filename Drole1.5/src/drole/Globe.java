@@ -17,6 +17,8 @@ import com.christopherwarnow.bildwelten.DroleWelt;
 import com.christopherwarnow.bildwelten.Drole;
 import com.christopherwarnow.bildwelten.SpherePrimitive;
 
+import drole.engine.Drawable;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;

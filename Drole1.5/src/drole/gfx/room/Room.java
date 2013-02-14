@@ -1,6 +1,6 @@
 package drole.gfx.room;
 
-import drole.Drawable;
+import drole.engine.Drawable;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -47,7 +47,7 @@ public class Room extends Drawable {
 	private PVector f4 = new PVector(-m, m, -p);
 	private PVector fn = new PVector(0, 0, -1);
 	
-	private PImage frontTex, backTex, leftTex, rightTex, bottomTex, topTex;   // texture images
+	private PImage backTex, leftTex, rightTex, bottomTex, topTex;   // texture images
 	
 	public Room(PApplet parent, String fileBasename) {
 		super(parent);
@@ -57,7 +57,6 @@ public class Room extends Drawable {
 	
 	// load six skybox images as cube texture
 	void loadSkybox(String skyboxName, String fExt) {
-		frontTex 	= parent.loadImage(skyboxName + "front" + fExt);
 		backTex 	= parent.loadImage(skyboxName + "back" + fExt);
 		leftTex 	= parent.loadImage(skyboxName + "left" + fExt);
 		rightTex 	= parent.loadImage(skyboxName + "right" + fExt);
@@ -79,7 +78,6 @@ public class Room extends Drawable {
 		parent.beginShape(PGraphics.QUADS);
 			parent.texture(tex);
 			parent.normal(normal.x, normal.y, normal.z);
-			System.out.println(normal);
 			parent.vertex(P1.x, P1.y, P1.z, 0, 0);
 			parent.vertex(P2.x, P2.y, P2.z, 1, 0);
 			parent.vertex(P3.x, P3.y, P3.z, 1, 1);

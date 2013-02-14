@@ -1,5 +1,6 @@
 package drole;
 
+import drole.engine.Drawable;
 import processing.core.PApplet;
 
 public class Ellipse extends Drawable {
