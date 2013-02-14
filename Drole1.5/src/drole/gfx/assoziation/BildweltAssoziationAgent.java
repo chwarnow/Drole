@@ -20,7 +20,7 @@ class BildweltAssoziationAgent {
 	float r, g, b, a;
 
 	int pathPosition = 0;
-	BildweltAssoziationAgent(PApplet parent, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius) {
+	BildweltAssoziationAgent(PApplet parent, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius, float quadHeight, int pathLength) {
 		this.parent = parent;
 		p = new PVector(beginning.x, beginning.y, beginning.z);//new PVector(0, 0, 0);
 		this.myColor = thisColor;
@@ -34,7 +34,8 @@ class BildweltAssoziationAgent {
 		offset = 10000;
 		stepSize = parent.random(2, 3);
 		// how many points has the ribbon
-		int ribbonAmount = (int)parent.random(1*2, 2*2);
+		pathLength = parent.max(1, pathLength);
+		int ribbonAmount = (int)parent.random(1*pathLength, 2*pathLength);
 		if(ribbonAmount %2 != 0) ribbonAmount ++;
 		ribbon = new Ribbon3D(parent, p, ribbonAmount);
 		// precompute positions
@@ -81,13 +82,11 @@ class BildweltAssoziationAgent {
 				positionsX[i] = p.x;
 				positionsY[i] = p.y;
 				positionsZ[i] = p.z;
-				p.x += (parent.frameCount%2==0) ? .25 : -.25;
+				//TODO: how to let pixels stay on place? (do not update ribbons)
+				p.x += quadHeight;//(i%2==0) ? quadHeight : -quadHeight;
 			}
-			// stepSize += .025;
 		}
-
-		// update(0);
-
+		
 		// set colors array
 		colors = new int[getVertexCount()];
 		for (int i=0;i<getVertexCount();i++) {

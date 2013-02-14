@@ -35,7 +35,7 @@ public class BildweltAssoziationPensee {
 	int animationDirection = -1;
 	int oldEasedIndex = 0;
 	float easedPosition = 0;
-	float quadHeight = .25f;
+	float quadHeight = 1.0f;
 
 	public BildweltAssoziationPensee(PApplet parent, String imagePath, float sphereConstraintRadius) {
 		this.parent = parent;
@@ -51,8 +51,19 @@ public class BildweltAssoziationPensee {
 		for (int x=0;x<content.width;x++) {
 			for (int y=0;y<content.height;y++) {
 				float starterThreshold = content.width/2 - parent.dist(x, y, content.width/2, content.height/2) * parent.noise(x*.1f, y*.1f);//x*.5;
-				starterThreshold *= .25;
-				agents[i++]=new BildweltAssoziationAgent(parent, new PVector((x-content.width/2)*.25f, (y-content.height/2)*.25f, 0), content.get(x, y), positionSteps, noiseScale, noiseStrength, starterThreshold, sphereConstraintRadius);
+				starterThreshold *= quadHeight;
+				agents[i++]=new BildweltAssoziationAgent(
+						parent,
+						new PVector((x-content.width/2)*quadHeight, (y-content.height/2)*quadHeight, 0),
+						content.get(x, y),
+						positionSteps,
+						noiseScale,
+						noiseStrength,
+						starterThreshold,
+						sphereConstraintRadius,
+						quadHeight,
+						10
+				);
 				vertexCount += agents[i-1].getVertexCount();
 			}
 		}
@@ -75,7 +86,7 @@ public class BildweltAssoziationPensee {
 		imageShader = new GLSLShader(parent, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
 	}
 
-	void update() {
+	public void update() {
 		// update playhead on precomputed noise path
 		if (currPosition == positionSteps-1) {
 			animationDirection *= -1;
@@ -95,7 +106,7 @@ public class BildweltAssoziationPensee {
 
 	}
 
-	void draw(GLGraphics renderer) {
+	public void draw(GLGraphics renderer) {
 		// renderer.lights();
 
 		// update glmodel
@@ -213,12 +224,12 @@ public class BildweltAssoziationPensee {
 
 		// renderer.beginGL();  
 		/*
-    imageShader.start();
-    imageShader.setFloatUniform("zmin", 0.65);
-    imageShader.setFloatUniform("zmax", 0.85);
-    imageShader.setFloatUniform("shininess", 100.0);//abs(cos(frameCount*0.1))*10.0);
-    imageShader.setVecUniform("lightPos", 00.0, 00.0, 500.0);
-		 */
+	    imageShader.start();
+	    imageShader.setFloatUniform("zmin", 0.65f);
+	    imageShader.setFloatUniform("zmax", 0.85f);
+	    imageShader.setFloatUniform("shininess", 100.0f);
+	    imageShader.setVecUniform("lightPos", 00.0f, 00.0f, 500.0f);
+		*/
 		// A model can be drawn through the GLGraphics renderer:
 		renderer.model(imageQuadModel);
 

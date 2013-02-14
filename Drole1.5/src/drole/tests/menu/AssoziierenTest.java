@@ -1,6 +1,7 @@
 package drole.tests.menu;
 
 import codeanticode.glgraphics.GLConstants;
+import codeanticode.glgraphics.GLGraphics;
 import drole.gfx.assoziation.BildweltAssoziationPensee;
 import processing.core.PApplet;
 
@@ -14,18 +15,34 @@ import processing.core.PApplet;
 
 public class AssoziierenTest extends PApplet {
 
-	BildweltAssoziationPensee penseeA, penseeB, penseeC, penseeD;
+	BildweltAssoziationPensee penseeA;
 	float sphereConstraintRadius = 160.0f;
 	
 	public void setup() {
 		size(1200, 720, GLConstants.GLGRAPHICS);
+	
+		// init ribbon sculpture
+		penseeA = new BildweltAssoziationPensee(this, "data/images/contentB.png", sphereConstraintRadius);
 	}
 	
 	public void draw() {
+		// update sculpture
+		penseeA.update();
+		
 		background(255);
 		
-		penseeA = new BildweltAssoziationPensee(this, "Exp_Spektakel_7.JPG", sphereConstraintRadius);
+		pushMatrix();
 		
+		translate(width/2, height/2, 300);
+		rotateY(radians(mouseX));
+		
+		// draw sculpture
+		GLGraphics renderer = (GLGraphics)g;
+		renderer.beginGL();
+		penseeA.draw(renderer);
+		renderer.endGL();
+		
+		popMatrix();
 	}
 	
 	public static void main(String args[]) {

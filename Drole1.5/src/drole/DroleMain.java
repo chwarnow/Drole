@@ -2,6 +2,8 @@ package drole;
 
 import java.util.ArrayList;
 
+import codeanticode.glgraphics.GLConstants;
+
 import com.christopherwarnow.bildwelten.BildweltOptik;
 
 import drole.engine.Drawable;
@@ -9,6 +11,7 @@ import drole.engine.Drawlist;
 import drole.engine.Engine;
 import drole.engine.optik.OffCenterOptik;
 import drole.engine.optik.StdOptik;
+import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.room.Room;
 import drole.settings.Settings;
 import drole.tracking.PositionTarget;
@@ -80,6 +83,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private Drawlist roomDrawlist;
 	private Drawlist menuDrawlist;
 	private Drawlist optikWorldDrawlist;
+	private Drawlist assoziationWorldDrawlist;
 	
 	/* Skybox */
 	private Room room;
@@ -109,10 +113,12 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	private float rotationMapStart = 0, rotationMapEnd = 0;
 	
-	private BildweltOptik testOptik;
+	/* Bildwelten */
+	private BildweltAssoziation bildweltAssoziation;
+	private BildweltOptik bildweltOptik;
 	
 	public void setup() {
-		size(1080, 1080, PGraphics.OPENGL);
+		size(1080, 1080, GLConstants.GLGRAPHICS);
 		
 		logLn("Starting Drole!");
 		logLn("Executing at : '"+System.getProperty("user.dir").replace("\\", "/")+"'");
@@ -168,6 +174,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		setupMenu();
 		
 		setupOptikWorld();
+		
+		setupAssoziationWorld();
 		
 		/* START */
 		if(FREEMODE) {
@@ -253,12 +261,22 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	private void setupOptikWorld() {
 		// testwise optik scene
-		testOptik = new BildweltOptik(this);
+		bildweltOptik = new BildweltOptik(this);
 		optikWorldDrawlist = new Drawlist(this);
-		optikWorldDrawlist.add(testOptik);
+		optikWorldDrawlist.add(bildweltOptik);
 		
 		optikWorldDrawlist.hideAll();
 		engine.addDrawlist("OptikWorld", optikWorldDrawlist);
+	}
+	
+	private void setupAssoziationWorld() {
+		bildweltAssoziation = new BildweltAssoziation(this);
+		
+		assoziationWorldDrawlist = new Drawlist(this);
+		assoziationWorldDrawlist.add(bildweltAssoziation);
+		
+		assoziationWorldDrawlist.hideAll();
+		engine.addDrawlist("AssoziationWorld", assoziationWorldDrawlist);
 	}
 
 	private void setupLogo() {
@@ -679,12 +697,14 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 				globe.getRibbons().get(0).createPivotAt(0, 0, -200);
 				
 				menuDrawlist.fadeAllOut(100);
-				optikWorldDrawlist.fadeAllIn(100);
+				// optikWorldDrawlist.fadeAllIn(100);
+				assoziationWorldDrawlist.fadeAllIn(100);
 			} else {
 				globe.getRibbons().get(0).deletePivot();
 				
 				menuDrawlist.fadeAllIn(100);
-				optikWorldDrawlist.fadeAllOut(100);
+				// optikWorldDrawlist.fadeAllOut(100);
+				assoziationWorldDrawlist.fadeAllOut(100);
 			}
 		}
 		
@@ -755,6 +775,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 			engine.update("OptikWorld");
 			engine.draw("OptikWorld");
+			
+			engine.update("AssoziationWorld");
+			engine.draw("AssoziationWorld");
 			
 		popMatrix();
 		popStyle();
