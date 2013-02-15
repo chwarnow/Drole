@@ -6,7 +6,7 @@ import drole.DroleMain;
 
 public class Drawlist extends Drawable {
 
-	private ArrayList<Drawable> drawables = new ArrayList<Drawable>();
+	protected ArrayList<Drawable> drawables = new ArrayList<Drawable>();
 	
 	public Drawlist(DroleMain parent) {
 		super(parent);

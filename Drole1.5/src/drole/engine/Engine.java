@@ -72,20 +72,6 @@ public class Engine {
 	public void startShader(String name) {
 		activeShader = name;
 		shaders.get(activeShader).start();
-		
-		GLGraphics renderer = (GLGraphics) p.g;
-		GL gl = renderer.gl;
-		
-		/*
-		// First set active texture unit
-		gl.glClientActiveTexture(GL.GL_mask.getTextureID());
-		// Then enable it!
-		gl.glEnable(GL.GL_TEXTURE_2D);
-
-		gl.glBindTexture(GL.GL_TEXTURE_2D, mask.getTextureID());
-		
-		gl.glUniform1iARB(shaders.get(activeShader).glsl().getUniformLocation("maskTexture"), 0);
-		*/
 	}
 	
 	public void stopShader() {

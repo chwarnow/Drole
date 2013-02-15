@@ -90,7 +90,6 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	/* Drawlists */
 	private Drawlist overlayDrawlist;
 	private Drawlist roomDrawlist;
-	private Drawlist menuDrawlist;
 	private Drawlist optikWorldDrawlist;
 	private Drawlist assoziationWorldDrawlist;
 	
@@ -98,9 +97,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private Room room;
 	
 	/* Globe */
-	private PImage globeTexture;
 	private PVector globePosition = new PVector(0, -900, 0);
-	private PVector globeSize = new PVector(900, 100, 100);
+	private PVector globeSize = new PVector(600, 0, 0);
 	private RibbonGlobe globe;
 	
 	private float horizontalViewAlpha = 0.0f;
@@ -199,7 +197,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		
 		/* START */
 		if(FREEMODE) {
-			menuDrawlist.fadeAllIn(500);
+			globe.fadeIn(500);
 			switchMode(LIVE);
 		}
 		
@@ -276,15 +274,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-		menuDrawlist = new Drawlist(this);
+		globe = new RibbonGlobe(this, globePosition, globeSize);
 		
-		globeTexture = loadImage("data/images/Karte_1.jpg");
-		globe = new RibbonGlobe(this, globePosition, globeSize, globeTexture);
-		globe.scale(.5f, .5f, .5f);
-		
-		menuDrawlist.add(globe);
-		
-		engine.addDrawlist("Menu", menuDrawlist);
+		engine.addDrawlist("Globe", globe);
 	}	
 	
 	private void setupOptikWorld() {
@@ -722,18 +714,18 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			switchToLive();
 			break;
 		case 'r': 
-			if(!globe.getRibbons().get(0).isPivoting()) {
-				globe.getRibbons().get(0).createPivotAt(0, 0, -200);
+			if(globe.menuMode() == RibbonGlobe.MENU) {
+				globe.switchToLights();
 				
-				menuDrawlist.fadeAllOut(100);
-				// optikWorldDrawlist.fadeAllIn(100);
-				assoziationWorldDrawlist.fadeAllIn(100);
+				optikWorldDrawlist.fadeAllIn(100);
+//				assoziationWorldDrawlist.fadeAllIn(100);
 			} else {
-				globe.getRibbons().get(0).deletePivot();
+				globe.switchToMenu();
 				
-				menuDrawlist.fadeAllIn(100);
-				// optikWorldDrawlist.fadeAllOut(100);
-				assoziationWorldDrawlist.fadeAllOut(100);
+//				globe.getRibbons().get(0).deletePivot();
+				
+				optikWorldDrawlist.fadeAllOut(100);
+//				assoziationWorldDrawlist.fadeAllOut(100);
 			}
 		}
 		
@@ -799,14 +791,14 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			engine.update("Room");
 			engine.draw("Room");
 		
-			engine.update("Menu");
-			engine.draw("Menu");
+			engine.update("Globe");
+			engine.draw("Globe");
 
 			engine.update("OptikWorld");
 			engine.draw("OptikWorld");
 			
-			engine.update("AssoziationWorld");
-			engine.draw("AssoziationWorld");
+//			engine.update("AssoziationWorld");
+//			engine.draw("AssoziationWorld");
 			
 		popMatrix();
 		popStyle();

@@ -62,7 +62,7 @@ public class BildweltAssoziationPensee {
 						starterThreshold,
 						sphereConstraintRadius,
 						quadHeight,
-						10
+						1
 				);
 				vertexCount += agents[i-1].getVertexCount();
 			}
