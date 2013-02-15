@@ -17,7 +17,7 @@ public class BildweltAssoziation extends Drawable {
 		super(parent);
 		// van she idea of happiness
 		scale(4.0f, 4.0f, 4.0f);
-		position(0.0f, -900.0f, 200.0f);
+		position(0.0f, -900.0f, -1500.0f);
 		
 		// init ribbon sculpture
 		penseeA = new BildweltAssoziationPensee(parent, "data/images/associationA.png", sphereConstraintRadius);

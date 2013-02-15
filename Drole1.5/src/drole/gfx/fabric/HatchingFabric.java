@@ -31,6 +31,8 @@ public class HatchingFabric {
 
 	private String contentTexturePath;
 	
+	public VerletParticle endA, endB;
+	
 	private float scalingX, scalingY;
 	public HatchingFabric(PApplet parent, String contentTexturePath, int detail, float springLength, float scalingX, float scalingY) {
 		this.parent = parent;
@@ -53,6 +55,12 @@ public class HatchingFabric {
 	public void draw() {
 		
 		//-------------- updating simulation
+		
+		endA.x += parent.sin(parent.frameCount*.01f)*.1f;//*springLength;
+		endB.x += parent.cos(parent.frameCount*.01f)*.1f;//*springLength;
+		
+		endA.z = parent.cos(parent.frameCount*.04f)*springLength;
+		endB.z = parent.sin(parent.frameCount*.025f)*springLength;
 		
 		// update simulation
 		physics.update();
@@ -85,6 +93,9 @@ public class HatchingFabric {
 		renderer.model(fabricMesh);
 
 		shader.stop(); // Disabling shader.
+		
+		// reactivate texturing for processing
+		renderer.gl.glActiveTexture(GL.GL_TEXTURE0);
 		
 		renderer.endGL();
 		parent.popMatrix();
@@ -137,9 +148,15 @@ public class HatchingFabric {
 
 		for(int y=0,idx=0; y<detail; y++) {
 			for(int x=0; x<detail; x++) {
-				VerletParticle p=new VerletParticle(x*springLength*scalingX-(detail*springLength*scalingX)/2,-200,y*springLength*scalingY-(detail*springLength*scalingY)/2);
-				if(y == 0 && x == 0) p.lock();
-				if(y == 0 && x == detail-1) p.lock();
+				VerletParticle p=new VerletParticle(x*springLength*scalingX-(detail*springLength*scalingX)/2, y*springLength*scalingY-(detail*springLength*scalingY)/2, parent.random(-springLength*.1f, springLength*.1f));
+				if(y == 0 && x == 0) {
+					endA = p;
+					p.lock();
+				}
+				if(y == 0 && x == detail-1) {
+					endB = p;
+					p.lock();
+				}
 				// TODO: move upper line on a sine
 				physics.addParticle(p);
 				if (x>0) {

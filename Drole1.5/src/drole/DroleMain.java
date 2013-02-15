@@ -3,6 +3,7 @@ package drole;
 import java.util.ArrayList;
 
 import codeanticode.glgraphics.GLConstants;
+import codeanticode.glgraphics.GLGraphics;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
 
@@ -347,6 +348,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	public void draw() {
+//		GLGraphics renderer = (GLGraphics)g;
+//		renderer.beginGL();
+		
 		// update the cam
 		if(!FREEMODE) context.update();
 
@@ -496,12 +500,17 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 						float rot = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
 						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) globe.rotation = rot;  
 						
-						// add rotation to assoziartion bildwelt
+						// add rotation to assoziation bildwelt
 						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) bildweltAssoziation.rotation = rot;
+						
+						// add rotation to fabric bildwelt
+						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) bildweltFabric.rotation = rot;
 					}
 				}
 			}
 		}
+		
+//		renderer.endGL();
 	}
 
 	private void drawLogo() {
