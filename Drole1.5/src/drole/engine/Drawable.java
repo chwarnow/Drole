@@ -92,10 +92,7 @@ public abstract class Drawable {
 	}
 	
 	public PVector scale(float x, float y, float z) {
-		scale 				= new PVector(x, y, z);
-		targetScale 		= scale.get();
-		
-		return scale();
+		return scale(new PVector(x, y, z));
 	}
 	
 	public PVector scale(PVector scale) {
@@ -160,11 +157,17 @@ public abstract class Drawable {
 	    }
 	    
 	    if(!position.equals(targetPosition)) {
-	    	if(position.dist(targetPosition) > 1) {
+	    	if(position.dist(targetPosition) > 0.001f) {
+	    		/*
 	    		long time = System.currentTimeMillis();
 	    		position.x = Quad.easeInOut(time-positionEaseTime, 0, 1, positionEaseMillis)*(position.x-targetPosition.x);
 	    		position.y = Quad.easeInOut(time-positionEaseTime, 0, 1, positionEaseMillis)*(position.y-targetPosition.y);
 	    		position.z = Quad.easeInOut(time-positionEaseTime, 0, 1, positionEaseMillis)*(position.z-targetPosition.z);
+	    		*/
+	    		
+	    		position.x = PApplet.lerp(position.x, targetPosition.x, 0.02f);
+	    		position.y = PApplet.lerp(position.y, targetPosition.y, 0.02f);
+	    		position.z = PApplet.lerp(position.z, targetPosition.z, 0.02f);
 	    	} else {
 	    		position = targetPosition.get();
 	    	}
@@ -182,7 +185,7 @@ public abstract class Drawable {
 	    }
 	    
 	    if(!scale.equals(targetScale)) {
-	    	if(scale.dist(targetScale) > 0.0001) {
+	    	if(scale.dist(targetScale) > 0.001) {
 	    		/*
 	    		long time = System.currentTimeMillis();
 	    		System.out.println((time-scaleEaseTime)+" : "+scaleEaseMillis);

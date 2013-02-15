@@ -1,5 +1,7 @@
 package drole.gfx.ribbon;
 
+import drole.DroleMain;
+import drole.engine.Drawable;
 import processing.core.PApplet;
 import processing.core.PVector;
 import toxi.geom.AABB;
@@ -12,15 +14,13 @@ import toxi.physics.behaviors.GravityBehavior;
 import toxi.physics.constraints.ParticleConstraint;
 import toxi.physics.constraints.SphereConstraint;
 
-public class RibbonGroup {
+public class RibbonGroup extends Drawable {
 
 	private static final long serialVersionUID = 1L;
 
-	private PApplet parent;
-	
 	private float seed;
-	private int numRibbons;
-	private int numJointsPerRibbon;
+	private int numPhysicParticles;
+	private int numQuadsPerRibbon;
 	private float sphereSize;
 	
 	private Ribbon3D[] particles;
@@ -30,15 +30,18 @@ public class RibbonGroup {
 	private int REST_LENGTH;
 	
 	private VerletParticle pivot;
-	private VerletSpring pivotSpring;
+	private VerletSpring[] pivotSprings;
+	
+	private ParticleConstraint sphereA, sphereB; 
 	
 	private boolean isPivoting = false;
 	
-	public RibbonGroup(PApplet parent, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
-		this.parent				= parent;
+	public RibbonGroup(DroleMain parent, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
+		super(parent);
+		
 		this.seed				= parent.random(1000);
-		this.numRibbons			= numRibbons;
-		this.numJointsPerRibbon	= numJointsPerRibbon;
+		this.numPhysicParticles	= numRibbons;
+		this.numQuadsPerRibbon	= numJointsPerRibbon;
 		this.sphereSize			= sphereSize;
 		this.REST_LENGTH		= REST_LENGTH;
 
@@ -90,6 +93,7 @@ public class RibbonGroup {
 	}
 
 	public void update() {
+		super.update();
 		if(!isPivoting) {
 			seed++;
 			
@@ -120,14 +124,19 @@ public class RibbonGroup {
 		pivot.lock();
 		physics.addParticle(pivot);
 		
-		pivotSpring = new VerletSpring(head, pivot, 5, 0.000001f);
-		pivotSpring.lockB(true);
-		
-		physics.addSpring(pivotSpring);
-		
+		/* First tighten all springs*/
 		for(VerletSpring s : physics.springs) {
 			s.setRestLength(0.1f);
 			s.setStrength(0.001f);
+		}
+		
+		// Add springs between all joints and the pivot
+		pivotSprings = new VerletSpring[numPhysicParticles];
+		for(int i = 0; i < numPhysicParticles; i++) {
+			pivotSprings[i] = new VerletSpring(head, pivot, 5, 0.000001f);
+			pivotSprings[i].lockB(true);
+			
+			physics.addSpring(pivotSprings[i]);
 		}
 		
 		head.unlock();
@@ -136,10 +145,23 @@ public class RibbonGroup {
 	}
 	
 	public void deletePivot() {
-		physics.removeSpring(pivotSpring);
+		// First remove all pivot prings
+		for(int i = 0; i < numPhysicParticles; i++) {
+			physics.removeSpring(pivotSprings[i]);
+		}
+		// Remove pivot
 		physics.removeParticle(pivot);
 		
-		for(VerletSpring s : physics.springs) s.setRestLength(REST_LENGTH);
+		// Relax all other springs
+		for(VerletSpring s : physics.springs) s.setRestLength(REST_LENGTH * 20);
+		
+		// Randomize all particle positions
+		for(VerletParticle p : physics.particles) {
+			p.lock();
+			p.set(Vec3D.randomVector().scaleSelf(sphereSize * 2));
+			p.update();
+			p.unlock();
+		}
 		
 		head.lock();
 		
@@ -151,14 +173,30 @@ public class RibbonGroup {
 	}
 	
 	public void draw() {
-		for (int i = 0; i < numRibbons; i++) {
-			particles[i].drawMeshRibbon(30);
-		}
+		parent.g.pushStyle();
+		parent.g.pushMatrix();
+
+			parent.startShader("JustColor");
+		
+			parent.g.translate(position.x, position.y, position.z);
+			parent.g.scale(scale.x, scale.y, scale.z);
+			
+			parent.fill(200, 200, 200, fade*255);
+			parent.noStroke();
+			
+			for (int i = 0; i < numPhysicParticles; i++) {
+				particles[i].drawMeshRibbon(30);
+			}
+		
+			parent.stopShader();
+			
+		parent.g.popMatrix();
+		parent.g.popStyle();
 	}
 
 	public void drawAsLines() {
-		for (int i = 0; i < numRibbons; i++) {
-			if(i != numRibbons-1) particles[i].drawStrokeRibbon(parent.color(200, 200, 0), 5);
+		for (int i = 0; i < numPhysicParticles; i++) {
+			if(i != numPhysicParticles-1) particles[i].drawStrokeRibbon(parent.color(200, 200, 0), 5);
 			else particles[i].drawStrokeRibbon(parent.color(200, 0, 0), 5);
 		}
 	}
