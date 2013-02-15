@@ -12,6 +12,7 @@ import drole.engine.Engine;
 import drole.engine.optik.OffCenterOptik;
 import drole.engine.optik.StdOptik;
 import drole.gfx.assoziation.BildweltAssoziation;
+import drole.gfx.fabric.BildweltFabric;
 import drole.engine.shader.ColorAndTextureShader;
 import drole.engine.shader.JustColorShader;
 import drole.gfx.room.Room;
@@ -44,7 +45,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= true;
+	private boolean FREEMODE			= false;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -93,6 +94,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private Drawlist menuDrawlist;
 	private Drawlist optikWorldDrawlist;
 	private Drawlist assoziationWorldDrawlist;
+	private Drawlist fabricWorldDrawlist;
 	
 	/* Skybox */
 	private Room room;
@@ -125,6 +127,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	/* Bildwelten */
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
+	private BildweltFabric bildweltFabric;
 	
 	public void setup() {
 		size(1080, 1080, GLConstants.GLGRAPHICS);
@@ -196,6 +199,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		setupOptikWorld();
 		
 		setupAssoziationWorld();
+		
+		setupFabricWorld();
 		
 		/* START */
 		if(FREEMODE) {
@@ -307,6 +312,16 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		
 		assoziationWorldDrawlist.hideAll();
 		engine.addDrawlist("AssoziationWorld", assoziationWorldDrawlist);
+	}
+	
+	private void setupFabricWorld() {
+		bildweltFabric = new BildweltFabric(this);
+		
+		fabricWorldDrawlist = new Drawlist(this);
+		fabricWorldDrawlist.add(bildweltFabric);
+		
+		fabricWorldDrawlist.hideAll();
+		engine.addDrawlist("FabricWorld", fabricWorldDrawlist);
 	}
 
 	private void setupLogo() {
@@ -480,6 +495,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	//					println(dHandA);
 						float rot = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
 						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) globe.rotation = rot;  
+						
+						// add rotation to assoziartion bildwelt
+						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) bildweltAssoziation.rotation = rot;
 					}
 				}
 			}
@@ -726,14 +744,16 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 				globe.getRibbons().get(0).createPivotAt(0, 0, -200);
 				
 				menuDrawlist.fadeAllOut(100);
-				// optikWorldDrawlist.fadeAllIn(100);
-				assoziationWorldDrawlist.fadeAllIn(100);
+				//optikWorldDrawlist.fadeAllIn(100);
+				//assoziationWorldDrawlist.fadeAllIn(100);
+				fabricWorldDrawlist.fadeAllIn(100);
 			} else {
 				globe.getRibbons().get(0).deletePivot();
 				
 				menuDrawlist.fadeAllIn(100);
-				// optikWorldDrawlist.fadeAllOut(100);
-				assoziationWorldDrawlist.fadeAllOut(100);
+				//optikWorldDrawlist.fadeAllOut(100);
+				//assoziationWorldDrawlist.fadeAllOut(100);
+				fabricWorldDrawlist.fadeAllOut(100);
 			}
 		}
 		
@@ -807,6 +827,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			
 			engine.update("AssoziationWorld");
 			engine.draw("AssoziationWorld");
+			
+			engine.update("FabricWorld");
+			engine.draw("FabricWorld");
 			
 		popMatrix();
 		popStyle();

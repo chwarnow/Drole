@@ -1,4 +1,4 @@
-package com.christopherwarnow.bildwelten;
+package drole.gfx.fabric;
 
 import javax.media.opengl.GL;
 

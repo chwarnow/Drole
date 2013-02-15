@@ -30,12 +30,15 @@ public class BildweltAssoziationPensee {
 
 	// animation values
 
-	int positionSteps = 200;
+	int positionSteps = 150;
 	int currPosition = 0;
 	int animationDirection = -1;
 	int oldEasedIndex = 0;
 	float easedPosition = 0;
 	float quadHeight = 1.0f;
+	
+	private int delay = 0; // count up when delaying
+	private int delayTime = 100; // wait for 100 frames until next one begins
 
 	public BildweltAssoziationPensee(PApplet parent, String imagePath, float sphereConstraintRadius) {
 		this.parent = parent;
@@ -44,14 +47,23 @@ public class BildweltAssoziationPensee {
 		content = new GLTexture(parent, imagePath);
 
 		// init agents pased on images pixels
-		agentsCount = content.width*content.height;
+		agentsCount = 0;//content.width*content.height;
+		// count visible pixels
+		for (int x=0;x<content.width;x++) {
+			for (int y=0;y<content.height;y++) {
+				if(parent.alpha(content.get(x, y)) != 0.0) {
+					agentsCount++;
+				}
+			}
+		}
 		agents = new BildweltAssoziationAgent[agentsCount];
 
 		int i=0;
 		for (int x=0;x<content.width;x++) {
 			for (int y=0;y<content.height;y++) {
-				float starterThreshold = content.width/2 - parent.dist(x, y, content.width/2, content.height/2) * parent.noise(x*.1f, y*.1f);//x*.5;
-				starterThreshold *= quadHeight;
+				if(parent.alpha(content.get(x, y)) != 0.0) {
+				float starterThreshold = content.width/2 - parent.dist(x, y, content.width/2, content.height/2);// * parent.noise(x*.1f, y*.1f);//x*.5;
+				starterThreshold *= .25f;
 				agents[i++]=new BildweltAssoziationAgent(
 						parent,
 						new PVector((x-content.width/2)*quadHeight, (y-content.height/2)*quadHeight, 0),
@@ -62,9 +74,10 @@ public class BildweltAssoziationPensee {
 						starterThreshold,
 						sphereConstraintRadius,
 						quadHeight,
-						10
+						1
 				);
 				vertexCount += agents[i-1].getVertexCount();
+				}
 			}
 		}
 
@@ -89,13 +102,18 @@ public class BildweltAssoziationPensee {
 	public void update() {
 		// update playhead on precomputed noise path
 		if (currPosition == positionSteps-1) {
-			animationDirection *= -1;
+			if (delay++==delayTime) {
+				animationDirection *= -1;
+				currPosition += animationDirection;
+				delay = 0;
+			}
 		}
-		if (currPosition == 0) {
-			// if (frameCount%200==0) {
-			animationDirection *= -1;
-			currPosition += animationDirection;
-			// }
+		else if (currPosition == 0) {
+			if (delay++==delayTime) {
+				animationDirection *= -1;
+				currPosition += animationDirection;
+				delay = 0;
+			}
 		}
 		else {
 			currPosition += animationDirection;

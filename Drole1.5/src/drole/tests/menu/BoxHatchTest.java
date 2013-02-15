@@ -2,14 +2,12 @@ package drole.tests.menu;
 
 import javax.media.opengl.GL;
 
-import com.christopherwarnow.bildwelten.HatchingFabric;
-
 import codeanticode.glgraphics.GLConstants;
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLTexture;
+import drole.gfx.fabric.HatchingFabric;
 import processing.core.PApplet;
 import processing.core.PFont;
-import processing.core.PShape;
 import processing.core.PVector;
 
 public class BoxHatchTest extends PApplet {
