@@ -433,8 +433,6 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 		if (MODE == LIVE || MODE == TRANSIT_FROM_LIVE || MODE == ZOOMING || MODE == ROTATING) {
 			background(background);
-
-			if(!FREEMODE) offCenterOptik.updateHeadPosition(head);
 			
 			engine.activateOptik("OffCenter");
 
@@ -742,19 +740,24 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			break;
 		case 'r': 
 			if(globe.menuMode() == RibbonGlobe.MENU) {
-				globe.switchToLights();
+//				globe.switchToLights();
+				globe.fadeAllOut(100);
+				globe.fadeOut(100);
 				
-				//optikWorldDrawlist.fadeAllIn(100);
-				//assoziationWorldDrawlist.fadeAllIn(100);
-				fabricWorldDrawlist.fadeAllIn(100);
+//				optikWorldDrawlist.fadeAllIn(100);
+				assoziationWorldDrawlist.fadeAllIn(100);
+//				fabricWorldDrawlist.fadeAllIn(100);
 //				optikWorldDrawlist.fadeAllIn(100);
 //				assoziationWorldDrawlist.fadeAllIn(100);
 			} else {
-				globe.switchToMenu();
+//				globe.switchToMenu();
+				
+				globe.fadeAllIn(100);
+				globe.fadeIn(100);
 
-				//optikWorldDrawlist.fadeAllOut(100);
-				//assoziationWorldDrawlist.fadeAllOut(100);
-				fabricWorldDrawlist.fadeAllOut(100);
+//				optikWorldDrawlist.fadeAllOut(100);
+				assoziationWorldDrawlist.fadeAllOut(100);
+//				fabricWorldDrawlist.fadeAllOut(100);
 
 //				optikWorldDrawlist.fadeAllOut(100);
 //				assoziationWorldDrawlist.fadeAllOut(100);
@@ -875,7 +878,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 //			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
-			"--display=1",
+			"--display=0",
 			"drole.DroleMain"
 		});
 	}

@@ -11,6 +11,7 @@ import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.GravityBehavior;
+import toxi.physics.constraints.BoxConstraint;
 import toxi.physics.constraints.ParticleConstraint;
 import toxi.physics.constraints.SphereConstraint;
 
@@ -32,7 +33,8 @@ public class RibbonGroup extends Drawable {
 	private VerletParticle pivot;
 	private VerletSpring[] pivotSprings;
 	
-	private ParticleConstraint sphereA, sphereB; 
+	private AABB worldBox;
+	private ParticleConstraint sphereA, sphereB, cubeConst;
 	
 	private boolean isPivoting = false;
 	
@@ -57,16 +59,19 @@ public class RibbonGroup extends Drawable {
 
 		// create collision sphere at origin, replace OUTSIDE with INSIDE to
 		// keep particles inside the sphere
-		ParticleConstraint sphereA = new SphereConstraint(new Sphere(new Vec3D(), sphereSize * .8f), SphereConstraint.OUTSIDE);
-		ParticleConstraint sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
+		sphereA = new SphereConstraint(new Sphere(new Vec3D(), sphereSize * .8f), SphereConstraint.OUTSIDE);
+		sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
+		
+		worldBox = new AABB(new Vec3D(), 1500);
+		cubeConst = new BoxConstraint(worldBox);
 
 		physics = new VerletPhysics();
 
 		// weak gravity along Y axis
 		physics.addBehavior(new GravityBehavior(new Vec3D(0, 0.01f, 0)));
 
-		// set bounding box to 110% of sphere radius
-		physics.setWorldBounds(new AABB(new Vec3D(), new Vec3D(sphereSize, sphereSize, sphereSize).scaleSelf(1.1f)));
+		// set bounding box to 100% of out virtual world
+		physics.setWorldBounds(worldBox);
 
 		VerletParticle prev = null;
 
@@ -126,19 +131,29 @@ public class RibbonGroup extends Drawable {
 		
 		/* First tighten all springs*/
 		for(VerletSpring s : physics.springs) {
-			s.setRestLength(0.1f);
-			s.setStrength(0.001f);
+			s.setRestLength(0.00001f);
+			s.setStrength(0.000001f);
 		}
 		
 		// Add springs between all joints and the pivot
 		pivotSprings = new VerletSpring[numPhysicParticles];
 		for(int i = 0; i < numPhysicParticles; i++) {
-			pivotSprings[i] = new VerletSpring(head, pivot, 5, 0.000001f);
+			pivotSprings[i] = new VerletSpring(physics.particles.get(i), pivot, 5, 0.000001f);
 			pivotSprings[i].lockB(true);
 			
 			physics.addSpring(pivotSprings[i]);
 		}
 		
+		for(int i = 0; i < physics.particles.size()-2; i++) {
+			VerletParticle p = physics.particles.get(i);
+			p.removeConstraint(sphereA);
+			p.removeConstraint(sphereB);
+			p.addConstraint(cubeConst);
+			
+			p.applyConstraints();
+			p.update();
+		}
+
 		head.unlock();
 		
 		isPivoting = true;
@@ -146,9 +161,12 @@ public class RibbonGroup extends Drawable {
 	
 	public void deletePivot() {
 		// First remove all pivot prings
+		/*
 		for(int i = 0; i < numPhysicParticles; i++) {
 			physics.removeSpring(pivotSprings[i]);
 		}
+		*/
+		
 		// Remove pivot
 		physics.removeParticle(pivot);
 		
@@ -159,6 +177,12 @@ public class RibbonGroup extends Drawable {
 		for(VerletParticle p : physics.particles) {
 			p.lock();
 			p.set(Vec3D.randomVector().scaleSelf(sphereSize * 2));
+
+			p.addConstraint(sphereA);
+			p.addConstraint(sphereB);
+			p.removeConstraint(cubeConst);
+			
+			p.applyConstraints();
 			p.update();
 			p.unlock();
 		}

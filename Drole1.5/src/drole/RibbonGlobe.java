@@ -49,10 +49,10 @@ public class RibbonGlobe extends Drawlist {
 		for(int x = 0; x < 5; x++) {
 			for(int y = 0; y < 5; y++) {
 				RibbonGroup r = (RibbonGroup)drawables.get(i++);
-				r.easeToScale(new PVector(.1f, .1f, .1f), 300);
+//				r.easeToScale(new PVector(.1f, .1f, .1f), 300);
 				//r.easeToPosition(-2500+(x*500), -1000, -2500+(y*500), 300);
-				r.easeToPosition(-1250+(x*500), -900, -2500+(y*500), 300);
-//				r.createPivotAt(0, 0, 0);
+//				r.easeToPosition(-1250+(x*500), -900, -2500+(y*500), 300);
+				r.createPivotAt(0, 0, 0);
 			}
 		}
 		
@@ -64,9 +64,9 @@ public class RibbonGlobe extends Drawlist {
 		
 		for(Drawable d : drawables) {
 			RibbonGroup r = (RibbonGroup)d;
-			r.easeToScale(new PVector(1f, 1f, 1f), 300);
-			r.easeToPosition(0f, 0f, 0f, 300);
-//			r.deletePivot();
+//			r.easeToScale(new PVector(1f, 1f, 1f), 300);
+//			r.easeToPosition(0f, 0f, 0f, 300);
+			r.deletePivot();
 		}
 		
 		menuMode = RibbonGlobe.MENU;		
