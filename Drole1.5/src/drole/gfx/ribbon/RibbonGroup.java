@@ -1,7 +1,9 @@
 package drole.gfx.ribbon;
 
-import drole.DroleMain;
-import drole.engine.Drawable;
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
+
+import drole.Main;
 import processing.core.PApplet;
 import processing.core.PVector;
 import toxi.geom.AABB;
@@ -38,10 +40,10 @@ public class RibbonGroup extends Drawable {
 	
 	private boolean isPivoting = false;
 	
-	public RibbonGroup(DroleMain parent, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
-		super(parent);
+	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
+		super(e);
 		
-		this.seed				= parent.random(1000);
+		this.seed				= e.p.random(1000);
 		this.numPhysicParticles	= numRibbons;
 		this.numQuadsPerRibbon	= numJointsPerRibbon;
 		this.sphereSize			= sphereSize;
@@ -54,7 +56,7 @@ public class RibbonGroup extends Drawable {
 		for (int i = 0; i < numRibbons; i++) {			
 //			PVector startPosition = new PVector(parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f));
 			PVector startPosition = new PVector(0, 0, 0);
-			particles[i] = new Ribbon3D(parent, startPosition, numJointsPerRibbon);
+			particles[i] = new Ribbon3D(e.p, startPosition, numJointsPerRibbon);
 		}
 
 		// create collision sphere at origin, replace OUTSIDE with INSIDE to
@@ -87,7 +89,7 @@ public class RibbonGroup extends Drawable {
 
 			if(prev != null) {
 				physics.addSpring(new VerletSpring(prev, p, REST_LENGTH * 5, 0.005f));
-				physics.addSpring(new VerletSpring(physics.particles.get((int) parent.random(i)), p, REST_LENGTH * 20, 0.00001f + i * .0005f));
+				physics.addSpring(new VerletSpring(physics.particles.get((int) e.p.random(i)), p, REST_LENGTH * 20, 0.00001f + i * .0005f));
 			}
 
 			prev = p;
@@ -103,8 +105,8 @@ public class RibbonGroup extends Drawable {
 			seed++;
 			
 			// update particle movement
-			head.set(parent.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * parent.width -parent. width / 2, parent.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(seed * .01f + 100) * parent.width - parent.width / 2);
-			physics.particles.get(physics.particles.size() - 1).set(parent.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * parent.width - parent.width / 2, parent.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(seed * .01f + 100) * parent.width - parent.width / 2);
+			head.set(e.p.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * g.width -g.width / 2, e.p.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * g.height - g.height / 2, e.p.noise(seed * .01f + 100) * g.width - g.width / 2);
+			physics.particles.get(physics.particles.size() - 1).set(e.p.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * g.width - g.width / 2, e.p.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * g.height - g.height / 2, e.p.noise(seed * .01f + 100) * g.width - g.width / 2);
 	
 			// also apply sphere constraint to head
 			// this needs to be done manually because if this particle is locked
@@ -197,31 +199,31 @@ public class RibbonGroup extends Drawable {
 	}
 	
 	public void draw() {
-		parent.g.pushStyle();
-		parent.g.pushMatrix();
+		g.pushStyle();
+		g.pushMatrix();
 
-			parent.startShader("JustColor");
+			e.startShader("JustColor");
 		
-			parent.g.translate(position.x, position.y, position.z);
-			parent.g.scale(scale.x, scale.y, scale.z);
+			g.translate(position.x, position.y, position.z);
+			g.scale(scale.x, scale.y, scale.z);
 			
-			parent.fill(200, 200, 200, fade*255);
-			parent.noStroke();
+			g.fill(200, 200, 200, fade*255);
+			g.noStroke();
 			
 			for (int i = 0; i < numPhysicParticles; i++) {
 				particles[i].drawMeshRibbon(30);
 			}
 		
-			parent.stopShader();
+			e.stopShader();
 			
-		parent.g.popMatrix();
-		parent.g.popStyle();
+		g.popMatrix();
+		g.popStyle();
 	}
 
 	public void drawAsLines() {
 		for (int i = 0; i < numPhysicParticles; i++) {
-			if(i != numPhysicParticles-1) particles[i].drawStrokeRibbon(parent.color(200, 200, 0), 5);
-			else particles[i].drawStrokeRibbon(parent.color(200, 0, 0), 5);
+			if(i != numPhysicParticles-1) particles[i].drawStrokeRibbon(g.color(200, 200, 0), 5);
+			else particles[i].drawStrokeRibbon(g.color(200, 0, 0), 5);
 		}
 	}
 	

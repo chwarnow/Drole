@@ -1,4 +1,4 @@
-package drole;
+package drole.gfx.ribbon;
 
 /**
  * 
@@ -10,9 +10,9 @@ package drole;
  * 
  */
 
-import drole.engine.Drawable;
-import drole.engine.Drawlist;
-import drole.gfx.ribbon.RibbonGroup;
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
+import com.madsim.engine.drawable.Drawlist;
 
 import processing.core.PVector;
 
@@ -31,19 +31,19 @@ public class RibbonGlobe extends Drawlist {
 	private int numRibbonHandler 				= 25;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 
-	public RibbonGlobe(DroleMain parent, PVector position, PVector dimension) {
-		super(parent);
+	public RibbonGlobe(Engine e, PVector position, PVector dimension) {
+		super(e);
 
 		position(position);
 		dimension(dimension);
 		
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(parent, dimension.x*scale.x, 10, 20, 100));
+			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 10, 20, 100));
 		}
 	}
 	
 	public void switchToLights() {
-		parent.logLn("[Globe]: Switching to mode LIGHTS!");
+		e.p.logLn("[Globe]: Switching to mode LIGHTS!");
 		
 		int i = 0;
 		for(int x = 0; x < 5; x++) {
@@ -60,7 +60,7 @@ public class RibbonGlobe extends Drawlist {
 	}
 	
 	public void switchToMenu() {
-		parent.logLn("[Globe]: Switching to mode MENU!");
+		e.p.logLn("[Globe]: Switching to mode MENU!");
 		
 		for(Drawable d : drawables) {
 			RibbonGroup r = (RibbonGroup)d;
@@ -78,17 +78,17 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {		
-		parent.g.pushStyle();
-		parent.g.pushMatrix();
+		g.pushStyle();
+		g.pushMatrix();
 
-			parent.startShader("JustColor");
+			e.startShader("JustColor");
 		
-			parent.g.translate(position.x, position.y, position.z);
-			parent.g.scale(scale.x, scale.y, scale.z);
-			parent.g.rotateY(smoothedRotation);
+			g.translate(position.x, position.y, position.z);
+			g.scale(scale.x, scale.y, scale.z);
+			g.rotateY(smoothedRotation);
 			
-			parent.fill(200, 200, 200, fade*255);
-			parent.noStroke();
+			g.fill(200, 200, 200, fade*255);
+			g.noStroke();
 			
 			for(Drawable r : drawables) {
 				r.update();
@@ -96,10 +96,10 @@ public class RibbonGlobe extends Drawlist {
 			}
 //			for(RibbonGroup r : ribbons) r.drawAsLines();
 		
-			parent.stopShader();
+			e.stopShader();
 			
-		parent.g.popMatrix();
-		parent.g.popStyle();
+		g.popMatrix();
+		g.popStyle();
 	}
 	
 }

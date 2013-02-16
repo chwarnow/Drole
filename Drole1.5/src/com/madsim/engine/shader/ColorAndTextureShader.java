@@ -1,4 +1,4 @@
-package drole.engine.shader;
+package com.madsim.engine.shader;
 
 import javax.media.opengl.GL;
 

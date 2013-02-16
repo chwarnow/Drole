@@ -1,4 +1,4 @@
-package drole.tracking;
+package com.madsim.tracking.kinect;
 
 public interface PositionTargetListener {
 	

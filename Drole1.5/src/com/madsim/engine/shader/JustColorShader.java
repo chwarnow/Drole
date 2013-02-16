@@ -1,4 +1,4 @@
-package drole.engine.shader;
+package com.madsim.engine.shader;
 
 import codeanticode.glgraphics.GLSLShader;
 import processing.core.PApplet;

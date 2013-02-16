@@ -4,14 +4,13 @@ import codeanticode.glgraphics.GLTexture;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
-import drole.DroleMain;
-import drole.engine.Drawable;
+import drole.Main;
 
 import com.christopherwarnow.bildwelten.utils.Ray;
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
 
 public class BildweltOptik extends Drawable {
-	
-	DroleMain parent;
 
 	PVector[] face = new PVector[3];
 	float ai = PApplet.TWO_PI/3;//angle increment
@@ -25,18 +24,16 @@ public class BildweltOptik extends Drawable {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 	
-	public BildweltOptik(DroleMain parent) {
-		super(parent);
-		// TODO Auto-generated constructor stub
-		this.parent = parent;
+	public BildweltOptik(Engine e) {
+		super(e);
 
 		position(position);
 		dimension(dimension);
 
-		font = parent.loadFont("data/fonts/HoeflerText-Regular-48.vlw");
-		parent.textFont(font);
+		font = e.p.loadFont("data/fonts/HoeflerText-Regular-48.vlw");
+		e.p.textFont(font);
 
-		optikAkteur = new GLTexture(parent, "data/images/optikAkteur.png");
+		optikAkteur = new GLTexture(e.p, "data/images/optikAkteur.png");
 	}
 
 	@Override
@@ -47,39 +44,39 @@ public class BildweltOptik extends Drawable {
 
 	@Override
 	public void draw() {
-		parent.g.pushStyle();
-		parent.g.pushMatrix();
+		g.pushStyle();
+		g.pushMatrix();
 
-		parent.g.translate(position.x, position.y-(fade*700), position.z);
-		parent.g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
-		parent.g.rotateY(smoothedRotation);
+		g.translate(position.x, position.y-(fade*700), position.z);
+		g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
+		g.rotateY(smoothedRotation);
 
 		float rectSize = 500;
 		
-		parent.startShader("JustColor");
+		e.startShader("JustColor");
 		
-		parent.tint(255);
-		parent.stroke(105, 90, 97);
-		parent.fill(199, 186, 177);
+		g.tint(255);
+		g.stroke(105, 90, 97);
+		g.fill(199, 186, 177);
 
-		parent.imageMode(parent.CORNERS);
+		g.imageMode(g.CORNERS);
 
-		parent.pushMatrix();
-		// parent.translate(parent.width/2, parent.height/2+200 - fade*500);
+		g.pushMatrix();
+		// g.translate(g.width/2, g.height/2+200 - fade*500);
 		// TODO:use parent rotation
-		// parent.rotateY(parent.radians(parent.mouseX));
-		// parent.rotateZ(.1f + parent.radians(-parent.mouseY)*.05f);
+		// g.rotateY(g.radians(g.mouseX));
+		// g.rotateZ(.1f + g.radians(-g.mouseY)*.05f);
 
 		//floor
-		parent.pushMatrix();		
-		parent.box(rectSize, 10, rectSize*0.6181f); // golden ratio
-		parent.popMatrix();
+		g.pushMatrix();		
+		g.box(rectSize, 10, rectSize*0.6181f); // golden ratio
+		g.popMatrix();
 
 		// wall
-		parent.pushMatrix();
+		g.pushMatrix();
 		// translate(-rectSize*(0.6181f*.33f), -rectSize*(0.6181f*.25f)-5, 0);
 		// box(10, rectSize*(0.6181f*.5f), rectSize*0.6181f); // golden ratio
-		parent.popMatrix();
+		g.popMatrix();
 
 		// rays
 
@@ -100,11 +97,11 @@ public class BildweltOptik extends Drawable {
 		PVector pointH = new PVector(pointG.x, -5, pointG.z);
 
 		// generic triangle a
-		PVector pointE = new PVector(-rectSize*(.6181f*.66f) + parent.cos(parent.frameCount*.005f)*30, -5, 0 + parent.sin(parent.frameCount*.0025f)*30);
+		PVector pointE = new PVector(-rectSize*(.6181f*.66f) + PApplet.cos(e.p.frameCount*.005f)*30, -5, 0 + PApplet.sin(e.p.frameCount*.0025f)*30);
 		// generic triangle b
-		PVector pointF = new PVector(-rectSize*(.6181f*.75f) + parent.cos(parent.frameCount*.01f)*10, -5, rectSize*.28f + parent.sin(parent.frameCount*.01f)*10);
+		PVector pointF = new PVector(-rectSize*(.6181f*.75f) + PApplet.cos(e.p.frameCount*.01f)*10, -5, rectSize*.28f + PApplet.sin(e.p.frameCount*.01f)*10);
 		// generic triangle c
-		PVector pointR = new PVector(-rectSize*(.6181f*.5f) + parent.cos(parent.frameCount*.001f)*30, -5, rectSize*.1f + parent.sin(parent.frameCount*.005f)*30);
+		PVector pointR = new PVector(-rectSize*(.6181f*.5f) + PApplet.cos(e.p.frameCount*.001f)*30, -5, rectSize*.1f + PApplet.sin(e.p.frameCount*.005f)*30);
 
 		// intersection g-f
 		PVector pointO = linePlaneIntersection(new Ray(pointG, pointF), face);
@@ -114,145 +111,145 @@ public class BildweltOptik extends Drawable {
 		PVector pointS = linePlaneIntersection(new Ray(pointG, pointR), face);
 
 		// g-e
-		parent.beginShape();
-		parent.vertex(pointG.x, pointG.y, pointG.z);
-		parent.vertex(pointE.x, pointE.y, pointE.z);
-		parent.endShape();
+		g.beginShape();
+		g.vertex(pointG.x, pointG.y, pointG.z);
+		g.vertex(pointE.x, pointE.y, pointE.z);
+		g.endShape();
 
 		// g-f
-		parent.beginShape();
-		parent.vertex(pointG.x, pointG.y, pointG.z);
-		parent.vertex(pointF.x, pointF.y, pointF.z);
-		parent.endShape();
+		g.beginShape();
+		g.vertex(pointG.x, pointG.y, pointG.z);
+		g.vertex(pointF.x, pointF.y, pointF.z);
+		g.endShape();
 
 		// g-r
-		parent.beginShape();
-		parent.vertex(pointG.x, pointG.y, pointG.z);
-		parent.vertex(pointR.x, pointR.y, pointR.z);
-		parent.endShape();
+		g.beginShape();
+		g.vertex(pointG.x, pointG.y, pointG.z);
+		g.vertex(pointR.x, pointR.y, pointR.z);
+		g.endShape();
 
 		// triangle on floor
-		parent.beginShape();
-		parent.vertex(pointF.x, pointF.y, pointF.z);
-		parent.vertex(pointE.x, pointE.y, pointE.z);
-		parent.vertex(pointR.x, pointR.y, pointR.z);
-		parent.vertex(pointF.x, pointF.y, pointF.z);
-		parent.endShape();
+		g.beginShape();
+		g.vertex(pointF.x, pointF.y, pointF.z);
+		g.vertex(pointE.x, pointE.y, pointE.z);
+		g.vertex(pointR.x, pointR.y, pointR.z);
+		g.vertex(pointF.x, pointF.y, pointF.z);
+		g.endShape();
 
 		// triangle on wall
-		parent.beginShape();
-		parent.vertex(pointO.x, pointO.y, pointO.z);
-		parent.vertex(pointN.x, pointN.y, pointN.z);
-		parent.vertex(pointS.x, pointS.y, pointS.z);
-		parent.vertex(pointO.x, pointO.y, pointO.z);
-		parent.endShape();
+		g.beginShape();
+		g.vertex(pointO.x, pointO.y, pointO.z);
+		g.vertex(pointN.x, pointN.y, pointN.z);
+		g.vertex(pointS.x, pointS.y, pointS.z);
+		g.vertex(pointO.x, pointO.y, pointO.z);
+		g.endShape();
 
 		// intersection example
 
-		parent.pushStyle();
+		g.pushStyle();
 
-		parent.strokeWeight(5);
-		parent.point(pointO.x,pointO.y,pointO.z);//point of ray-plane intersection
-		parent.point(pointN.x,pointN.y,pointN.z);//point of ray-plane intersection
-		parent.point(pointS.x,pointS.y,pointS.z);//point of ray-plane intersection
+		g.strokeWeight(5);
+		g.point(pointO.x,pointO.y,pointO.z);//point of ray-plane intersection
+		g.point(pointN.x,pointN.y,pointN.z);//point of ray-plane intersection
+		g.point(pointS.x,pointS.y,pointS.z);//point of ray-plane intersection
 
-		parent.popStyle();
+		g.popStyle();
 
 		// draw wall plane
-		parent.pushMatrix();
-		parent.fill(0, 20);
-		parent.beginShape();
-		parent.vertex(pointI.x+1, pointI.y, pointI.z);
-		parent.vertex(pointK.x+1, pointK.y, pointK.z);
-		parent.vertex(pointL.x+1, pointL.y, pointL.z);
-		parent.vertex(pointM.x+1, pointM.y, pointM.z);
-		parent.vertex(pointI.x+1, pointI.y, pointI.z);
-		parent.endShape();
-		parent.popMatrix();
+		g.pushMatrix();
+		g.fill(0, 20);
+		g.beginShape();
+		g.vertex(pointI.x+1, pointI.y, pointI.z);
+		g.vertex(pointK.x+1, pointK.y, pointK.z);
+		g.vertex(pointL.x+1, pointL.y, pointL.z);
+		g.vertex(pointM.x+1, pointM.y, pointM.z);
+		g.vertex(pointI.x+1, pointI.y, pointI.z);
+		g.endShape();
+		g.popMatrix();
 		
-		parent.stopShader();
+		e.stopShader();
 		
-		parent.startShader("ColorAndTexture");
+		e.startShader("ColorAndTexture");
 		
-		parent.fill(0);
+		g.fill(0);
 		
 		// texts
 		float textOffset = 13;
-		parent.noStroke();
-		parent.fill(0);
-		parent.textSize(12);
+		g.noStroke();
+		g.fill(0);
+		g.textSize(12);
 
-		parent.pushMatrix();
-		parent.translate(pointI.x-textOffset, pointI.y, pointI.z);
-		parent.text("I", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointI.x-textOffset, pointI.y, pointI.z);
+		g.text("I", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointK.x-textOffset, pointK.y, pointK.z);
-		parent.text("K", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointK.x-textOffset, pointK.y, pointK.z);
+		g.text("K", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointL.x-textOffset, pointL.y, pointL.z);
-		parent.text("L", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointL.x-textOffset, pointL.y, pointL.z);
+		g.text("L", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointM.x-textOffset, pointM.y, pointM.z);
-		parent.text("M", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointM.x-textOffset, pointM.y, pointM.z);
+		g.text("M", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointG.x-textOffset, pointG.y, pointG.z);
-		parent.text("G", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointG.x-textOffset, pointG.y, pointG.z);
+		g.text("G", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointH.x-textOffset, pointH.y, pointH.z);
-		parent.text("H", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointH.x-textOffset, pointH.y, pointH.z);
+		g.text("H", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointO.x-textOffset, pointO.y, pointO.z);
-		parent.text("O", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointO.x-textOffset, pointO.y, pointO.z);
+		g.text("O", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointN.x-textOffset, pointN.y, pointN.z);
-		parent.text("N", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointN.x-textOffset, pointN.y, pointN.z);
+		g.text("N", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointS.x-textOffset, pointS.y, pointS.z);
-		parent.text("S", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointS.x-textOffset, pointS.y, pointS.z);
+		g.text("S", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointF.x, pointF.y, pointF.z);
-		parent.text("F", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointF.x, pointF.y, pointF.z);
+		g.text("F", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointE.x, pointE.y, pointE.z);
-		parent.text("E", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointE.x, pointE.y, pointE.z);
+		g.text("E", 0, 0);
+		g.popMatrix();
 
-		parent.pushMatrix();
-		parent.translate(pointR.x, pointR.y, pointR.z);
-		parent.text("R", 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointR.x, pointR.y, pointR.z);
+		g.text("R", 0, 0);
+		g.popMatrix();
 
 		// sehender akteur
-		parent.pushMatrix();
-		parent.translate(pointG.x-40, pointG.y-12, pointG.z);
-		parent.scale(.455f);
-		parent.image(optikAkteur, 0, 0);
-		parent.popMatrix();
+		g.pushMatrix();
+		g.translate(pointG.x-40, pointG.y-12, pointG.z);
+		g.scale(.455f);
+		g.image(optikAkteur, 0, 0);
+		g.popMatrix();
 
-		parent.popMatrix();
+		g.popMatrix();
 
-		parent.g.popStyle();
-		parent.g.popMatrix();
+		g.popStyle();
+		g.popMatrix();
 
 	}
 

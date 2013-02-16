@@ -1,37 +1,39 @@
 package drole;
 
-import java.util.ArrayList;
 
 import codeanticode.glgraphics.GLConstants;
 import codeanticode.glgraphics.GLGraphics;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
+import com.madsim.engine.Engine;
+import com.madsim.engine.EngineApplet;
+import com.madsim.engine.drawable.Drawable;
+import com.madsim.engine.drawable.Drawlist;
+import com.madsim.engine.drawable.file.Image;
+import com.madsim.engine.drawable.geom.Ellipse;
+import com.madsim.engine.optik.OffCenterOptik;
+import com.madsim.engine.optik.StdOptik;
+import com.madsim.engine.shader.ColorAndTextureShader;
+import com.madsim.engine.shader.JustColorShader;
+import com.madsim.tracking.kinect.PositionTarget;
+import com.madsim.tracking.kinect.PositionTargetListener;
+import com.madsim.tracking.kinect.TargetBox3D;
+import com.madsim.tracking.kinect.TargetDetection;
+import com.madsim.tracking.kinect.TargetSphere;
 
-import drole.engine.Drawable;
-import drole.engine.Drawlist;
-import drole.engine.Engine;
-import drole.engine.optik.OffCenterOptik;
-import drole.engine.optik.StdOptik;
 import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.fabric.BildweltFabric;
-import drole.engine.shader.ColorAndTextureShader;
-import drole.engine.shader.JustColorShader;
+import drole.gfx.ribbon.RibbonGlobe;
 import drole.gfx.room.Room;
 import drole.settings.Settings;
-import drole.tracking.PositionTarget;
-import drole.tracking.PositionTargetListener;
-import drole.tracking.TargetBox3D;
-import drole.tracking.TargetDetection;
-import drole.tracking.TargetSphere;
 
 import processing.core.PApplet;
 import processing.core.PFont;
-import processing.core.PImage;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
 import SimpleOpenNI.*;
 
-public class DroleMain extends PApplet implements PositionTargetListener {
+public class Main extends EngineApplet implements PositionTargetListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,7 +48,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= false;
+	private boolean FREEMODE			= true;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -70,13 +72,6 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 	/* Users Head */
 	private PVector head = new PVector(0, 0, 3000);
-	
-	/* Logging */
-	private ArrayList<String> logs = new ArrayList<String>();
-	private boolean newLine = true;
-	
-	/* Mask */
-	private PImage mask;
 	
 	/* Engine */
 	private Engine engine;
@@ -135,8 +130,6 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		logLn("Executing at : '"+System.getProperty("user.dir").replace("\\", "/")+"'");
 		
 		logLn("Initializing Engine ...");
-			mask = loadImage("data/images/drole-mask.png");
-		
 			engine = new Engine(this);
 			
 			justColorShader = new JustColorShader(this);
@@ -161,7 +154,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			
 			engine.addOptik("OffCenter", offCenterOptik);
 			
-			overlayDrawlist = new Drawlist(this);
+			overlayDrawlist = new Drawlist(engine);
 			engine.addDrawlist("Overlay", overlayDrawlist);
 		logLn("Engine is setup!");
 			
@@ -209,30 +202,6 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		
 	}
 	
-	private void truncateLog() {
-		if(logs.size() > Settings.MAX_LOG_ENTRYS) logs.remove(0);
-	}
-	
-	public void logLn(String msg) {
-		logs.add(msg);
-		println(msg);
-		newLine = true;
-		truncateLog();
-	}
-
-	public void log(String msg) {
-		if(newLine) {
-			logs.add(msg);
-		} else {
-			String newLog = logs.get(logs.size()-1)+msg;
-			logs.set(logs.size()-1, newLog);
-		}
-		
-		print(msg);
-		newLine = false;
-		truncateLog();
-	}
-	
 	public void startShader(String name) {
 		engine.startShader(name);
 	}
@@ -268,9 +237,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 
 	private void setupRoom() {
 		logLn("Initializing Room ...");
-		roomDrawlist = new Drawlist(this);
+		roomDrawlist = new Drawlist(engine);
 		
-		room = new Room(this, "data/room/drolebox2/panorama03.");
+		room = new Room(engine, "data/room/drolebox2/panorama03.");
 		room.position(0, -950, 0);
 		
 		roomDrawlist.add(room);
@@ -280,7 +249,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-		globe = new RibbonGlobe(this, globePosition, globeSize);
+		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		
 		engine.addDrawlist("Globe", globe);
 	}	
@@ -289,8 +258,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 		logLn("Initializing world 'Optik' ...");
 		
 		// testwise optik scene
-		bildweltOptik = new BildweltOptik(this);
-		optikWorldDrawlist = new Drawlist(this);
+		bildweltOptik = new BildweltOptik(engine);
+		optikWorldDrawlist = new Drawlist(engine);
 		optikWorldDrawlist.add(bildweltOptik);
 		
 		optikWorldDrawlist.hideAll();
@@ -298,9 +267,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 	
 	private void setupAssoziationWorld() {
-		bildweltAssoziation = new BildweltAssoziation(this);
+		bildweltAssoziation = new BildweltAssoziation(engine);
 		
-		assoziationWorldDrawlist = new Drawlist(this);
+		assoziationWorldDrawlist = new Drawlist(engine);
 		assoziationWorldDrawlist.add(bildweltAssoziation);
 		
 		assoziationWorldDrawlist.hideAll();
@@ -308,9 +277,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 	
 	private void setupFabricWorld() {
-		bildweltFabric = new BildweltFabric(this);
+		bildweltFabric = new BildweltFabric(engine);
 		
-		fabricWorldDrawlist = new Drawlist(this);
+		fabricWorldDrawlist = new Drawlist(engine);
 		fabricWorldDrawlist.add(bildweltFabric);
 		
 		fabricWorldDrawlist.hideAll();
@@ -318,9 +287,9 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	private void setupLogo() {
-		logoGrey = new Image(this, "images/logo-grey.png");
-		logoColor = new Image(this, "images/logo-color.png");
-		logoBG = new Ellipse(this, 250, 250, 90);
+		logoGrey = new Image(engine, "images/logo-grey.png");
+		logoColor = new Image(engine, "images/logo-color.png");
+		logoBG = new Ellipse(engine, 250, 250, 90);
 	}
 
 	private void setViewAlpha() {
@@ -340,8 +309,8 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	public void draw() {
-//		GLGraphics renderer = (GLGraphics)g;
-//		renderer.beginGL();
+		GLGraphics renderer = (GLGraphics)g;
+		renderer.beginGL();
 		
 		// update the cam
 		if(!FREEMODE) context.update();
@@ -500,7 +469,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			}
 		}
 		
-//		renderer.endGL();
+		renderer.endGL();
 	}
 
 	private void drawLogo() {
@@ -820,26 +789,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 	}
 
 	public void drawMainScene() {
-		pushMatrix();
-		pushStyle();
-		
-			engine.update("Room");
-			engine.draw("Room");
-		
-			engine.update("Globe");
-			engine.draw("Globe");
-
-			engine.update("OptikWorld");
-			engine.draw("OptikWorld");
-			
-//			engine.update("AssoziationWorld");
-//			engine.draw("AssoziationWorld");
-			
-			engine.update("FabricWorld");
-			engine.draw("FabricWorld");
-			
-		popMatrix();
-		popStyle();
+		engine.draw();
 	}
 
 	private void drawRealWorldScreen() {
@@ -879,7 +829,7 @@ public class DroleMain extends PApplet implements PositionTargetListener {
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 			"--display=0",
-			"drole.DroleMain"
+			"drole.Main"
 		});
 	}
 

@@ -1,15 +1,15 @@
-package drole.engine;
+package com.madsim.engine.drawable;
 
 import java.util.ArrayList;
 
-import drole.DroleMain;
+import com.madsim.engine.Engine;
 
 public class Drawlist extends Drawable {
 
 	protected ArrayList<Drawable> drawables = new ArrayList<Drawable>();
 	
-	public Drawlist(DroleMain parent) {
-		super(parent);
+	public Drawlist(Engine e) {
+		super(e);
 	}
 
 	private static final long serialVersionUID = 1L;

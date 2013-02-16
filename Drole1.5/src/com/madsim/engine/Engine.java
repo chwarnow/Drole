@@ -1,22 +1,22 @@
-package drole.engine;
+package com.madsim.engine;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.media.opengl.GL;
+import com.madsim.engine.drawable.Drawable;
+import com.madsim.engine.drawable.Drawlist;
+import com.madsim.engine.optik.Optik;
+import com.madsim.engine.shader.Shader;
 
 import codeanticode.glgraphics.GLGraphics;
-import codeanticode.glgraphics.GLTexture;
-
-import drole.DroleMain;
-import drole.engine.optik.Optik;
-import drole.engine.shader.Shader;
 
 public class Engine {
 
-	private DroleMain p;
+	public EngineApplet p;
 	
-	private HashMap<String, Drawlist> drawlists = new HashMap<String, Drawlist>();
+	public GLGraphics g;
+	
+	private HashMap<String, Drawable> drawables = new HashMap<String, Drawable>();
 	
 	private HashMap<String, Optik> optiks = new HashMap<String, Optik>();
 	private String activeOptik;
@@ -24,13 +24,12 @@ public class Engine {
 	private HashMap<String, Shader> shaders = new HashMap<String, Shader>();
 	private String activeShader;
 	
-	private GLTexture mask;
-	
-	public Engine(DroleMain p) {
+	public Engine(EngineApplet p) {
 		this.p = p;
+		refreshGLG();
+		
 		p.logLn("[Engine]: Setting rendering defaults.");
-		mask = new GLTexture(p, "data/images/drole-mask.png");
-		p.smooth();
+		g.smooth();
 	}
 	
 	public void addOptik(String name, Optik optik) {
@@ -49,18 +48,23 @@ public class Engine {
 	}
 	
 	public void addDrawlist(String name, Drawlist dl) {
-		this.drawlists.put(name, dl);
+		this.drawables.put(name, dl);
 	}
 	
 	public void update(String name) {
-		Drawlist dl = drawlists.get(name);
-		if(dl.mode() != Drawable.OFF_SCREEN) dl.update();
+		Drawable dl = drawables.get(name);
+		if(
+			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
+			(dl.updateMode() == Drawable.ONLY_ONSCREEN && dl.mode() != Drawable.OFF_SCREEN)
+		) {
+			dl.setG(g);
+			dl.update();
+		}
 	}
 	
 	public void updateAll() {
-		for(Entry<String, Drawlist> dle : drawlists.entrySet()) {
-			Drawlist dl = dle.getValue();
-			if(dl.mode() != Drawable.OFF_SCREEN) dl.update();
+		for(Entry<String, Drawable> dle : drawables.entrySet()) {
+			update(dle.getKey());
 		}
 	}
 	
@@ -78,20 +82,25 @@ public class Engine {
 		shaders.get(activeShader).stop();
 	}
 	
-	public void draw(String name) {
-		setOptik();
-		
-		Drawlist dl = drawlists.get(name);
-		if(dl.mode() != Drawable.OFF_SCREEN) dl.draw();
-	}	
+	public void refreshGLG() {
+		g = (GLGraphics)p.g;
+	}
 	
-	public void drawAll() {
+	public void draw() {
+		refreshGLG();
+		
+		g.beginGL();
+		
+		updateAll();
+		
 		setOptik();
 		
-		for(Entry<String, Drawlist> dle : drawlists.entrySet()) {
-			Drawlist dl = dle.getValue();
-			if(dl.mode() != Drawable.OFF_SCREEN) dl.draw();
-		}
+			for(Entry<String, Drawable> dle : drawables.entrySet()) {
+				Drawable dl = dle.getValue();
+				if(dl.mode() != Drawable.OFF_SCREEN) dl.draw();
+			}
+		
+		g.endGL();
 	}
 	
 }

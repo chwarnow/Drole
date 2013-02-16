@@ -1,7 +1,8 @@
 package drole.gfx.room;
 
-import drole.DroleMain;
-import drole.engine.Drawable;
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
+
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -50,19 +51,19 @@ public class Room extends Drawable {
 	
 	private PImage backTex, leftTex, rightTex, bottomTex, topTex;   // texture images
 	
-	public Room(DroleMain parent, String fileBasename) {
-		super(parent);
+	public Room(Engine e, String fileBasename) {
+		super(e);
 		
 		loadSkybox(fileBasename, ".jpg");
 	}
 	
 	// load six skybox images as cube texture
 	void loadSkybox(String skyboxName, String fExt) {
-		backTex 	= parent.loadImage(skyboxName + "back" + fExt);
-		leftTex 	= parent.loadImage(skyboxName + "left" + fExt);
-		rightTex 	= parent.loadImage(skyboxName + "right" + fExt);
-		bottomTex 	= parent.loadImage(skyboxName + "bottom" + fExt);
-		topTex 		= parent.loadImage(skyboxName + "top" + fExt);
+		backTex 	= e.p.loadImage(skyboxName + "back" + fExt);
+		leftTex 	= e.p.loadImage(skyboxName + "left" + fExt);
+		rightTex 	= e.p.loadImage(skyboxName + "right" + fExt);
+		bottomTex 	= e.p.loadImage(skyboxName + "bottom" + fExt);
+		topTex 		= e.p.loadImage(skyboxName + "top" + fExt);
 	}
 	
 	// Assign six texture to the six cube faces
@@ -76,44 +77,44 @@ public class Room extends Drawable {
 	
 	// create a cube side given by 4 edge vertices and a texture
 	private void TexturedCubeSide(PVector P1, PVector P2, PVector P3, PVector P4, PVector normal, PImage tex) {
-		parent.beginShape(PGraphics.QUADS);
-			parent.texture(tex);
-			parent.normal(normal.x, normal.y, normal.z);
-			parent.vertex(P1.x, P1.y, P1.z, 0, 0);
-			parent.vertex(P2.x, P2.y, P2.z, 1, 0);
-			parent.vertex(P3.x, P3.y, P3.z, 1, 1);
-			parent.vertex(P4.x, P4.y, P4.z, 0, 1);
-		parent.endShape();
+		g.beginShape(PGraphics.QUADS);
+			g.texture(tex);
+			g.normal(normal.x, normal.y, normal.z);
+			g.vertex(P1.x, P1.y, P1.z, 0, 0);
+			g.vertex(P2.x, P2.y, P2.z, 1, 0);
+			g.vertex(P3.x, P3.y, P3.z, 1, 1);
+			g.vertex(P4.x, P4.y, P4.z, 0, 1);
+		g.endShape();
 	}
 	
 	@Override
 	public void draw() {
-		parent.pushStyle();
-		parent.pushMatrix();
+		g.pushStyle();
+		g.pushMatrix();
 		
-			parent.startShader("ColorAndTexture");
+			e.startShader("ColorAndTexture");
 		
-			parent.noFill();
-			parent.noStroke();
+			g.noFill();
+			g.noStroke();
 			
-			parent.lights();
+			g.lights();
 			
-			parent.translate(position.x, position.y, position.z);
+			g.translate(position.x, position.y, position.z);
 			
-			parent.pointLight(255, 255, 204, 0, 0, 0);
+			g.pointLight(255, 255, 204, 0, 0, 0);
 			
-			parent.textureMode(PApplet.CORNERS);
+			g.textureMode(PApplet.CORNERS);
 			
-			parent.fill(255);
-			parent.noStroke();
-			parent.tint(255, 255);
+			g.fill(255);
+			g.noStroke();
+			g.tint(255, 255);
 			
 			TexturedCube();
 		
-			parent.stopShader();
+			e.stopShader();
 			
-		parent.popMatrix();
-		parent.popStyle();
+		g.popMatrix();
+		g.popStyle();
 	}
 	
 }

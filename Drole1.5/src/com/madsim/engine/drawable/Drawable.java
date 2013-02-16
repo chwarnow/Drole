@@ -1,26 +1,36 @@
-package drole.engine;
+package com.madsim.engine.drawable;
 
-import drole.DroleMain;
+import codeanticode.glgraphics.GLGraphics;
+
+import com.madsim.engine.Engine;
+
 import penner.easing.Quad;
 import processing.core.PApplet;
 import processing.core.PVector;
 
 public abstract class Drawable {
 
-	public static String OFF_SCREEN 	= "OFF_SCREEN";
-	public static String ON_SCREEN 		= "ON_SCREEN";
-	public static String FADING_IN 		= "FADING_IN";
-	public static String FADING_OUT 	= "FADING_OUT";
+	protected Engine e;
+	protected GLGraphics g;
 	
-	protected String MODE = ON_SCREEN;
+	public static String OFF_SCREEN 		= 	"OFF_SCREEN";
+	public static String ON_SCREEN 			= 	"ON_SCREEN";
+	public static String FADING_IN 			= 	"FADING_IN";
+	public static String FADING_OUT 		= 	"FADING_OUT";
+	public static String ONLY_ONSCREEN 		= 	"ONLY_ONSCREEN";
+	public static String ONANDOFFSCREEN 	= 	"ONANDOFFSCREEN";
 	
-	private float fadeTime = 1;
-	private float currentFadeTime = 1;
+	protected String MODE 					= 	ON_SCREEN;
+	protected String UPDATE_MODE			= 	ONLY_ONSCREEN;
+	
+	public String shader					=	"";
+	public boolean useShader				= 	false;
+	
+	private float fadeTime 					= 	1;
+	private float currentFadeTime 			= 	1;
 
-	protected DroleMain parent;
-
-	protected float fade = 1;
-	public boolean 	visible = true;
+	protected float fade 					= 	1;
+	public boolean 	visible 				= 	true;
 	
 	protected PVector 	position 			= 	new PVector(0, 0, 0);
 	protected PVector 	dimension 			= 	new PVector(0, 0, 0);
@@ -39,10 +49,16 @@ public abstract class Drawable {
 	private long 		scaleEaseMillis		=	0;
 	private long 		scaleEaseTime		=	0;
 
-	public Drawable(DroleMain parent) {
-		this.parent = parent;
+	
+	public Drawable(Engine e) {
+		this.e = e;
+		setG(e.g);
 	}
 
+	public void setG(GLGraphics g) {
+		this.g = g;
+	}
+	
 	public String mode() {
 		return MODE;
 	}
@@ -51,6 +67,23 @@ public abstract class Drawable {
 		this.MODE = MODE;
 	}
 
+	public String updateMode() {
+		return UPDATE_MODE;
+	}
+
+	public void updateMode(String UPDATE_MODE) {
+		this.UPDATE_MODE = UPDATE_MODE;
+	}
+	
+	protected void useShader(String shader) {
+		this.shader = shader;
+		useShader = true;
+	}
+	
+	protected void noShader() {
+		useShader = false;
+	}
+	
 	public PVector position() {
 		return position;
 	}

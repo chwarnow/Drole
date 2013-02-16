@@ -1,4 +1,4 @@
-package drole;
+package drole.tests.globe;
 
 /**
  * 
@@ -16,8 +16,11 @@ import java.util.Iterator;
 import com.christopherwarnow.bildwelten.DroleWelt;
 import com.christopherwarnow.bildwelten.Drole;
 import com.christopherwarnow.bildwelten.SpherePrimitive;
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
 
-import drole.engine.Drawable;
+import drole.Main;
+
 
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -66,8 +69,8 @@ public class Globe extends Drawable {
 	// ------ circular mask ------
 	PImage circularMask;
 
-	public Globe(DroleMain parent, PVector position, PVector dimension, PImage globeTexture) {
-		super(parent);
+	public Globe(Engine e, PVector position, PVector dimension, PImage globeTexture) {
+		super(e);
 
 		position(position);
 		dimension(dimension);
@@ -78,15 +81,15 @@ public class Globe extends Drawable {
 		// generate drole swarms
 		droles = new DroleWelt[droleAmount];
 		for(int i=0;i<droleAmount;i++) {
-			droles[i] = new DroleWelt(parent, drolesPerWelt, dimension.x);
+			droles[i] = new DroleWelt(e.p, drolesPerWelt, dimension.x);
 		}
 		
 		// cube environment
-		cubeTex = parent.loadImage("data/images/boxTexture.jpg");
-		cubeEnvironment = new SpherePrimitive(parent, new PVector(), 1500, cubeTex, 32);
+		cubeTex = e.p.loadImage("data/images/boxTexture.jpg");
+		cubeEnvironment = new SpherePrimitive(e.p, new PVector(), 1500, cubeTex, 32);
 		
 		// circular mask
-		circularMask = parent.loadImage("data/images/circularMaskWhite.png");
+		circularMask = e.p.loadImage("data/images/circularMaskWhite.png");
 	}
 
 	@Override
@@ -102,13 +105,13 @@ public class Globe extends Drawable {
 
 	@Override
 	public void draw() {		
-		parent.g.pushStyle();
+		g.pushStyle();
 		
-//		parent.g.lights();
+//		g.lights();
 
-		//parent.g.tint(255, PApplet.map(fade, 0, 1, 0, 255));	
+		//g.tint(255, PApplet.map(fade, 0, 1, 0, 255));	
 
-		parent.g.pushMatrix();
+		g.pushMatrix();
 		// position, scale, rotation and dimension must be respected!
 		/*
 		System.out.println(position.toString());
@@ -116,92 +119,92 @@ public class Globe extends Drawable {
 		System.out.println(rotation+" : "+smoothedRotation);
 		*/
 		
-		parent.g.translate(position.x, position.y, position.z);
-		parent.g.scale(scale.x, scale.y, scale.z);
-		parent.g.rotateY(smoothedRotation);//rotation);
-//		parent.g.rotateY(rotation);
+		g.translate(position.x, position.y, position.z);
+		g.scale(scale.x, scale.y, scale.z);
+		g.rotateY(smoothedRotation);//rotation);
+//		g.rotateY(rotation);
 
 		/* ACTUAL APPEARANCE OF THE OBJECT */
-//		parent.g.pointLight(255, 255, 255, position.x+500, position.y+1000, position.z+500);
-//		parent.g.pointLight(255, 255, 255, position.x-500, position.y-1000, position.z+200);
+//		g.pointLight(255, 255, 255, position.x+500, position.y+1000, position.z+500);
+//		g.pointLight(255, 255, 255, position.x-500, position.y-1000, position.z+200);
 
-		parent.g.noStroke();
-		parent.g.fill(200);
+		g.noStroke();
+		g.fill(200);
 
 		// render the cube scene
-		parent.g.tint(255, 255);
+		g.tint(255, 255);
 		
 		// box
 		
 		// front
 		float mainSize = 3000;
 		/*
-		parent.g.pushMatrix();
-		parent.g.translate(-mainSize/2, -mainSize/2, mainSize/2);
-		parent.image(circularMask, 0, 0, mainSize, mainSize);
-		parent.g.popMatrix();
+		g.pushMatrix();
+		g.translate(-mainSize/2, -mainSize/2, mainSize/2);
+		e.p.image(circularMask, 0, 0, mainSize, mainSize);
+		g.popMatrix();
 		*/
 		
 		// back
-		parent.g.pushStyle();
-		parent.g.imageMode(parent.CORNER);
+		g.pushStyle();
+		g.imageMode(e.p.CORNER);
 		
-		parent.g.pushMatrix();
+		g.pushMatrix();
 		
-		parent.g.translate(0, 0, -mainSize*.75f);
+		g.translate(0, 0, -mainSize*.75f);
 		
-		parent.g.pushMatrix();
-		parent.g.translate(-mainSize/2, -mainSize/2, -mainSize/2);
-		parent.image(cubeTex, 0, 0, mainSize, mainSize);
-		parent.g.popMatrix();
+		g.pushMatrix();
+			g.translate(-mainSize/2, -mainSize/2, -mainSize/2);
+			g.image(cubeTex, 0, 0, mainSize, mainSize);
+		g.popMatrix();
 		
 		//left
-		parent.g.pushMatrix();
-		parent.g.translate(-mainSize/2, -mainSize/2, mainSize/2);
-		parent.g.rotateY(parent.HALF_PI);
-		parent.image(cubeTex, 0, 0, mainSize, mainSize);
-		parent.g.popMatrix();
+		g.pushMatrix();
+			g.translate(-mainSize/2, -mainSize/2, mainSize/2);
+			g.rotateY(e.p.HALF_PI);
+			g.image(cubeTex, 0, 0, mainSize, mainSize);
+		g.popMatrix();
 		
 		//right
-		parent.g.pushMatrix();
-		parent.g.translate(mainSize/2, -mainSize/2, mainSize/2);
-		parent.g.rotateY(parent.HALF_PI);
-		parent.image(cubeTex, 0, 0, mainSize, mainSize);
-		parent.g.popMatrix();
+		g.pushMatrix();
+		g.translate(mainSize/2, -mainSize/2, mainSize/2);
+		g.rotateY(e.p.HALF_PI);
+		e.p.image(cubeTex, 0, 0, mainSize, mainSize);
+		g.popMatrix();
 		
 		//top
-		parent.g.pushMatrix();
-		parent.g.translate(-mainSize/2, -mainSize/2, -mainSize/2);
-		parent.g.rotateX(parent.HALF_PI);
-		parent.image(cubeTex, 0, 0, mainSize, mainSize);
-		parent.g.popMatrix();
+		g.pushMatrix();
+		g.translate(-mainSize/2, -mainSize/2, -mainSize/2);
+		g.rotateX(e.p.HALF_PI);
+		e.p.image(cubeTex, 0, 0, mainSize, mainSize);
+		g.popMatrix();
 		
 		//bottom
-		parent.g.pushMatrix();
-		parent.g.translate(-mainSize/2, mainSize/2, -mainSize/2);
-		parent.g.rotateX(parent.HALF_PI);
-		parent.image(cubeTex, 0, 0, mainSize, mainSize);
-		parent.g.popMatrix();
+		g.pushMatrix();
+		g.translate(-mainSize/2, mainSize/2, -mainSize/2);
+		g.rotateX(e.p.HALF_PI);
+		e.p.image(cubeTex, 0, 0, mainSize, mainSize);
+		g.popMatrix();
 		
-		parent.g.popMatrix();
+		g.popMatrix();
 		
-		parent.g.popStyle();
+		g.popStyle();
 		
-		//parent.hint(parent.ENABLE_DEPTH_TEST);
+		//e.p.hint(e.p.ENABLE_DEPTH_TEST);
 		/*
-		parent.g.pushMatrix();
-		parent.g.translate(0, 0, -1500);
+		g.pushMatrix();
+		g.translate(0, 0, -1500);
 		cubeEnvironment.draw();
-		parent.g.popMatrix();
+		g.popMatrix();
 		*/
 		// dimension must be respected!
-		parent.g.tint(255, 255);
+		g.tint(255, 255);
 		texturedSphere(dimension.x, globeTexture);
 
-		parent.g.stroke(120);
-		parent.g.noFill();
+		g.stroke(120);
+		g.noFill();
 
-		// parent.g.sphere(dimension.x+2);
+		// g.sphere(dimension.x+2);
 		
 		/* END APPEARANCE */
 
@@ -220,30 +223,30 @@ public class Globe extends Drawable {
 		for(int i=0;i<droleAmount;i++) {
 			float myRotation = menuRotation - 3.1414f*.5f + i*.3f;
 			
-//			System.out.println(i + " " + parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation));
+//			System.out.println(i + " " + e.p.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation));
 
-			if(parent.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation) < .05f) {
-				parent.g.fill(55,0,0);
+			if(e.p.abs((startRotation + (droleAmount-i)*.15f) - smoothedRotation) < .05f) {
+				g.fill(55,0,0);
 				droles[i].isActive(true);
 			} else {
-				parent.g.noFill();
+				g.noFill();
 				droles[i].isActive(false);
 			}
-			parent.g.stroke(50,0,0);
-			parent.g.strokeWeight(1);
+			g.stroke(50,0,0);
+			g.strokeWeight(1);
 			
-			parent.g.pushMatrix();
-			parent.g.rotateY(myRotation);
-			parent.g.translate(0, 0, dimension.x*.5f);
-			parent.g.ellipse(0,0, 100, 100);
-			parent.g.popMatrix();
+			g.pushMatrix();
+			g.rotateY(myRotation);
+			g.translate(0, 0, dimension.x*.5f);
+			g.ellipse(0,0, 100, 100);
+			g.popMatrix();
 		}
 	*/
-		parent.g.popMatrix();
+		g.popMatrix();
 
-//		parent.g.noLights();
+//		g.noLights();
 
-		parent.g.popStyle();
+		g.popStyle();
 	}
 
 	private void initializeSphere(int res)
@@ -295,19 +298,19 @@ public class Globe extends Drawable {
 	void texturedSphere(float r, PImage t) {
 		int v1,v11,v2;
 		r = (r + 240f ) * 0.33f;
-		parent.g.beginShape(PApplet.TRIANGLE_STRIP);
-		parent.g.texture(t);
+		e.g.beginShape(PApplet.TRIANGLE_STRIP);
+		e.g.texture(t);
 		float iu=(float)(t.width-1)/(sDetail);
 		float iv=(float)(t.height-1)/(sDetail);
 		float u=0,v=iv;
 		for(int i = 0; i < sDetail; i++) {
-			parent.g.vertex(0, -r, 0,u,0);
-			parent.g.vertex(sphereX[i]*r, sphereY[i]*r, sphereZ[i]*r, u, v);
+			e.g.vertex(0, -r, 0,u,0);
+			e.g.vertex(sphereX[i]*r, sphereY[i]*r, sphereZ[i]*r, u, v);
 		    u+=iu;
 		}
-		parent.g.vertex(0, -r, 0,u,0);
-		parent.g.vertex(sphereX[0]*r, sphereY[0]*r, sphereZ[0]*r, u, v);
-		parent.g.endShape();   
+		e.g.vertex(0, -r, 0,u,0);
+		e.g.vertex(sphereX[0]*r, sphereY[0]*r, sphereZ[0]*r, u, v);
+		e.g.endShape();   
 		  
 		  // Middle rings
 		  int voff = 0;
@@ -316,35 +319,35 @@ public class Globe extends Drawable {
 		    voff += sDetail;
 		    v2=voff;
 		    u=0;
-		    parent.g.beginShape(PApplet.TRIANGLE_STRIP);
-		    parent.g.texture(t);
+		    e.g.beginShape(PApplet.TRIANGLE_STRIP);
+		    e.g.texture(t);
 		    for (int j = 0; j < sDetail; j++) {
-		    	parent.g.vertex(sphereX[v1]*r, sphereY[v1]*r, sphereZ[v1++]*r, u, v);
-		    	parent.g.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2++]*r, u, v+iv);
+		    	e.g.vertex(sphereX[v1]*r, sphereY[v1]*r, sphereZ[v1++]*r, u, v);
+		    	e.g.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2++]*r, u, v+iv);
 		      u+=iu;
 		    }
 		  
 		    // Close each ring
 		    v1=v11;
 		    v2=voff;
-		    parent.g.vertex(sphereX[v1]*r, sphereY[v1]*r, sphereZ[v1]*r, u, v);
-		    parent.g.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2]*r, u, v+iv);
-		    parent.g.endShape();
+		    e.g.vertex(sphereX[v1]*r, sphereY[v1]*r, sphereZ[v1]*r, u, v);
+		    e.g.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2]*r, u, v+iv);
+		    e.g.endShape();
 		    v+=iv;
 		  }
 		  u=0;
 		  
 		  // Add the northern cap
-		  parent.g.beginShape(PApplet.TRIANGLE_STRIP);
-		  parent.g.texture(t);
+		  e.g.beginShape(PApplet.TRIANGLE_STRIP);
+		  e.g.texture(t);
 		  for (int i = 0; i < sDetail; i++) {
 		    v2 = voff + i;
-		    parent.g.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2]*r, u, v);
-		    parent.g.vertex(0, r, 0,u,v+iv);    
+		    e.g.vertex(sphereX[v2]*r, sphereY[v2]*r, sphereZ[v2]*r, u, v);
+		    e.g.vertex(0, r, 0,u,v+iv);    
 		    u+=iu;
 		  }
-		  parent.g.vertex(sphereX[voff]*r, sphereY[voff]*r, sphereZ[voff]*r, u, v);
-		  parent.g.endShape();
+		  e.g.vertex(sphereX[voff]*r, sphereY[voff]*r, sphereZ[voff]*r, u, v);
+		  e.g.endShape();
 	}
 	
 }
