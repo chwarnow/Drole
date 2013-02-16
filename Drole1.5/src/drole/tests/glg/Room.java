@@ -1,4 +1,4 @@
-package drole.gfx.room;
+package drole.tests.glg;
 
 import codeanticode.glgraphics.GLGraphics;
 
@@ -9,7 +9,10 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
 
-public class Room extends Drawable {
+public class Room {
+	
+	private GLGraphics g;
+	private PApplet parent;
 	
 	private float p = 1800;
 	private float m = p/2f;
@@ -52,19 +55,19 @@ public class Room extends Drawable {
 	
 	private PImage backTex, leftTex, rightTex, bottomTex, topTex;   // texture images
 	
-	public Room(Engine e, String fileBasename) {
-		super(e);
-		
+	public Room(PApplet parent, GLGraphics g, String fileBasename) {
+		this.g = g;
+		this.parent = parent;
 		loadSkybox(fileBasename, ".jpg");
 	}
 	
 	// load six skybox images as cube texture
 	void loadSkybox(String skyboxName, String fExt) {
-		backTex 	= e.p.loadImage(skyboxName + "back" + fExt);
-		leftTex 	= e.p.loadImage(skyboxName + "left" + fExt);
-		rightTex 	= e.p.loadImage(skyboxName + "right" + fExt);
-		bottomTex 	= e.p.loadImage(skyboxName + "bottom" + fExt);
-		topTex 		= e.p.loadImage(skyboxName + "top" + fExt);
+		backTex 	= parent.loadImage(skyboxName + "back" + fExt);
+		leftTex 	= parent.loadImage(skyboxName + "left" + fExt);
+		rightTex 	= parent.loadImage(skyboxName + "right" + fExt);
+		bottomTex 	= parent.loadImage(skyboxName + "bottom" + fExt);
+		topTex 		= parent.loadImage(skyboxName + "top" + fExt);
 	}
 	
 	// Assign six texture to the six cube faces
@@ -88,31 +91,22 @@ public class Room extends Drawable {
 		g.endShape();
 	}
 	
-	@Override
 	public void draw() {
 		g.pushStyle();
 		g.pushMatrix();
 		
-			e.startShader("ColorAndTexture");
-		
 			g.noFill();
 			g.noStroke();
 			
-			g.lights();
-			
-			g.translate(position.x, position.y, position.z);
-			
-			g.pointLight(255, 255, 204, 0, 0, 0);
+			g.translate(0, 0, 0);
 			
 			g.textureMode(PApplet.CORNERS);
 			
+			g.tint(255, 255);
 			g.fill(255);
 			g.noStroke();
-			g.tint(255, 255);
 			
 			TexturedCube();
-		
-			e.stopShader();
 			
 		g.popMatrix();
 		g.popStyle();

@@ -2,7 +2,6 @@ package drole;
 
 
 import codeanticode.glgraphics.GLConstants;
-import codeanticode.glgraphics.GLGraphics;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.engine.Engine;
@@ -48,7 +47,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= true;
+	private boolean FREEMODE			= false;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -98,9 +97,6 @@ public class Main extends EngineApplet implements PositionTargetListener {
 	private PVector globePosition = new PVector(0, -900, 0);
 	private PVector globeSize = new PVector(600, 0, 0);
 	private RibbonGlobe globe;
-	
-	private float horizontalViewAlpha = 0.0f;
-	private float verticalViewAlpha = 0.0f;
 
 	private PFont mainFont;
 
@@ -138,12 +134,12 @@ public class Main extends EngineApplet implements PositionTargetListener {
 			colorAndTextureShader = new ColorAndTextureShader(this);
 			engine.addShader("ColorAndTexture", colorAndTextureShader);
 			
-			stdOptik = new StdOptik(this);
+			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);
 			engine.activateOptik("Std");
 			
 			offCenterOptik = new OffCenterOptik(
-				this,
+				engine,
 				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM,
 				Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM,
 				Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM,
@@ -155,7 +151,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 			engine.addOptik("OffCenter", offCenterOptik);
 			
 			overlayDrawlist = new Drawlist(engine);
-			engine.addDrawlist("Overlay", overlayDrawlist);
+//			engine.addDrawlist("Overlay", overlayDrawlist);
 		logLn("Engine is setup!");
 			
 		/* FONTS */
@@ -188,18 +184,19 @@ public class Main extends EngineApplet implements PositionTargetListener {
 		
 		setupMenu();
 		
-		setupOptikWorld();
+//		setupOptikWorld();
 		
-		setupAssoziationWorld();
+//		setupAssoziationWorld();
 		
-		setupFabricWorld();
+//		setupFabricWorld();
 		
 		/* START */
 		if(FREEMODE) {
-			globe.fadeIn(500);
+//			globe.fadeIn(500);
 			switchMode(LIVE);
 		}
 		
+		switchMode(LIVE);
 	}
 	
 	public void startShader(String name) {
@@ -292,14 +289,6 @@ public class Main extends EngineApplet implements PositionTargetListener {
 		logoBG = new Ellipse(engine, 250, 250, 90);
 	}
 
-	private void setViewAlpha() {
-		horizontalViewAlpha = atan(abs(head.x - globePosition.x) / abs(head.z - globePosition.z));
-		horizontalViewAlpha = (head.x <= globePosition.x) ? horizontalViewAlpha : -horizontalViewAlpha;
-
-		verticalViewAlpha = atan(abs(head.x - globePosition.x) / abs(head.y - globePosition.y));
-		verticalViewAlpha = (head.y <= globePosition.y) ? verticalViewAlpha : -verticalViewAlpha;
-	}
-
 	private void updateHead() {
 		if(context.isTrackingSkeleton(1)) {
 			PVector thead = new PVector();
@@ -309,32 +298,24 @@ public class Main extends EngineApplet implements PositionTargetListener {
 	}
 
 	public void draw() {
-		GLGraphics renderer = (GLGraphics)g;
-		renderer.beginGL();
-		
 		// update the cam
 		if(!FREEMODE) context.update();
 
 		if(!FREEMODE) updateHead();
 
-		setViewAlpha();
-
-		// set the scene pos
-		translate(width / 2, height / 2, 0);
-
 		if(MODE == DEBUG || MODE == FORCED_DEBUG) {
-			resetMatrix();
+			engine.activateOptik("Std");
+			
+			engine.beginDraw();
 
-			perspective(radians(45), (float) width / (float) height, 10, 150000);
+			engine.g.background(0, 0, 0);
 
-			background(0, 0, 0);
-
-			translate(0, 0, -1000); // set the rotation center of the scene 1000
+			engine.g.translate(0, 0, -3000); // set the rotation center of the scene 1000
 									// in front of the camera
 
-			rotateX(rotX);
-			rotateY(rotY);
-			scale(zoomF);
+			engine.g.rotateX(rotX);
+			engine.g.rotateY(rotY);
+			engine.g.scale(zoomF);
 			
 			drawRealWorldScreen();
 			
@@ -346,15 +327,15 @@ public class Main extends EngineApplet implements PositionTargetListener {
 				int index;
 				PVector realWorldPoint;
 	
-				strokeWeight(1);
-				stroke(100);
+				engine.g.strokeWeight(1);
+				engine.g.stroke(100);
 				for (int y = 0; y < context.depthHeight(); y += steps) {
 					for (int x = 0; x < context.depthWidth(); x += steps) {
 						index = x + y * context.depthWidth();
 						if (depthMap[index] > 0) {
 							// draw the projected point
 							realWorldPoint = context.depthMapRealWorld()[index];
-							point(realWorldPoint.x, realWorldPoint.y, realWorldPoint.z);
+							engine.g.point(realWorldPoint.x, realWorldPoint.y, realWorldPoint.z);
 						}
 					}
 				}
@@ -367,11 +348,11 @@ public class Main extends EngineApplet implements PositionTargetListener {
 	
 				targetDetection.check();
 				
-				pushStyle();
-				stroke(0, 200, 0);
-				noFill();
-					for(PositionTarget pt : targetDetection.targets) pt.drawTarget(g);
-				popStyle();
+				engine.g.pushStyle();
+				engine.g.stroke(0, 200, 0);
+				engine.g.noFill();
+					for(PositionTarget pt : targetDetection.targets) pt.drawTarget(engine.g);
+				engine.g.popStyle();
 			}
 			
 			/*
@@ -392,6 +373,8 @@ public class Main extends EngineApplet implements PositionTargetListener {
 			
 			// draw the kinect cam
 			if(!FREEMODE) context.drawCamFrustum();
+			
+			engine.endDraw();
 		}
 
 		if (MODE == LOGO || MODE == LOGO2 || MODE == TRANSIT_TO_LIVE) drawLogo();
@@ -401,8 +384,6 @@ public class Main extends EngineApplet implements PositionTargetListener {
 		if (MODE == TRANSIT_FROM_LIVE && globe.mode() == Drawable.OFF_SCREEN) backToLogo();
 
 		if (MODE == LIVE || MODE == TRANSIT_FROM_LIVE || MODE == ZOOMING || MODE == ROTATING) {
-			background(background);
-			
 			engine.activateOptik("OffCenter");
 
 			//drawOffCenterVectors(head);
@@ -417,8 +398,8 @@ public class Main extends EngineApplet implements PositionTargetListener {
 				targetDetection.check();
 				
 				if(holdingTarget.inTarget()) {
-					// If the arm wasn't mesured yet!
-					// Lets mesure the users arm length to map it to the scaling of our globe
+					// If the arm wasn't measured yet!
+					// Lets measure the users arm length to map it to the scaling of our globe
 					PVector leftHand 		= new PVector(0, 0, 0);
 					PVector rightHand 		= new PVector(0, 0, 0);
 					PVector leftElbow 		= new PVector(0, 0, 0);
@@ -468,26 +449,29 @@ public class Main extends EngineApplet implements PositionTargetListener {
 				}
 			}
 		}
-		
-		renderer.endGL();
 	}
 
 	private void drawLogo() {
-		resetMatrix();
-		perspective(radians(45), (float) width / (float) height, 0.1f, 3000);
-
-		background(background);
-
-		pushMatrix();
-		translate(0, 0, -1400);
-
-		logoBG.update();
-		logoBG.draw();
-		logoGrey.update();
-		logoGrey.draw();
-		logoColor.update();
-		logoColor.draw();
-		popMatrix();
+		engine.activateOptik("Std");
+		
+		engine.beginDraw();	
+		
+			engine.g.pushStyle();
+			engine.g.pushMatrix();
+			
+				engine.g.translate(0, 0, -1400);
+		
+					logoBG.update();
+					logoBG.draw();
+					logoGrey.update();
+					logoGrey.draw();
+					logoColor.update();
+					logoColor.draw();
+					
+			engine.g.popMatrix();
+			engine.g.pushStyle();
+			
+		engine.endDraw();
 	}
 
 	// draw the skeleton with the selected joints

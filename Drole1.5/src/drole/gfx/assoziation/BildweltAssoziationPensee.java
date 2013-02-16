@@ -1,5 +1,7 @@
 package drole.gfx.assoziation;
 
+import com.madsim.engine.Engine;
+
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
 import codeanticode.glgraphics.GLSLShader;
@@ -15,7 +17,7 @@ import penner.easing.*;
  *
  */
 public class BildweltAssoziationPensee {
-	PApplet parent;
+	Engine e;
 
 	// ------ agents ------
 	BildweltAssoziationAgent[] agents;
@@ -40,18 +42,18 @@ public class BildweltAssoziationPensee {
 	private int delay = 0; // count up when delaying
 	private int delayTime = 100; // wait for 100 frames until next one begins
 
-	public BildweltAssoziationPensee(PApplet parent, String imagePath, float sphereConstraintRadius) {
-		this.parent = parent;
-		parent.noiseSeed((long)parent.random(1000));
+	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius) {
+		this.e = e;
+		e.p.noiseSeed((long)e.p.random(1000));
 		// load image
-		content = new GLTexture(parent, imagePath);
+		content = new GLTexture(e.p, imagePath);
 
 		// init agents pased on images pixels
 		agentsCount = 0;//content.width*content.height;
 		// count visible pixels
 		for (int x=0;x<content.width;x++) {
 			for (int y=0;y<content.height;y++) {
-				if(parent.alpha(content.get(x, y)) != 0.0) {
+				if(e.p.alpha(content.get(x, y)) != 0.0) {
 					agentsCount++;
 				}
 			}
@@ -61,11 +63,11 @@ public class BildweltAssoziationPensee {
 		int i=0;
 		for (int x=0;x<content.width;x++) {
 			for (int y=0;y<content.height;y++) {
-				if(parent.alpha(content.get(x, y)) != 0.0) {
-				float starterThreshold = content.width/2 - parent.dist(x, y, content.width/2, content.height/2);// * parent.noise(x*.1f, y*.1f);//x*.5;
+				if(e.p.alpha(content.get(x, y)) != 0.0) {
+				float starterThreshold = content.width/2 - e.p.dist(x, y, content.width/2, content.height/2);// * parent.noise(x*.1f, y*.1f);//x*.5;
 				starterThreshold *= .25f;
 				agents[i++]=new BildweltAssoziationAgent(
-						parent,
+						e,
 						new PVector((x-content.width/2)*quadHeight, (y-content.height/2)*quadHeight, 0),
 						content.get(x, y),
 						positionSteps,
@@ -91,12 +93,12 @@ public class BildweltAssoziationPensee {
 		}
 
 		// create a model that uses quads
-		imageQuadModel = new GLModel(parent, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
+		imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
 		imageQuadModel.initColors();
 		imageQuadModel.initNormals();
 
 		// load shader
-		imageShader = new GLSLShader(parent, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
+		imageShader = new GLSLShader(e.p, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
 	}
 
 	public void update() {

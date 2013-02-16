@@ -19,6 +19,7 @@ public class Ellipse extends Drawable {
 	  }
 
 	  public void draw() {
+		  g.pushStyle();
 		  g.pushMatrix();
 		      g.translate(position.x, position.y);
 		      g.scale(scale.x, scale.y);
@@ -26,6 +27,7 @@ public class Ellipse extends Drawable {
 		      g.fill(tcolor, PApplet.map(fade, 0, 1, 0, 255));
 		      g.ellipse(0, 0, w, h);
 	      g.popMatrix();
+	      g.pushStyle();
 	  }
 	  
 }

@@ -1,4 +1,4 @@
-package drole.gfx.ribbon;
+package drole.tests.ribbons;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
@@ -68,10 +68,6 @@ public class Ribbon3D extends Drawable {
 	
 	public int getVertexCount() {
 		return numJoints;
-	}
-	
-	public PVector[] getVertices() {
-		return joints;
 	}
 	
 	@Override

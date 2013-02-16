@@ -1,11 +1,13 @@
 package drole.gfx.assoziation;
 
+import com.madsim.engine.Engine;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 import drole.gfx.ribbon.Ribbon3D;
 
 class BildweltAssoziationAgent {
-	PApplet parent;
+	Engine parent;
 	PVector p, beginning;
 	float offset, stepSize, angleY, angleZ;
 	Ribbon3D ribbon;
@@ -20,8 +22,7 @@ class BildweltAssoziationAgent {
 	float r, g, b, a;
 
 	int pathPosition = 0;
-	BildweltAssoziationAgent(PApplet parent, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius, float quadHeight, int pathLength) {
-		this.parent = parent;
+	BildweltAssoziationAgent(Engine e, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius, float quadHeight, int pathLength) {
 		p = new PVector(beginning.x, beginning.y, beginning.z);//new PVector(0, 0, 0);
 		this.myColor = thisColor;
 		this.beginning = beginning;
@@ -32,10 +33,10 @@ class BildweltAssoziationAgent {
 		positionsZ = new float[positionSteps];
 
 		offset = 10000;
-		stepSize = parent.random(2, 3);
+		stepSize = e.p.random(2, 3);
 		// how many points has the ribbon
-		pathLength = parent.max(1, pathLength);
-		int ribbonAmount = (int)parent.random(1*pathLength, 2*pathLength);
+		pathLength = PApplet.max(1, pathLength);
+		int ribbonAmount = (int)e.p.random(1*pathLength, 2*pathLength);
 		if(ribbonAmount %2 != 0) ribbonAmount ++;
 		ribbon = new Ribbon3D(parent, p, ribbonAmount);
 		// precompute positions
@@ -47,12 +48,12 @@ class BildweltAssoziationAgent {
 				thisP.z = positionsZ[i-1];
 
 
-				float angleY = parent.noise(thisP.x/noiseScale, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength; 
-				float angleZ = parent.noise(thisP.x/noiseScale+offset, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength;
+				float angleY = e.p.noise(thisP.x/noiseScale, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength; 
+				float angleZ = e.p.noise(thisP.x/noiseScale+offset, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength;
 
-				thisP.x += parent.cos(angleZ) * parent.cos(angleY) * stepSize;
-				thisP.y += parent.sin(angleZ) * stepSize;
-				thisP.z += parent.cos(angleZ) * parent.sin(angleY) * stepSize;
+				thisP.x += PApplet.cos(angleZ) * PApplet.cos(angleY) * stepSize;
+				thisP.y += PApplet.sin(angleZ) * stepSize;
+				thisP.z += PApplet.cos(angleZ) * PApplet.sin(angleY) * stepSize;
 
 				// distance to center
 
@@ -93,10 +94,10 @@ class BildweltAssoziationAgent {
 			colors[i] = myColor;
 		}
 
-		r = parent.red(myColor)/255.0f;
-		g = parent.green(myColor)/255.0f;
-		b = parent.blue(myColor)/255.0f;
-		a = parent.alpha(myColor)/255.0f;
+		r = e.p.red(myColor)/255.0f;
+		g = e.p.green(myColor)/255.0f;
+		b = e.p.blue(myColor)/255.0f;
+		a = e.p.alpha(myColor)/255.0f;
 	}
 
 	public void update(int pathPosition) {

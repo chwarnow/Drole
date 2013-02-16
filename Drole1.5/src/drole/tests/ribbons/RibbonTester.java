@@ -1,4 +1,4 @@
-package drole.gfx.ribbon;
+package drole.tests.ribbons;
 
 import processing.core.PApplet;
 import processing.core.PVector;

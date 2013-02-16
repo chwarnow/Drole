@@ -1,12 +1,21 @@
-package com.madsim.engine.optik;
+package drole.tests.glg;
 
-import com.madsim.engine.Engine;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
+import codeanticode.glgraphics.GLConstants;
+import codeanticode.glgraphics.GLGraphics;
+import drole.settings.Settings;
 import processing.core.PApplet;
 import processing.core.PMatrix3D;
 import processing.core.PVector;
 
-public class OffCenterOptik extends Optik {
+public class OffCenter extends PApplet implements MouseWheelListener {
+
+	private static final long serialVersionUID = 1L;
+
+	private Room room;
 	
 	// Real World Screen Dimensions
 	private PVector realScreenDim;
@@ -19,7 +28,7 @@ public class OffCenterOptik extends Optik {
 	private PVector pd = new PVector();
 	
 	// Head Position in Tracker Space
-	private PVector pe;
+	private PVector pe = new PVector();
 
 	// Real World Screen Orthonormal Basis
 	private PVector vr = new PVector();
@@ -43,25 +52,31 @@ public class OffCenterOptik extends Optik {
 	// z
 	private PVector vc = new PVector();
 	
-	public OffCenterOptik(Engine e, float w, float h, float d, float x, float y, float z) {
-		super(e);
-		realScreenDim = new PVector(w, h, d);
-		realScreenPos = new PVector(x, y, z);
+	public void setup() {
+		size(720, 720, GLConstants.GLGRAPHICS);
+		
+		GLGraphics gl = (GLGraphics)g;
+		room = new Room(this, gl, "data/room/drolebox2/panorama03.");
+		
+		realScreenDim = new PVector(Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM, Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM, Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM);
+		realScreenPos = new PVector(Settings.REAL_SCREEN_POSITION_X_MM, Settings.REAL_SCREEN_POSITION_Y_MM, Settings.REAL_SCREEN_POSITION_Z_MM);
+		
+		updateHeadPosition();
 		
 		calcRealWorldScreenSetup();
 		
-		updateHeadPosition(new PVector(realScreenPos.x+(realScreenDim.x/2f), realScreenPos.y+(realScreenDim.y/2f), 3000));
+		addMouseWheelListener(this);
 	}
-
-	public PVector updateHeadPosition(PVector pe) {
+	
+	public PVector updateHeadPosition() {
+		pe = new PVector(0, 0, 0);
+		
 //		p.logLn(pe.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
-		pe.y = realScreenPos.y + (realScreenDim.y / 2f);
-//		pe.y *= -1;
 		pe.x *= -1;
+		pe.y = (realScreenPos.y + (realScreenDim.y / 2f));
+		pe.z = 3000;
 		
-		this.pe = pe;
-		
-		return this.pe;
+		return pe;
 	}
 
 	private void calcRealWorldScreenSetup() {
@@ -95,8 +110,7 @@ public class OffCenterOptik extends Optik {
 		vn.normalize();
 	}
 	
-	@Override
-	public void calculate() {		
+	public void calculatep() {		
 		// logLn(pe);
 
 		// Compute the screen corner vectors.
@@ -126,8 +140,7 @@ public class OffCenterOptik extends Optik {
 		t = PVector.dot(vu, vc) * n / d;
 	}
 
-	@Override
-	public void set() {
+	public void setp() {
 		// Load the perpendicular projection.
 
 		g.frustum(l, r, b, t, n, f);
@@ -147,87 +160,61 @@ public class OffCenterOptik extends Optik {
 
 		g.applyMatrix(M);
 
-		g.translate(-pe.x, -pe.y, -pe.z);
+		g.translate(-pe.x, pe.y, -pe.z);
+	}	
+	
+	
+	public void draw() {
+		GLGraphics gl = (GLGraphics)g;
+		
+		gl.resetMatrix();
+		
+		gl.beginGL();
+		
+		gl.resetMatrix();
+		
+		calculatep();
+		setp();
+		
+//		gl.translate(0, gl.height, 0);
+		
+		gl.background(0);
+		
+		gl.fill(200, 200, 0);
+		gl.ellipse(0, 0, 20, 20);
+		
+		translate(0, 0, 0);
+		gl.fill(200);
+		gl.stroke(0);
+//		gl.box(1800);
+		
+		room.draw();
+		
+		gl.endGL();
 	}
 
-	public void drawOffCenterVectors() {
-		g.pushStyle();
-		g.pushMatrix();
-		g.stroke(0, 200, 200);
-			drawLine(pe, pa);
-			drawLine(pe, pb);
-			drawLine(pe, pc);
-			drawLine(pe, pd);
-		g.strokeWeight(1);
-		g.popMatrix();
-		g.popStyle();
+	public void mouseMoved(MouseEvent e) {
+		pe.x = map(e.getX(), 0, width, -realScreenDim.x/2f, realScreenDim.x/2f);
+		pe.y = map(e.getY(), 0, height, realScreenPos.y, realScreenPos.y+realScreenDim.y);
+		
+		println(pe);
 	}
 	
-	private void drawLine(PVector p1, PVector p2) {
-		g.line(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
+	public void mouseDragged(MouseEvent e) {
+		println("Drag");
 	}
 	
-	public void drawRealWorldScreen() {
-		g.pushStyle();
-		g.pushMatrix();
-			g.stroke(200, 0, 0);
-			g.noFill();
-			g.beginShape();
-				
-				/*
-				println("Positions");
-				
-				println(pa);
-				println(pb);
-				println(pc);
-				println(pd);
-				
-				println("Orthos");
-				
-				println(vr);
-				println(vu);
-				println(vn);
-				*/
-
-				g.vertex(pc.x, pc.y, pc.z); // Upper Left Corner of Screen	
-				g.vertex(pd.x, pd.y, pd.z); // Upper Right Corner of Screen
-				g.vertex(pb.x, pb.y, pb.z); // Lower Right Corner of Screen
-				g.vertex(pa.x, pa.y, pa.z); // Lower Left Corner of Screen
-			g.endShape();
-			
-			// Draw Real World Screen Orthonormal
-			PVector ox = vr.get();
-			ox.mult(200);
-			
-			PVector oy = vu.get();
-			oy.mult(200);
-			
-			PVector oz = vn.get();
-			oz.mult(200);
-			
-			g.stroke(255, 200, 200);
-			g.line(pa.x, pa.y, pa.z, pa.x+ox.x, pa.y+ox.y, pa.z+ox.z);
-			g.line(pa.x, pa.y, pa.z, pa.x+oy.x, pa.y+oy.y, pa.z+oy.z);
-			g.line(pa.x, pa.y, pa.z, pa.x+oz.x, pa.y+oz.y, pa.z+oz.z);
-			
-			g.strokeWeight(1);
-			
-			// Draw Screen-Space Origin
-			g.pushMatrix();
-				g.noStroke();
-				g.fill(0, 0, 200);
-				
-				g.translate(pe.x, pe.y, pa.z);
-				g.ellipse(0, 0, 20, 20);
-			g.popMatrix();
-			
-			g.pushMatrix();
-				g.translate(-pe.x, -pe.y, -pe.z);
-				g.ellipse(0, 0, 20, 20);
-			g.popMatrix();
-			
-		g.popStyle();
-		g.popMatrix();
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		pe.z += e.getWheelRotation()*30f;
+		
+		println(pe);
+	}
+	
+	public static void main(String args[]) {
+		PApplet.main(new String[] {
+			"drole.tests.glg.OffCenter"
+		});
 	}
 	
 }

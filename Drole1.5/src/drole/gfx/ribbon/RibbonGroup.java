@@ -56,7 +56,8 @@ public class RibbonGroup extends Drawable {
 		for (int i = 0; i < numRibbons; i++) {			
 //			PVector startPosition = new PVector(parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f));
 			PVector startPosition = new PVector(0, 0, 0);
-			particles[i] = new Ribbon3D(e.p, startPosition, numJointsPerRibbon);
+			particles[i] = new Ribbon3D(e, startPosition, numJointsPerRibbon);
+			particles[i].dimension(30, 0, 0);
 		}
 
 		// create collision sphere at origin, replace OUTSIDE with INSIDE to
@@ -211,7 +212,7 @@ public class RibbonGroup extends Drawable {
 			g.noStroke();
 			
 			for (int i = 0; i < numPhysicParticles; i++) {
-				particles[i].drawMeshRibbon(30);
+				particles[i].draw();
 			}
 		
 			e.stopShader();

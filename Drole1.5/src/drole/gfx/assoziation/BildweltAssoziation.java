@@ -24,9 +24,9 @@ public class BildweltAssoziation extends Drawable {
 		position(0.0f, -900.0f, -1500.0f);
 		
 		// init ribbon sculpture
-		penseeA = new BildweltAssoziationPensee(e.p, "data/images/associationA.png", sphereConstraintRadius);
-		penseeB = new BildweltAssoziationPensee(e.p, "data/images/associationB.png", sphereConstraintRadius);
-		penseeC = new BildweltAssoziationPensee(e.p, "data/images/associationC.png", sphereConstraintRadius);
+		penseeA = new BildweltAssoziationPensee(e, "data/images/associationA.png", sphereConstraintRadius);
+		penseeB = new BildweltAssoziationPensee(e, "data/images/associationB.png", sphereConstraintRadius);
+		penseeC = new BildweltAssoziationPensee(e, "data/images/associationC.png", sphereConstraintRadius);
 		
 		penseeB.positionSteps = 33;
 		penseeC.positionSteps = 66;

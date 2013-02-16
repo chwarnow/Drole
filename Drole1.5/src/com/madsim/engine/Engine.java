@@ -24,6 +24,8 @@ public class Engine {
 	private HashMap<String, Shader> shaders = new HashMap<String, Shader>();
 	private String activeShader;
 	
+	public boolean drawStarted = false;
+	
 	public Engine(EngineApplet p) {
 		this.p = p;
 		refreshGLG();
@@ -39,7 +41,6 @@ public class Engine {
 	
 	public void activateOptik(String name) {
 		activeOptik = name;
-		setOptik();
 	}
 
 	public void addShader(String name, Shader shader) {
@@ -69,8 +70,9 @@ public class Engine {
 	}
 	
 	private void setOptik() {
+		optiks.get(activeOptik).setG(g);
 		optiks.get(activeOptik).calculate();
-		optiks.get(activeOptik).set();		
+		optiks.get(activeOptik).set();
 	}
 	
 	public void startShader(String name) {
@@ -86,21 +88,52 @@ public class Engine {
 		g = (GLGraphics)p.g;
 	}
 	
+	public void beginDraw() {
+		if(!drawStarted) {
+			drawStarted = true;
+			
+//			refreshGLG();
+			
+			// GLGraphics will copy the old matrix to the new context, we don't want the old matrix
+			g.resetMatrix();
+			
+			g.beginGL();
+			
+			// Setting up clean Matrix again to wipe out GLGraphics std. settings
+			g.resetMatrix();
+			
+			// Set current Optik
+			setOptik();
+			
+			// Refresh background color
+			g.background(0, 0, 0);
+		}
+	}
+
+	public void endDraw() {
+		if(drawStarted) {
+			g.endGL();
+			drawStarted = false;
+		}
+	}
+	
 	public void draw() {
-		refreshGLG();
-		
-		g.beginGL();
+		beginDraw();
 		
 		updateAll();
 		
-		setOptik();
-		
 			for(Entry<String, Drawable> dle : drawables.entrySet()) {
 				Drawable dl = dle.getValue();
-				if(dl.mode() != Drawable.OFF_SCREEN) dl.draw();
+				if(dl.mode() != Drawable.OFF_SCREEN) {
+					g.pushStyle();
+					g.pushMatrix();
+						dl.draw();
+					g.popMatrix();
+					g.popStyle();
+				}
 			}
 		
-		g.endGL();
+		endDraw();
 	}
 	
 }

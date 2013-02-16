@@ -1,14 +1,21 @@
 package com.madsim.engine.optik;
 
-import processing.core.PApplet;
+import codeanticode.glgraphics.GLGraphics;
+
+import com.madsim.engine.Engine;
 
 public abstract class Optik {
 
-	@SuppressWarnings("unused")
-	protected PApplet p;
+	protected Engine e;
+	protected GLGraphics g;
 	
-	public Optik(PApplet p) {
-		this.p = p;
+	public Optik(Engine e) {
+		this.e = e;
+		setG(e.g);
+	}
+	
+	public void setG(GLGraphics g) {
+		this.g = g;
 	}
 	
 	// Is called just before set
