@@ -1,5 +1,7 @@
 package com.madsim.engine.optik;
 
+import javax.media.opengl.GL;
+
 import com.madsim.engine.Engine;
 
 import processing.core.PApplet;
@@ -9,8 +11,8 @@ import processing.core.PVector;
 public class OffCenterOptik extends Optik {
 	
 	// Real World Screen Dimensions
-	private PVector realScreenDim;
-	private PVector realScreenPos;
+	public PVector realScreenDim;
+	public PVector realScreenPos;
 	
 	// Real World Screen Positions
 	private PVector pa = new PVector();
@@ -55,7 +57,7 @@ public class OffCenterOptik extends Optik {
 
 	public PVector updateHeadPosition(PVector pe) {
 //		p.logLn(pe.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
-		pe.y = realScreenPos.y + (realScreenDim.y / 2f);
+//		pe.y = realScreenPos.y + (realScreenDim.y / 2f);
 //		pe.y *= -1;
 		pe.x *= -1;
 		
@@ -129,8 +131,10 @@ public class OffCenterOptik extends Optik {
 	@Override
 	public void set() {
 		// Load the perpendicular projection.
-
-		g.frustum(l, r, b, t, n, f);
+		g.gl.glMatrixMode(GL.GL_PROJECTION);
+		g.gl.glLoadIdentity();
+		
+		g.gl.glFrustum(l, r, b, t, n, f);
 
 		// println(l+":"+r+":"+b+":"+t+":"+n+":"+f);
 
@@ -138,18 +142,21 @@ public class OffCenterOptik extends Optik {
 
 		// Final projection matrix
 
-		PMatrix3D M = new PMatrix3D(
+		float[] M = new float[]{
 			vr.x, vr.y, vr.z, 0.0f,
 			vu.x, vu.y, vu.z, 0.0f,
 			vn.x, vn.y, vn.z, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
-		);
+		};
 
-		g.applyMatrix(M);
-
-		g.translate(-pe.x, -pe.y, -pe.z);
+		g.gl.glMultMatrixf(M, 0);
+		
+		g.gl.glTranslatef(-pe.x, -pe.y, -pe.z);
+		
+		g.gl.glMatrixMode(GL.GL_MODELVIEW);
+		g.gl.glTranslatef(0, -(realScreenPos.y+realScreenDim.y)+(realScreenDim.y/2), 0);
 	}
-
+	
 	public void drawOffCenterVectors() {
 		g.pushStyle();
 		g.pushMatrix();

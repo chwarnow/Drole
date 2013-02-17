@@ -4,17 +4,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import javax.media.opengl.GL;
+
 import codeanticode.glgraphics.GLConstants;
 import codeanticode.glgraphics.GLGraphics;
+import codeanticode.glgraphics.GLGraphicsOffScreen;
 import drole.settings.Settings;
 import processing.core.PApplet;
-import processing.core.PMatrix3D;
 import processing.core.PVector;
 
-public class OffCenter extends PApplet implements MouseWheelListener {
+public class OffCenterOffScreen extends PApplet implements MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 
+	private GLGraphicsOffScreen offG;
+	
 	private Room room;
 	
 	// Real World Screen Dimensions
@@ -56,7 +60,10 @@ public class OffCenter extends PApplet implements MouseWheelListener {
 		size(720, 720, GLConstants.GLGRAPHICS);
 		
 		GLGraphics gl = (GLGraphics)g;
-		room = new Room(this, gl, "data/room/drolebox2/panorama03.");
+		
+		offG = new GLGraphicsOffScreen(this, width, height);
+		
+		room = new Room(this, offG, "data/room/drolebox2/panorama03.");
 		
 		realScreenDim = new PVector(Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM, Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM, Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM);
 		realScreenPos = new PVector(Settings.REAL_SCREEN_POSITION_X_MM, Settings.REAL_SCREEN_POSITION_Y_MM, Settings.REAL_SCREEN_POSITION_Z_MM);
@@ -142,8 +149,15 @@ public class OffCenter extends PApplet implements MouseWheelListener {
 
 	public void setp() {
 		// Load the perpendicular projection.
-
-		g.frustum(l, r, b, t, n, f);
+		offG.gl.glMatrixMode(GL.GL_MODELVIEW);
+		offG.gl.glPushMatrix();
+		
+		offG.gl.glMatrixMode(GL.GL_PROJECTION);
+		offG.gl.glPushMatrix();
+		
+		offG.gl.glLoadIdentity();
+		
+		offG.gl.glFrustum(l, r, b, t, n, f);
 
 		// println(l+":"+r+":"+b+":"+t+":"+n+":"+f);
 
@@ -151,43 +165,53 @@ public class OffCenter extends PApplet implements MouseWheelListener {
 
 		// Final projection matrix
 
-		PMatrix3D M = new PMatrix3D(
+		float[] M = new float[]{
 			vr.x, vr.y, vr.z, 0.0f,
 			vu.x, vu.y, vu.z, 0.0f,
 			vn.x, vn.y, vn.z, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
-		);
+		};
 
-		g.applyMatrix(M);
-
-		g.translate(-pe.x, pe.y, -pe.z);
+		offG.gl.glMultMatrixf(M, 0);
+		
+		offG.gl.glTranslatef(-pe.x, -pe.y, -pe.z);
+		
+		offG.gl.glMatrixMode(GL.GL_MODELVIEW);
+		offG.gl.glTranslatef(0, -(realScreenPos.y+realScreenDim.y)+(realScreenDim.y/2), 0);
 	}	
 	
 	
 	public void draw() {
+		offG.beginDraw();
+		offG.beginGL();
+			calculatep();
+			setp();
+			
+			offG.background(200, 0, 100);
+			room.draw();
+			
+			offG.gl.glMatrixMode(GL.GL_MODELVIEW);
+			offG.gl.glPopMatrix();
+			
+			offG.gl.glMatrixMode(GL.GL_PROJECTION);
+			offG.gl.glPopMatrix();
+		offG.endGL();
+		offG.endDraw();
+		
 		GLGraphics gl = (GLGraphics)g;
 		
-		gl.resetMatrix();
-		
 		gl.beginGL();
-		
 		gl.resetMatrix();
 		
-		calculatep();
-		setp();
+		gl.translate(width/2, height/2, 0);
 		
-		gl.translate(0, -(realScreenPos.y+realScreenDim.y)+(realScreenDim.y/2), 0);
+		gl.background(255);
 		
-		gl.background(0);
+		gl.imageMode(PApplet.CENTER);
+		gl.image(offG.getTexture(), 0, 0);
 		
 		gl.fill(200, 200, 0);
 		gl.ellipse(0, 0, 20, 20);
-		
-		gl.fill(200);
-		gl.stroke(0);
-//		gl.box(1800);
-		
-		room.draw();
 		
 		gl.endGL();
 	}
@@ -199,10 +223,6 @@ public class OffCenter extends PApplet implements MouseWheelListener {
 		println(pe);
 	}
 	
-	public void mouseDragged(MouseEvent e) {
-		println("Drag");
-	}
-	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		pe.z += e.getWheelRotation()*30f;
@@ -212,7 +232,7 @@ public class OffCenter extends PApplet implements MouseWheelListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-			"drole.tests.glg.OffCenter"
+			"drole.tests.glg.OffCenterOffScreen"
 		});
 	}
 	

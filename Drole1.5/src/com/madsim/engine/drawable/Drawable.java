@@ -1,17 +1,17 @@
 package com.madsim.engine.drawable;
 
-import codeanticode.glgraphics.GLGraphics;
 
 import com.madsim.engine.Engine;
 
 import penner.easing.Quad;
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.opengl.PGraphicsOpenGL;
 
 public abstract class Drawable {
 
 	protected Engine e;
-	protected GLGraphics g;
+	protected PGraphicsOpenGL g;
 	
 	public static String OFF_SCREEN 		= 	"OFF_SCREEN";
 	public static String ON_SCREEN 			= 	"ON_SCREEN";
@@ -55,7 +55,7 @@ public abstract class Drawable {
 		setG(e.g);
 	}
 
-	public void setG(GLGraphics g) {
+	public void setG(PGraphicsOpenGL g) {
 		this.g = g;
 	}
 	

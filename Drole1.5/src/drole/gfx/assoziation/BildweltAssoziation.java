@@ -54,11 +54,9 @@ public class BildweltAssoziation extends Drawable {
 		g.rotateY(smoothedRotation+PApplet.HALF_PI/2);
 		
 		// draw sculpture
-		g.beginGL();
 		penseeA.draw(g);
 		penseeB.draw(g);
 		penseeC.draw(g);
-		g.endGL();
 		
 		g.noFill();
 		g.stroke(155, 100);

@@ -8,6 +8,7 @@ import codeanticode.glgraphics.GLSLShader;
 import codeanticode.glgraphics.GLTexture;
 import processing.core.PApplet;
 import processing.core.PVector;
+import processing.opengl.PGraphicsOpenGL;
 import penner.easing.*;
 
 /**
@@ -126,7 +127,7 @@ public class BildweltAssoziationPensee {
 
 	}
 
-	public void draw(GLGraphics renderer) {
+	public void draw(PGraphicsOpenGL renderer) {
 		// renderer.lights();
 
 		// update glmodel
@@ -251,7 +252,7 @@ public class BildweltAssoziationPensee {
 	    imageShader.setVecUniform("lightPos", 00.0f, 00.0f, 500.0f);
 		*/
 		// A model can be drawn through the GLGraphics renderer:
-		renderer.model(imageQuadModel);
+		e.model(imageQuadModel);
 
 		// imageShader.stop();
 

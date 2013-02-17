@@ -9,7 +9,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/GLGraphics.jar"/>
 	<classpathentry kind="lib" path="lib/opengl/gluegen-rt.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib/opengl"/>

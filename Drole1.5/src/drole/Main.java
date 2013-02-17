@@ -1,6 +1,10 @@
 package drole;
 
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+
 import codeanticode.glgraphics.GLConstants;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
@@ -11,6 +15,7 @@ import com.madsim.engine.drawable.Drawlist;
 import com.madsim.engine.drawable.file.Image;
 import com.madsim.engine.drawable.geom.Ellipse;
 import com.madsim.engine.optik.OffCenterOptik;
+import com.madsim.engine.optik.OrthoOptik;
 import com.madsim.engine.optik.StdOptik;
 import com.madsim.engine.shader.ColorAndTextureShader;
 import com.madsim.engine.shader.JustColorShader;
@@ -32,7 +37,7 @@ import processing.core.PMatrix3D;
 import processing.core.PVector;
 import SimpleOpenNI.*;
 
-public class Main extends EngineApplet implements PositionTargetListener {
+public class Main extends EngineApplet implements PositionTargetListener, MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -47,7 +52,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= false;
+	private boolean FREEMODE			= true;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -71,6 +76,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 
 	/* Users Head */
 	private PVector head = new PVector(0, 0, 3000);
+	private PVector mouseHead = new PVector(0, 0, 3000);
 	
 	/* Engine */
 	private Engine engine;
@@ -78,6 +84,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 	/* Optiks */
 	private OffCenterOptik offCenterOptik;
 	private StdOptik stdOptik;
+	private OrthoOptik orthoOptik;
 	
 	/* Shader */
 	private JustColorShader justColorShader;
@@ -94,7 +101,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 	private Room room;
 	
 	/* Globe */
-	private PVector globePosition = new PVector(0, -900, 0);
+	private PVector globePosition = new PVector(0, 0, 0);
 	private PVector globeSize = new PVector(600, 0, 0);
 	private RibbonGlobe globe;
 
@@ -125,6 +132,8 @@ public class Main extends EngineApplet implements PositionTargetListener {
 		logLn("Starting Drole!");
 		logLn("Executing at : '"+System.getProperty("user.dir").replace("\\", "/")+"'");
 		
+		addMouseWheelListener(this);
+		
 		logLn("Initializing Engine ...");
 			engine = new Engine(this);
 			
@@ -136,7 +145,9 @@ public class Main extends EngineApplet implements PositionTargetListener {
 			
 			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);
-			engine.activateOptik("Std");
+
+			orthoOptik = new OrthoOptik(engine);
+			engine.addOptik("Ortho", orthoOptik);			
 			
 			offCenterOptik = new OffCenterOptik(
 				engine,
@@ -149,6 +160,8 @@ public class Main extends EngineApplet implements PositionTargetListener {
 			);
 			
 			engine.addOptik("OffCenter", offCenterOptik);
+			
+			engine.activateOptik("Std");
 			
 			overlayDrawlist = new Drawlist(engine);
 //			engine.addDrawlist("Overlay", overlayDrawlist);
@@ -237,7 +250,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 		roomDrawlist = new Drawlist(engine);
 		
 		room = new Room(engine, "data/room/drolebox2/panorama03.");
-		room.position(0, -950, 0);
+		room.position(0, 0, 0);
 		
 		roomDrawlist.add(room);
 		
@@ -565,8 +578,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 
 		if (autoCalib) {
 			context.requestCalibrationSkeleton(userId, true);
-			if (userId == 1)
-				switchToLogo2();
+//			if (userId == 1) switchToLogo2();
 		} else {
 			context.startPoseDetection("Psi", userId);
 		}
@@ -574,18 +586,17 @@ public class Main extends EngineApplet implements PositionTargetListener {
 
 	public void onLostUser(int userId) {
 		println("onLostUser - userId: " + userId);
-		if (userId == 1)
-			backToLogo();
+//		if (userId == 1) backToLogo();
 	}
 
 	public void onExitUser(int userId) {
 		println("onExitUser - userId: " + userId);
-		if(userId == 1) backToLogo();
+//		if(userId == 1) backToLogo();
 	}
 
 	public void onReEnterUser(int userId) {
 		println("onReEnterUser - userId: " + userId);
-		if(userId == 1) switchToLive();
+//		if(userId == 1) switchToLive();
 	}
 
 	public void onStartCalibration(int userId) {
@@ -599,7 +610,7 @@ public class Main extends EngineApplet implements PositionTargetListener {
 			println("  User calibrated !!!");
 			context.startTrackingSkeleton(userId);
 			
-			if(userId == 1) switchToLive();
+//			if(userId == 1) switchToLive();
 		} else {
 			println("  Failed to calibrate user !!!");
 			println("  Start pose detection");
@@ -806,6 +817,25 @@ public class Main extends EngineApplet implements PositionTargetListener {
 			globe.rotationSpeed = 0.04f;
 		}
 	}	
+	
+	public void mouseMoved(MouseEvent e) {
+		if(FREEMODE) {
+			mouseHead.x = map(e.getX(), 0, width, -offCenterOptik.realScreenDim.x/2f, offCenterOptik.realScreenDim.x/2f);
+			mouseHead.y = map(e.getY(), 0, height, offCenterOptik.realScreenPos.y, offCenterOptik.realScreenPos.y+offCenterOptik.realScreenDim.y);
+			
+			offCenterOptik.updateHeadPosition(mouseHead);
+			println(mouseHead);
+		}
+	}
+	
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		if(FREEMODE) {
+			mouseHead.z += e.getWheelRotation()*30f;
+			
+			println(mouseHead);
+		}
+	}
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {

@@ -1,20 +1,21 @@
 package com.madsim.engine.optik;
 
-import codeanticode.glgraphics.GLGraphics;
+
+import processing.opengl.PGraphicsOpenGL;
 
 import com.madsim.engine.Engine;
 
 public abstract class Optik {
 
 	protected Engine e;
-	protected GLGraphics g;
+	protected PGraphicsOpenGL g;
 	
 	public Optik(Engine e) {
 		this.e = e;
 		setG(e.g);
 	}
 	
-	public void setG(GLGraphics g) {
+	public void setG(PGraphicsOpenGL g) {
 		this.g = g;
 	}
 	

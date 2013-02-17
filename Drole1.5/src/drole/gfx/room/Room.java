@@ -98,11 +98,7 @@ public class Room extends Drawable {
 			g.noFill();
 			g.noStroke();
 			
-			g.lights();
-			
 			g.translate(position.x, position.y, position.z);
-			
-			g.pointLight(255, 255, 204, 0, 0, 0);
 			
 			g.textureMode(PApplet.CORNERS);
 			

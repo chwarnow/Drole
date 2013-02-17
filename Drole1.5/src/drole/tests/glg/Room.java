@@ -2,16 +2,14 @@ package drole.tests.glg;
 
 import codeanticode.glgraphics.GLGraphics;
 
-import com.madsim.engine.Engine;
-import com.madsim.engine.drawable.Drawable;
-
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
+import processing.opengl.PGraphicsOpenGL;
 
 public class Room {
 	
-	private GLGraphics g;
+	private PGraphicsOpenGL g;
 	private PApplet parent;
 	
 	private float p = 1800;
@@ -55,8 +53,8 @@ public class Room {
 	
 	private PImage backTex, leftTex, rightTex, bottomTex, topTex;   // texture images
 	
-	public Room(PApplet parent, GLGraphics g, String fileBasename) {
-		this.g = g;
+	public Room(PApplet parent, PGraphicsOpenGL offG, String fileBasename) {
+		this.g = offG;
 		this.parent = parent;
 		loadSkybox(fileBasename, ".jpg");
 	}
@@ -97,8 +95,6 @@ public class Room {
 		
 			g.noFill();
 			g.noStroke();
-			
-			g.translate(0, 0, 0);
 			
 			g.textureMode(PApplet.CORNERS);
 			
