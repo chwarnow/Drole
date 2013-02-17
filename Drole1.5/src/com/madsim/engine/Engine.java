@@ -3,6 +3,8 @@ package com.madsim.engine;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import javax.media.opengl.GL;
+
 import processing.core.PApplet;
 import processing.opengl.PGraphicsOpenGL;
 
@@ -51,7 +53,6 @@ public class Engine {
 		g.smooth();
 		
 		p.logLn("[Engine]: Initializing Framebuffers ("+g.width+":"+g.height+")");
-//		offG = new GLGraphicsOffScreen(p, g.width, g.height);
 		offG = new GLGraphicsOffScreen(p, g.width, g.height);
 	}
 	
@@ -123,9 +124,6 @@ public class Engine {
 			
 			g.beginGL();
 			
-			// Setting up clean matrix again to wipe out GLGraphics std. settings
-			g.resetMatrix();
-			
 			// Set current Optik
 			setOptik(g);
 		}
@@ -135,15 +133,17 @@ public class Engine {
 		if(!drawStarted) {
 			drawStarted = true;
 			
-			// Setting up clean matrix again to wipe out GLGraphics std. settings
-			g.resetMatrix();
-			
 			cg.beginDraw();
-			cg.beginGL();
-			cg.clear(0);
 			
-			// Set current Optik
-			setOptik(cg);
+			// GLGraphics will copy the old matrix to the new context, we don't want the old matrix!
+			cg.resetMatrix();			
+			
+			cg.beginGL();
+			
+			setOptik(g);
+			
+			// Flip x-axis back as this is already done in GLGraphicsOffScreen 
+			offG.gl.glScalef(1.0f, -1.0f, 1.0f);
 		}
 	}
 	
@@ -168,15 +168,11 @@ public class Engine {
 	
 	private void drawFirstPass(GLGraphicsOffScreen cg) {
 		activateOptik("OffCenter");
-		
-		updateAll((PGraphicsOpenGL) cg);
-		
-//		cg.pushMatrix();
-		
+
 		beginDraw(cg);
 		
-//			cg.pushMatrix();
-//			cg.translate(cg.width, 0, -30);
+			updateAll((PGraphicsOpenGL) cg);
+		
 			cg.background(200, 0, 100);
 
 			for(Entry<String, Drawable> dle : drawables.entrySet()) {
@@ -191,12 +187,11 @@ public class Engine {
 			}
 			
 		endDraw(cg);
-		
-//		cg.popMatrix();
 	}
 	
 	private void drawOnScreenFirstPass() {
 		activateOptik("OffCenter");
+		
 		beginDraw();
 		
 			updateAll((PGraphicsOpenGL) g);
@@ -209,10 +204,6 @@ public class Engine {
 					g.pushStyle();
 					g.pushMatrix();
 						dl.draw();
-						/*
-						cg.translate(0, 0, -1000);
-						cg.box(500);
-						*/
 					g.popMatrix();
 					g.popStyle();
 				}
@@ -221,47 +212,32 @@ public class Engine {
 		endDraw(g);
 	}
 	
-	private void drawComposePass() {
-		initialActiveOptik = activeOptik;
-		
-//		g.pushMatrix();
-		
-		activateOptik("Ortho");
-		
-		beginDraw();
-		
-			g.background(0, 200, 0);
-		
-			g.pushStyle();
-			g.pushMatrix();
-				g.translate(g.width/2, g.height/2, -1);
-				g.imageMode(PApplet.CENTER);
-				g.image(firstPassResult, 0, 0, g.width, g.height);
-			g.popMatrix();
-			g.popStyle();
-		
-		endDraw();
-		
-//		g.popMatrix();
-			
-		activeOptik = initialActiveOptik;
-	}
-	
 	public void draw() {
 		refreshGLG();
 		
-//		drawOnScreenFirstPass();
-
-//		beginDraw();
+		initialActiveOptik = activeOptik;
 		
-		drawOffScreen = true;
-			drawFirstPass(offG);
-			firstPassResult = offG.getTexture();
-		drawOffScreen = false;
+		// Force GLGraphics to start with a fresh matrix
+		g.resetMatrix();
 		
-		drawComposePass();
+		g.beginGL();
 		
-//		endDraw();
+			drawOffScreen = true;
+				drawFirstPass(offG);
+				firstPassResult = offG.getTexture();
+			drawOffScreen = false;
+			
+			activateOptik("Ortho");
+			setOptik(g);
+			
+			g.background(0, 200, 0);
+			
+			g.imageMode(PApplet.CENTER);
+			g.image(firstPassResult, 0, 0, g.width, g.height);
+		
+		g.endGL();
+				
+		activeOptik = initialActiveOptik;
 	}
 	
 }

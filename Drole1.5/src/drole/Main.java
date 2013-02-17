@@ -842,7 +842,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 //			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
-			"--display=0",
+//			"--display=0",
 			"drole.Main"
 		});
 	}

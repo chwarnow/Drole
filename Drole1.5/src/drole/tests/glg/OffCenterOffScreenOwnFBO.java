@@ -13,7 +13,7 @@ import drole.settings.Settings;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class OffCenterOffScreen extends PApplet implements MouseWheelListener {
+public class OffCenterOffScreenOwnFBO extends PApplet implements MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -65,7 +65,7 @@ public class OffCenterOffScreen extends PApplet implements MouseWheelListener {
 		
 		offG = new GLGraphicsOffScreen(this, width, height);
 		
-		room = new Room(this, gl, "data/room/drolebox2/panorama03.");
+		room = new Room(this, offG, "data/room/drolebox2/panorama03.");
 		
 		realScreenDim = new PVector(Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM, Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM, Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM);
 		realScreenPos = new PVector(Settings.REAL_SCREEN_POSITION_X_MM, Settings.REAL_SCREEN_POSITION_Y_MM, Settings.REAL_SCREEN_POSITION_Z_MM);
@@ -187,12 +187,25 @@ public class OffCenterOffScreen extends PApplet implements MouseWheelListener {
 		
 		gl.beginGL();
 		
-		calculatep();
-		setp();
+		offG.beginDraw();
 		
-		gl.background(200, 0, 100);
-		room.draw();
+			offG.resetMatrix();
+			offG.beginGL();
+		
+			calculatep();
+			setp();
+		
+			// Flip x-axis back as this is already done in GLGraphicsOffScreen 
+			offG.gl.glScalef(1.0f, -1.0f, 1.0f);
+			
+			offG.background(200, 0, 100);
+			room.draw();
 
+			offG.endGL();
+		offG.endDraw();
+		
+		gl.background(255);
+		
 		/*
 		offG.beginDraw();
 			calculatep();
@@ -212,13 +225,30 @@ public class OffCenterOffScreen extends PApplet implements MouseWheelListener {
 		gl.translate(width/2, height/2, 0);
 		
 		gl.background(255);
+		*/
+		/*
+		gl.translate(width/2, height/2, 0);
+		
+		gl.imageMode(PApplet.CENTER);
+		gl.image(offG.getTexture(), 0, 0, width, height);
+		*/
+		
+		gl.gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.gl.glLoadIdentity();
+		
+		gl.gl.glOrtho(0, width, height, 0, 10, -10);
+		
+		gl.gl.glMatrixMode(GL.GL_MODELVIEW);
+		gl.gl.glLoadIdentity();
+//		gl.gl.glScalef(1.0f, -1.0f, 1.0f);
+		
+		gl.translate(width/2, height/2, 0);
 		
 		gl.imageMode(PApplet.CENTER);
 		gl.image(offG.getTexture(), 0, 0, width, height);
 		
 		gl.fill(200, 200, 0);
 		gl.ellipse(0, 0, 20, 20);
-		*/
 		
 		gl.endGL();
 	}
@@ -239,7 +269,7 @@ public class OffCenterOffScreen extends PApplet implements MouseWheelListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-			"drole.tests.glg.OffCenterOffScreen"
+			"drole.tests.glg.OffCenterOffScreenOwnFBO"
 		});
 	}
 	
