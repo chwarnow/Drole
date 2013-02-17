@@ -197,7 +197,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 		setupMenu();
 		
-//		setupOptikWorld();
+		setupOptikWorld();
 		
 //		setupAssoziationWorld();
 		
@@ -705,22 +705,26 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		case 'r': 
 			if(globe.menuMode() == RibbonGlobe.MENU) {
 //				globe.switchToLights();
+				globe.menuMode(RibbonGlobe.LIGHTS);
+				
 				globe.fadeAllOut(100);
 				globe.fadeOut(100);
 				
-//				optikWorldDrawlist.fadeAllIn(100);
-				assoziationWorldDrawlist.fadeAllIn(100);
+				optikWorldDrawlist.fadeAllIn(100);
+//				assoziationWorldDrawlist.fadeAllIn(100);
 //				fabricWorldDrawlist.fadeAllIn(100);
 //				optikWorldDrawlist.fadeAllIn(100);
 //				assoziationWorldDrawlist.fadeAllIn(100);
 			} else {
 //				globe.switchToMenu();
 				
+				globe.menuMode(RibbonGlobe.MENU);
+				
 				globe.fadeAllIn(100);
 				globe.fadeIn(100);
 
-//				optikWorldDrawlist.fadeAllOut(100);
-				assoziationWorldDrawlist.fadeAllOut(100);
+				optikWorldDrawlist.fadeAllOut(100);
+//				assoziationWorldDrawlist.fadeAllOut(100);
 //				fabricWorldDrawlist.fadeAllOut(100);
 
 //				optikWorldDrawlist.fadeAllOut(100);
@@ -820,11 +824,11 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	
 	public void mouseMoved(MouseEvent e) {
 		if(FREEMODE) {
-			mouseHead.x = map(e.getX(), 0, width, -offCenterOptik.realScreenDim.x/2f, offCenterOptik.realScreenDim.x/2f);
+			mouseHead.x = map(e.getX(), width, 0, -offCenterOptik.realScreenDim.x/2f, offCenterOptik.realScreenDim.x/2f);
 			mouseHead.y = map(e.getY(), 0, height, offCenterOptik.realScreenPos.y, offCenterOptik.realScreenPos.y+offCenterOptik.realScreenDim.y);
 			
 			offCenterOptik.updateHeadPosition(mouseHead);
-			println(mouseHead);
+//			println(mouseHead);
 		}
 	}
 	
@@ -833,7 +837,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		if(FREEMODE) {
 			mouseHead.z += e.getWheelRotation()*30f;
 			
-			println(mouseHead);
+//			println(mouseHead);
 		}
 	}
 	

@@ -72,6 +72,11 @@ public class RibbonGlobe extends Drawlist {
 		menuMode = RibbonGlobe.MENU;		
 	}
 	
+	public short menuMode(short menuMode) {
+		this.menuMode = menuMode;
+		return menuMode();
+	}
+
 	public short menuMode() {
 		return menuMode;
 	}

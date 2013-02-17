@@ -173,7 +173,7 @@ public class Engine {
 		
 			updateAll((PGraphicsOpenGL) cg);
 		
-			cg.background(200, 0, 100);
+			cg.background(0);
 
 			for(Entry<String, Drawable> dle : drawables.entrySet()) {
 				Drawable dl = dle.getValue();
@@ -230,7 +230,7 @@ public class Engine {
 			activateOptik("Ortho");
 			setOptik(g);
 			
-			g.background(0, 200, 0);
+			g.background(0);
 			
 			g.imageMode(PApplet.CENTER);
 			g.image(firstPassResult, 0, 0, g.width, g.height);
