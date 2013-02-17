@@ -38,4 +38,11 @@ public class EngineApplet extends PApplet {
 		truncateLog();
 	}
 
+	public void logErr(Object o) {
+		logs.add("ERROR: "+o.toString());
+		System.err.println(o);
+		newLine = true;
+		truncateLog();
+	}
+	
 }

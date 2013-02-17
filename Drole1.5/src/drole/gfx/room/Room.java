@@ -20,28 +20,28 @@ public class Room extends Drawable {
 	private PVector l2 	= new PVector(-m, -m, -p);
 	private PVector l3 	= new PVector(-m, m, -p);
 	private PVector l4 	= new PVector(-m, m, 0);
-	private PVector ln  = new PVector(-1, 0, 0);
+	private PVector ln  = new PVector(1, 0, 0);
 	
 	// Right
 	private PVector r1 = new PVector(m, -m, 0);
 	private PVector r2 = new PVector(m, -m, -p);
 	private PVector r3 = new PVector(m, m, -p);
 	private PVector r4 = new PVector(m, m, 0);
-	private PVector rn = new PVector(1, 0, 0);
+	private PVector rn = new PVector(-1, 0, 0);
 
 	// Top
 	private PVector t1 = new PVector(-m, -m, 0);
 	private PVector t2 = new PVector(m, -m, 0);
 	private PVector t3 = new PVector(m, -m, -p);
 	private PVector t4 = new PVector(-m, -m, -p);
-	private PVector tn = new PVector(0, -1, 0);
+	private PVector tn = new PVector(0, 1, 0);
 
 	// Bottom
 	private PVector b1 = new PVector(-m, m, 0);
 	private PVector b2 = new PVector(m, m, 0);
 	private PVector b3 = new PVector(m, m, -p);
 	private PVector b4 = new PVector(-m, m, -p);
-	private PVector bn = new PVector(0, 1, 0);
+	private PVector bn = new PVector(0, -1, 0);
 
 	// Back
 	private PVector f1 = new PVector(-m, -m, -p);
@@ -93,7 +93,7 @@ public class Room extends Drawable {
 		g.pushStyle();
 		g.pushMatrix();
 		
-			e.startShader("ColorAndTexture");
+//			e.startShader("ColorAndTexture");
 		
 			g.noFill();
 			g.noStroke();
@@ -108,7 +108,7 @@ public class Room extends Drawable {
 			
 			TexturedCube();
 		
-			e.stopShader();
+//			e.stopShader();
 			
 		g.popMatrix();
 		g.popStyle();

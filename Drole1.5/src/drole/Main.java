@@ -19,6 +19,7 @@ import com.madsim.engine.optik.OrthoOptik;
 import com.madsim.engine.optik.StdOptik;
 import com.madsim.engine.shader.ColorAndTextureShader;
 import com.madsim.engine.shader.JustColorShader;
+import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.tracking.kinect.PositionTarget;
 import com.madsim.tracking.kinect.PositionTargetListener;
 import com.madsim.tracking.kinect.TargetBox3D;
@@ -89,6 +90,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	/* Shader */
 	private JustColorShader justColorShader;
 	private ColorAndTextureShader colorAndTextureShader;
+	private PolyLightAndTextureShader polyLightAndTextureShader;
 	
 	/* Drawlists */
 	private Drawlist overlayDrawlist;
@@ -101,7 +103,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private Room room;
 	
 	/* Globe */
-	private PVector globePosition = new PVector(0, 0, 0);
+	private PVector globePosition = new PVector(0, 0, -1000);
 	private PVector globeSize = new PVector(600, 0, 0);
 	private RibbonGlobe globe;
 
@@ -142,6 +144,9 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			
 			colorAndTextureShader = new ColorAndTextureShader(this);
 			engine.addShader("ColorAndTexture", colorAndTextureShader);
+
+			polyLightAndTextureShader = new PolyLightAndTextureShader(this);
+			engine.addShader("PolyLightAndTexture", polyLightAndTextureShader);
 			
 			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);

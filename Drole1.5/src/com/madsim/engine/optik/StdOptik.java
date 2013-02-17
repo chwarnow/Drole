@@ -1,5 +1,7 @@
 package com.madsim.engine.optik;
 
+import javax.media.opengl.GL;
+
 import com.madsim.engine.Engine;
 
 import processing.core.PApplet;
@@ -19,8 +21,13 @@ public class StdOptik extends Optik {
 
 	@Override
 	public void set() {
+		g.gl.glMatrixMode(GL.GL_PROJECTION);
+		g.gl.glLoadIdentity();
+		
 		g.perspective(PApplet.PI/3.0f, g.width/g.height, cameraZ/10.0f, cameraZ*10.0f);
-//		p.ortho();
+		
+		g.gl.glMatrixMode(GL.GL_MODELVIEW);
+		g.gl.glLoadIdentity();
 	}
 
 }

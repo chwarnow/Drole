@@ -39,7 +39,7 @@ public class Engine {
 	private String initialActiveOptik;
 
 	private HashMap<String, Shader> shaders = new HashMap<String, Shader>();
-	private String activeShader;
+	private Shader activeShader;
 	
 	public boolean drawStarted = false;
 	
@@ -103,12 +103,13 @@ public class Engine {
 	}
 	
 	public void startShader(String name) {
-		activeShader = name;
-		shaders.get(activeShader).start();
+		if(!shaders.containsKey(name)) p.logErr("[Engine]: Can't find shader '"+name+"'!");
+		activeShader = shaders.get(name);
+		activeShader.start();
 	}
 	
 	public void stopShader() {
-		shaders.get(activeShader).stop();
+		activeShader.stop();
 	}
 	
 	public void refreshGLG() {
@@ -212,6 +213,22 @@ public class Engine {
 		endDraw(g);
 	}
 	
+	private void setLights() {
+		// First kill all previously set lights!
+		g.noLights();
+		offG.noLights();
+		
+		// enable lights
+		g.lights();
+		g.lightFalloff(1.0f, 0.0f, 0.0f);
+//		offG.ambient(200, 0, 0);
+		g.pointLight(200*PApplet.sin(p.frameCount/20f), 0, 100*PApplet.sin(p.frameCount/20f), -200, -200, -400);
+		g.pointLight(0, 255*PApplet.sin(p.frameCount/110f), 200*PApplet.sin(p.frameCount/110f), 200, 200, -400);
+		g.pointLight(0, 0, 170*PApplet.sin(p.frameCount/60f), 500, 300, -800);
+//		activeShader.glsl().setVecAttribute("ambientGlobal", 0.6f, 0.0f, 0.0f, 1.0f);
+		activeShader.glsl().setVecUniform("ambient", 0.6f, 0.6f, 0.6f, 1.0f);
+	}
+	
 	public void draw() {
 		refreshGLG();
 		
@@ -222,19 +239,32 @@ public class Engine {
 		
 		g.beginGL();
 		
+			startShader("PolyLightAndTexture");
+		
+			setLights();
+			
 			drawOffScreen = true;
 				drawFirstPass(offG);
 				firstPassResult = offG.getTexture();
 			drawOffScreen = false;
 			
+			stopShader();
+			
 			activateOptik("Ortho");
 			setOptik(g);
 			
+			g.noLights();
+			
 			g.background(0);
 			
-			g.imageMode(PApplet.CENTER);
-			g.image(firstPassResult, 0, 0, g.width, g.height);
-		
+			g.beginShape(PApplet.QUADS);
+				g.texture(firstPassResult);
+				g.vertex(-(g.width/2), -(g.height/2), -1, 0, 0);
+				g.vertex(g.width/2, -(g.height/2), -1, 1, 0);
+				g.vertex(g.width/2, g.height/2, -1, 1, 1);
+				g.vertex(-(g.width/2), g.height/2, -1, 0, 1);
+			g.endShape();
+
 		g.endGL();
 				
 		activeOptik = initialActiveOptik;

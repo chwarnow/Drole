@@ -86,7 +86,7 @@ public class RibbonGlobe extends Drawlist {
 		g.pushStyle();
 		g.pushMatrix();
 
-			e.startShader("JustColor");
+//			e.startShader("JustColor");
 		
 			g.translate(position.x, position.y, position.z);
 			g.scale(scale.x, scale.y, scale.z);
@@ -101,7 +101,7 @@ public class RibbonGlobe extends Drawlist {
 			}
 //			for(RibbonGroup r : ribbons) r.drawAsLines();
 		
-			e.stopShader();
+//			e.stopShader();
 			
 		g.popMatrix();
 		g.popStyle();
