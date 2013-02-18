@@ -22,7 +22,7 @@ public class AssoziierenTest extends PApplet {
 		size(1200, 720, GLConstants.GLGRAPHICS);
 	
 		// init ribbon sculpture
-		penseeA = new BildweltAssoziationPensee(this, "data/images/contentB.png", sphereConstraintRadius);
+		penseeA = new BildweltAssoziationPensee(this, "data/images/associationA.png", sphereConstraintRadius, 1.0f);
 	}
 	
 	public void draw() {

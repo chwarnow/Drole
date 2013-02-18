@@ -1,5 +1,6 @@
 package drole.gfx.assoziation;
 
+import penner.easing.Expo;
 import processing.core.PApplet;
 import processing.core.PVector;
 import drole.gfx.ribbon.Ribbon3D;
@@ -20,7 +21,7 @@ class BildweltAssoziationAgent {
 	float r, g, b, a;
 
 	int pathPosition = 0;
-	BildweltAssoziationAgent(PApplet parent, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius, float quadHeight, int pathLength) {
+	BildweltAssoziationAgent(PApplet parent, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius, float quadHeight, int pathLength, PVector constraintCenter) {
 		this.parent = parent;
 		p = new PVector(beginning.x, beginning.y, beginning.z);//new PVector(0, 0, 0);
 		this.myColor = thisColor;
@@ -32,16 +33,22 @@ class BildweltAssoziationAgent {
 		positionsZ = new float[positionSteps];
 
 		offset = 10000;
-		stepSize = parent.random(2, 3);
+		stepSize = parent.random(1, 2);
 		// how many points has the ribbon
 		pathLength = parent.max(1, pathLength);
 		int ribbonAmount = (int)parent.random(1*pathLength, 2*pathLength);
 		if(ribbonAmount %2 != 0) ribbonAmount ++;
 		ribbon = new Ribbon3D(parent, p, ribbonAmount);
+		int startPos = 0;
 		// precompute positions
 		for (int i=0;i<positionSteps;i++) {
 			PVector thisP = new PVector(p.x, p.y, p.z);
 			if (i>1 && i > beginX) {
+				float ratio = (float)(i-startPos)/(positionSteps-startPos);
+				float angle = ratio*parent.PI;
+				float distanceRatio = parent.sin(angle);//Sine.easeInOut ((float)(i-startPos)/(positionSteps-startPos), 0, 1.0f, 1.0f);//parent.cos((float)i/(positionSteps-startPos)*parent.TWO_PI);
+				
+				
 				thisP.x = positionsX[i-1];
 				thisP.y = positionsY[i-1];
 				thisP.z = positionsZ[i-1];
@@ -55,8 +62,11 @@ class BildweltAssoziationAgent {
 				thisP.z += parent.cos(angleZ) * parent.sin(angleY) * stepSize;
 
 				// distance to center
-
-				float centerDistance = thisP.x*thisP.x + thisP.y*thisP.y + thisP.z*thisP.z;
+				float dx = thisP.x - constraintCenter.x;
+				float dy = thisP.y - constraintCenter.y;
+				float dz = thisP.z - constraintCenter.z;
+				
+				float centerDistance = dx*dx + dy*dy + dz*dz;//thisP.x*thisP.x + thisP.y*thisP.y + thisP.z*thisP.z;
 
 				// constrain to sphere
 				if(centerDistance > sphereConstraintRadius*sphereConstraintRadius) {
@@ -64,9 +74,29 @@ class BildweltAssoziationAgent {
 					thisP.mult(sphereConstraintRadius);
 				}
 
-				positionsX[i] = thisP.x;
-				positionsY[i] = thisP.y;
-				positionsZ[i] = thisP.z;
+				if(ratio > .5f) {
+					int frameID = startPos;
+					// if(ratio > .9) if(i%2==0) frameID = startPos-1;
+					float thisRatio = Expo.easeIn(ratio-.5f, 0f, .8f, .5f);
+					thisP.x += (positionsX[frameID] - thisP.x)*thisRatio;
+					thisP.y += (positionsY[frameID] - thisP.y)*thisRatio;
+					thisP.z += (positionsZ[frameID] - thisP.z)*thisRatio;
+				}
+				if(i == positionSteps-2) {
+					thisP.x = positionsX[1];
+					thisP.y = positionsY[1];
+					thisP.z = positionsZ[1];
+				} else if(i==positionSteps-1) {
+					thisP.x = positionsX[0];
+					thisP.y = positionsY[0];
+					thisP.z = positionsZ[0];
+				}
+				float newX = thisP.x;//positionsX[startPos] + parent.cos(angle)*distanceRatio*100.0f + (parent.cos(angleZ) * parent.cos(angleY))*10.0f*angle;
+				float newY = thisP.y;//positionsY[startPos] + parent.sin(angle)*distanceRatio*100.0f + (parent.sin(angleZ))*10.0f*angle;
+				float newZ = thisP.z;//positionsZ[startPos] + parent.sin(angle)*distanceRatio*100.0f + (parent.cos(angleZ) * parent.sin(angleY))*10.0f*angle;
+				positionsX[i] = newX;
+				positionsY[i] = newY;
+				positionsZ[i] = newZ;
 			} 
 			else {
 
@@ -84,6 +114,8 @@ class BildweltAssoziationAgent {
 				positionsZ[i] = p.z;
 				//TODO: how to let pixels stay on place? (do not update ribbons)
 				p.x += quadHeight;//(i%2==0) ? quadHeight : -quadHeight;
+				
+				startPos = i;
 			}
 		}
 		

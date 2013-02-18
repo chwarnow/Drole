@@ -30,18 +30,21 @@ public class BildweltAssoziationPensee {
 
 	// animation values
 
-	int positionSteps = 150;
-	int currPosition = 0;
+	int positionSteps = 250;
+	public int currPosition = 0;
 	int animationDirection = -1;
 	int oldEasedIndex = 0;
 	float easedPosition = 0;
 	float quadHeight = 1.0f;
 	
 	private int delay = 0; // count up when delaying
-	private int delayTime = 100; // wait for 100 frames until next one begins
+	private int delayTime = 10; // wait for 100 frames until next one begins
+	int cosDetail = 25;
+	float[] cosLUT = new float[cosDetail];
 
-	public BildweltAssoziationPensee(PApplet parent, String imagePath, float sphereConstraintRadius) {
+	public BildweltAssoziationPensee(PApplet parent, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter) {
 		this.parent = parent;
+		this.quadHeight = quadHeight;
 		parent.noiseSeed((long)parent.random(1000));
 		// load image
 		content = new GLTexture(parent, imagePath);
@@ -66,7 +69,7 @@ public class BildweltAssoziationPensee {
 				starterThreshold *= .25f;
 				agents[i++]=new BildweltAssoziationAgent(
 						parent,
-						new PVector((x-content.width/2)*quadHeight, (y-content.height/2)*quadHeight, 0),
+						new PVector((x-content.width/2)*quadHeight + penseeCenter.x, (y-content.height/2)*quadHeight + penseeCenter.y, 0 + penseeCenter.z),
 						content.get(x, y),
 						positionSteps,
 						noiseScale,
@@ -74,7 +77,8 @@ public class BildweltAssoziationPensee {
 						starterThreshold,
 						sphereConstraintRadius,
 						quadHeight,
-						1
+						1,
+						constraintCenter
 				);
 				vertexCount += agents[i-1].getVertexCount();
 				}
@@ -97,30 +101,39 @@ public class BildweltAssoziationPensee {
 
 		// load shader
 		imageShader = new GLSLShader(parent, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
+		
+		// create cos lookup table
+		for(i=0;i<cosDetail;i++) {
+			cosLUT[i] = parent.cos(((float)i/cosDetail)*parent.PI);
+		}
 	}
 
 	public void update() {
 		// update playhead on precomputed noise path
 		if (currPosition == positionSteps-1) {
 			if (delay++==delayTime) {
-				animationDirection *= -1;
-				currPosition += animationDirection;
+				//animationDirection *= -1;
+				//currPosition += animationDirection;
+				currPosition = 0;
 				delay = 0;
 			}
 		}
+		/*
 		else if (currPosition == 0) {
 			if (delay++==delayTime) {
-				animationDirection *= -1;
+				//animationDirection *= -1;
 				currPosition += animationDirection;
 				delay = 0;
 			}
 		}
+		*/
 		else {
-			currPosition += animationDirection;
+			// currPosition += animationDirection;
+			currPosition -= animationDirection;
 		}
 
 		// eased value out of currStep/positionSteps
-		easedPosition = Sine.easeInOut (currPosition, 0, positionSteps-1, positionSteps);
+		easedPosition = currPosition;//Sine.easeInOut (currPosition, 0, positionSteps-1, positionSteps);
 
 	}
 
@@ -145,6 +158,8 @@ public class BildweltAssoziationPensee {
 
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
+			
+			
 			BildweltAssoziationAgent agent = agents[i];
 			// set agents position
 			// TODO: improve updating performance
@@ -155,9 +170,13 @@ public class BildweltAssoziationPensee {
 			int agentVertexNum = agentsVertices.length;
 
 			for(int j=0;j<agentVertexNum-1;j++) {
+				
+				// cosinus from lookup table
+				float ratio = cosLUT[(int)((float)j/agentVertexNum) *cosDetail];
+				
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
-				PVector thirdP = agentsVertices[j+1];
+				//PVector thirdP = agentsVertices[j+1];
 
 				// create quad from above vertices and save in glmodel, then add colors
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
@@ -166,12 +185,12 @@ public class BildweltAssoziationPensee {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
-				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight;
+				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight*ratio*2.0f;
 				floatQuadVertices[quadVertexIndex++] = thisP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = nextP.x;
-				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight;
+				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight*ratio*2.0f;
 				floatQuadVertices[quadVertexIndex++] = nextP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
@@ -181,9 +200,9 @@ public class BildweltAssoziationPensee {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				// compute face normal
-				PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
-				PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight) - thisP.y, nextP.z - thisP.z);
-				PVector v3 = v1.cross(v2);
+				// PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
+				// PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight) - thisP.y, nextP.z - thisP.z);
+				PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);//v1.cross(v2);
 				v3.normalize();
 
 				float nX = v3.x;
@@ -238,20 +257,20 @@ public class BildweltAssoziationPensee {
 
 		imageQuadModel.updateVertices(floatQuadVertices);
 		imageQuadModel.updateColors(floatQuadColors);
-		imageQuadModel.updateNormals(floatQuadNormals);
+		imageQuadModel.updateNormals(floatQuadVertices);
 
 		// renderer.beginGL();  
-		/*
+		
 	    imageShader.start();
 	    imageShader.setFloatUniform("zmin", 0.65f);
 	    imageShader.setFloatUniform("zmax", 0.85f);
 	    imageShader.setFloatUniform("shininess", 100.0f);
-	    imageShader.setVecUniform("lightPos", 00.0f, 00.0f, 500.0f);
-		*/
+	    imageShader.setVecUniform("lightPos", 00.0f, 150.0f, 30.0f);
+		
 		// A model can be drawn through the GLGraphics renderer:
 		renderer.model(imageQuadModel);
 
-		// imageShader.stop();
+		imageShader.stop();
 
 		// renderer.endGL();
 	}

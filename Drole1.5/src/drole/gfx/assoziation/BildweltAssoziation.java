@@ -1,5 +1,6 @@
 package drole.gfx.assoziation;
 
+import processing.core.PVector;
 import codeanticode.glgraphics.GLGraphics;
 import drole.DroleMain;
 import drole.engine.Drawable;
@@ -17,12 +18,12 @@ public class BildweltAssoziation extends Drawable {
 		super(parent);
 		// van she idea of happiness
 		scale(4.0f, 4.0f, 4.0f);
-		position(0.0f, -900.0f, -1500.0f);
+		position(0.0f, -900.0f, 0.0f);
 		
 		// init ribbon sculpture
-		penseeA = new BildweltAssoziationPensee(parent, "data/images/associationA.png", sphereConstraintRadius);
-		penseeB = new BildweltAssoziationPensee(parent, "data/images/associationB.png", sphereConstraintRadius);
-		penseeC = new BildweltAssoziationPensee(parent, "data/images/associationC.png", sphereConstraintRadius);
+		penseeA = new BildweltAssoziationPensee(parent, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
+		penseeB = new BildweltAssoziationPensee(parent, "data/images/associationB.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
+		penseeC = new BildweltAssoziationPensee(parent, "data/images/associationC.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
 		
 		penseeB.positionSteps = 33;
 		penseeC.positionSteps = 66;
