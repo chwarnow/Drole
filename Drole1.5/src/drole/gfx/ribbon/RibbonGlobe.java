@@ -92,7 +92,7 @@ public class RibbonGlobe extends Drawlist {
 			g.scale(scale.x, scale.y, scale.z);
 			g.rotateY(smoothedRotation);
 			
-			g.fill(200, 200, 200, fade*255);
+			g.fill(255, fade*255);
 			g.noStroke();
 			
 			for(Drawable r : drawables) {

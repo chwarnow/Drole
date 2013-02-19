@@ -11,7 +11,7 @@ public class StdOptik extends Optik {
 	public float cameraZ;
 	
 	public StdOptik(Engine e) {
-		super(e);
+		super(e, 0, 0, 0);
 	}
 
 	@Override
@@ -19,6 +19,9 @@ public class StdOptik extends Optik {
 		cameraZ = ((g.height/2.0f) / PApplet.tan(PApplet.PI*60.0f/360.0f));
 	}
 
+	@Override
+	public void calculate(float povX, float povY, float povZ) { calculate(); }
+	
 	@Override
 	public void set() {
 		g.gl.glMatrixMode(GL.GL_PROJECTION);

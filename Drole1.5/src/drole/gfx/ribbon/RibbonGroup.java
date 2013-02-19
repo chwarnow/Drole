@@ -208,7 +208,7 @@ public class RibbonGroup extends Drawable {
 			g.translate(position.x, position.y, position.z);
 			g.scale(scale.x, scale.y, scale.z);
 			
-			g.fill(200, 200, 200, fade*255);
+			g.fill(255, fade*255);
 			g.noStroke();
 			
 			for (int i = 0; i < numPhysicParticles; i++) {

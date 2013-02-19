@@ -14,12 +14,16 @@ import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.drawable.Drawlist;
 import com.madsim.engine.drawable.file.Image;
 import com.madsim.engine.drawable.geom.Ellipse;
+import com.madsim.engine.optik.LookAt;
 import com.madsim.engine.optik.OffCenterOptik;
 import com.madsim.engine.optik.OrthoOptik;
 import com.madsim.engine.optik.StdOptik;
 import com.madsim.engine.shader.ColorAndTextureShader;
 import com.madsim.engine.shader.JustColorShader;
+import com.madsim.engine.shader.PolyLightAndColorShader;
+import com.madsim.engine.shader.PolyLightAndColorShadowComposerShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
+import com.madsim.engine.shader.PolyLightAndTextureShadowComposerShader;
 import com.madsim.tracking.kinect.PositionTarget;
 import com.madsim.tracking.kinect.PositionTargetListener;
 import com.madsim.tracking.kinect.TargetBox3D;
@@ -53,7 +57,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
-	private boolean FREEMODE			= true;
+	private boolean FREEMODE			= !Settings.USE_KINECT;
 	
 	/* GUI */
 	private Image logoGrey;
@@ -89,6 +93,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	
 	/* Shader */
 	private JustColorShader justColorShader;
+	private PolyLightAndColorShader polyLightAndColorShader;
+	private PolyLightAndColorShadowComposerShader polyLightAndColorShadowComposerShader;
 	private ColorAndTextureShader colorAndTextureShader;
 	private PolyLightAndTextureShader polyLightAndTextureShader;
 	
@@ -129,7 +135,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private BildweltFabric bildweltFabric;
 	
 	public void setup() {
-		size(1080, 1080, GLConstants.GLGRAPHICS);
+		size(Settings.VIRTUAL_SCREEN_WIDTH, Settings.VIRTUAL_SCREEN_HEIGHT, GLConstants.GLGRAPHICS);
 		
 		logLn("Starting Drole!");
 		logLn("Executing at : '"+System.getProperty("user.dir").replace("\\", "/")+"'");
@@ -145,14 +151,24 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			colorAndTextureShader = new ColorAndTextureShader(this);
 			engine.addShader("ColorAndTexture", colorAndTextureShader);
 
+			polyLightAndColorShader = new PolyLightAndColorShader(this);
+			engine.addShader("PolyLightAndColor", polyLightAndColorShader);
+
+			/*
+			polyLightAndColorShadowComposerShader = new PolyLightAndColorShadowComposerShader(this);
+			engine.addShader("PolyLightAndColorShadowComposer", polyLightAndColorShadowComposerShader);
+			*/
+			
 			polyLightAndTextureShader = new PolyLightAndTextureShader(this);
 			engine.addShader("PolyLightAndTexture", polyLightAndTextureShader);
+			
+			engine.addShader("PolyLightAndTextureShadowComposer", new PolyLightAndTextureShadowComposerShader(this));
 			
 			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);
 
 			orthoOptik = new OrthoOptik(engine);
-			engine.addOptik("Ortho", orthoOptik);			
+			engine.addOptik("Ortho", orthoOptik);
 			
 			offCenterOptik = new OffCenterOptik(
 				engine,
@@ -161,12 +177,15 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM,
 				Settings.REAL_SCREEN_POSITION_X_MM,
 				Settings.REAL_SCREEN_POSITION_Y_MM,
-				Settings.REAL_SCREEN_POSITION_Z_MM
+				Settings.REAL_SCREEN_POSITION_Z_MM,
+				head
 			);
 			
 			engine.addOptik("OffCenter", offCenterOptik);
 			
 			engine.activateOptik("Std");
+			
+			engine.addOptik("LookAt", new LookAt(engine));
 			
 			overlayDrawlist = new Drawlist(engine);
 //			engine.addDrawlist("Overlay", overlayDrawlist);

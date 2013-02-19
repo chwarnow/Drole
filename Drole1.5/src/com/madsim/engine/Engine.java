@@ -11,6 +11,7 @@ import processing.opengl.PGraphicsOpenGL;
 import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.drawable.Drawlist;
 import com.madsim.engine.optik.Optik;
+import com.madsim.engine.renderpass.ShadowMapPass;
 import com.madsim.engine.shader.Shader;
 
 import codeanticode.glgraphics.GLGraphics;
@@ -23,6 +24,8 @@ public class Engine {
 	public EngineApplet p;
 	
 	public GLGraphics g;
+	
+	private ShadowMapPass shadowPass;
 	
 	private GLGraphicsOffScreen offG;
 	
@@ -41,6 +44,8 @@ public class Engine {
 	private HashMap<String, Shader> shaders = new HashMap<String, Shader>();
 	private Shader activeShader;
 	
+	private float[][] lights = new float[3][6];
+	
 	public boolean drawStarted = false;
 	
 	public Engine(EngineApplet p) {
@@ -54,6 +59,8 @@ public class Engine {
 		
 		p.logLn("[Engine]: Initializing Framebuffers ("+g.width+":"+g.height+")");
 		offG = new GLGraphicsOffScreen(p, g.width, g.height);
+		
+		shadowPass = new ShadowMapPass(this);
 	}
 	
 	public void model(GLModel model) {
@@ -73,6 +80,10 @@ public class Engine {
 	public void addShader(String name, Shader shader) {
 		shaders.put(name, shader);
 		p.logLn("[Engine]: New shader '"+name+"' added.");
+	}
+	
+	public Shader activeShader() {
+		return activeShader;
 	}
 	
 	public void addDrawlist(String name, Drawlist dl) {
@@ -96,10 +107,14 @@ public class Engine {
 		}
 	}
 	
+	public Optik getActiveOptik() {
+		return optiks.get(activeOptik); 
+	}
+	
 	private void setOptik(PGraphicsOpenGL cg) {
-		optiks.get(activeOptik).setG(cg);
-		optiks.get(activeOptik).calculate();
-		optiks.get(activeOptik).set();
+		getActiveOptik().setG(cg);
+		getActiveOptik().calculate();
+		getActiveOptik().set();
 	}
 	
 	public void startShader(String name) {
@@ -197,36 +212,126 @@ public class Engine {
 		
 			updateAll((PGraphicsOpenGL) g);
 		
-			g.background(200, 0, 100);
-
-			for(Entry<String, Drawable> dle : drawables.entrySet()) {
-				Drawable dl = dle.getValue();
-				if(dl.mode() != Drawable.OFF_SCREEN) {
-					g.pushStyle();
-					g.pushMatrix();
-						dl.draw();
-					g.popMatrix();
-					g.popStyle();
-				}
-			}
+			drawContent();
 			
 		endDraw(g);
 	}
 	
-	private void setLights() {
+	public float[] getLightPosition(int p) {
+		return lights[p];
+	}
+	
+	public void setLights() {
 		// First kill all previously set lights!
 		g.noLights();
 		offG.noLights();
 		
 		// enable lights
 		g.lights();
-		g.lightFalloff(1.0f, 0.0f, 0.0f);
-//		offG.ambient(200, 0, 0);
-		g.pointLight(200*PApplet.sin(p.frameCount/20f), 0, 100*PApplet.sin(p.frameCount/20f), -200, -200, -400);
-		g.pointLight(0, 255*PApplet.sin(p.frameCount/110f), 200*PApplet.sin(p.frameCount/110f), 200, 200, -400);
-		g.pointLight(0, 0, 170*PApplet.sin(p.frameCount/60f), 500, 300, -800);
-//		activeShader.glsl().setVecAttribute("ambientGlobal", 0.6f, 0.0f, 0.0f, 1.0f);
-		activeShader.glsl().setVecUniform("ambient", 0.6f, 0.6f, 0.6f, 1.0f);
+		g.lightFalloff(0.8f, 0.0f, 0.0f);
+
+		lights[0] = new float[]{
+			PApplet.sin(p.frameCount/100f)*500,
+			0,
+			PApplet.abs(PApplet.sin(p.frameCount/30f)*500),
+			20, 0, 200
+		};
+		lights[1] = new float[]{200, 200, -400, 0, 120, 100};	
+		lights[2] = new float[]{500, 300, -800, 200, 0, 30};
+
+		for(int i = 0; i < lights.length; i++) {
+			g.pointLight(lights[i][3], lights[i][4], lights[i][5], lights[i][0], lights[i][1], lights[i][2]);
+		}
+		
+		activeShader.glsl().setVecUniform("ambient", 0.1f, 0.1f, 0.1f, 0.1f);
+	}
+	
+	public void drawContent() {
+		g.background(255);
+
+		for(Entry<String, Drawable> dle : drawables.entrySet()) {
+			Drawable dl = dle.getValue();
+			if(dl.mode() != Drawable.OFF_SCREEN) {
+				g.pushStyle();
+				g.pushMatrix();
+					dl.draw();
+				g.popMatrix();
+				g.popStyle();
+			}
+		}
+		
+		g.pushStyle();
+		g.pushMatrix();
+			g.fill(200);
+			g.translate(-200, -200, -500);
+			g.box(100);
+		g.popMatrix();
+		g.popStyle();
+		
+		g.pushStyle();
+		g.pushMatrix();
+			g.fill(200);
+			g.translate(-200, 200, -100);
+			g.box(100);
+		g.popMatrix();
+		g.popStyle();		
+		
+		drawLights();
+	}
+	
+	public void drawCasterContent() {
+		g.background(255);
+
+		g.pushStyle();
+		g.pushMatrix();
+			drawables.get("Globe").draw();
+		g.popMatrix();
+		g.popStyle();
+		
+		g.pushStyle();
+		g.pushMatrix();
+			g.fill(200);
+			g.translate(-200, -200, -500);
+			g.box(100);
+		g.popMatrix();
+		g.popStyle();
+		
+		g.pushStyle();
+		g.pushMatrix();
+			g.fill(200);
+			g.translate(-200, 200, -100);
+			g.box(100);
+		g.popMatrix();
+		g.popStyle();		
+	}
+	
+	public void drawLights() {
+		for(int i = 0; i < lights.length; i++) {
+			g.pushStyle();
+			g.pushMatrix();
+				g.fill(200, 200, 0);
+				g.translate(lights[i][0], lights[i][1], lights[i][2]);
+				g.sphere(10);
+			g.popMatrix();
+			g.popStyle();
+		}		
+	}
+	
+	public void drawRenderToTexture(GLTexture texture) {
+		activateOptik("Ortho");
+		setOptik(g);
+		
+		g.noLights();
+		
+		g.background(0);
+		
+		g.beginShape(PApplet.QUADS);
+			g.texture(texture);
+			g.vertex(-(g.width/2), -(g.height/2), -1, 0, 0);
+			g.vertex(g.width/2, -(g.height/2), -1, 1, 0);
+			g.vertex(g.width/2, g.height/2, -1, 1, 1);
+			g.vertex(-(g.width/2), g.height/2, -1, 0, 1);
+		g.endShape();
 	}
 	
 	public void draw() {
@@ -239,7 +344,14 @@ public class Engine {
 		
 		g.beginGL();
 		
-			startShader("PolyLightAndTexture");
+			shadowPass.beginRender();
+//			drawRenderToTexture(shadowPass.depthTexture);
+			
+			shadowPass.finalizeRender();
+//			shadowPass.drawLightsView();
+		
+		/*
+			startShader("PolyLightAndColor");
 		
 			setLights();
 			
@@ -250,21 +362,9 @@ public class Engine {
 			
 			stopShader();
 			
-			activateOptik("Ortho");
-			setOptik(g);
-			
-			g.noLights();
-			
-			g.background(0);
-			
-			g.beginShape(PApplet.QUADS);
-				g.texture(firstPassResult);
-				g.vertex(-(g.width/2), -(g.height/2), -1, 0, 0);
-				g.vertex(g.width/2, -(g.height/2), -1, 1, 0);
-				g.vertex(g.width/2, g.height/2, -1, 1, 1);
-				g.vertex(-(g.width/2), g.height/2, -1, 0, 1);
-			g.endShape();
-
+			drawRenderToTexture(firstPassResult);
+		*/
+		
 		g.endGL();
 				
 		activeOptik = initialActiveOptik;

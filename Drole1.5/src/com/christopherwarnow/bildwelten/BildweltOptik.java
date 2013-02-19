@@ -1,10 +1,10 @@
 package com.christopherwarnow.bildwelten;
 
+
 import codeanticode.glgraphics.GLTexture;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
-import drole.Main;
 
 import com.christopherwarnow.bildwelten.utils.Ray;
 import com.madsim.engine.Engine;
@@ -26,9 +26,6 @@ public class BildweltOptik extends Drawable {
 	
 	public BildweltOptik(Engine e) {
 		super(e);
-
-		position(position);
-		dimension(dimension);
 
 		font = e.p.loadFont("data/fonts/HoeflerText-Regular-48.vlw");
 		e.p.textFont(font);
@@ -59,7 +56,7 @@ public class BildweltOptik extends Drawable {
 		g.stroke(105, 90, 97);
 		g.fill(199, 186, 177);
 
-		g.imageMode(g.CORNERS);
+		g.imageMode(PApplet.CORNERS);
 
 		g.pushMatrix();
 		// g.translate(g.width/2, g.height/2+200 - fade*500);

@@ -4,18 +4,17 @@ import javax.media.opengl.GL;
 
 import com.madsim.engine.Engine;
 
-import processing.core.PApplet;
-
 public class OrthoOptik extends Optik {
 
 	public OrthoOptik(Engine e) {
-		super(e);
+		super(e, 0, 0, 0);
 	}
 
 	@Override
-	public void calculate() {
-		
-	}
+	public void calculate() {}
+	
+	@Override
+	public void calculate(float povX, float povY, float povZ) { calculate(); }
 
 	@Override
 	public void set() {

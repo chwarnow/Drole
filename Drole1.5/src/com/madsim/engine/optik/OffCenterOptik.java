@@ -11,15 +11,15 @@ public class OffCenterOptik extends Optik {
 	// Real World Screen Dimensions
 	public PVector realScreenDim;
 	public PVector realScreenPos;
+
+	// Tracker Space Position of the users head
+	private PVector pe;
 	
 	// Real World Screen Positions
 	private PVector pa = new PVector();
 	private PVector pb = new PVector();
 	private PVector pc = new PVector();
 	private PVector pd = new PVector();
-	
-	// Head Position in Tracker Space
-	private PVector pe;
 
 	// Real World Screen Orthonormal Basis
 	private PVector vr = new PVector();
@@ -43,8 +43,9 @@ public class OffCenterOptik extends Optik {
 	// z
 	private PVector vc = new PVector();
 	
-	public OffCenterOptik(Engine e, float w, float h, float d, float x, float y, float z) {
-		super(e);
+	public OffCenterOptik(Engine e, float w, float h, float d, float x, float y, float z, PVector head) {
+		super(e, head);
+		
 		realScreenDim = new PVector(w, h, d);
 		realScreenPos = new PVector(x, y, z);
 		
@@ -54,14 +55,14 @@ public class OffCenterOptik extends Optik {
 	}
 
 	public PVector updateHeadPosition(PVector pe) {
-//		p.logLn(pe.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
-//		pe.y = realScreenPos.y + (realScreenDim.y / 2f);
-//		pe.y *= -1;
-		pe.x *= -1;
+		stdPOV = pe.get();
 		
-		this.pe = pe;
+//		p.logLn(stdPOV.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
+//		stdPOV.y = realScreenPos.y + (realScreenDim.y / 2f);
+//		stdPOV.y *= -1;
+		stdPOV.x *= -1;
 		
-		return this.pe;
+		return stdPOV;
 	}
 
 	private void calcRealWorldScreenSetup() {
@@ -96,7 +97,14 @@ public class OffCenterOptik extends Optik {
 	}
 	
 	@Override
-	public void calculate() {		
+	public void calculate(float povX, float povY, float povZ) {
+		calculate(new PVector(povX, povY, povZ));
+	}
+	
+	@Override
+	public void calculate(PVector pov) {
+		pe = pov.get();
+		
 		// logLn(pe);
 
 		// Compute the screen corner vectors.
@@ -125,7 +133,7 @@ public class OffCenterOptik extends Optik {
 		b = PVector.dot(vu, va) * n / d;
 		t = PVector.dot(vu, vc) * n / d;
 	}
-
+	
 	@Override
 	public void set() {
 		// Load the perpendicular projection.

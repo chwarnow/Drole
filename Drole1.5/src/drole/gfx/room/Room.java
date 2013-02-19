@@ -78,14 +78,24 @@ public class Room extends Drawable {
 	
 	// create a cube side given by 4 edge vertices and a texture
 	private void TexturedCubeSide(PVector P1, PVector P2, PVector P3, PVector P4, PVector normal, PImage tex) {
+		/*
 		g.beginShape(GLGraphics.QUADS);
 			g.texture(tex);
 			g.normal(normal.x, normal.y, normal.z);
 			g.vertex(P1.x, P1.y, P1.z, 0, 0);
 			g.vertex(P2.x, P2.y, P2.z, 1, 0);
 			g.vertex(P3.x, P3.y, P3.z, 1, 1);
-			g.vertex(P4.x, P4.y, P4.z, 0, 1);
+			g.vertex(P4.x, P4.y, P4.z, 0, 1);		
 		g.endShape();
+		*/
+		
+		g.beginShape(GLGraphics.QUADS);
+			g.normal(normal.x, normal.y, normal.z);
+			g.vertex(P1.x, P1.y, P1.z);
+			g.vertex(P2.x, P2.y, P2.z);
+			g.vertex(P3.x, P3.y, P3.z);
+			g.vertex(P4.x, P4.y, P4.z);		
+		g.endShape();		
 	}
 	
 	@Override
@@ -102,7 +112,7 @@ public class Room extends Drawable {
 			
 			g.textureMode(PApplet.CORNERS);
 			
-			g.fill(255);
+			g.fill(200);
 			g.noStroke();
 			g.tint(255, 255);
 			
