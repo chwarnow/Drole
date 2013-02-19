@@ -29,6 +29,7 @@ void main()
 	//{
 	//	color += texture2D( textureSource, gl_TexCoord[0].st + vec2( gaussFilter[i].x*ScaleU.x, gaussFilter[i].x*ScaleU.y ) )*gaussFilter[i].y;
 	//}
+	//for(int i = 0; i < 2; i++) {
 	color += texture2D( textureSource, gl_TexCoord[0].st + vec2( -3.0*ScaleU.x, -3.0*ScaleU.y ) ) * 0.015625;
 	color += texture2D( textureSource, gl_TexCoord[0].st + vec2( -2.0*ScaleU.x, -2.0*ScaleU.y ) )*0.09375;
 	color += texture2D( textureSource, gl_TexCoord[0].st + vec2( -1.0*ScaleU.x, -1.0*ScaleU.y ) )*0.234375;
@@ -36,6 +37,7 @@ void main()
 	color += texture2D( textureSource, gl_TexCoord[0].st + vec2( 1.0*ScaleU.x,  1.0*ScaleU.y ) )*0.234375;
 	color += texture2D( textureSource, gl_TexCoord[0].st + vec2( 2.0*ScaleU.x,  2.0*ScaleU.y ) )*0.09375;
 	color += texture2D( textureSource, gl_TexCoord[0].st + vec2( 3.0*ScaleU.x, -3.0*ScaleU.y ) ) * 0.015625;
+	//}
 
 	gl_FragColor = color;
 }

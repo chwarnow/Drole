@@ -1,5 +1,7 @@
 package drole.tests.vsmshadow;
 
+import java.awt.event.MouseEvent;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
@@ -16,7 +18,7 @@ public class ShadowTest extends PApplet {
 
 	private float RENDER_WIDTH		=	1000.0f;
 	private float RENDER_HEIGHT		=	 700.0f;
-	private float SHADOW_MAP_COEF 	=	   0.5f;
+	private float SHADOW_MAP_COEF 	=	   2.0f;
 	private float BLUR_COEF 		= 	  0.25f;
 
 	private GLGraphics renderer;
@@ -107,6 +109,10 @@ public class ShadowTest extends PApplet {
 			gl.glClearColor(0,0,0,1.0f);
 			gl.glEnable(GL.GL_CULL_FACE);
 			gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+			gl.glEnable(GL.GL_POLYGON_SMOOTH);
+			gl.glEnable(GL.GL_LINE_SMOOTH);
+			gl.glHint(GL.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
+			gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
 			
 		renderer.endGL();
 	}
@@ -212,7 +218,7 @@ public class ShadowTest extends PApplet {
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
 		
-		//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+//		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_GENERATE_MIPMAP, GL.GL_TRUE);
 		
 
 		// Remove artefact on the edges of the shadowmap
@@ -286,31 +292,40 @@ public class ShadowTest extends PApplet {
 		gl.glColor4f(0.3f, 0.3f, 0.3f, 1);
 		
 		gl.glBegin(GL.GL_TRIANGLE_STRIP);
-			gl.glVertex3f(-45, 2, -45);
-			gl.glVertex3f(45, 2,  -45);
-			gl.glVertex3f(-45, 2,  0);
-			gl.glVertex3f(45, 2, 0);
+			gl.glVertex3f(-100, 2, -100);
+			gl.glVertex3f(100, 2,  -100);
+			gl.glVertex3f(-100, 2,  0);
+			gl.glVertex3f(100, 2, 0);
 		gl.glEnd();
 		
-		gl.glColor4f(0.9f, 0.9f, 0.9f, 1);
+		gl.glColor4f(0.8f, 0.8f, 0.8f, 1);
 		
 		// Instead of calling glTranslatef, we need a custom function that also maintain the light matrix
-		startTranslate(0,8,-16);
+		startTranslate(0 , 8, -40);
 		glut.glutSolidCube(4);
 		endTranslate();
 
-		startTranslate(-8,4,-16);
+		gl.glColor4f(0.0f, 0.8f, 0.8f, 1);
+		
+		startTranslate(-8, 4.1f, -16);
 		glut.glutSolidCube(4);
 		endTranslate();
 
-		startTranslate(8,4,-16);
+		startTranslate(8,4.1f,-16);
 		glut.glutSolidCube(4);
 		endTranslate();
 		
-		startTranslate(0,8,-5);
+		gl.glColor4f(0.8f, 0.0f, 0.8f, 1);
+		
+		startTranslate(0, 8, -5);
 		//glutSolidCube(4);
-		glut.glutSolidSphere(4,40,40);
+		glut.glutSolidSphere(5,5,5);
 		endTranslate();
+		
+		startTranslate(20, 8, -50);
+		//glutSolidCube(4);
+		glut.glutSolidSphere(5,5,5);
+		endTranslate();		
 	}
 
 	private void blurShadowMap() {
@@ -318,7 +333,7 @@ public class ShadowTest extends PApplet {
 		//glDisable(GL_CULL_FACE);
 		
 		// Bluring the shadow map  horinzontaly
-		gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT,blurFboId[0]);
+		gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, blurFboId[0]);
 		
 		gl.glViewport(0,0, (int)(RENDER_WIDTH * SHADOW_MAP_COEF *BLUR_COEF), (int)(RENDER_HEIGHT* SHADOW_MAP_COEF*BLUR_COEF));
 		
@@ -344,7 +359,7 @@ public class ShadowTest extends PApplet {
 			gl.glTexCoord2d(1,1); gl.glVertex3f(RENDER_WIDTH/2,RENDER_HEIGHT/2,0);
 			gl.glTexCoord2d(0,1); gl.glVertex3f(-RENDER_WIDTH/2,RENDER_HEIGHT/2,0);
 		gl.glEnd();
-			//glGenerateMipmapEXT(GL_TEXTURE_2D);
+//		gl.glGenerateMipmapEXT(GL.GL_TEXTURE_2D);
 			
 			 
 			 // Bluring vertically
@@ -369,11 +384,11 @@ public class ShadowTest extends PApplet {
 	//int elapsedTimeCounter = 0;
 	private void update() {
 		//printf("%d\n",glutGet(GLUT_ELAPSED_TIME));
-//		p_light[0] = light_mvnt * cos(frameCount/2000.0f);
-//		p_light[2] = light_mvnt * sin(frameCount/2000.0f);
+		p_light[0] = light_mvnt * cos(frameCount/1000.0f);
+		p_light[2] = light_mvnt * sin(frameCount/1000.0f);
 
-		p_camera[0] = -light_mvnt * cos(frameCount/1800.0f);
-		p_camera[2] = -light_mvnt * sin(frameCount/1800.0f);
+//		p_camera[0] = -light_mvnt * cos(frameCount/1800.0f);
+//		p_camera[2] = -light_mvnt * sin(frameCount/1800.0f);
 		
 		//p_light[0] = light_mvnt * cos(4000/1000.0);
 		//p_light[2] = light_mvnt * sin(4000/1000.0);
@@ -420,41 +435,37 @@ public class ShadowTest extends PApplet {
 		
 		blurShadowMap();
 
-		// DEBUG only. this piece of code draw the depth buffer onscreen
-/*
-		 gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
-		 gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
-		 
-		 gl.glMatrixMode(GL.GL_PROJECTION);
-		 gl.glLoadIdentity();
-		 gl.glOrtho(-RENDER_WIDTH/2,RENDER_WIDTH/2,-RENDER_HEIGHT/2,RENDER_HEIGHT/2,1,20);
-		 gl.glMatrixMode(GL.GL_MODELVIEW);
-		 gl.glLoadIdentity();
-		 gl.glColor4f(1,1,1,1);
-		 gl.glActiveTexture(GL.GL_TEXTURE0);
-		 gl.glBindTexture(GL.GL_TEXTURE_2D, blurFboIdColorTextureId[0]);
-		 gl.glEnable(GL.GL_TEXTURE_2D);
-		 gl.glTranslated(0,0,-1);
-		 gl.glBegin(GL.GL_QUADS);
-		 gl.glTexCoord2d(0,0); gl.glVertex3f(0,0,0);
-		 gl.glTexCoord2d(1,0); gl.glVertex3f(RENDER_WIDTH/2,0,0);
-		 gl.glTexCoord2d(1,1); gl.glVertex3f(RENDER_WIDTH/2,RENDER_HEIGHT/2,0);
-		 gl.glTexCoord2d(0,1); gl.glVertex3f(0,RENDER_HEIGHT/2,0);
-		 gl.glEnd();
-		 gl.glDisable(GL.GL_TEXTURE_2D);
-*/
-
 		// Now rendering from the camera POV, using the FBO to generate shadows
 		gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
 		
 		gl.glViewport(0, 0, (int)RENDER_WIDTH, (int)RENDER_HEIGHT);
 			
 		// Clear previous frame values
-		gl.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
-		//Using the shadow shader
 		
+		// DEBUG only. this piece of code draw the depth buffer onscreen
+				 gl.glMatrixMode(GL.GL_PROJECTION);
+				 gl.glLoadIdentity();
+				 gl.glOrtho(0, RENDER_WIDTH, RENDER_HEIGHT, 0, 10 , -10);
+				 gl.glMatrixMode(GL.GL_MODELVIEW);
+				 gl.glLoadIdentity();
+				 gl.glColor4f(1,1,1,1);
+				 gl.glActiveTexture(GL.GL_TEXTURE0);
+				 gl.glBindTexture(GL.GL_TEXTURE_2D, depthTextureId[0]);
+				 gl.glEnable(GL.GL_TEXTURE_2D);
+				 gl.glTranslated(0, 0, -1);
+				 gl.glBegin(GL.GL_TRIANGLE_STRIP);
+				 gl.glTexCoord2d(1,1); gl.glVertex3f(RENDER_WIDTH, 0, 0);
+				 gl.glTexCoord2d(1,0); gl.glVertex3f(RENDER_WIDTH, RENDER_HEIGHT, 0);
+				 gl.glTexCoord2d(0,1); gl.glVertex3f(0, 0, 0);
+				 gl.glTexCoord2d(0,0); gl.glVertex3f(0, RENDER_HEIGHT, 0);
+				 gl.glEnd();
+				 gl.glDisable(GL.GL_TEXTURE_2D);
+		
+		/*
+		//Using the shadow shader
 		composeShader.start();
 		
 		composeShader.setTexUniform("ShadowMap", 7);
@@ -462,42 +473,27 @@ public class ShadowTest extends PApplet {
 		composeShader.setFloatUniform("yPixelOffset", 1.0f / (RENDER_HEIGHT * SHADOW_MAP_COEF));
 		
 		gl.glActiveTexture(GL.GL_TEXTURE7);
-		gl.glBindTexture(GL.GL_TEXTURE_2D, colorTextureId[0]);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, depthTextureId[0]);
 		
 		setupMatrices(p_camera[0],p_camera[1],p_camera[2],l_camera[0],l_camera[1],l_camera[2]);
+
 		
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, p_light, 0);
 
-		gl.glCullFace(GL.GL_BACK);
+//		gl.glCullFace(GL.GL_BACK);
 		
 		drawObjects();
 		
 		
 		composeShader.stop();
-		
-		// DEBUG only. this piece of code draw the depth buffer onscreen
-		/*
-		 glUseProgramObjectARB(0);
-		 glMatrixMode(GL_PROJECTION);
-		 glLoadIdentity();
-		 glOrtho(-RENDER_WIDTH/2,RENDER_WIDTH/2,-RENDER_HEIGHT/2,RENDER_HEIGHT/2,1,20);
-		 glMatrixMode(GL_MODELVIEW);
-		 glLoadIdentity();
-		 glColor4f(1,1,1,1);
-		 glActiveTextureARB(GL_TEXTURE0);
-		 glBindTexture(GL_TEXTURE_2D,blurFboIdColorTextureId);
-		 glEnable(GL_TEXTURE_2D);
-		 glTranslated(0,0,-1);
-		 glBegin(GL_QUADS);
-		 glTexCoord2d(0,0);glVertex3f(0,0,0);
-		 glTexCoord2d(1,0);glVertex3f(RENDER_WIDTH/2,0,0);
-		 glTexCoord2d(1,1);glVertex3f(RENDER_WIDTH/2,RENDER_HEIGHT/2,0);
-		 glTexCoord2d(0,1);glVertex3f(0,RENDER_HEIGHT/2,0);
-		 glEnd();
-		 glDisable(GL_TEXTURE_2D);
-		 */
+		*/
 		
 		renderer.endGL();
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+		p_camera[0] = 100f*sin(map(e.getX(), 0, width, -1, 1));
+		p_camera[1] = 100f*sin(map(e.getY(), 0, height, -1, 1));
 	}
 	
 	public static void main(String args[]) {
