@@ -34,10 +34,10 @@ void main()
 	vec4 ambient = mat_ambient * gl_Color;//gl_Color;// gl_LightSource[0].ambient;
 	
 	// diffuse color
-	vec4 kd = mat_diffuse*vec4(.5, .5, .5, gl_Color.a);// * gl_Color*1.0;// gl_LightSource[0].diffuse;
+	vec4 kd = mat_diffuse*vec4(.25, .25, .25, gl_Color.a);// * gl_Color*1.0;// gl_LightSource[0].diffuse;
 	
 	// specular color
-	vec4 ks = mat_specular * vec4(.6, .6, .6, gl_Color.a);//(gl_Color*1.5);// gl_Color;// gl_LightSource[0].specular;
+	vec4 ks = mat_specular * vec4(.46, .46, .46, gl_Color.a);//(gl_Color*1.5);// gl_Color;// gl_LightSource[0].specular;
 	
 	// diffuse term
 	vec3 lightDir = normalize(lightPos - vpos);

@@ -25,7 +25,7 @@ public class BildweltAssoziationPensee {
 	int vertexCount = 0;
 
 	GLTexture content;
-	GLModel imageModel, imageQuadModel;
+	GLModel imageQuadModel;
 	GLSLShader imageShader; // should pe provided by mother class?
 
 	// animation values
@@ -38,7 +38,7 @@ public class BildweltAssoziationPensee {
 	float quadHeight = 1.0f;
 	
 	private int delay = 0; // count up when delaying
-	private int delayTime = 10; // wait for 100 frames until next one begins
+	private int delayTime = 1; // wait for 100 frames until next one begins
 	int cosDetail = 25;
 	float[] cosLUT = new float[cosDetail];
 
@@ -172,7 +172,7 @@ public class BildweltAssoziationPensee {
 			for(int j=0;j<agentVertexNum-1;j++) {
 				
 				// cosinus from lookup table
-				float ratio = cosLUT[(int)((float)j/agentVertexNum) *cosDetail];
+				float ratio = cosLUT[(int)(((float)j/agentVertexNum) * cosDetail)];
 				
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
@@ -265,7 +265,7 @@ public class BildweltAssoziationPensee {
 	    imageShader.setFloatUniform("zmin", 0.65f);
 	    imageShader.setFloatUniform("zmax", 0.85f);
 	    imageShader.setFloatUniform("shininess", 100.0f);
-	    imageShader.setVecUniform("lightPos", 00.0f, 150.0f, 30.0f);
+	    imageShader.setVecUniform("lightPos", 100.0f, 150.0f, 30.0f);
 		
 		// A model can be drawn through the GLGraphics renderer:
 		renderer.model(imageQuadModel);

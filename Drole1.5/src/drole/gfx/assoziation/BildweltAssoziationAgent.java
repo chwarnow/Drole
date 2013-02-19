@@ -1,6 +1,6 @@
 package drole.gfx.assoziation;
 
-import penner.easing.Expo;
+import penner.easing.Cubic;
 import processing.core.PApplet;
 import processing.core.PVector;
 import drole.gfx.ribbon.Ribbon3D;
@@ -33,7 +33,7 @@ class BildweltAssoziationAgent {
 		positionsZ = new float[positionSteps];
 
 		offset = 10000;
-		stepSize = parent.random(1, 2);
+		stepSize = parent.random(2, 4);
 		// how many points has the ribbon
 		pathLength = parent.max(1, pathLength);
 		int ribbonAmount = (int)parent.random(1*pathLength, 2*pathLength);
@@ -57,10 +57,12 @@ class BildweltAssoziationAgent {
 				float angleY = parent.noise(thisP.x/noiseScale, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength; 
 				float angleZ = parent.noise(thisP.x/noiseScale+offset, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength;
 
-				thisP.x += parent.cos(angleZ) * parent.cos(angleY) * stepSize;
-				thisP.y += parent.sin(angleZ) * stepSize;
-				thisP.z += parent.cos(angleZ) * parent.sin(angleY) * stepSize;
-
+				if(ratio < .75) {
+					thisP.x += parent.cos(angleZ) * parent.cos(angleY) * stepSize;
+					thisP.y += parent.sin(angleZ) * stepSize;
+					thisP.z += parent.cos(angleZ) * parent.sin(angleY) * stepSize;
+				}
+				
 				// distance to center
 				float dx = thisP.x - constraintCenter.x;
 				float dy = thisP.y - constraintCenter.y;
@@ -75,13 +77,30 @@ class BildweltAssoziationAgent {
 				}
 
 				if(ratio > .5f) {
-					int frameID = startPos;
-					// if(ratio > .9) if(i%2==0) frameID = startPos-1;
-					float thisRatio = Expo.easeIn(ratio-.5f, 0f, .8f, .5f);
-					thisP.x += (positionsX[frameID] - thisP.x)*thisRatio;
-					thisP.y += (positionsY[frameID] - thisP.y)*thisRatio;
-					thisP.z += (positionsZ[frameID] - thisP.z)*thisRatio;
+					float thisRatio = Cubic.easeIn(ratio-.5f, 0f, 1.0f, .5f);
+					if(i%2==0) {
+						thisP.x += (positionsX[0] - thisP.x)*thisRatio;
+						thisP.y += (positionsY[0] - thisP.y)*thisRatio;
+						thisP.z += (positionsZ[0] - thisP.z)*thisRatio;
+					} else {
+						thisP.x += (positionsX[1] - thisP.x)*thisRatio;
+						thisP.y += (positionsY[1] - thisP.y)*thisRatio;
+						thisP.z += (positionsZ[1] - thisP.z)*thisRatio;
+					}
 				}
+				
+				if(ratio > .81) {
+					if(i%2==0) {
+						thisP.x += (positionsX[0] - thisP.x)*1.0;
+						thisP.y += (positionsY[0] - thisP.y)*1.0;
+						thisP.z += (positionsZ[0] - thisP.z)*1.0;
+					} else {
+						thisP.x += (positionsX[1] - thisP.x)*1.0;
+						thisP.y += (positionsY[1] - thisP.y)*1.0;
+						thisP.z += (positionsZ[1] - thisP.z)*1.0;
+					}
+				}
+				/*
 				if(i == positionSteps-2) {
 					thisP.x = positionsX[1];
 					thisP.y = positionsY[1];
@@ -91,6 +110,8 @@ class BildweltAssoziationAgent {
 					thisP.y = positionsY[0];
 					thisP.z = positionsZ[0];
 				}
+				*/
+				
 				float newX = thisP.x;//positionsX[startPos] + parent.cos(angle)*distanceRatio*100.0f + (parent.cos(angleZ) * parent.cos(angleY))*10.0f*angle;
 				float newY = thisP.y;//positionsY[startPos] + parent.sin(angle)*distanceRatio*100.0f + (parent.sin(angleZ))*10.0f*angle;
 				float newZ = thisP.z;//positionsZ[startPos] + parent.sin(angle)*distanceRatio*100.0f + (parent.cos(angleZ) * parent.sin(angleY))*10.0f*angle;

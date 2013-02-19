@@ -4,6 +4,7 @@ import codeanticode.glgraphics.GLConstants;
 import codeanticode.glgraphics.GLGraphics;
 import drole.gfx.assoziation.BildweltAssoziationPensee;
 import processing.core.PApplet;
+import processing.core.PVector;
 
 /**
  * 
@@ -22,7 +23,7 @@ public class AssoziierenTest extends PApplet {
 		size(1200, 720, GLConstants.GLGRAPHICS);
 	
 		// init ribbon sculpture
-		penseeA = new BildweltAssoziationPensee(this, "data/images/associationA.png", sphereConstraintRadius, 1.0f);
+		penseeA = new BildweltAssoziationPensee(this, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
 	}
 	
 	public void draw() {
