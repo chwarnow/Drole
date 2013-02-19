@@ -47,7 +47,7 @@ public class MenuAssoziationTest extends PApplet {
 		
 		
 		// background dtexture
-		bg = new GLTexture(this, "data/images/backgroundTest.png");
+		bg = new GLTexture(this, "data/images/light_box_two_spots_02.png");
 		
 		// a swarm
 		swarms = new RibbonGroupTest[swarmsAmount];
@@ -77,17 +77,37 @@ public class MenuAssoziationTest extends PApplet {
 		
 		pushMatrix();
 		
-		translate(width/2, height/2, 300);
+		translate(width/2, height/2, 100);
 		rotateY(frameCount*.01f);//radians(mouseX));
 		
 		// draw sculpture
 		GLGraphics renderer = (GLGraphics)g;
 		renderer.beginGL();
+		
+		pushMatrix();
+		translate(0, cos(frameCount*.05f)*10, 0);
 		penseeA.draw(renderer);
+		popMatrix();
+		
+		pushMatrix();
+		translate(0, cos((frameCount+30)*.05f)*10, 0);
 		penseeB.draw(renderer);
+		popMatrix();
+		
+		pushMatrix();
+		translate(0, cos((frameCount+60)*.05f)*10, 0);
 		penseeC.draw(renderer);
+		popMatrix();
+		
+		pushMatrix();
+		translate(0, cos((frameCount+90)*.05f)*10, 0);
 		penseeD.draw(renderer);
+		popMatrix();
+		
+		pushMatrix();
+		translate(0, cos((frameCount+30)*.05f)*10, 0);
 		penseeE.draw(renderer);
+		popMatrix();
 		
 		for(RibbonGroupTest swarm:swarms) swarm.draw();
 		

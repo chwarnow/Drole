@@ -265,7 +265,7 @@ public class BildweltAssoziationPensee {
 	    imageShader.setFloatUniform("zmin", 0.65f);
 	    imageShader.setFloatUniform("zmax", 0.85f);
 	    imageShader.setFloatUniform("shininess", 100.0f);
-	    imageShader.setVecUniform("lightPos", 100.0f, 150.0f, 30.0f);
+	    imageShader.setVecUniform("lightPos", 100.0f, -10.0f, 30.0f);
 		
 		// A model can be drawn through the GLGraphics renderer:
 		renderer.model(imageQuadModel);
