@@ -11,7 +11,7 @@ public class ModelTextures extends PApplet {
 
 	private static final long serialVersionUID = 1L;
 
-	private GLModel texquad;
+	private GLModel model;
 	private GLTexture texture0, texture1;
 
 	private GLSLShader shader;
@@ -25,56 +25,60 @@ public class ModelTextures extends PApplet {
 	  
 	  // The model is dynamic, which means that its coordinates can be
 	  // updating during the drawing loop.
-	  texquad = new GLModel(this, numPoints, QUADS, GLModel.DYNAMIC);
+	  model = new GLModel(this, numPoints, QUADS, GLModel.DYNAMIC);
 	    
 	  // Updating the vertices to their initial positions.
-	  texquad.beginUpdateVertices();
-	  texquad.updateVertex(0, -100, -100, 0);
-	  texquad.updateVertex(1, 100, -100, 0);
-	  texquad.updateVertex(2, 100, 100, 0);
-	  texquad.updateVertex(3, -100, 100, 0);    
-	  texquad.endUpdateVertices();
+	  model.beginUpdateVertices();
+	  model.updateVertex(0, -100, -100, 0);
+	  model.updateVertex(1, 100, -100, 0);
+	  model.updateVertex(2, 100, 100, 0);
+	  model.updateVertex(3, -100, 100, 0);    
+	  model.endUpdateVertices();
 
 	  // Enabling the use of texturing...
-	  texquad.initTextures(2);
+	  model.initTextures(2);
 	  // ... and loading and setting texture for this model.
 	  texture0 = new GLTexture(this, "data/images/boxTexture.jpg");
-	  texquad.setTexture(0, texture0);
+	  model.setTexture(0, texture0);
 	  shader.setTexUniform("texture0", texture0);
+
+	  // Setting the texture coordinates.
+	  model.beginUpdateTexCoords(0);
+	  model.updateTexCoord(0, 0, 0);
+	  model.updateTexCoord(1, 1, 0);    
+	  model.updateTexCoord(2, 1, 1);
+	  model.updateTexCoord(3, 0, 1);
+	  model.endUpdateTexCoords();
 	  
 	  texture1 = new GLTexture(this, "data/images/fabricAngelA.png");
 	  shader.setTexUniform("texture1", texture1);
-	  texquad.setTexture(1, texture1);
+	  model.setTexture(1, texture1);
 	  
-	  // Setting the texture coordinates.
-	  texquad.beginUpdateTexCoords(0);
-	  texquad.updateTexCoord(0, 0, 0);
-	  texquad.updateTexCoord(1, 1, 0);    
-	  texquad.updateTexCoord(2, 1, 1);
-	  texquad.updateTexCoord(3, 0, 1);
-	  texquad.endUpdateTexCoords();
-	  
-	  texquad.beginUpdateTexCoords(1);
-	  texquad.updateTexCoord(0, 0, 0);
-	  texquad.updateTexCoord(1, 1, 0);    
-	  texquad.updateTexCoord(2, 1, 1);
-	  texquad.updateTexCoord(3, 0, 1);
-	  texquad.endUpdateTexCoords();
+	  model.beginUpdateTexCoords(1);
+	  model.updateTexCoord(0, 0, 0);
+	  model.updateTexCoord(1, 1, 0);    
+	  model.updateTexCoord(2, 1, 1);
+	  model.updateTexCoord(3, 0, 1);
+	  model.endUpdateTexCoords();
 
 	  // Enabling colors.
-	  texquad.initColors();
-	  texquad.beginUpdateColors();
+	  model.initColors();
+	  model.beginUpdateColors();
 	  for (int i = 0; i < numPoints; i++) {
-	    texquad.updateColor(i, random(0, 255), random(0, 255), random(0, 255), 225);
+	    model.updateColor(i, random(0, 255), random(0, 255), random(0, 255), 225);
 	  }
-	  texquad.endUpdateColors();    
+	  model.endUpdateColors();
 	}
 
 	public void draw() {    
 	  GLGraphics renderer = (GLGraphics)g;
 	  renderer.beginGL();   
 	  
+	  lights();
+	  
 	  background(0);
+	  
+	  pointLight(200, 0, 0, 0, 0, 100);
 	  
 	  translate(width/2, height/2, 200);        
 	  rotateY(frameCount * 0.01f);   
@@ -88,9 +92,10 @@ public class ModelTextures extends PApplet {
 	  texquad.endUpdateVertices();    
 	   */
 	  shader.start();
-	  	shader.setIntUniform("w00t", 2);
+	  	shader.setIntUniform("numTextures", model.getNumTextures());
+//	  	shader.setIntUniform("numTextures", 0);
 	  	
-	  	renderer.model(texquad);
+	  	renderer.model(model);
 	  shader.stop();
 	  
 	  renderer.endGL();    

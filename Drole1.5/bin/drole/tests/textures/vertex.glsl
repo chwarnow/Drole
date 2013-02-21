@@ -1,3 +1,4 @@
+varying vec3 normal, vertex;
 
 void main() {
 	
@@ -13,4 +14,8 @@ void main() {
 	gl_TexCoord[5] = gl_MultiTexCoord5;
 	gl_TexCoord[6] = gl_MultiTexCoord6;
 	gl_TexCoord[7] = gl_MultiTexCoord7;
+
+	vertex = gl_Position.xyz;
+
+	normal = gl_Normal.xyz;
 }
