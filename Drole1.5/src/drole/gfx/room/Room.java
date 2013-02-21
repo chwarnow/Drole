@@ -56,6 +56,8 @@ public class Room extends Drawable {
 		super(e);
 		
 		loadSkybox(fileBasename, ".jpg");
+		
+		SHADOW_HINT = Drawable.RECEIVE_SHADOW;
 	}
 	
 	// load six skybox images as cube texture

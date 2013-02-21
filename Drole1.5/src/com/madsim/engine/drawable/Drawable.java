@@ -13,41 +13,46 @@ public abstract class Drawable {
 	protected Engine e;
 	protected PGraphicsOpenGL g;
 	
-	public static String OFF_SCREEN 		= 	"OFF_SCREEN";
-	public static String ON_SCREEN 			= 	"ON_SCREEN";
-	public static String FADING_IN 			= 	"FADING_IN";
-	public static String FADING_OUT 		= 	"FADING_OUT";
-	public static String ONLY_ONSCREEN 		= 	"ONLY_ONSCREEN";
-	public static String ONANDOFFSCREEN 	= 	"ONANDOFFSCREEN";
+	public static String OFF_SCREEN 			= 	"OFF_SCREEN";
+	public static String ON_SCREEN 				= 	"ON_SCREEN";
+	public static String FADING_IN 				= 	"FADING_IN";
+	public static String FADING_OUT 			= 	"FADING_OUT";
+	public static String ONLY_ONSCREEN 			= 	"ONLY_ONSCREEN";
+	public static String ONANDOFFSCREEN 		= 	"ONANDOFFSCREEN";
 	
-	protected String MODE 					= 	ON_SCREEN;
-	protected String UPDATE_MODE			= 	ONLY_ONSCREEN;
+	protected String MODE 						= 	ON_SCREEN;
+	protected String UPDATE_MODE				= 	ONLY_ONSCREEN;
 	
-	public String shader					=	"";
-	public boolean useShader				= 	false;
+	public static short CAST_SHADOW				=	10;
+	public static short RECEIVE_SHADOW			=	20;
+	public static short CAST_AND_RECEIVE_SHADOW	=	30;
+	public short SHADOW_HINT					= 	CAST_AND_RECEIVE_SHADOW;
 	
-	private float fadeTime 					= 	1;
-	private float currentFadeTime 			= 	1;
+	public String shader						=	"";
+	public boolean useShader					= 	false;
+	
+	private float fadeTime 						= 	1;
+	private float currentFadeTime 				= 	1;
 
-	protected float fade 					= 	1;
-	public boolean 	visible 				= 	true;
+	protected float fade 						= 	1;
+	public boolean 	visible 					= 	true;
 	
-	protected PVector 	position 			= 	new PVector(0, 0, 0);
-	protected PVector 	dimension 			= 	new PVector(0, 0, 0);
-	protected PVector 	scale 				= 	new PVector(1, 1, 1);
+	protected PVector 	position 				= 	new PVector(0, 0, 0);
+	protected PVector 	dimension 				= 	new PVector(0, 0, 0);
+	protected PVector 	scale 					= 	new PVector(1, 1, 1);
 	
-	private PVector 	targetPosition 		= 	new PVector(0, 0, 0);
-	private PVector 	targetDimension		= 	new PVector(0, 0, 0);
-	private PVector 	targetScale 		= 	new PVector(1, 1, 1);
+	private PVector 	targetPosition 			= 	new PVector(0, 0, 0);
+	private PVector 	targetDimension			= 	new PVector(0, 0, 0);
+	private PVector 	targetScale 			= 	new PVector(1, 1, 1);
 	
-	private long 		positionEaseMillis	=	0;
-	private long 		positionEaseTime	=	0;
+	private long 		positionEaseMillis		=	0;
+	private long 		positionEaseTime		=	0;
 	
-	private long 		dimensionEaseMillis	=	0;
-	private long 		dimensionEaseTime	=	0;
+	private long 		dimensionEaseMillis		=	0;
+	private long 		dimensionEaseTime		=	0;
 	
-	private long 		scaleEaseMillis		=	0;
-	private long 		scaleEaseTime		=	0;
+	private long 		scaleEaseMillis			=	0;
+	private long 		scaleEaseTime			=	0;
 
 	
 	public Drawable(Engine e) {

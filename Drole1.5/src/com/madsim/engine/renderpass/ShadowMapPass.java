@@ -6,6 +6,7 @@ import javax.media.opengl.GL;
 import codeanticode.glgraphics.GLTexture;
 
 import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.optik.LookAt;
 
 public class ShadowMapPass extends RenderPass {
@@ -45,7 +46,7 @@ public class ShadowMapPass extends RenderPass {
 		gl.glCullFace(GL.GL_BACK);
 
 		e.startShader("JustColor");
-			e.drawCasterContent();
+			e.drawContent(new short[]{ Drawable.CAST_SHADOW, Drawable.CAST_AND_RECEIVE_SHADOW });
 		e.stopShader();
 
 		setTextureMatrix();
@@ -62,7 +63,7 @@ public class ShadowMapPass extends RenderPass {
 		e.getActiveOptik().calculate();
 		e.getActiveOptik().set();		
 		
-		e.startShader("PolyLightAndTextureShadowComposer");
+		e.startShader("PolyLightAndColorShadowComposer");
 		e.setLights();
 	
 //			e.p.logLn(depthTexture.getTextureID());
@@ -76,7 +77,7 @@ public class ShadowMapPass extends RenderPass {
 	
 			gl.glCullFace(GL.GL_FRONT);
 	
-			e.drawContent();
+			e.drawContent(new short[]{ Drawable.RECEIVE_SHADOW, Drawable.CAST_AND_RECEIVE_SHADOW });
 	
 		e.stopShader();
 	}
@@ -92,7 +93,7 @@ public class ShadowMapPass extends RenderPass {
 			
 			gl.glCullFace(GL.GL_FRONT);
 			
-			e.drawCasterContent();
+			e.drawContent(new short[]{ Drawable.CAST_SHADOW, Drawable.CAST_AND_RECEIVE_SHADOW });
 			
 		e.stopShader();
 	}

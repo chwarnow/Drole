@@ -25,6 +25,8 @@ public class Engine {
 	
 	public GLGraphics g;
 	
+	public GL gl;
+	
 	private ShadowMapPass shadowPass;
 	
 	private GLGraphicsOffScreen offG;
@@ -86,7 +88,7 @@ public class Engine {
 		return activeShader;
 	}
 	
-	public void addDrawlist(String name, Drawlist dl) {
+	public void addDrawable(String name, Drawable dl) {
 		this.drawables.put(name, dl);
 	}
 	
@@ -129,6 +131,7 @@ public class Engine {
 	
 	public void refreshGLG() {
 		g = (GLGraphics)p.g;
+		gl = g.gl;
 	}
 	
 	public void beginDraw() {
@@ -246,12 +249,25 @@ public class Engine {
 		activeShader.glsl().setVecUniform("ambient", 0.1f, 0.1f, 0.1f, 0.1f);
 	}
 	
+	public boolean isInHintList(short hint, short[] list) {
+		for(short s : list) if(s == hint) return true;
+		return false;
+	}
+	
 	public void drawContent() {
+		drawContent(new short[]{ Drawable.CAST_SHADOW, Drawable.RECEIVE_SHADOW, Drawable.CAST_AND_RECEIVE_SHADOW });
+	}
+	
+	public void drawContent(short[] shadowHintFilter) {
 		g.background(255);
 
 		for(Entry<String, Drawable> dle : drawables.entrySet()) {
 			Drawable dl = dle.getValue();
-			if(dl.mode() != Drawable.OFF_SCREEN) {
+			p.logLn("Checking "+dle.getKey()+" : "+dl.SHADOW_HINT);
+			if(
+				dl.mode() != Drawable.OFF_SCREEN && 
+				isInHintList(dl.SHADOW_HINT, shadowHintFilter)
+			) {
 				g.pushStyle();
 				g.pushMatrix();
 					dl.draw();
@@ -259,50 +275,6 @@ public class Engine {
 				g.popStyle();
 			}
 		}
-		
-		g.pushStyle();
-		g.pushMatrix();
-			g.fill(200);
-			g.translate(-200, -200, -500);
-			g.box(100);
-		g.popMatrix();
-		g.popStyle();
-		
-		g.pushStyle();
-		g.pushMatrix();
-			g.fill(200);
-			g.translate(-200, 200, -100);
-			g.box(100);
-		g.popMatrix();
-		g.popStyle();		
-		
-		drawLights();
-	}
-	
-	public void drawCasterContent() {
-		g.background(255);
-
-		g.pushStyle();
-		g.pushMatrix();
-			drawables.get("Globe").draw();
-		g.popMatrix();
-		g.popStyle();
-		
-		g.pushStyle();
-		g.pushMatrix();
-			g.fill(200);
-			g.translate(-200, -200, -500);
-			g.box(100);
-		g.popMatrix();
-		g.popStyle();
-		
-		g.pushStyle();
-		g.pushMatrix();
-			g.fill(200);
-			g.translate(-200, 200, -100);
-			g.box(100);
-		g.popMatrix();
-		g.popStyle();		
 	}
 	
 	public void drawLights() {
@@ -317,21 +289,27 @@ public class Engine {
 		}		
 	}
 	
-	public void drawRenderToTexture(GLTexture texture) {
+	public void drawRenderToTexture(int textureID) {
 		activateOptik("Ortho");
 		setOptik(g);
 		
-		g.noLights();
-		
-		g.background(0);
-		
-		g.beginShape(PApplet.QUADS);
-			g.texture(texture);
-			g.vertex(-(g.width/2), -(g.height/2), -1, 0, 0);
-			g.vertex(g.width/2, -(g.height/2), -1, 1, 0);
-			g.vertex(g.width/2, g.height/2, -1, 1, 1);
-			g.vertex(-(g.width/2), g.height/2, -1, 0, 1);
-		g.endShape();
+		 gl.glMatrixMode(GL.GL_PROJECTION);
+		 gl.glLoadIdentity();
+		 gl.glOrtho(0, g.width, g.height, 0, 10, -10);
+		 gl.glMatrixMode(GL.GL_MODELVIEW);
+		 gl.glLoadIdentity();
+			 gl.glColor4f(1,1,1,1);
+			 gl.glActiveTexture(GL.GL_TEXTURE0);
+			 gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
+			 gl.glEnable(GL.GL_TEXTURE_2D);
+			 gl.glTranslated(0, 0, -1);
+			 gl.glBegin(GL.GL_TRIANGLE_STRIP);
+				 gl.glTexCoord2d(1,1); gl.glVertex3f(g.width, 0, 0);
+				 gl.glTexCoord2d(1,0); gl.glVertex3f(g.width, g.height, 0);
+				 gl.glTexCoord2d(0,1); gl.glVertex3f(0, 0, 0);
+				 gl.glTexCoord2d(0,0); gl.glVertex3f(0, g.height, 0);
+			 gl.glEnd();
+			 gl.glDisable(GL.GL_TEXTURE_2D);
 	}
 	
 	public void draw() {
@@ -345,7 +323,7 @@ public class Engine {
 		g.beginGL();
 		
 			shadowPass.beginRender();
-//			drawRenderToTexture(shadowPass.depthTexture);
+//			drawRenderToTexture(shadowPass.depthTexture.getTextureID());
 			
 			shadowPass.finalizeRender();
 //			shadowPass.drawLightsView();

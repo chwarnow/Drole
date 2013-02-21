@@ -50,7 +50,7 @@ public class ShadowTest extends PApplet {
 	// Z values will be rendered to this texture when using fboId framebuffer
 	int[] depthTextureId = { 0 };
 	int[] colorTextureId = { 0 };
-
+	
 	/*
 	// Use to activate/disable shadowShader
 	GLhandleARB shadowShaderId;

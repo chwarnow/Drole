@@ -98,13 +98,6 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private ColorAndTextureShader colorAndTextureShader;
 	private PolyLightAndTextureShader polyLightAndTextureShader;
 	
-	/* Drawlists */
-	private Drawlist overlayDrawlist;
-	private Drawlist roomDrawlist;
-	private Drawlist optikWorldDrawlist;
-	private Drawlist assoziationWorldDrawlist;
-	private Drawlist fabricWorldDrawlist;
-	
 	/* Skybox */
 	private Room room;
 	
@@ -154,15 +147,16 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			polyLightAndColorShader = new PolyLightAndColorShader(this);
 			engine.addShader("PolyLightAndColor", polyLightAndColorShader);
 
-			/*
+			
 			polyLightAndColorShadowComposerShader = new PolyLightAndColorShadowComposerShader(this);
 			engine.addShader("PolyLightAndColorShadowComposer", polyLightAndColorShadowComposerShader);
-			*/
-			
+			 
 			polyLightAndTextureShader = new PolyLightAndTextureShader(this);
 			engine.addShader("PolyLightAndTexture", polyLightAndTextureShader);
 			
+			/*
 			engine.addShader("PolyLightAndTextureShadowComposer", new PolyLightAndTextureShadowComposerShader(this));
+			*/
 			
 			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);
@@ -187,8 +181,6 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			
 			engine.addOptik("LookAt", new LookAt(engine));
 			
-			overlayDrawlist = new Drawlist(engine);
-//			engine.addDrawlist("Overlay", overlayDrawlist);
 		logLn("Engine is setup!");
 			
 		/* FONTS */
@@ -271,21 +263,17 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 
 	private void setupRoom() {
 		logLn("Initializing Room ...");
-		roomDrawlist = new Drawlist(engine);
-		
 		room = new Room(engine, "data/room/drolebox2/panorama03.");
 		room.position(0, 0, 0);
 		
-		roomDrawlist.add(room);
-		
-		engine.addDrawlist("Room", roomDrawlist);
+		engine.addDrawable("Room", room);
 	}
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
 		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		
-		engine.addDrawlist("Globe", globe);
+		engine.addDrawable("Globe", globe);
 	}	
 	
 	private void setupOptikWorld() {
@@ -293,31 +281,23 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 		// testwise optik scene
 		bildweltOptik = new BildweltOptik(engine);
-		optikWorldDrawlist = new Drawlist(engine);
-		optikWorldDrawlist.add(bildweltOptik);
+		bildweltOptik.hide();
 		
-		optikWorldDrawlist.hideAll();
-		engine.addDrawlist("OptikWorld", optikWorldDrawlist);
+		engine.addDrawable("OptikWorld", bildweltOptik);
 	}
 	
 	private void setupAssoziationWorld() {
 		bildweltAssoziation = new BildweltAssoziation(engine);
+		bildweltAssoziation.hide();
 		
-		assoziationWorldDrawlist = new Drawlist(engine);
-		assoziationWorldDrawlist.add(bildweltAssoziation);
-		
-		assoziationWorldDrawlist.hideAll();
-		engine.addDrawlist("AssoziationWorld", assoziationWorldDrawlist);
+		engine.addDrawable("AssoziationWorld", bildweltAssoziation);
 	}
 	
 	private void setupFabricWorld() {
 		bildweltFabric = new BildweltFabric(engine);
+		bildweltFabric.hide();
 		
-		fabricWorldDrawlist = new Drawlist(engine);
-		fabricWorldDrawlist.add(bildweltFabric);
-		
-		fabricWorldDrawlist.hideAll();
-		engine.addDrawlist("FabricWorld", fabricWorldDrawlist);
+		engine.addDrawable("FabricWorld", bildweltFabric);
 	}
 
 	private void setupLogo() {
@@ -734,7 +714,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeAllOut(100);
 				globe.fadeOut(100);
 				
-				optikWorldDrawlist.fadeAllIn(100);
+				bildweltOptik.fadeIn(100);
 //				assoziationWorldDrawlist.fadeAllIn(100);
 //				fabricWorldDrawlist.fadeAllIn(100);
 //				optikWorldDrawlist.fadeAllIn(100);
@@ -747,7 +727,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeAllIn(100);
 				globe.fadeIn(100);
 
-				optikWorldDrawlist.fadeAllOut(100);
+				bildweltOptik.fadeOut(100);
 //				assoziationWorldDrawlist.fadeAllOut(100);
 //				fabricWorldDrawlist.fadeAllOut(100);
 

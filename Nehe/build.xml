@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="jogl_demos" default="build">
+    <path id="classpath">
+        <pathelement location="lib/jogl.jar"/>
+        <pathelement location="lib/timer.jar"/>
+    </path>
+
+    <property name="build.dir" location="${basedir}/build"/>
+    <property name="classes.dir" location="${basedir}/build/classes"/>
+    <property name="source.dir" location="${basedir}/src"/>
+    <property name="resources.dir" location="${basedir}/resources"/>
+
+    <target name="init">
+        <delete dir="${classes.dir}" quiet="true"/>
+        <delete dir="${build.dir}" quiet="true"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${source.dir}" destdir="${classes.dir}" source="1.4" target="1.4" fork="true">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <target name="package">
+        <condition property="${demo.resourcefile}">
+            <available file="${demo.resourcefile}"/>
+        </condition>
+
+        <jar destfile="${build.dir}/${demo.jarfile}">
+            <fileset dir="${classes.dir}">
+                <include name="demos/common/**/*.class"/>
+                <include name="${demo.package}/**/*.class"/>
+            </fileset>
+            <fileset dir="${source.dir}">
+                <include name="demos/common/**/*.java"/>
+                <include name="${demo.package}/**/*.java"/>
+            </fileset>
+            <fileset dir="${resources.dir}">
+                <exclude name="**/*" unless="${demo.resourcefile}"/>
+                <includesfile name="${demo.resourcefile}" if="${demo.resourcefile}"/>
+            </fileset>
+            <manifest>
+                <attribute name="Main-Class" value="${demo.mainclass}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="packagenehelesson">
+        <antcall target="package">
+            <param name="demo.jarfile" value="lesson${lessonnumber}.jar"/>
+            <param name="demo.package" value="demos/nehe/lesson${lessonnumber}"/>
+            <param name="demo.mainclass" value="demos.nehe.lesson${lessonnumber}.Lesson${lessonnumber}"/>
+            <param name="demo.resourcefile" value="${resources.dir}/lesson${lessonnumber}.resources"/>
+        </antcall>
+    </target>
+
+    <target name="packagenehelessons">
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="01"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="02"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="03"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="04"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="05"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="06"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="07"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="08"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="09"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="10"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="11"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="12"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="13"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="14"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="15"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="16"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="17"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="18"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="19"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="20"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="21"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="22"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="23"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="24"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="25"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="26"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="27"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="28"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="29"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="30"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="33"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="34"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="36"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="37"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="39"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="42"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="44"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="45"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="47"/>
+        </antcall>
+        <antcall target="packagenehelesson">
+            <param name="lessonnumber" value="48"/>
+        </antcall>
+    </target>
+
+    <target name="build" depends="compile" description="build all">
+        <antcall target="packagenehelessons"/>
+    </target>
+</project>
