@@ -202,8 +202,6 @@ public class RibbonGroup extends Drawable {
 	public void draw() {
 		g.pushStyle();
 		g.pushMatrix();
-
-			e.startShader("JustColor");
 		
 			g.translate(position.x, position.y, position.z);
 			g.scale(scale.x, scale.y, scale.z);
@@ -214,18 +212,9 @@ public class RibbonGroup extends Drawable {
 			for (int i = 0; i < numPhysicParticles; i++) {
 				particles[i].draw();
 			}
-		
-			e.stopShader();
 			
 		g.popMatrix();
 		g.popStyle();
-	}
-
-	public void drawAsLines() {
-		for (int i = 0; i < numPhysicParticles; i++) {
-			if(i != numPhysicParticles-1) particles[i].drawStrokeRibbon(g.color(200, 200, 0), 5);
-			else particles[i].drawStrokeRibbon(g.color(200, 0, 0), 5);
-		}
 	}
 	
 	public PVector getHead() {

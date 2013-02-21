@@ -22,8 +22,6 @@ public class PolyLightAndTextureShader extends Shader {
 		GL gl = renderer.gl;
 		
 		s.start();
-		
-		s.setTexUniform("permTexture", GL.GL_TEXTURE0+0);
 	}
 
 	@Override

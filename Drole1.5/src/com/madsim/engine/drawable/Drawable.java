@@ -80,15 +80,6 @@ public abstract class Drawable {
 		this.UPDATE_MODE = UPDATE_MODE;
 	}
 	
-	protected void useShader(String shader) {
-		this.shader = shader;
-		useShader = true;
-	}
-	
-	protected void noShader() {
-		useShader = false;
-	}
-	
 	public PVector position() {
 		return position;
 	}

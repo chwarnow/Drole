@@ -25,8 +25,8 @@ public class ModelTextures extends PApplet {
 	  
 	  // The model is dynamic, which means that its coordinates can be
 	  // updating during the drawing loop.
-	  model = new GLModel(this, numPoints, QUADS, GLModel.DYNAMIC);
-	    
+	  model = new GLModel(this, numPoints, QUADS, GLModel.STATIC);
+	   
 	  // Updating the vertices to their initial positions.
 	  model.beginUpdateVertices();
 	  model.updateVertex(0, -100, -100, 0);

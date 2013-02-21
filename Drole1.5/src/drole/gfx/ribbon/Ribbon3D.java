@@ -1,13 +1,9 @@
 package drole.gfx.ribbon;
 
-import javax.media.opengl.GL;
-
 import codeanticode.glgraphics.GLModel;
-import codeanticode.glgraphics.GLTexture;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
-import com.madsim.gfx.util.Geom;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -39,8 +35,6 @@ public class Ribbon3D extends Drawable {
 	private PVector[] joints;
 	
 	private GLModel model;
-
-	private GLTexture t1d;
 	
 	public Ribbon3D(Engine e, PVector startPosition, int numJoints) {
 		super(e);
@@ -50,12 +44,15 @@ public class Ribbon3D extends Drawable {
 		
 		numVertices = (numJoints-1)*2;
 		
-//		t1d = new GLTexture(e.p, "data/images/1d-white.jpg");
-		
 		model = new GLModel(e.p, numVertices, GLModel.QUAD_STRIP, GLModel.DYNAMIC);
+		
 		model.initColors();
+		model.setColors(e.p.random(255), e.p.random(255));
+		
 		model.initNormals();
-		model.setColors(200);
+		
+		model.initTextures(1);
+		model.setTexture(0, e.requestTexture("data/textures/globe/transparent-noise.png"));
 		
 		update(startPosition.x, startPosition.y, startPosition.z);
 	}
@@ -82,6 +79,7 @@ public class Ribbon3D extends Drawable {
 				v2 = v1.cross(v3);
 	
 				float scaling = PApplet.max(.25f, (PApplet.sin(((float) i / numJoints) * PApplet.PI) * PApplet.cos(PApplet.atan2(v1.y, v1.x))));
+//				float scaling = 3f;
 	
 				v1.normalize();
 				v2.normalize();
@@ -100,26 +98,21 @@ public class Ribbon3D extends Drawable {
 		model.beginUpdateNormals();
 			
 			PVector n;
-			int ni = 0;
-			vi = 0;
-			
-			for(int i = 0; i < 38; i++) model.updateNormal(i, 0, 0, 0);
-			
-			for(int i = 0; i < numVertices; i += 3) {
-				n = Geom.calculateNormal(
-					new PVector(model.vertices.get(vi++), model.vertices.get(vi++), model.vertices.get(vi++)),
-					new PVector(model.vertices.get(vi++), model.vertices.get(vi++), model.vertices.get(vi++)),
-					new PVector(model.vertices.get(vi++), model.vertices.get(vi++), model.vertices.get(vi++))
-				);
-				model.updateNormal(ni++, n.x, n.y, n.z);
-				model.updateNormal(ni++, n.x, n.y, n.z);
-				if(ni < 38) model.updateNormal(ni++, n.x, n.y, n.z);
+			for(int i = 0; i < numVertices; i++) {
+				n = new PVector(model.vertices.get(i), model.vertices.get(i+1), model.vertices.get(i+2));
+				n.normalize();
+				model.updateNormal(i, n.x, n.y, n.z);
 			}
 			
 		model.endUpdateNormals();
 		
 		// Calculate TextureCoords
-		
+		model.beginUpdateTexCoords(0);
+			for(int i = 0; i < numVertices; i+=2) {
+				model.updateTexCoord(i, (1.0f/numVertices)*i, 1);
+				model.updateTexCoord(i+1, (1.0f/numVertices)*(i+1), 0);
+			}
+		model.endUpdateTexCoords();
 	}
 
 	public void drawStrokeRibbon(float color, float width) {
@@ -131,11 +124,12 @@ public class Ribbon3D extends Drawable {
 			g.strokeWeight(width);
 			g.stroke(color);
 			
-			g.beginShape(PApplet.LINES);
-				for (int i = 0; i < numJoints; i++) {
-					g.vertex(joints[i].x, joints[i].y, joints[i].z);
-				}
-			g.endShape();
+			model.beginUpdateColors();
+				model.setColors(color);
+			model.endUpdateColors();
+			e.setupModel(model);
+			
+			model.render();
 			
 		g.popMatrix();
 		g.popStyle();
@@ -151,8 +145,7 @@ public class Ribbon3D extends Drawable {
 	
 	@Override
 	public void draw() {
-//		g.texture(t1d);
-			model.render();
-//		g.noTexture();
+		e.setupModel(model);
+		model.render();
 	}
 }

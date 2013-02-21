@@ -11,7 +11,6 @@ import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
-import com.madsim.engine.drawable.Drawlist;
 import com.madsim.engine.drawable.file.Image;
 import com.madsim.engine.drawable.geom.Ellipse;
 import com.madsim.engine.optik.LookAt;
@@ -207,13 +206,13 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		if(!FREEMODE) setupGestureDetection();
 
 		/* CONTENT */
-		setupLogo();
+//		setupLogo();
 		
 		setupRoom();
 		
 		setupMenu();
 		
-		setupOptikWorld();
+//		setupOptikWorld();
 		
 //		setupAssoziationWorld();
 		
@@ -263,7 +262,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 
 	private void setupRoom() {
 		logLn("Initializing Room ...");
-		room = new Room(engine, "data/room/drolebox2/panorama03.");
+		room = new Room(engine, "data/room/drolebox3/drolebox-cubemap.jpg");
 		room.position(0, 0, 0);
 		
 		engine.addDrawable("Room", room);

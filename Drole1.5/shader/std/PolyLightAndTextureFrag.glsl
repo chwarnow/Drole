@@ -1,49 +1,26 @@
 varying vec3 normal, vertex;
-varying vec4 vAmbient;
 
-uniform sampler2D permTexture;
+uniform sampler2D texture0;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
+uniform sampler2D texture3;
+uniform sampler2D texture4;
+uniform sampler2D texture5;
+uniform sampler2D texture6;
 
-vec4 pointLight(int lightNum) {
-	vec3 lightDir = vec3(gl_LightSource[lightNum].position.xyz - vertex);
-	vec3 eyeVec = -vertex;
-	
-	float d = length(lightDir);
-	
-	float att = 1.0 / ( gl_LightSource[lightNum].constantAttenuation + 
-	(gl_LightSource[lightNum].linearAttenuation*d) + 
-	(gl_LightSource[lightNum].quadraticAttenuation*d*d) );
-
-	vec4 final_color =  gl_LightSource[lightNum].ambient * att;
-							
-	vec3 N = normalize(normal);
-	vec3 L = normalize(lightDir);
-	
-	float lambertTerm = dot(N,L);
-	
-	if(lambertTerm > 0.0) {
-		final_color += gl_LightSource[lightNum].diffuse * lambertTerm * att;	
-		
-		vec3 E = normalize(eyeVec);
-		vec3 R = reflect(-L, N);
-		
-		float specular = pow( max(dot(R, E), 0.0), gl_FrontMaterial.shininess );
-		
-		final_color += gl_LightSource[lightNum].specular * gl_FrontMaterial.specular * specular * att;	
-	}
-	
-	return final_color;
-}
+uniform int numTextures;
 
 void main() {
+	vec4 textureColor = vec4(0.0, 0.0, 0.0, 1.0);
 
-	vec4 lightColor = vec4(0.0, 0.0, 0.0, 0.0);
+	if(numTextures >= 1) textureColor = texture2D(texture0, gl_TexCoord[0].st);
+	if(numTextures >= 2) textureColor *= texture2D(texture1, gl_TexCoord[1].st);
+	if(numTextures >= 3) textureColor *= texture2D(texture2, gl_TexCoord[2].st);
+	if(numTextures >= 4) textureColor *= texture2D(texture3, gl_TexCoord[3].st);
+	if(numTextures >= 5) textureColor *= texture2D(texture4, gl_TexCoord[4].st);
+	if(numTextures >= 6) textureColor *= texture2D(texture5, gl_TexCoord[5].st);
+	if(numTextures == 7) textureColor *= texture2D(texture6, gl_TexCoord[6].st);
 
-	for(int i = 2; i < 5; i++){
-    	lightColor += pointLight(i);
-	}
-
-	gl_FragColor = texture2D(permTexture, gl_TexCoord[0].st) * (vAmbient + lightColor);	
-
-	//gl_FragColor = texture2D(permTexture, gl_TexCoord[0].st)*color;
-	//gl_FragColor = vec4(intensity, intensity, intensity, 1.0);
-} 
+	if(numTextures > 0) gl_FragColor = vec4(textureColor.rgb * gl_Color.rgb, textureColor.a);
+	else gl_FragColor = gl_Color;
+}

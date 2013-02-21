@@ -252,7 +252,8 @@ public class BildweltAssoziationPensee {
 	    imageShader.setVecUniform("lightPos", 00.0f, 00.0f, 500.0f);
 		*/
 		// A model can be drawn through the GLGraphics renderer:
-		e.model(imageQuadModel);
+		e.setupModel(imageQuadModel);
+		imageQuadModel.render();
 
 		// imageShader.stop();
 

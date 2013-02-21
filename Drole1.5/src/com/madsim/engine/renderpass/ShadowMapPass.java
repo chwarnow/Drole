@@ -63,17 +63,17 @@ public class ShadowMapPass extends RenderPass {
 		e.getActiveOptik().calculate();
 		e.getActiveOptik().set();		
 		
-		e.startShader("PolyLightAndColorShadowComposer");
+		e.startShader("PolyLightAndTexture");
 		e.setLights();
 	
 //			e.p.logLn(depthTexture.getTextureID());
 		
-			e.activeShader().glsl().setFloatUniform("xPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
-			e.activeShader().glsl().setFloatUniform("yPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
-			e.activeShader().glsl().setTexUniform("ShadowMap", depthTexture.getTextureID());
+//			e.activeShader().glsl().setFloatUniform("xPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
+//			e.activeShader().glsl().setFloatUniform("yPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
+//			e.activeShader().glsl().setTexUniform("ShadowMap", depthTexture.getTextureID());
 	
-			gl.glActiveTexture(GL.GL_TEXTURE0+depthTexture.getTextureID());
-			gl.glBindTexture(GL.GL_TEXTURE_2D, depthTexture.getTextureID());
+//			gl.glActiveTexture(GL.GL_TEXTURE0+depthTexture.getTextureID());
+//			gl.glBindTexture(GL.GL_TEXTURE_2D, depthTexture.getTextureID());
 	
 			gl.glCullFace(GL.GL_FRONT);
 	

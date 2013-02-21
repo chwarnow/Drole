@@ -38,7 +38,7 @@ public class RibbonGlobe extends Drawlist {
 		dimension(dimension);
 		
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 10, 20, 100));
+			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 10, 20, 500));
 		}
 	}
 	
@@ -85,8 +85,6 @@ public class RibbonGlobe extends Drawlist {
 	public void draw() {		
 		g.pushStyle();
 		g.pushMatrix();
-
-//			e.startShader("JustColor");
 		
 			g.translate(position.x, position.y, position.z);
 			g.scale(scale.x, scale.y, scale.z);
@@ -99,9 +97,6 @@ public class RibbonGlobe extends Drawlist {
 				r.update();
 				r.draw();
 			}
-//			for(RibbonGroup r : ribbons) r.drawAsLines();
-		
-//			e.stopShader();
 			
 		g.popMatrix();
 		g.popStyle();
