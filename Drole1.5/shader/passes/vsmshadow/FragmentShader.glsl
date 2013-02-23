@@ -1,11 +1,9 @@
 uniform sampler2D ShadowMap;
-
 varying vec4 ShadowCoord;
 
 vec4 ShadowCoordPostW;
 
-float chebyshevUpperBound( float distance)
-{
+float chebyshevUpperBound( float distance) {
 	vec2 moments = texture2D(ShadowMap, ShadowCoordPostW.xy).rg;
 	
 	// Surface is fully lit. as the current fragment is before the light occluder
@@ -22,14 +20,11 @@ float chebyshevUpperBound( float distance)
 	return p_max;
 }
 
-
-void main()
-{	
+void main() {
 	ShadowCoordPostW = ShadowCoord / ShadowCoord.w;
-	//ShadowCoordPostW = ShadowCoordPostW * 0.5 + 0.5; This is done via a bias matrix in main.c
 
 	float shadow = chebyshevUpperBound(ShadowCoordPostW.z);
 
-	gl_FragColor = gl_Color * vec4(shadow, shadow, shadow, 1.0);
-  
+	//gl_FragColor = gl_Color * vec4(shadow, shadow, shadow, 1.0);
+	gl_FragColor = gl_Color * vec4(shadow, shadow, shadow, 1.0);  
 }

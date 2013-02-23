@@ -1,13 +1,12 @@
 // Used for shadow lookup
 varying vec4 ShadowCoord;
 
-void main()
-{
+uniform int shadowTexCoord;
 
-
-     	ShadowCoord= gl_TextureMatrix[7] * gl_Vertex;
+void main() {
+	ShadowCoord = gl_TextureMatrix[shadowTexCoord] * gl_Vertex;
   
-		gl_Position = ftransform();
-
-		gl_FrontColor = gl_Color;
+	gl_Position = ftransform();
+	
+	gl_FrontColor = gl_Color;
 }

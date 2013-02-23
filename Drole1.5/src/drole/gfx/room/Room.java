@@ -1,5 +1,9 @@
 package drole.gfx.room;
 
+import javax.media.opengl.GL;
+
+import processing.core.PGraphics;
+
 import codeanticode.glgraphics.GLModel;
 import codeanticode.glgraphics.GLTexture;
 
@@ -100,16 +104,19 @@ public class Room extends Drawable {
 		
 		SHADOW_HINT = Drawable.RECEIVE_SHADOW;
 		
-		model = new GLModel(e.p, numSides*(12), GLModel.QUADS, GLModel.STATIC);
+		model = new GLModel(e.p, numSides*(12), PGraphics.QUADS, GLModel.STATIC);
 		
 		model.initColors();
+		model.setColors(180);
+		/*
 		model.beginUpdateColors();
 			for(int i = 0; i < numSides*4; i++) {
 //				model.updateColor(i, e.p.random(0, 255), e.p.random(0, 255), e.p.random(0, 255), 225);
 //				model.updateColor(i, e.p.random(100, 255));
-				model.updateColor(i, 255);
+				model.updateColor(i, 180);
 			}
 		model.endUpdateColors();
+		*/
 		
 		model.initNormals();
 		

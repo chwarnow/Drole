@@ -92,10 +92,10 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	
 	/* Shader */
 	private JustColorShader justColorShader;
-	private PolyLightAndColorShader polyLightAndColorShader;
-	private PolyLightAndColorShadowComposerShader polyLightAndColorShadowComposerShader;
-	private ColorAndTextureShader colorAndTextureShader;
-	private PolyLightAndTextureShader polyLightAndTextureShader;
+//	private PolyLightAndColorShader polyLightAndColorShader;
+//	private PolyLightAndColorShadowComposerShader polyLightAndColorShadowComposerShader;
+//	private ColorAndTextureShader colorAndTextureShader;
+//	private PolyLightAndTextureShader polyLightAndTextureShader;
 	
 	/* Skybox */
 	private Room room;
@@ -140,6 +140,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			justColorShader = new JustColorShader(this);
 			engine.addShader("JustColor", justColorShader);
 			
+			/*
 			colorAndTextureShader = new ColorAndTextureShader(this);
 			engine.addShader("ColorAndTexture", colorAndTextureShader);
 
@@ -152,6 +153,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			 
 			polyLightAndTextureShader = new PolyLightAndTextureShader(this);
 			engine.addShader("PolyLightAndTexture", polyLightAndTextureShader);
+			*/
 			
 			/*
 			engine.addShader("PolyLightAndTextureShadowComposer", new PolyLightAndTextureShadowComposerShader(this));

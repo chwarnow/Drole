@@ -9,7 +9,7 @@ import processing.core.PApplet;
 import processing.opengl.PGraphicsOpenGL;
 
 import com.madsim.engine.drawable.Drawable;
-import com.madsim.engine.drawable.Drawlist;
+import com.madsim.engine.drawable.FilterSets;
 import com.madsim.engine.optik.Optik;
 import com.madsim.engine.renderpass.ShadowMapPass;
 import com.madsim.engine.renderpass.VSMShadowPass;
@@ -34,10 +34,6 @@ public class Engine {
 	
 	private GLGraphicsOffScreen offG;
 	
-	private GLTexture firstPassResult;
-	
-	private GLTexture maskTexture;
-	
 	private boolean drawOffScreen = false;
 	
 	private HashMap<String, Drawable> drawables = new HashMap<String, Drawable>();
@@ -59,15 +55,13 @@ public class Engine {
 		this.p = p;
 		refreshGLG();
 		
-		maskTexture = new GLTexture(p, "data/images/drole-mask.png");
-		
 		p.logLn("[Engine]: Setting rendering defaults.");
 		g.smooth();
 		
 		p.logLn("[Engine]: Initializing Framebuffers ("+g.width+":"+g.height+")");
-		offG = new GLGraphicsOffScreen(p, g.width, g.height);
+//		offG = new GLGraphicsOffScreen(p, g.width, g.height);
 		
-		shadowPass = new ShadowMapPass(this);
+//		shadowPass = new ShadowMapPass(this);
 		
 		vsmShadowPass = new VSMShadowPass(this);
 	}
@@ -141,6 +135,7 @@ public class Engine {
 	
 	public void stopShader() {
 		activeShader.stop();
+		activeShader = null;
 	}
 	
 	public void refreshGLG() {
@@ -199,41 +194,6 @@ public class Engine {
 		}
 	}
 	
-	private void drawFirstPass(GLGraphicsOffScreen cg) {
-		activateOptik("OffCenter");
-
-		beginDraw(cg);
-		
-			updateAll((PGraphicsOpenGL) cg);
-		
-			cg.background(0);
-
-			for(Entry<String, Drawable> dle : drawables.entrySet()) {
-				Drawable dl = dle.getValue();
-				if(dl.mode() != Drawable.OFF_SCREEN) {
-					cg.pushStyle();
-					cg.pushMatrix();
-						dl.draw();
-					cg.popMatrix();
-					cg.popStyle();
-				}
-			}
-			
-		endDraw(cg);
-	}
-	
-	private void drawOnScreenFirstPass() {
-		activateOptik("OffCenter");
-		
-		beginDraw();
-		
-			updateAll((PGraphicsOpenGL) g);
-		
-			drawContent();
-			
-		endDraw(g);
-	}
-	
 	public float[] getLightPosition(int p) {
 		return lights[p];
 	}
@@ -269,20 +229,20 @@ public class Engine {
 	}
 	
 	public void setupModel(GLModel model) {
-		// Set texture informations for the shader
-		activeShader().glsl().setIntUniform("numTextures", model.getNumTextures());
-		for(int i = 0; i < model.getNumTextures(); i++) {
-			activeShader().glsl().setTexUniform("texture"+i, model.getTexture(i));
+		if(activeShader() != null && activeShader().textureHint() == Shader.USE_TEXTURES) {
+			// Set texture informations for the shader
+			activeShader().glsl().setIntUniform("numTextures", model.getNumTextures());
+			for(int i = 0; i < model.getNumTextures(); i++) {
+				activeShader().glsl().setTexUniform("texture"+i, model.getTexture(i));
+			}
 		}
 	}
 	
 	public void drawContent() {
-		drawContent(new short[]{ Drawable.CAST_SHADOW, Drawable.RECEIVE_SHADOW, Drawable.CAST_AND_RECEIVE_SHADOW });
+		drawContent(FilterSets.All());
 	}
 	
 	public void drawContent(short[] shadowHintFilter) {
-		g.background(255);
-
 		for(Entry<String, Drawable> dle : drawables.entrySet()) {
 			Drawable dl = dle.getValue();
 			if(
@@ -343,6 +303,14 @@ public class Engine {
 		g.resetMatrix();
 		
 		g.beginGL();
+
+			vsmShadowPass.beginRender();
+//				drawRenderToTexture(vsmShadowPass.depthTexture.getTextureID());
+			vsmShadowPass.finalizeRender();
+//			drawRenderToTexture(shadowPass.depthTexture.getTextureID());
+			
+//			shadowPass.finalizeRender();
+//			shadowPass.drawLightsView();
 		
 //			shadowPass.beginRender();
 //			drawRenderToTexture(shadowPass.depthTexture.getTextureID());
@@ -364,15 +332,16 @@ public class Engine {
 			
 			drawRenderToTexture(firstPassResult);
 		*/
+		/*
 			activateOptik("OffCenter");
 			setOptik(g);
 			
 			startShader("PolyLightAndTexture");
 				drawContent(new short[]{ Drawable.CAST_SHADOW, Drawable.RECEIVE_SHADOW, Drawable.CAST_AND_RECEIVE_SHADOW });
 			stopShader();
-		
+		*/
 		g.endGL();
-				
+		
 		activeOptik = initialActiveOptik;
 	}
 	

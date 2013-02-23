@@ -105,14 +105,8 @@ public class ShadowTest extends PApplet {
 
 		  generateShadowFBO();
 		  
-			gl.glEnable(GL.GL_DEPTH_TEST);
-			gl.glClearColor(0,0,0,1.0f);
+//			gl.glEnable(GL.GL_DEPTH_TEST);
 			gl.glEnable(GL.GL_CULL_FACE);
-			gl.glHint(GL.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-			gl.glEnable(GL.GL_POLYGON_SMOOTH);
-			gl.glEnable(GL.GL_LINE_SMOOTH);
-			gl.glHint(GL.GL_POLYGON_SMOOTH_HINT, GL.GL_NICEST);
-			gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
 			
 		renderer.endGL();
 	}
@@ -215,8 +209,8 @@ public class ShadowTest extends PApplet {
 		gl.glGenTextures(1, colorTextureId, 0);
 		gl.glBindTexture(GL.GL_TEXTURE_2D, colorTextureId[0]);
 
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 		
 //		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_GENERATE_MIPMAP, GL.GL_TRUE);
 		
@@ -226,7 +220,7 @@ public class ShadowTest extends PApplet {
 		gl.glTexParameterf(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP );
 
 		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB16F_ARB, shadowMapWidth, shadowMapHeight, 0, GL.GL_RGB, GL.GL_FLOAT, null);
-		gl.glGenerateMipmapEXT(GL.GL_TEXTURE_2D);
+//		gl.glGenerateMipmapEXT(GL.GL_TEXTURE_2D);
 		gl.glBindTexture(GL.GL_TEXTURE_2D, 0);
 
 
@@ -447,23 +441,23 @@ public class ShadowTest extends PApplet {
 		
 		// DEBUG only. this piece of code draw the depth buffer onscreen
 		/*
-				 gl.glMatrixMode(GL.GL_PROJECTION);
-				 gl.glLoadIdentity();
-				 gl.glOrtho(0, RENDER_WIDTH, RENDER_HEIGHT, 0, 10 , -10);
-				 gl.glMatrixMode(GL.GL_MODELVIEW);
-				 gl.glLoadIdentity();
-				 gl.glColor4f(1,1,1,1);
-				 gl.glActiveTexture(GL.GL_TEXTURE0);
-				 gl.glBindTexture(GL.GL_TEXTURE_2D, depthTextureId[0]);
-				 gl.glEnable(GL.GL_TEXTURE_2D);
-				 gl.glTranslated(0, 0, -1);
-				 gl.glBegin(GL.GL_TRIANGLE_STRIP);
-				 gl.glTexCoord2d(1,1); gl.glVertex3f(RENDER_WIDTH, 0, 0);
-				 gl.glTexCoord2d(1,0); gl.glVertex3f(RENDER_WIDTH, RENDER_HEIGHT, 0);
-				 gl.glTexCoord2d(0,1); gl.glVertex3f(0, 0, 0);
-				 gl.glTexCoord2d(0,0); gl.glVertex3f(0, RENDER_HEIGHT, 0);
-				 gl.glEnd();
-				 gl.glDisable(GL.GL_TEXTURE_2D);
+		 gl.glMatrixMode(GL.GL_PROJECTION);
+		 gl.glLoadIdentity();
+		 gl.glOrtho(0, RENDER_WIDTH, RENDER_HEIGHT, 0, 10 , -10);
+		 gl.glMatrixMode(GL.GL_MODELVIEW);
+		 gl.glLoadIdentity();
+		 gl.glColor4f(1,1,1,1);
+		 gl.glActiveTexture(GL.GL_TEXTURE0);
+		 gl.glBindTexture(GL.GL_TEXTURE_2D, colorTextureId[0]);
+		 gl.glEnable(GL.GL_TEXTURE_2D);
+		 gl.glTranslated(0, 0, -1);
+		 gl.glBegin(GL.GL_TRIANGLE_STRIP);
+		 gl.glTexCoord2d(1,1); gl.glVertex3f(RENDER_WIDTH, 0, 0);
+		 gl.glTexCoord2d(1,0); gl.glVertex3f(RENDER_WIDTH, RENDER_HEIGHT, 0);
+		 gl.glTexCoord2d(0,1); gl.glVertex3f(0, 0, 0);
+		 gl.glTexCoord2d(0,0); gl.glVertex3f(0, RENDER_HEIGHT, 0);
+		 gl.glEnd();
+		 gl.glDisable(GL.GL_TEXTURE_2D);
 		*/
 		
 		//Using the shadow shader
@@ -477,17 +471,13 @@ public class ShadowTest extends PApplet {
 		gl.glBindTexture(GL.GL_TEXTURE_2D, depthTextureId[0]);
 		
 		setupMatrices(p_camera[0],p_camera[1],p_camera[2],l_camera[0],l_camera[1],l_camera[2]);
-
-		
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, p_light, 0);
-
-//		gl.glCullFace(GL.GL_BACK);
 		
 		drawObjects();
 		
 		composeShader.stop();
 		
 		renderer.endGL();
+		
 	}
 	
 	public void mouseDragged(MouseEvent e) {

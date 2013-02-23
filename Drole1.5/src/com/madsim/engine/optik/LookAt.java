@@ -27,13 +27,13 @@ public class LookAt extends Optik {
 	}
 	
 	@Override
-	public void set() {
+	public void set() {		
 		  e.g.gl.glMatrixMode(GL.GL_PROJECTION);
 		  e.g.gl.glLoadIdentity();
-		  e.g.glu.gluPerspective(angle, g.width/(float)g.height, 0.1f, 100000);
+		  e.g.glu.gluPerspective(angle, g.width/(float)g.height, 10, 100000);
 		  e.g.gl.glMatrixMode(GL.GL_MODELVIEW);
 		  e.g.gl.glLoadIdentity();
-		  e.g.glu.gluLookAt(stdPOV.x, stdPOV.y, stdPOV.z, lx, ly, lz, 0, 1, 0);
+		  e.g.glu.gluLookAt(stdPOV.x, stdPOV.y, stdPOV.z, lx, ly, lz, 0, -1, 0);
 	}
 
 }
