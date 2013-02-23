@@ -322,8 +322,8 @@ public class VSMShadowPass extends RenderPass implements KeyListener {
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT |  GL.GL_DEPTH_BUFFER_BIT);
 	
-		e.activateOptik("LookAt");
-		LookAt la = (LookAt)e.getActiveOptik();
+		e.useOptik("LookAt");
+		LookAt la = (LookAt)e.activeOptik();
 		la.calculate(p_light[0], p_light[1], p_light[2], l_light[0], l_light[1], l_light[2], light_angle);
 		la.set();
 		
@@ -373,9 +373,9 @@ public class VSMShadowPass extends RenderPass implements KeyListener {
 		gl.glActiveTexture(GL.GL_TEXTURE0 + depthTexture.getTextureID());
 		gl.glBindTexture(GL.GL_TEXTURE_2D, depthTexture.getTextureID());
 		
-		e.activateOptik("OffCenter");
-		e.getActiveOptik().calculate();
-		e.getActiveOptik().set();
+		e.useOptik("OffCenter");
+		e.activeOptik().calculate();
+		e.activeOptik().set();
 		
 //		gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, p_light, 0);
 

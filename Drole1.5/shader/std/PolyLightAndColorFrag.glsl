@@ -1,44 +1,48 @@
-varying vec3 normal, vertex;
-varying vec4 vAmbient;
+uniform int numLights;
 
-vec4 pointLight(int lightNum) {
-	vec3 lightDir = vec3(gl_LightSource[lightNum].position.xyz - vertex);
-	vec3 eyeVec = -vertex;
-	
-	float d = length(lightDir);
-	
-	float att = 1.0 / ( gl_LightSource[lightNum].constantAttenuation + 
-	(gl_LightSource[lightNum].linearAttenuation*d) + 
-	(gl_LightSource[lightNum].quadraticAttenuation*d*d) );
+uniform vec4 ambient;
 
-	vec4 final_color =  gl_LightSource[lightNum].ambient * att;
-							
-	vec3 N = normalize(normal);
-	vec3 L = normalize(lightDir);
-	
-	float lambertTerm = dot(N,L);
-	
-	if(lambertTerm > 0.0) {
-		final_color += gl_LightSource[lightNum].diffuse * lambertTerm * att;	
-		
-		vec3 E = normalize(eyeVec);
-		vec3 R = reflect(-L, N);
-		
-		float specular = pow( max(dot(R, E), 0.0), gl_FrontMaterial.shininess );
-		
-		final_color += gl_LightSource[lightNum].specular * gl_FrontMaterial.specular * specular * att;	
-	}
-	
-	return final_color;
+varying vec4 ecPos;
+varying vec3 normal;
+
+
+vec4 pointLight(int lightIndex) {
+    vec3 n, lightDir;
+    float NdotL;
+    float att, dist;
+
+	vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
+     
+    /* a fragment shader can't write a verying variable, hence we need
+    a new variable to store the normalized interpolated normal */
+    n = normalize(normal);
+     
+    // Compute the ligt direction
+    lightDir = vec3(gl_LightSource[lightIndex].position - ecPos);
+     
+    /* compute the distance to the light source to a varying variable*/
+    dist = length(lightDir);
+ 
+    /* compute the dot product between normal and ldir */
+    NdotL = max(dot(n, normalize(lightDir)), 0.0);
+ 
+    if(NdotL > 0.0) {
+        att = 1.0 / (gl_LightSource[lightIndex].constantAttenuation +
+                gl_LightSource[lightIndex].linearAttenuation * dist +
+                gl_LightSource[lightIndex].quadraticAttenuation * dist * dist);
+
+		color = att * (color + gl_LightSource[lightIndex].diffuse) * NdotL;
+    }
+    
+    return color;
 }
 
 void main() {
-
-	vec4 lightColor = vec4(0.0, 0.0, 0.0, 0.0);
-
-	for(int i = 2; i < 5; i++){
-    	lightColor += pointLight(i);
+	vec4 color = gl_Color * ambient;
+ 
+	if(numLights > 0) {
+		for(int i = 0; i < numLights; i++) color += pointLight(i);
 	}
-
-	gl_FragColor = gl_Color * (vAmbient + lightColor);
-} 
+	
+    gl_FragColor = color;
+}

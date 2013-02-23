@@ -7,7 +7,9 @@ import codeanticode.glgraphics.GLTexture;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
+import com.madsim.engine.drawable.FilterSets;
 import com.madsim.engine.optik.LookAt;
+import com.madsim.engine.shader.PolyLightAndColorShadowComposerShader;
 
 public class ShadowMapPass extends RenderPass {
 	
@@ -28,6 +30,8 @@ public class ShadowMapPass extends RenderPass {
 	public ShadowMapPass(Engine e) {
 		super(e);
 		
+		e.addShader("PolyLightAndColorShadowComposer", new PolyLightAndColorShadowComposerShader(e.p));
+		
 		generateShadowFBO();
 	}
 
@@ -38,8 +42,8 @@ public class ShadowMapPass extends RenderPass {
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		gl.glColorMask(false, false, false, false);
 
-		e.activateOptik("LookAt");
-		LookAt la = (LookAt)e.getActiveOptik();
+		e.useOptik("LookAt");
+		LookAt la = (LookAt)e.activeOptik();
 		la.calculate(e.getLightPosition(0)[0], e.getLightPosition(0)[1], e.getLightPosition(0)[2], 0, 0, -1000, 60);
 		la.set();
 
@@ -59,32 +63,31 @@ public class ShadowMapPass extends RenderPass {
 
 	@Override
 	public void finalizeRender() {
-		e.activateOptik("OffCenter");
-		e.getActiveOptik().calculate();
-		e.getActiveOptik().set();		
+		e.useOptik("OffCenter");
+		e.activeOptik().calculate();
+		e.activeOptik().set();		
 		
-		e.startShader("PolyLightAndTexture");
-		e.setLights();
-	
-//			e.p.logLn(depthTexture.getTextureID());
+		e.startShader("PolyLightAndColorShadowComposer");
 		
-//			e.activeShader().glsl().setFloatUniform("xPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
-//			e.activeShader().glsl().setFloatUniform("yPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
-//			e.activeShader().glsl().setTexUniform("ShadowMap", depthTexture.getTextureID());
+			e.setLights();
+		
+			e.activeShader().glsl().setFloatUniform("xPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
+			e.activeShader().glsl().setFloatUniform("yPixelOffset", 1.0f / (g.width * SHADOW_MAP_RATIO));
+			e.activeShader().glsl().setTexUniform("ShadowMap", depthTexture.getTextureID());
 	
-//			gl.glActiveTexture(GL.GL_TEXTURE0+depthTexture.getTextureID());
-//			gl.glBindTexture(GL.GL_TEXTURE_2D, depthTexture.getTextureID());
+			gl.glActiveTexture(GL.GL_TEXTURE0 + depthTexture.getTextureID());
+			gl.glBindTexture(GL.GL_TEXTURE_2D, depthTexture.getTextureID());
 	
 			gl.glCullFace(GL.GL_FRONT);
 	
-			e.drawContent(new short[]{ Drawable.RECEIVE_SHADOW, Drawable.CAST_AND_RECEIVE_SHADOW });
+			e.drawContent(FilterSets.ShadowReceiver());
 	
 		e.stopShader();
 	}
 
 	public void drawLightsView() {
-		e.activateOptik("LookAt");
-		LookAt la = (LookAt)e.getActiveOptik();
+		e.useOptik("LookAt");
+		LookAt la = (LookAt)e.activeOptik();
 		la.calculate(e.getLightPosition(0)[0], e.getLightPosition(0)[1], e.getLightPosition(0)[2], 0, 0, -1000, 60);
 		la.set();
 

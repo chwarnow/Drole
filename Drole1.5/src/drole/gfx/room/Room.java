@@ -1,6 +1,5 @@
 package drole.gfx.room;
 
-import javax.media.opengl.GL;
 
 import processing.core.PGraphics;
 
@@ -82,19 +81,19 @@ public class Room extends Drawable {
 	};
 	private float[] normals = new float[]{
 		// Left
-		 1,  0,  0,
+		  1,   0,  0,
 		
 		// Right
-		-1,  0,  0,
+		 -1,  0,  0,
 		
 		// Top
-		 0,  1,  0,
+		  0,   1,  0,
 		 
 		// Bottom
-		 0, -1,  0,
+		  0,   -1,  0,
 		 
 		// Back
-		 0,  0, -1
+		  0,   0,  1
 	};
 	
 	private int numSides = 5;
@@ -107,21 +106,46 @@ public class Room extends Drawable {
 		model = new GLModel(e.p, numSides*(12), PGraphics.QUADS, GLModel.STATIC);
 		
 		model.initColors();
-		model.setColors(180);
-		/*
-		model.beginUpdateColors();
-			for(int i = 0; i < numSides*4; i++) {
-//				model.updateColor(i, e.p.random(0, 255), e.p.random(0, 255), e.p.random(0, 255), 225);
-//				model.updateColor(i, e.p.random(100, 255));
-				model.updateColor(i, 180);
-			}
-		model.endUpdateColors();
-		*/
-		
 		model.initNormals();
 		
 		model.initTextures(1);
 		model.setTexture(0, new GLTexture(e.p, cubeMapFilename));
+		
+		model.setColors(255);
+		
+		/*
+		model.beginUpdateColors();
+			// Left
+			model.updateColor( 0, 255, 0, 0);
+			model.updateColor( 1, 255, 0, 0);
+			model.updateColor( 2, 255, 0, 0);
+			model.updateColor( 3, 255, 0, 0);
+			
+			// Right
+			model.updateColor( 4, 0, 255, 0);
+			model.updateColor( 5, 0, 255, 0);
+			model.updateColor( 6, 0, 255, 0);
+			model.updateColor( 7, 0, 255, 0);
+			
+			// Top
+			model.updateColor( 8, 0, 0, 255);
+			model.updateColor( 9, 0, 0, 255);
+			model.updateColor(10, 0, 0, 255);
+			model.updateColor(11, 0, 0, 255);
+			
+			// Bottom
+			model.updateColor(12, 255, 255, 0);
+			model.updateColor(13, 255, 255, 0);
+			model.updateColor(14, 255, 255, 0);
+			model.updateColor(15, 255, 255, 0);
+			
+			// Back
+			model.updateColor(16, 0, 255, 255);
+			model.updateColor(17, 0, 255, 255);
+			model.updateColor(18, 0, 255, 255);
+			model.updateColor(19, 0, 255, 255);
+		model.endUpdateColors();
+		*/
 		
 		int nv = 0;
 		model.beginUpdateVertices();
@@ -139,9 +163,30 @@ public class Room extends Drawable {
 			
 		nv = 0;
 		model.beginUpdateNormals();
-			for(int i = 0; i < numSides*(3); i+=3) {
-				model.updateNormal(nv++, normals[i], normals[i+1], normals[i+2]);
-			}
+			model.updateNormal(0, normals[0], normals[1], normals[2]);
+			model.updateNormal(1, normals[0], normals[1], normals[2]);
+			model.updateNormal(2, normals[0], normals[1], normals[2]);
+			model.updateNormal(3, normals[0], normals[1], normals[2]);
+			
+			model.updateNormal(4, normals[3], normals[4], normals[5]);
+			model.updateNormal(5, normals[3], normals[4], normals[5]);
+			model.updateNormal(6, normals[3], normals[4], normals[5]);
+			model.updateNormal(7, normals[3], normals[4], normals[5]);
+			
+			model.updateNormal(8, normals[6], normals[7], normals[8]);
+			model.updateNormal(9, normals[6], normals[7], normals[8]);
+			model.updateNormal(10, normals[6], normals[7], normals[8]);
+			model.updateNormal(11, normals[6], normals[7], normals[8]);
+			
+			model.updateNormal(12, normals[9], normals[10], normals[11]);
+			model.updateNormal(13, normals[9], normals[10], normals[11]);
+			model.updateNormal(14, normals[9], normals[10], normals[11]);
+			model.updateNormal(15, normals[9], normals[10], normals[11]);
+			
+			model.updateNormal(16, normals[12], normals[13], normals[14]);
+			model.updateNormal(17, normals[12], normals[13], normals[14]);
+			model.updateNormal(18, normals[12], normals[13], normals[14]);
+			model.updateNormal(19, normals[12], normals[13], normals[14]);
 		model.endUpdateNormals();
 	}
 	

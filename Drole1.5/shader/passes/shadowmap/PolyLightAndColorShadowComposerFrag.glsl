@@ -1,5 +1,4 @@
 varying vec3 normal, vertex;
-varying vec4 vAmbient;
 
 uniform sampler2DShadow ShadowMap;
 varying vec4 ShadowCoord;

@@ -2,14 +2,15 @@ package com.madsim.engine.optik;
 
 
 import processing.core.PVector;
-import processing.opengl.PGraphicsOpenGL;
+
+import codeanticode.glgraphics.GLGraphics;
 
 import com.madsim.engine.Engine;
 
 public abstract class Optik {
 
 	protected Engine e;
-	protected PGraphicsOpenGL g;
+	protected GLGraphics g;
 	
 	protected PVector stdPOV;
 
@@ -20,11 +21,7 @@ public abstract class Optik {
 	public Optik(Engine e, PVector stdPOV) {
 		this.e 		= e;
 		this.stdPOV = stdPOV;
-		setG(e.g);
-	}
-	
-	public void setG(PGraphicsOpenGL g) {
-		this.g = g;
+		this.g = e.g;
 	}
 	
 	// Is called just before set

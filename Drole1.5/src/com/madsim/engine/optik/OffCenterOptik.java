@@ -161,6 +161,7 @@ public class OffCenterOptik extends Optik {
 		
 		g.gl.glMatrixMode(GL.GL_MODELVIEW);
 		g.gl.glLoadIdentity();
+		
 		g.gl.glScalef(1.0f, -1.0f, 1.0f);
 		g.gl.glTranslatef(0, -(realScreenPos.y+realScreenDim.y)+(realScreenDim.y/2), 0);
 	}

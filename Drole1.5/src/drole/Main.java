@@ -92,8 +92,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	
 	/* Shader */
 	private JustColorShader justColorShader;
-//	private PolyLightAndColorShader polyLightAndColorShader;
-//	private PolyLightAndColorShadowComposerShader polyLightAndColorShadowComposerShader;
+	private PolyLightAndColorShader polyLightAndColorShader;
 //	private ColorAndTextureShader colorAndTextureShader;
 //	private PolyLightAndTextureShader polyLightAndTextureShader;
 	
@@ -140,10 +139,13 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			justColorShader = new JustColorShader(this);
 			engine.addShader("JustColor", justColorShader);
 			
+			polyLightAndColorShader = new PolyLightAndColorShader(this);
+			engine.addShader("PolyLightAndColor", polyLightAndColorShader);
+			
 			/*
 			colorAndTextureShader = new ColorAndTextureShader(this);
 			engine.addShader("ColorAndTexture", colorAndTextureShader);
-
+			
 			polyLightAndColorShader = new PolyLightAndColorShader(this);
 			engine.addShader("PolyLightAndColor", polyLightAndColorShader);
 
@@ -178,7 +180,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			
 			engine.addOptik("OffCenter", offCenterOptik);
 			
-			engine.activateOptik("Std");
+			engine.useOptik("Std");
 			
 			engine.addOptik("LookAt", new LookAt(engine));
 			
@@ -322,7 +324,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		if(!FREEMODE) updateHead();
 
 		if(MODE == DEBUG || MODE == FORCED_DEBUG) {
-			engine.activateOptik("Std");
+			engine.useOptik("Std");
 			
 			engine.beginDraw();
 
@@ -402,7 +404,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		if (MODE == TRANSIT_FROM_LIVE && globe.mode() == Drawable.OFF_SCREEN) backToLogo();
 
 		if (MODE == LIVE || MODE == TRANSIT_FROM_LIVE || MODE == ZOOMING || MODE == ROTATING) {
-			engine.activateOptik("OffCenter");
+			engine.useOptik("OffCenter");
 
 			//drawOffCenterVectors(head);
 
@@ -470,7 +472,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	}
 
 	private void drawLogo() {
-		engine.activateOptik("Std");
+		engine.useOptik("Std");
 		
 		engine.beginDraw();	
 		

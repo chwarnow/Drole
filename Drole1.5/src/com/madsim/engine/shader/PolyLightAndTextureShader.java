@@ -14,6 +14,9 @@ public class PolyLightAndTextureShader extends Shader {
 		super(p);
 		this.p = p;
 		s = new GLSLShader(p, "shader/std/PolyLightAndTextureVert.glsl", "shader/std/PolyLightAndTextureFrag.glsl");
+		
+		textureHint = Shader.USE_TEXTURES;
+		lightHint = Shader.USE_LIGHTS;
 	}
 	
 	@Override

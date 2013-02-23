@@ -1,7 +1,4 @@
 varying vec3 normal, vertex;
-varying vec4 vAmbient;
-
-uniform vec4 ambient;
 
 varying vec4 ShadowCoord;
 	
@@ -15,6 +12,4 @@ void main() {
 	gl_Position = ftransform();
 
 	vertex = gl_Position.xyz;
-
-	vAmbient = ambient;
 }

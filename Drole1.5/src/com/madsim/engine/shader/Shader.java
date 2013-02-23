@@ -7,10 +7,15 @@ public abstract class Shader {
 	
 	protected GLSLShader s;
 	
-	public static short NO_TEXTURES;
-	public static short USE_TEXTURES;
+	public static short NO_TEXTURES 	= 10;
+	public static short USE_TEXTURES	= 20;
+
+	protected short textureHint = NO_TEXTURES;
 	
-	private short textureHint = NO_TEXTURES;
+	public static short NO_LIGHTS		= 10;
+	public static short USE_LIGHTS		= 20;
+	
+	protected short lightHint = NO_LIGHTS;
 	
 	public Shader(PApplet p) {
 		
@@ -18,6 +23,10 @@ public abstract class Shader {
 	
 	public short textureHint() {
 		return textureHint;
+	}
+
+	public short lightHint() {
+		return lightHint;
 	}
 	
 	public abstract void start();
