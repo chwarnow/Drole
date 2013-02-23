@@ -231,7 +231,7 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(0.1f, 0.1f, 0.1f);
+		ambient(1.0f, 1.0f, 1.0f);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();
@@ -259,7 +259,7 @@ public class Engine {
 		
 		stopShader();
 		
-		startShader("PolyLightAndColor");
+		startShader("PolyLightAndTexture");
 			
 			drawContent();
 			

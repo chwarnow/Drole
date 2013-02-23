@@ -17,12 +17,9 @@ import com.madsim.engine.optik.LookAt;
 import com.madsim.engine.optik.OffCenterOptik;
 import com.madsim.engine.optik.OrthoOptik;
 import com.madsim.engine.optik.StdOptik;
-import com.madsim.engine.shader.ColorAndTextureShader;
 import com.madsim.engine.shader.JustColorShader;
 import com.madsim.engine.shader.PolyLightAndColorShader;
-import com.madsim.engine.shader.PolyLightAndColorShadowComposerShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
-import com.madsim.engine.shader.PolyLightAndTextureShadowComposerShader;
 import com.madsim.tracking.kinect.PositionTarget;
 import com.madsim.tracking.kinect.PositionTargetListener;
 import com.madsim.tracking.kinect.TargetBox3D;
@@ -62,9 +59,6 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private Image logoGrey;
 	private Image logoColor;
 	private Ellipse logoBG;
-	
-	private int background = color(27);
-//	private Image background;
 
 	private SimpleOpenNI context;
 	private float zoomF = 0.5f;
@@ -93,8 +87,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	/* Shader */
 	private JustColorShader justColorShader;
 	private PolyLightAndColorShader polyLightAndColorShader;
-//	private ColorAndTextureShader colorAndTextureShader;
-//	private PolyLightAndTextureShader polyLightAndTextureShader;
+	private PolyLightAndTextureShader polyLightAndTextureShader;
 	
 	/* Skybox */
 	private Room room;
@@ -142,24 +135,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			polyLightAndColorShader = new PolyLightAndColorShader(this);
 			engine.addShader("PolyLightAndColor", polyLightAndColorShader);
 			
-			/*
-			colorAndTextureShader = new ColorAndTextureShader(this);
-			engine.addShader("ColorAndTexture", colorAndTextureShader);
-			
-			polyLightAndColorShader = new PolyLightAndColorShader(this);
-			engine.addShader("PolyLightAndColor", polyLightAndColorShader);
-
-			
-			polyLightAndColorShadowComposerShader = new PolyLightAndColorShadowComposerShader(this);
-			engine.addShader("PolyLightAndColorShadowComposer", polyLightAndColorShadowComposerShader);
-			 
 			polyLightAndTextureShader = new PolyLightAndTextureShader(this);
 			engine.addShader("PolyLightAndTexture", polyLightAndTextureShader);
-			*/
-			
-			/*
-			engine.addShader("PolyLightAndTextureShadowComposer", new PolyLightAndTextureShadowComposerShader(this));
-			*/
 			
 			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);
