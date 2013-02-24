@@ -19,6 +19,7 @@ import com.madsim.engine.optik.OrthoOptik;
 import com.madsim.engine.optik.StdOptik;
 import com.madsim.engine.shader.JustColorShader;
 import com.madsim.engine.shader.PolyLightAndColorShader;
+import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.tracking.kinect.PositionTarget;
 import com.madsim.tracking.kinect.PositionTargetListener;
@@ -84,11 +85,6 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private StdOptik stdOptik;
 	private OrthoOptik orthoOptik;
 	
-	/* Shader */
-	private JustColorShader justColorShader;
-	private PolyLightAndColorShader polyLightAndColorShader;
-	private PolyLightAndTextureShader polyLightAndTextureShader;
-	
 	/* Skybox */
 	private Room room;
 	
@@ -129,14 +125,10 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		logLn("Initializing Engine ...");
 			engine = new Engine(this);
 			
-			justColorShader = new JustColorShader(this);
-			engine.addShader("JustColor", justColorShader);
-			
-			polyLightAndColorShader = new PolyLightAndColorShader(this);
-			engine.addShader("PolyLightAndColor", polyLightAndColorShader);
-			
-			polyLightAndTextureShader = new PolyLightAndTextureShader(this);
-			engine.addShader("PolyLightAndTexture", polyLightAndTextureShader);
+			engine.addShader("JustColor", new JustColorShader(this));
+			engine.addShader("PolyLightAndColor", new PolyLightAndColorShader(this));
+			engine.addShader("PolyLightAndTexture", new PolyLightAndTextureShader(this));
+			engine.addShader("PolyLightAndTextureAndEM", new PolyLightAndTextureAndEMShader(this));
 			
 			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);
@@ -253,7 +245,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		logLn("Initializing Menu ...");
 		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		
-		engine.addDrawable("Globe", globe);
+//		engine.addDrawable("Globe", globe);
 	}	
 	
 	private void setupOptikWorld() {

@@ -22,5 +22,8 @@
 	<classpathentry kind="lib" path="lib/opengl/opengl.jar"/>
 	<classpathentry kind="lib" path="lib/core.jar"/>
 	<classpathentry kind="lib" path="lib/GLGraphics.jar" sourcepath="/GLGraphics/src/codeanticode/glgraphics"/>
+	<classpathentry kind="lib" path="lib/controlP5.jar"/>
+	<classpathentry kind="lib" path="lib/volumeutils.jar"/>
+	<classpathentry kind="lib" path="lib/simutils.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

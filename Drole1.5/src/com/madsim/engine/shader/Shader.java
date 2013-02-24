@@ -11,6 +11,11 @@ public abstract class Shader {
 	public static short USE_TEXTURES	= 20;
 
 	protected short textureHint = NO_TEXTURES;
+
+	public static short NO_ENVIRONMENT_MAP		= 10;
+	public static short USE_ENVIRONMENT_MAP		= 20;
+	
+	protected short environmentMapHint = NO_ENVIRONMENT_MAP;
 	
 	public static short NO_LIGHTS		= 10;
 	public static short USE_LIGHTS		= 20;
@@ -25,6 +30,10 @@ public abstract class Shader {
 		return textureHint;
 	}
 
+	public short environmentMapHint() {
+		return environmentMapHint;
+	}
+	
 	public short lightHint() {
 		return lightHint;
 	}

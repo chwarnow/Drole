@@ -48,6 +48,8 @@ public class Engine {
 	
 	private float[] ambientLight = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
 	
+	private GLTexture environmentMap;
+	
 	public boolean drawStarted = false;
 	
 	public Engine(EngineApplet p) {
@@ -132,6 +134,12 @@ public class Engine {
 		if(activeShader() != null && activeShader().lightHint() == Shader.USE_LIGHTS) {
 			activeShader().glsl().setIntUniform("numLights", lights.size());
 			activeShader().glsl().setVecUniform("ambient", ambientLight[0], ambientLight[1], ambientLight[2], ambientLight[3]);
+		}
+	}
+	
+	public void setEnvironment() {
+		if(activeShader() != null && activeShader().environmentMapHint() == Shader.NO_ENVIRONMENT_MAP && environmentMap != null) {
+			
 		}
 	}
 	
@@ -231,7 +239,7 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(1.0f, 1.0f, 1.0f);
+		ambient(0.5f, 0.5f, 0.5f);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();
@@ -255,6 +263,18 @@ public class Engine {
 				g.noStroke();
 				g.fill(200, 200, 0);
 				g.sphere(20);
+			g.popMatrix();
+		
+		stopShader();
+
+		startShader("PolyLightAndTextureAndEM");
+		
+			g.pushMatrix();
+				g.translate(0, 0, -1000);
+				g.noStroke();
+				g.fill(200);
+				
+				g.sphere(200);
 			g.popMatrix();
 		
 		stopShader();

@@ -1,0 +1,17 @@
+package drole.tests.serialize;
+
+public class Employee implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
+public String name;
+   public String address;
+   public int SSN;
+   public int number;
+   public void mailCheck()
+   {
+      System.out.println("Mailing a check to " + name
+                           + " " + address);
+   }
+   
+}
