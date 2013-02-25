@@ -117,9 +117,16 @@ public class RibbonGlobe extends Drawlist {
 			
 			e.startShader("PolyLightAndColor");
 			
+			float penseeRotation = .0f;
 			for(Drawable r : drawables) {
 				r.update();
+				g.pushMatrix();
+				g.rotateY(penseeRotation);
+				g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
 				r.draw();
+				g.popMatrix();
+				
+				penseeRotation += 10f;
 			}
 			
 			// e.stopShader();

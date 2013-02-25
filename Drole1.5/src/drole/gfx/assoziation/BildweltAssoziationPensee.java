@@ -35,16 +35,18 @@ public class BildweltAssoziationPensee extends Drawable {
 	// animation values
 
 	int positionSteps = 250;
-	public int currPosition = 0;
+	public float currPosition = 0;
 	int animationDirection = -1;
 	int oldEasedIndex = 0;
 	float easedPosition = 0;
 	float quadHeight = 1.0f;
 	
 	private int delay = 0; // count up when delaying
-	private int delayTime = 1; // wait for 100 frames until next one begins
+	private int delayTime = 100; // wait for 100 frames until next one begins
 	int cosDetail = 25;
 	float[] cosLUT = new float[cosDetail];
+	
+	float delaySteps = .33f;
 
 	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter) {
 		super(e);
@@ -120,8 +122,8 @@ public class BildweltAssoziationPensee extends Drawable {
 
 	public void update() {
 		// update playhead on precomputed noise path
-		if (currPosition == positionSteps-1) {
-			if (delay++==delayTime) {
+		if (currPosition >= positionSteps-1) {
+			if ( delay++ ==delayTime) {
 				//animationDirection *= -1;
 				//currPosition += animationDirection;
 				currPosition = 0;
@@ -139,12 +141,12 @@ public class BildweltAssoziationPensee extends Drawable {
 		*/
 		else {
 			// currPosition += animationDirection;
-			currPosition -= animationDirection;
+			currPosition -= animationDirection*delaySteps;
 		}
 
 		// eased value out of currStep/positionSteps
-		easedPosition = currPosition;//Sine.easeInOut (currPosition, 0, positionSteps-1, positionSteps);
-
+		easedPosition = (int)currPosition;//Sine.easeInOut (currPosition, 0, positionSteps-1, positionSteps);
+		// e.p.println(currPosition);
 	}
 
 	public void draw() {

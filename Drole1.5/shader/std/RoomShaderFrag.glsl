@@ -70,7 +70,7 @@ void main() {
 	if(numLights > 0) {
 		vec4 lightColor = vec4(.0, .0, .0, 1.0);
 		for(int i = 0; i < numLights; i++) lightColor += pointLight(i);
-		color *= lightColor*2.0;
+		color *= lightColor*1.0;
 	}
 	
 	gl_FragColor = color;
