@@ -37,7 +37,13 @@ public class MMWorld extends Drawable {
 			pointDLA.setColors(255);
 		
 		lineDLA.initColors();
-//			lineDLA.setColors(255, 100);
+			lineDLA.setColors(255, 100);
+		
+		pointDLA.initTextures(1);
+		pointDLA.setTexture(0, e.requestTexture("data/images/1d-white.jpg"));
+		pointDLA.beginUpdateTexCoords(0);
+			for(int i = 0; i < points.size(); i++) pointDLA.updateTexCoord(i, (1.0f/points.size())*i, 0.0f);
+		pointDLA.endUpdateTexCoords();
 	}
 
 	@Override
@@ -57,6 +63,8 @@ public class MMWorld extends Drawable {
 			g.rotateX(rotation.x);
 			g.rotateY(rotation.y);
 			g.rotateZ(rotation.z);
+			
+			e.setPixelKnockOut(0.5f);
 			
 			e.setupModel(pointDLA);
 				pointDLA.render();

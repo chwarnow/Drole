@@ -1,6 +1,6 @@
 package com.madsim.drole.mmworld.drop;
 
-import codeanticode.glgraphics.GLGraphics;
+import processing.opengl.PGraphicsOpenGL;
 import toxi.geom.Vec3D;
 import toxi.geom.mesh.Face;
 import toxi.geom.mesh.WETriangleMesh;
@@ -15,7 +15,7 @@ public class DropMesh {
 
 	private int GRID = 36;
 	private Vec3D SCALE = new Vec3D(DIM, DIM, DIM).scale(2);
-	private float isoThreshold = 3;
+	private float isoThreshold = 1.0f;
 
 	private int numP;
 
@@ -64,34 +64,41 @@ public class DropMesh {
 		mesh.computeVertexNormals();
 	}
 	
-	public void draw(GLGraphics g) {
-		int num = mesh.getNumFaces();
+	public void draw(PGraphicsOpenGL g) {
+		g.noStroke();
+		g.fill(200, 100);
 		
-		for (int i = 0; i < num; i++) {
-			Face f = mesh.faces.get(i);
+		g.beginShape(PGraphicsOpenGL.TRIANGLES);
+		
+			int num = mesh.getNumFaces();
 			
-			Vec3D col = f.a.add(colAmp).scaleSelf(0.5f);
-			g.fill(col.x, col.y, col.z);
-			normal(g, f.a.normal);
-			vertex(g, f.a);
+			for (int i = 0; i < num; i++) {
+				Face f = mesh.faces.get(i);
+				
+				Vec3D col = f.a.add(colAmp).scaleSelf(0.5f);
+				g.fill(col.x, col.y, col.z);
+				normal(g, f.a.normal);
+				vertex(g, f.a);
+				
+				col = f.b.add(colAmp).scaleSelf(0.5f);
+				g.fill(col.x, col.y, col.z);
+				normal(g, f.b.normal);
+				vertex(g, f.b);
+				
+				col = f.c.add(colAmp).scaleSelf(0.5f);
+				g.fill(col.x, col.y, col.z);
+				normal(g, f.c.normal);
+				vertex(g, f.c);
+			}
 			
-			col = f.b.add(colAmp).scaleSelf(0.5f);
-			g.fill(col.x, col.y, col.z);
-			normal(g, f.b.normal);
-			vertex(g, f.b);
-			
-			col = f.c.add(colAmp).scaleSelf(0.5f);
-			g.fill(col.x, col.y, col.z);
-			normal(g, f.c.normal);
-			vertex(g, f.c);
-		}
+		g.endShape();
 	}
 	
-	public void normal(GLGraphics g, Vec3D v) {
+	public void normal(PGraphicsOpenGL g, Vec3D v) {
 		g.normal(v.x, v.y, v.z);
 	}
 
-	public void vertex(GLGraphics g, Vec3D v) {
+	public void vertex(PGraphicsOpenGL g, Vec3D v) {
 		g.vertex(v.x, v.y, v.z);
 	}
 	

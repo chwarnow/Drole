@@ -2,6 +2,7 @@ package com.madsim.drole.mmworld.drop;
 
 
 import processing.core.PApplet;
+import processing.opengl.PGraphicsOpenGL;
 
 import codeanticode.glgraphics.GLGraphics;
 
@@ -33,7 +34,7 @@ public class DropPhysics {
 		return physics;
 	}
 	
-	public void drawPhysicSystem(GLGraphics g) {
+	public void drawPhysicSystem(PGraphicsOpenGL g) {
 		g.noStroke();
 		g.fill(200, 200, 0);
 		for(int i = 0; i < physics.particles.size(); i++) {

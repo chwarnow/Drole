@@ -1,20 +1,18 @@
 varying vec3 normal, vertex;
 
 varying vec4 ecPos;
- 
+
 void main() {
+	gl_Position = ftransform();
+
+	vertex = gl_Position.xyz;
+
     /* first transform the normal into eye space and normalize the result */
     normal = normalize(gl_NormalMatrix * gl_Normal);
  
     /* compute the vertex position  in camera space. */
     ecPos = gl_ModelViewMatrix * gl_Vertex;
 
-    gl_Position = ftransform();
-
-	gl_FrontColor = gl_Color;
-
-	gl_Position = ftransform();
-	
 	gl_FrontColor = gl_Color;
 	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
@@ -25,6 +23,4 @@ void main() {
 	gl_TexCoord[5] = gl_MultiTexCoord5;
 	gl_TexCoord[6] = gl_MultiTexCoord6;
 	gl_TexCoord[7] = gl_MultiTexCoord7;
-
-	vertex = gl_Position.xyz;
 }

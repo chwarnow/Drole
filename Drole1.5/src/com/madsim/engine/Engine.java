@@ -52,6 +52,8 @@ public class Engine {
 	
 	public boolean drawStarted = false;
 	
+	private boolean usePixelKnockOut = false;
+	
 	public Engine(EngineApplet p) {
 		this.p = p;
 		refreshGLG();
@@ -147,6 +149,24 @@ public class Engine {
 		return false;
 	}
 	
+	public void setPixelKnockOut(float k) {
+		activeShader().glsl().setFloatUniform("usePixelKnockOut", k);
+	}
+	
+	private void setupShader() {
+		if(activeShader() != null) {
+			
+		}
+	}
+	
+	public void resetShader() {
+		if(activeShader() != null) {
+			// Set texture informations for the shader
+			activeShader().glsl().setIntUniform("numTextures", 0);
+			activeShader().glsl().setFloatUniform("usePixelKnockOut", -1.0f);
+		}
+	}
+	
 	public void setupModel(GLModel model) {
 		if(activeShader() != null && activeShader().textureHint() == Shader.USE_TEXTURES) {
 			// Set texture informations for the shader
@@ -179,6 +199,8 @@ public class Engine {
 				dl.mode() != Drawable.OFF_SCREEN && 
 				isInHintList(dl.SHADOW_HINT, shadowHintFilter)
 			) {
+				resetShader();
+				
 				// Draw
 				g.pushStyle();
 				g.pushMatrix();
@@ -240,7 +262,7 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(0.1f, 0.1f, 0.1f);
+		ambient(0.8f, 0.8f, 0.8f);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();
