@@ -9,6 +9,7 @@ import codeanticode.glgraphics.GLConstants;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.drole.mmworld.MMWorld;
+import com.madsim.drole.mmworld.drop.Drop;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
@@ -222,6 +223,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		bildweltMicroMacro = new MMWorld(engine);
 		
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
+//		engine.addDrawable("MicroMacro", new Drop(engine));
 	}
 	
 	private void setupGestureDetection() {

@@ -5,28 +5,38 @@ import com.madsim.engine.drawable.Drawable;
 
 public class Drop extends Drawable {
 
-	private DropPhysics physics;
-	private DropMesh mesh;
+	private FullDrop drop;
 	
 	public Drop(Engine e) {
 		super(e);
 		
-		physics = new DropPhysics(e.p, 12);
-		mesh = new DropMesh(200);
+		position(0, 0, -1000);
+		
+		drop = new FullDrop(e.p);
 	}
 
 	@Override
 	public void update() {
 		super.update();
-		
-		physics.updateParticles();
-		mesh.update(physics.getPhysics());
 	}
 	
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
-		
+		g.pushMatrix();
+		g.pushStyle();
+			g.translate(position.x, position.y, position.z);
+			g.scale(scale.x, scale.y, scale.z);
+			g.rotateX(rotation.x);
+			g.rotateY(rotation.y);
+			g.rotateZ(rotation.z);
+			
+			g.noStroke();
+			g.fill(200, 10);
+			
+			drop.draw(g);
+			
+		g.popStyle();
+		g.popMatrix();
 	}
 	
 }
