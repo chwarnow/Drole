@@ -1,6 +1,7 @@
 package drole.gfx.assoziation;
 
 import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
 
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
@@ -17,14 +18,14 @@ import penner.easing.*;
  * @Author Christopher Warnow, hello@christopherwarnow.com
  *
  */
-public class BildweltAssoziationPensee {
+public class BildweltAssoziationPensee extends Drawable {
 	Engine e;
 
 	// ------ agents ------
 	BildweltAssoziationAgent[] agents;
 	int agentsCount;
 
-	float noiseScale = 150, noiseStrength = 20; 
+	float noiseScale = 250, noiseStrength = 20; 
 	int vertexCount = 0;
 
 	GLTexture content;
@@ -46,8 +47,12 @@ public class BildweltAssoziationPensee {
 	float[] cosLUT = new float[cosDetail];
 
 	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter) {
+		super(e);
 		this.e = e;
 		this.quadHeight = quadHeight;
+		
+		e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+		
 		e.p.noiseSeed((long)e.p.random(1000));
 
 		// load image
@@ -73,7 +78,7 @@ public class BildweltAssoziationPensee {
 				starterThreshold *= .25f;
 				agents[i++]=new BildweltAssoziationAgent(
 						e,
-						new PVector((x-content.width/2)*quadHeight, (y-content.height/2)*quadHeight, 0),
+						new PVector((x-content.width/2)*quadHeight + penseeCenter.x, (y-content.height/2)*quadHeight + penseeCenter.y,  + penseeCenter.z),
 						content.get(x, y),
 						positionSteps,
 						noiseScale,
@@ -104,7 +109,7 @@ public class BildweltAssoziationPensee {
 		imageQuadModel.initNormals();
 
 		// load shader
-		imageShader = new GLSLShader(e.p, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
+		imageShader = new GLSLShader(e.p, "shader/std/PolyLightAndColorVert.glsl", "shader/std/PolyLightAndColorFrag.glsl");
 		
 		// create cos lookup table
 		for(i=0;i<cosDetail;i++) {
@@ -142,7 +147,7 @@ public class BildweltAssoziationPensee {
 
 	}
 
-	public void draw(PGraphicsOpenGL renderer) {
+	public void draw() {
 		// renderer.lights();
 
 		// update glmodel
@@ -205,9 +210,10 @@ public class BildweltAssoziationPensee {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				// compute face normal
-				// PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
-				// PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight) - thisP.y, nextP.z - thisP.z);
-				PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);//v1.cross(v2);
+				PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
+				PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight*ratio*2.0f) - thisP.y, nextP.z - thisP.z);
+				PVector v3 = v1.cross(v2);
+				// PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);
 				v3.normalize();
 
 				float nX = v3.x;
@@ -265,18 +271,23 @@ public class BildweltAssoziationPensee {
 		imageQuadModel.updateNormals(floatQuadVertices);
 
 		// renderer.beginGL();  
-		
+		/*
 	    imageShader.start();
+	    imageShader.setVecUniform("ambient", .1f, .1f, .1f);
+	    imageShader.setIntUniform("numLights", 2);
+	    */
+	    
+	    /*
 	    imageShader.setFloatUniform("zmin", 0.65f);
 	    imageShader.setFloatUniform("zmax", 0.85f);
 	    imageShader.setFloatUniform("shininess", 100.0f);
 	    imageShader.setVecUniform("lightPos", 100.0f, -10.0f, 30.0f);
-		
+		*/
 		// A model can be drawn through the GLGraphics renderer:
-		e.setupModel(imageQuadModel);
+		// e.setupModel(imageQuadModel);
 		imageQuadModel.render();
 
-		imageShader.stop();
+		// imageShader.stop();
 
 		// renderer.endGL();
 	}

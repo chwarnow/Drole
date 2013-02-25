@@ -22,6 +22,7 @@ import com.madsim.engine.shader.JustColorShader;
 import com.madsim.engine.shader.PolyLightAndColorShader;
 import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
+import com.madsim.engine.shader.RoomShader;
 import com.madsim.tracking.kinect.PositionTarget;
 import com.madsim.tracking.kinect.PositionTargetListener;
 import com.madsim.tracking.kinect.TargetBox3D;
@@ -133,6 +134,9 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			engine.addShader("PolyLightAndTexture", new PolyLightAndTextureShader(this));
 			engine.addShader("PolyLightAndTextureAndEM", new PolyLightAndTextureAndEMShader(this));
 			
+			// a spinoff shader based on PolyLightAndTexture by chris
+			engine.addShader("RoomShader", new RoomShader(this));
+			
 			stdOptik = new StdOptik(engine);
 			engine.addOptik("Std", stdOptik);
 
@@ -238,7 +242,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 
 	private void setupRoom() {
 		logLn("Initializing Room ...");
-		room = new Room(engine, "data/room/drolebox3/drolebox-cubemap.jpg");
+		room = new Room(engine, "data/room/drolebox3/drolebox-cubemap-cw.jpg");
 		room.position(0, 0, 0);
 		
 		engine.addDrawable("Room", room);
@@ -246,9 +250,9 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-//		globe = new RibbonGlobe(engine, globePosition, globeSize);
+		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		
-//		engine.addDrawable("Globe", globe);
+		engine.addDrawable("Globe", globe);
 	}	
 	
 	private void setupOptikWorld() {

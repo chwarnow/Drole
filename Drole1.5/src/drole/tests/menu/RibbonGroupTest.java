@@ -1,5 +1,7 @@
 package drole.tests.menu;
 
+import com.madsim.engine.Engine;
+
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
 import codeanticode.glgraphics.GLSLShader;
@@ -17,7 +19,7 @@ import toxi.physics.constraints.ParticleConstraint;
 import toxi.physics.constraints.SphereConstraint;
 
 public class RibbonGroupTest {
-	PApplet parent;
+	Engine e;
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,10 +50,10 @@ public class RibbonGroupTest {
 	
 	private float seedSpeed = .01f;
 	
-	public RibbonGroupTest(PApplet parent, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
-		this.parent = parent;
+	public RibbonGroupTest(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
+		this.e = e;
 		
-		this.seed				= parent.random(1000);
+		this.seed				= e.p.random(1000);
 		this.numPhysicParticles	= numRibbons;
 		this.numQuadsPerRibbon	= numJointsPerRibbon;
 		this.sphereSize			= sphereSize;
@@ -64,7 +66,7 @@ public class RibbonGroupTest {
 		for (int i = 0; i < numRibbons; i++) {			
 //			PVector startPosition = new PVector(parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f));
 			PVector startPosition = new PVector(0, 0, 0);
-			particles[i] = new Ribbon3D(parent, startPosition, numJointsPerRibbon);
+			particles[i] = new Ribbon3D(e, startPosition, numJointsPerRibbon, false);
 			vertexCount += particles[i].getVertexCount();
 		}
 
@@ -95,7 +97,7 @@ public class RibbonGroupTest {
 
 			if(prev != null) {
 				physics.addSpring(new VerletSpring(prev, p, REST_LENGTH * 1, 0.005f));
-				physics.addSpring(new VerletSpring(physics.particles.get((int) parent.random(i)), p, REST_LENGTH * 2, 0.00001f + i * .0005f));
+				physics.addSpring(new VerletSpring(physics.particles.get((int) e.p.random(i)), p, REST_LENGTH * 2, 0.00001f + i * .0005f));
 			}
 
 			prev = p;
@@ -108,16 +110,16 @@ public class RibbonGroupTest {
 		tail.lock();
 		
 		// create a model that uses quads
-		imageQuadModel = new GLModel(parent, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
+		imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
 		imageQuadModel.initColors();
 		imageQuadModel.initNormals();
 
 		// load shader
-		imageShader = new GLSLShader(parent, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
+		imageShader = new GLSLShader(e.p, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
 		
 		// create cos lookup table
 		for(int i=0;i<cosDetail;i++) {
-			cosLUT[i] = parent.sin(((float)i/cosDetail)*parent.PI);
+			cosLUT[i] = e.p.sin(((float)i/cosDetail)*e.p.PI);
 		}
 	}
 
@@ -127,15 +129,15 @@ public class RibbonGroupTest {
 			
 			// update particle movement
 			head.set(
-					parent.noise(seed * (.0015f + PApplet.cos(seed * .001f) * .0015f)) * parent.width -parent. width / 2,
-					parent.noise(seed * .0015f + PApplet.cos(seed * .001f) * .0015f) * parent.height - parent.height / 2,
-					parent.noise(seed * .001f + 100) * parent.width - parent.width / 2);
+					e.p.noise(seed * (.0015f + PApplet.cos(seed * .001f) * .0015f)) * e.p.width -e.p. width / 2,
+					e.p.noise(seed * .0015f + PApplet.cos(seed * .001f) * .0015f) * e.p.height - e.p.height / 2,
+					e.p.noise(seed * .001f + 100) * e.p.width - e.p.width / 2);
 			
 			float tailSeed = seed + 10.0f;
 			tail.set(
-					parent.noise(tailSeed * (.0015f + PApplet.cos(tailSeed * .001f) * .0015f)) * parent.width - parent.width / 2,
-					parent.noise(tailSeed * .0015f + PApplet.cos(tailSeed * .001f) * .0015f) * parent.height - parent.height / 2,
-					parent.noise(tailSeed * .01f + 100) * parent.width - parent.width / 2);
+					e.p.noise(tailSeed * (.0015f + PApplet.cos(tailSeed * .001f) * .0015f)) * e.p.width - e.p.width / 2,
+					e.p.noise(tailSeed * .0015f + PApplet.cos(tailSeed * .001f) * .0015f) * e.p.height - e.p.height / 2,
+					e.p.noise(tailSeed * .01f + 100) * e.p.width - e.p.width / 2);
 	
 			// also apply sphere constraint to head
 			// this needs to be done manually because if this particle is locked
@@ -329,22 +331,22 @@ public class RibbonGroupTest {
 	    imageShader.setVecUniform("lightPos", 100.0f, -10.0f, 30.0f);
 		
 		// A model can be drawn through the GLGraphics renderer:
-	    GLGraphics renderer = (GLGraphics)parent.g;
+	    GLGraphics renderer = (GLGraphics)e.g;
 		renderer.model(imageQuadModel);
 
 		imageShader.stop();
 		
-		parent.fill(255);
-		parent.pushMatrix();
-		parent.translate(head.x, head.y, head.z);
-		parent.ellipse(0,0, 30, 30);
-		parent.popMatrix();
+		e.p.fill(255);
+		e.p.pushMatrix();
+		e.p.translate(head.x, head.y, head.z);
+		e.p.ellipse(0,0, 30, 30);
+		e.p.popMatrix();
 	}
 
 	public void drawAsLines() {
 		for (int i = 0; i < numPhysicParticles; i++) {
-			if(i != numPhysicParticles-1) particles[i].drawStrokeRibbon(parent.color(200, 200, 0), 5);
-			else particles[i].drawStrokeRibbon(parent.color(200, 0, 0), 5);
+			if(i != numPhysicParticles-1) particles[i].drawStrokeRibbon(e.p.color(200, 200, 0), 5);
+			else particles[i].drawStrokeRibbon(e.p.color(200, 0, 0), 5);
 		}
 	}
 	

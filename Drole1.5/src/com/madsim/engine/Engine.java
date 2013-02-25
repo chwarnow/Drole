@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import javax.media.opengl.GL;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 import processing.opengl.PGraphicsOpenGL;
 
 import com.madsim.engine.drawable.Drawable;
@@ -248,23 +249,43 @@ public class Engine {
 		
 		startShader("JustColor");
 		
+		// TODO: set that globally
+		float basicLightValueX = 586.0f - p.noise(p.frameCount*.01f)*150f;
+		float basicLightValueY = 526.0f + p.noise(p.frameCount*.01f + 100)*50f;
+		
+		PVector basicLightPosition = new PVector(
+				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
+				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
+				-1600 + p.noise(p.frameCount*.01f)*250f);
+		
 			g.pushMatrix();
-				g.translate(PApplet.map(p.mouseX, 0, g.width, -2000, 2000), PApplet.map(p.mouseY, 0, g.width, -2000, 2000), -800);
+				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);
 				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(200, 200, 200, 0, 0, 0);
+				pointLight(255, 255, 255, 0, 0, 0);
 				g.noStroke();
-				g.fill(200, 200, 0);
-				g.sphere(20);
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+			g.popMatrix();
+		
+			g.pushMatrix();
+				g.translate(basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				//  g.sphere(10);
 			g.popMatrix();
 			
 			g.pushMatrix();
-				g.translate(PApplet.map(p.mouseX, 0, g.width, -2000, 2000), PApplet.map(p.mouseY, 0, g.width, 2000, -2000), -800);
+				g.translate(basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450);
 				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(100, 100, 100, 0, 0, 0);
+				pointLight(255, 255, 255, 0, 0, 0);
 				g.noStroke();
-				g.fill(200, 200, 0);
-				g.sphere(20);
-			g.popMatrix();
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+		g.popMatrix();
+		
+		p.println(p.mouseX);
 		
 		stopShader();
 
@@ -282,7 +303,9 @@ public class Engine {
 		stopShader();
 		*/
 		
-		startShader("PolyLightAndTexture");
+		// edit by chris, testing a shader spinoff
+		// startShader("PolyLightAndTexture");
+		startShader("RoomShader");
 			
 			drawContent();
 			

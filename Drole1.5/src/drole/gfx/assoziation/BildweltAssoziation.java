@@ -26,12 +26,14 @@ public class BildweltAssoziation extends Drawable {
 		position(0.0f, -900.0f, 0.0f);
 		
 		// init ribbon sculpture
+		/*
 		penseeA = new BildweltAssoziationPensee(e, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
 		penseeB = new BildweltAssoziationPensee(e, "data/images/associationB.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
 		penseeC = new BildweltAssoziationPensee(e, "data/images/associationC.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
 		
 		penseeB.positionSteps = 33;
 		penseeC.positionSteps = 66;
+		*/
 	}
 	
 	@Override
@@ -40,9 +42,9 @@ public class BildweltAssoziation extends Drawable {
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
 		// update sculpture
-		penseeA.update();
-		penseeB.update();
-		penseeC.update();
+		// penseeA.update();
+		// penseeB.update();
+		// penseeC.update();
 	}
 
 	@Override
@@ -56,9 +58,9 @@ public class BildweltAssoziation extends Drawable {
 		g.rotateY(smoothedRotation+PApplet.HALF_PI/2);
 		
 		// draw sculpture
-		penseeA.draw(g);
-		penseeB.draw(g);
-		penseeC.draw(g);
+		// penseeA.draw(g);
+		// penseeB.draw(g);
+		// penseeC.draw(g);
 		
 		g.noFill();
 		g.stroke(155, 100);
