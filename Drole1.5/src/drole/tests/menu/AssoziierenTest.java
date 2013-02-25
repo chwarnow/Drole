@@ -1,5 +1,12 @@
 package drole.tests.menu;
 
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+
+import com.madsim.engine.Engine;
+import com.madsim.engine.EngineApplet;
+import com.madsim.tracking.kinect.PositionTargetListener;
+
 import codeanticode.glgraphics.GLConstants;
 import codeanticode.glgraphics.GLGraphics;
 import drole.gfx.assoziation.BildweltAssoziationPensee;
@@ -14,19 +21,24 @@ import processing.core.PVector;
  *
  */
 
-public class AssoziierenTest extends PApplet {
+public class AssoziierenTest extends EngineApplet implements PositionTargetListener, MouseWheelListener {
 
 	BildweltAssoziationPensee penseeA;
 	float sphereConstraintRadius = 160.0f;
 	
+	Engine engine;
+	
 	public void setup() {
 		size(1200, 720, GLConstants.GLGRAPHICS);
 	
+		engine = new Engine(this);
+		
 		// init ribbon sculpture
-		penseeA = new BildweltAssoziationPensee(this, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
+		penseeA = new BildweltAssoziationPensee(engine, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
 	}
 	
 	public void draw() {
+		println(frameRate);
 		// update sculpture
 		penseeA.update();
 		
@@ -51,6 +63,24 @@ public class AssoziierenTest extends PApplet {
 			"--bgcolor=#000000",
 			"drole.tests.menu.AssoziierenTest"
 		});
+	}
+
+	@Override
+	public void jointEnteredTarget(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void jointLeftTarget(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -1,5 +1,12 @@
 package drole.tests.ribbons;
 
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+
+import com.madsim.engine.Engine;
+import com.madsim.engine.EngineApplet;
+import com.madsim.tracking.kinect.PositionTargetListener;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 import toxi.geom.AABB;
@@ -12,7 +19,7 @@ import toxi.physics.behaviors.GravityBehavior;
 import toxi.physics.constraints.ParticleConstraint;
 import toxi.physics.constraints.SphereConstraint;
 
-public class RibbonTester extends PApplet {
+public class RibbonTester extends EngineApplet implements PositionTargetListener, MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,8 +32,12 @@ public class RibbonTester extends PApplet {
 	private VerletParticle head;
 	private int REST_LENGTH = 10;
 	
+	private Engine e;
+	
 	public void setup() {
 		size(1200, 720, P3D);
+		
+		e = new Engine(this);
 		
 		// create drole particles
 		  particles = new Ribbon3D[numRibbons];
@@ -34,7 +45,7 @@ public class RibbonTester extends PApplet {
 		  // create particles
 		  for (int i = 0; i < numRibbons; i++) {
 			  PVector startPosition = new PVector(random(-3.1414f, 3.1414f), random(-3.1414f, 3.1414f), random(-3.1414f, 3.1414f));
-			  particles[i] = new Ribbon3D(this, startPosition, numJointsPerRibbon);
+			  particles[i] = new Ribbon3D(e, startPosition, numJointsPerRibbon);
 		  }
 
 		  // create collision sphere at origin, replace OUTSIDE with INSIDE to keep particles inside the sphere
@@ -123,5 +134,23 @@ public class RibbonTester extends PApplet {
 			"--bgcolor=#000000",
 			"drole.gfx.ribbon.RibbonHandler"
 		});
+	}
+
+	@Override
+	public void jointEnteredTarget(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void jointLeftTarget(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

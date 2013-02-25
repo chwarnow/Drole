@@ -43,7 +43,7 @@ class BildweltAssoziationAgent {
 		pathLength = PApplet.max(1, pathLength);
 		int ribbonAmount = (int)e.p.random(1*pathLength, 2*pathLength);
 		if(ribbonAmount %2 != 0) ribbonAmount ++;
-		ribbon = new Ribbon3D(e, p, ribbonAmount);
+		ribbon = new Ribbon3D(e, p, ribbonAmount, false);
 		int startPos = 0;
 		// precompute positions
 		for (int i=0;i<positionSteps;i++) {

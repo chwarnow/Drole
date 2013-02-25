@@ -35,25 +35,27 @@ public class Ribbon3D extends Drawable {
 	private PVector[] joints;
 	
 	private GLModel model;
-	
-	public Ribbon3D(Engine e, PVector startPosition, int numJoints) {
+	private boolean isGLModel;
+	public Ribbon3D(Engine e, PVector startPosition, int numJoints, boolean isGLModel) {
 		super(e);
 		this.numJoints = numJoints;
+		this.isGLModel = isGLModel;
 		joints = new PVector[numJoints];
 		for(int i = 0; i < numJoints; i++) joints[i] = new PVector(startPosition.x, startPosition.y, startPosition.z);
 		
 		numVertices = (numJoints-1)*2;
 		
-		model = new GLModel(e.p, numVertices, GLModel.QUAD_STRIP, GLModel.DYNAMIC);
-		
-		model.initColors();
-		model.setColors(e.p.random(255), e.p.random(255));
-		
-		model.initNormals();
-		
-		model.initTextures(1);
-		model.setTexture(0, e.requestTexture("data/textures/globe/transparent-noise.png"));
-		
+		if(isGLModel) {
+			model = new GLModel(e.p, numVertices, GLModel.QUAD_STRIP, GLModel.DYNAMIC);
+			
+			model.initColors();
+			model.setColors(e.p.random(255), e.p.random(255));
+			
+			model.initNormals();
+			
+			model.initTextures(1);
+			model.setTexture(0, e.requestTexture("data/textures/globe/transparent-noise.png"));
+		}
 		update(startPosition.x, startPosition.y, startPosition.z);
 	}
 
@@ -64,7 +66,8 @@ public class Ribbon3D extends Drawable {
 
 		joints[0].set(new PVector(x, y, z));
 		
-		updateVertices();
+		// by Chris: Sorry, had change it, becaue it sucks LOTS of performance!!! have to find another way for that.
+		if(isGLModel) updateVertices();
 	}
 	
 	private void updateVertices() {
@@ -124,12 +127,14 @@ public class Ribbon3D extends Drawable {
 			g.strokeWeight(width);
 			g.stroke(color);
 			
-			model.beginUpdateColors();
-				model.setColors(color);
-			model.endUpdateColors();
-			e.setupModel(model);
-			
-			model.render();
+			if(isGLModel) {
+				model.beginUpdateColors();
+					model.setColors(color);
+				model.endUpdateColors();
+				e.setupModel(model);
+				
+				model.render();
+			}
 			
 		g.popMatrix();
 		g.popStyle();
@@ -145,7 +150,9 @@ public class Ribbon3D extends Drawable {
 	
 	@Override
 	public void draw() {
-		e.setupModel(model);
-		model.render();
+		if(isGLModel) {
+			e.setupModel(model);
+			model.render();
+		}
 	}
 }
