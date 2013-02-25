@@ -1,5 +1,10 @@
 package drole.gfx.ribbon;
 
+import java.util.ArrayList;
+
+import codeanticode.glgraphics.GLGraphics;
+import codeanticode.glgraphics.GLModel;
+
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 
@@ -21,26 +26,40 @@ public class RibbonGroup extends Drawable {
 
 	private static final long serialVersionUID = 1L;
 
-	private float seed;
-	private int numPhysicParticles;
-	private int numQuadsPerRibbon;
-	private float sphereSize;
+	public float 				ribbonR = .0f;
+	public float 				ribbonG = .0f;
+	public float 				ribbonB = .0f;
 	
-	private Ribbon3D[] particles;
+	private float 				seed;
+	private int 				numPhysicParticles;
+	private int 				numQuadsPerRibbon;
+	private float 				sphereSize;
+	private int 				vertexCount = 0;
+	private float 				seedSpeed = .09f;
+	private float 				quadHeight;
+	
+	private Ribbon3D[] 			particles;
 
-	private VerletPhysics physics;
-	private VerletParticle head;
-	private int REST_LENGTH;
+	private VerletPhysics 		physics;
+	private VerletParticle 		head, tail;
+	private int 				REST_LENGTH;
 	
-	private VerletParticle pivot;
-	private VerletSpring[] pivotSprings;
+	private VerletParticle 		pivot;
+	private VerletSpring[] 		pivotSprings;
+	private ArrayList<Float> 	springLengths = new ArrayList<Float>();
 	
-	private AABB worldBox;
-	private ParticleConstraint sphereA, sphereB, cubeConst;
+	private AABB 				worldBox;
+	private ParticleConstraint 	sphereA, sphereB, cubeConst;
 	
-	private boolean isPivoting = false;
+	private boolean 			isPivoting = false;
 	
-	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
+	private GLModel 			imageQuadModel;
+	
+	private int					noiseID = 0;
+	private int					maxNoiseID = 50;
+	private float[]				noiseLUT = new float[maxNoiseID];
+	
+	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH, float quadHeight) {
 		super(e);
 		
 		this.seed				= e.p.random(1000);
@@ -48,6 +67,7 @@ public class RibbonGroup extends Drawable {
 		this.numQuadsPerRibbon	= numJointsPerRibbon;
 		this.sphereSize			= sphereSize;
 		this.REST_LENGTH		= REST_LENGTH;
+		this.quadHeight			= quadHeight;
 
 		// create drole particles
 		particles = new Ribbon3D[numRibbons];
@@ -56,8 +76,9 @@ public class RibbonGroup extends Drawable {
 		for (int i = 0; i < numRibbons; i++) {			
 //			PVector startPosition = new PVector(parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f));
 			PVector startPosition = new PVector(0, 0, 0);
-			particles[i] = new Ribbon3D(e, startPosition, numJointsPerRibbon, true);
+			particles[i] = new Ribbon3D(e, startPosition, numJointsPerRibbon, false);
 			particles[i].dimension(30, 0, 0);
+			vertexCount += particles[i].getVertexCount();
 		}
 
 		// create collision sphere at origin, replace OUTSIDE with INSIDE to
@@ -89,8 +110,11 @@ public class RibbonGroup extends Drawable {
 			physics.addParticle(p);
 
 			if(prev != null) {
-				physics.addSpring(new VerletSpring(prev, p, REST_LENGTH * 5, 0.005f));
-				physics.addSpring(new VerletSpring(physics.particles.get((int) e.p.random(i)), p, REST_LENGTH * 20, 0.00001f + i * .0005f));
+				float thisLength = e.p.random(REST_LENGTH);
+				springLengths.add(thisLength);
+				physics.addSpring(new VerletSpring(prev, p, thisLength, 0.05f));
+				springLengths.add(thisLength * 20);
+				physics.addSpring(new VerletSpring(physics.particles.get((int) e.p.random(i)), p, thisLength * 20, 0.01f));
 			}
 
 			prev = p;
@@ -98,21 +122,50 @@ public class RibbonGroup extends Drawable {
 
 		head = physics.particles.get(0);
 		head.lock();
+		
+		// tail = physics.particles.get(physics.particles.size() - 1);
+		// tail.lock();
+		
+		// create a model that uses quads
+		imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
+		imageQuadModel.initColors();
+		imageQuadModel.initNormals();
+		
+		// create a noise lookuptable
+		for(int i=0;i<maxNoiseID;i++) {
+			noiseLUT[i] = e.p.noise((float)i*.01f);
+		}
 	}
 
 	public void update() {
 		super.update();
 		if(!isPivoting) {
-			seed++;
+			seed += seedSpeed;
 			
 			// update particle movement
-			head.set(e.p.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * g.width -g.width / 2, e.p.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * g.height - g.height / 2, e.p.noise(seed * .01f + 100) * g.width - g.width / 2);
-			physics.particles.get(physics.particles.size() - 1).set(e.p.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * g.width - g.width / 2, e.p.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * g.height - g.height / 2, e.p.noise(seed * .01f + 100) * g.width - g.width / 2);
-	
+			head.set(
+					e.p.noise(seed * (.015f + PApplet.cos(seed * .001f) * .015f)) * e.p.width -e.p. width / 2,
+					e.p.noise(seed * .015f + PApplet.cos(seed * .001f) * .015f) * e.p.height - e.p.height / 2,
+					e.p.noise(seed * .001f + 100) * e.p.width - e.p.width / 2);
+			/*
+			float tailSeed = seed + 10.0f;
+			tail.set(
+					e.p.noise(tailSeed * (.015f + PApplet.cos(tailSeed * .001f) * .015f)) * e.p.width - e.p.width / 2,
+					e.p.noise(tailSeed * .015f + PApplet.cos(tailSeed * .001f) * .005f) * e.p.height - e.p.height / 2,
+					e.p.noise(tailSeed * .01f + 100) * e.p.width - e.p.width / 2);
+	*/
 			// also apply sphere constraint to head
 			// this needs to be done manually because if this particle is locked
 			// it won't be updated automatically
 			head.applyConstraints();
+			//tail.applyConstraints();
+			
+			// iterate through springs and stiffen or widen them to achieve noise like aesthetics?
+			int springID = 0;
+			for(VerletSpring s : physics.springs) {
+				s.setRestLength(springLengths.get(springID++) * noiseLUT[noiseID++]);
+				if(noiseID == maxNoiseID) noiseID = 0;
+			}
 		}
 		
 		// update sim
@@ -201,19 +254,116 @@ public class RibbonGroup extends Drawable {
 	
 	public void draw() {
 		g.pushStyle();
-		g.pushMatrix();
+		// arrays for storing ribbon vertices
+		float[] floatQuadVertices = new float[vertexCount*16];
+		float[] floatQuadNormals = new float[vertexCount*16];
+		float[] floatQuadColors = new float[vertexCount*16];
+		int quadVertexIndex = 0;
+		int quadNormalIndex = 0;
+		int quadColorIndex = 0;
 		
-			g.translate(position.x, position.y, position.z);
-			g.scale(scale.x, scale.y, scale.z);
+		for (int i = 0; i < numPhysicParticles; i++) {
 			
-			g.fill(255, fade*255);
-			g.noStroke();
 			
-			for (int i = 0; i < numPhysicParticles; i++) {
-				particles[i].draw();
+			Ribbon3D agent = particles[i];
+			// create quads from ribbons
+			PVector[] agentsVertices = agent.getVertices();
+			int agentVertexNum = agentsVertices.length;
+
+			for(int j=0;j<agentVertexNum-1;j++) {
+				
+				// cosinus from lookup table
+				// float ratio = cosLUT[(int)(((float)j/agentVertexNum) * cosDetail)];
+				
+				PVector thisP = agentsVertices[j];
+				PVector nextP = agentsVertices[j+1];
+				//PVector thirdP = agentsVertices[j+1];
+
+				// create quad from above vertices and save in glmodel, then add colors
+				floatQuadVertices[quadVertexIndex++] = thisP.x;
+				floatQuadVertices[quadVertexIndex++] = thisP.y;
+				floatQuadVertices[quadVertexIndex++] = thisP.z;
+				floatQuadVertices[quadVertexIndex++] = 1.0f;
+
+				floatQuadVertices[quadVertexIndex++] = thisP.x;
+				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight;//*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = thisP.z;
+				floatQuadVertices[quadVertexIndex++] = 1.0f;
+
+				floatQuadVertices[quadVertexIndex++] = nextP.x;
+				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight;//*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = nextP.z;
+				floatQuadVertices[quadVertexIndex++] = 1.0f;
+
+				floatQuadVertices[quadVertexIndex++] = nextP.x;
+				floatQuadVertices[quadVertexIndex++] = nextP.y;
+				floatQuadVertices[quadVertexIndex++] = nextP.z;
+				floatQuadVertices[quadVertexIndex++] = 1.0f;
+
+				// compute face normal
+				// PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
+				// PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight) - thisP.y, nextP.z - thisP.z);
+				PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);//v1.cross(v2);
+				v3.normalize();
+
+				float nX = v3.x;
+				float nY = v3.y;
+				float nZ = v3.z;
+
+				floatQuadNormals[quadNormalIndex++] = nX;
+				floatQuadNormals[quadNormalIndex++] = nY;
+				floatQuadNormals[quadNormalIndex++] = nZ;
+				floatQuadNormals[quadNormalIndex++] = 1.0f;
+
+				floatQuadNormals[quadNormalIndex++] = nX;
+				floatQuadNormals[quadNormalIndex++] = nY;
+				floatQuadNormals[quadNormalIndex++] = nZ;
+				floatQuadNormals[quadNormalIndex++] = 1.0f;
+
+				floatQuadNormals[quadNormalIndex++] = nX;
+				floatQuadNormals[quadNormalIndex++] = nY;
+				floatQuadNormals[quadNormalIndex++] = nZ;
+				floatQuadNormals[quadNormalIndex++] = 1.0f;
+
+				floatQuadNormals[quadNormalIndex++] = nX;
+				floatQuadNormals[quadNormalIndex++] = nY;
+				floatQuadNormals[quadNormalIndex++] = nZ;
+				floatQuadNormals[quadNormalIndex++] = 1.0f;
+
+				// add colors
+				float theAlpha = 1.0f;//agent.a;// * ((!gaps[gapIndex++]) ? 1.0f : 0.0f);
+
+				floatQuadColors[quadColorIndex++] = ribbonR;
+				floatQuadColors[quadColorIndex++] = ribbonG;
+				floatQuadColors[quadColorIndex++] = ribbonB;
+				floatQuadColors[quadColorIndex++] = theAlpha;
+
+				floatQuadColors[quadColorIndex++] = ribbonR;
+				floatQuadColors[quadColorIndex++] = ribbonG;
+				floatQuadColors[quadColorIndex++] = ribbonB;
+				floatQuadColors[quadColorIndex++] = theAlpha;
+
+				floatQuadColors[quadColorIndex++] = ribbonR;
+				floatQuadColors[quadColorIndex++] = ribbonG;
+				floatQuadColors[quadColorIndex++] = ribbonB;
+				floatQuadColors[quadColorIndex++] = theAlpha;
+
+				floatQuadColors[quadColorIndex++] = ribbonR;
+				floatQuadColors[quadColorIndex++] = ribbonG;
+				floatQuadColors[quadColorIndex++] = ribbonB;
+				floatQuadColors[quadColorIndex++] = theAlpha;        
 			}
-			
-		g.popMatrix();
+
+		}
+
+		imageQuadModel.updateVertices(floatQuadVertices);
+		imageQuadModel.updateColors(floatQuadColors);
+		imageQuadModel.updateNormals(floatQuadVertices);
+		
+		// A model can be drawn through the GLGraphics renderer:
+	    GLGraphics renderer = (GLGraphics)e.g;
+		renderer.model(imageQuadModel);
+
 		g.popStyle();
 	}
 	

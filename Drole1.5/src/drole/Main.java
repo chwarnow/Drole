@@ -193,7 +193,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 		setupMenu();
 		
-		setupMicroMacroWorld();
+// 		setupMicroMacroWorld();
 		
 //		setupOptikWorld();
 		

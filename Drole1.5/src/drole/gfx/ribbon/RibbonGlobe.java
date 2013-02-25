@@ -30,43 +30,42 @@ public class RibbonGlobe extends Drawlist {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 
-	private int numRibbonHandler 				= 0;//25;
+	private int numRibbonHandler 				= 25;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 	
 	/* assoziationen that are flying around in the menu */
 	BildweltAssoziationPensee penseeA, penseeB, penseeC, penseeD, penseeE;
-	boolean isAssociations = true;
-
+	private int associationsAmount = 3;
+	
 	public RibbonGlobe(Engine e, PVector position, PVector dimension) {
 		super(e);
 
 		position(position);
 		dimension(dimension);
 		
-		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 10, 20, 500));
-		}
+		// init menu pensees 
+		float randomRadius = dimension.x*scale.x*.5f;
+		drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationA.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
+			
+		BildweltAssoziationPensee b = (BildweltAssoziationPensee)drawables.get(drawables.size()-1);
+		b.currPosition += 50;
+		drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationB.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
+		b = (BildweltAssoziationPensee)drawables.get(drawables.size()-1);
+		b.currPosition += 100;
+		drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationC.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
+			
+		// drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationD.png", dimension.x*scale.x, .75f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
+		// drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationE.png", dimension.x*scale.x, .75f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
 		
-		if(isAssociations) {
-			// init menu pensees 
-			float randomRadius = dimension.x*scale.x*.5f;
-			drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationA.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
-			
-			BildweltAssoziationPensee b = (BildweltAssoziationPensee)drawables.get(drawables.size()-1);
-			b.currPosition += 50;
-			drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationB.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
-			b = (BildweltAssoziationPensee)drawables.get(drawables.size()-1);
-			b.currPosition += 100;
-			drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationC.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
-			
-			// drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationD.png", dimension.x*scale.x, .75f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
-			// drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationE.png", dimension.x*scale.x, .75f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
+		// create swarms
+		for(int i = 0; i < numRibbonHandler; i++) {
+			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 100, 50, 1 + (int)e.p.random(10), 2f));
 		}
 	}
 	
 	public void switchToLights() {
 		e.p.logLn("[Globe]: Switching to mode LIGHTS!");
-		
+		/*
 		int i = 0;
 		for(int x = 0; x < 5; x++) {
 			for(int y = 0; y < 5; y++) {
@@ -77,20 +76,21 @@ public class RibbonGlobe extends Drawlist {
 				r.createPivotAt(0, 0, 0);
 			}
 		}
-		
+		*/
 		menuMode = RibbonGlobe.LIGHTS;
+		
 	}
 	
 	public void switchToMenu() {
 		e.p.logLn("[Globe]: Switching to mode MENU!");
-		
+		/*
 		for(Drawable d : drawables) {
 			RibbonGroup r = (RibbonGroup)d;
 //			r.easeToScale(new PVector(1f, 1f, 1f), 300);
 //			r.easeToPosition(0f, 0f, 0f, 300);
 			r.deletePivot();
 		}
-		
+		*/
 		menuMode = RibbonGlobe.MENU;		
 	}
 	
@@ -117,16 +117,24 @@ public class RibbonGlobe extends Drawlist {
 			
 			e.startShader("PolyLightAndColor");
 			
+			int drawableIndex = 0;
 			float penseeRotation = .0f;
 			for(Drawable r : drawables) {
 				r.update();
-				g.pushMatrix();
-				g.rotateY(penseeRotation);
-				g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
-				r.draw();
-				g.popMatrix();
 				
-				penseeRotation += 10f;
+				// draw associations
+				if(drawableIndex++ < associationsAmount) {
+					g.pushMatrix();
+					g.rotateY(penseeRotation);
+					g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
+					r.draw();
+					g.popMatrix();
+					
+					penseeRotation += 10f;
+				} else {
+					// draw menu swarms
+					r.draw();
+				}
 			}
 			
 			// e.stopShader();
