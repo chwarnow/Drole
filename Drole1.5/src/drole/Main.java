@@ -243,9 +243,9 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-//		globe = new RibbonGlobe(engine, globePosition, globeSize);
+		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		
-//		engine.addDrawable("Globe", globe);
+		engine.addDrawable("Globe", globe);
 	}	
 	
 	private void setupOptikWorld() {

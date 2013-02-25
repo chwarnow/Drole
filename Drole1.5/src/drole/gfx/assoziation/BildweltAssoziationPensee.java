@@ -1,6 +1,7 @@
 package drole.gfx.assoziation;
 
 import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
 
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
@@ -17,14 +18,14 @@ import penner.easing.*;
  * @Author Christopher Warnow, hello@christopherwarnow.com
  *
  */
-public class BildweltAssoziationPensee {
+public class BildweltAssoziationPensee extends Drawable {
 	Engine e;
 
 	// ------ agents ------
 	BildweltAssoziationAgent[] agents;
 	int agentsCount;
 
-	float noiseScale = 150, noiseStrength = 20; 
+	float noiseScale = 250, noiseStrength = 20; 
 	int vertexCount = 0;
 
 	GLTexture content;
@@ -46,6 +47,7 @@ public class BildweltAssoziationPensee {
 	float[] cosLUT = new float[cosDetail];
 
 	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter) {
+		super(e);
 		this.e = e;
 		this.quadHeight = quadHeight;
 		
@@ -107,7 +109,7 @@ public class BildweltAssoziationPensee {
 		imageQuadModel.initNormals();
 
 		// load shader
-		imageShader = new GLSLShader(e.p, "data/shader/imageVert.glsl", "data/shader/imageFrag.glsl");
+		imageShader = new GLSLShader(e.p, "shader/std/PolyLightAndColorVert.glsl", "shader/std/PolyLightAndColorFrag.glsl");
 		
 		// create cos lookup table
 		for(i=0;i<cosDetail;i++) {
@@ -145,7 +147,7 @@ public class BildweltAssoziationPensee {
 
 	}
 
-	public void draw(PGraphicsOpenGL renderer) {
+	public void draw() {
 		// renderer.lights();
 
 		// update glmodel
@@ -270,6 +272,11 @@ public class BildweltAssoziationPensee {
 		// renderer.beginGL();  
 		/*
 	    imageShader.start();
+	    imageShader.setVecUniform("ambient", .1f, .1f, .1f);
+	    imageShader.setIntUniform("numLights", 2);
+	    */
+	    
+	    /*
 	    imageShader.setFloatUniform("zmin", 0.65f);
 	    imageShader.setFloatUniform("zmax", 0.85f);
 	    imageShader.setFloatUniform("shininess", 100.0f);

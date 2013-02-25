@@ -37,7 +37,7 @@ class BildweltAssoziationAgent {
 		positionsZ = new float[positionSteps];
 
 		offset = 10000;
-		stepSize = e.p.random(2, 3);
+		stepSize = e.p.random(2*5, 3*5);
 
 		// how many points has the ribbon
 		pathLength = PApplet.max(1, pathLength);

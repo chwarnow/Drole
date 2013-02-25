@@ -38,7 +38,6 @@ public class AssoziierenTest extends EngineApplet implements PositionTargetListe
 	}
 	
 	public void draw() {
-		println(frameRate);
 		// update sculpture
 		penseeA.update();
 		
@@ -52,7 +51,7 @@ public class AssoziierenTest extends EngineApplet implements PositionTargetListe
 		// draw sculpture
 		GLGraphics renderer = (GLGraphics)g;
 		renderer.beginGL();
-		penseeA.draw(renderer);
+		penseeA.draw();
 		renderer.endGL();
 		
 		popMatrix();

@@ -99,27 +99,27 @@ public class MenuAssoziationTest extends EngineApplet implements PositionTargetL
 		if(isAssociations) {
 		pushMatrix();
 		translate(0, cos(frameCount*.05f)*10, 0);
-		penseeA.draw(renderer);
+		penseeA.draw();
 		popMatrix();
 		
 		pushMatrix();
 		translate(0, cos((frameCount+30)*.05f)*10, 0);
-		penseeB.draw(renderer);
+		penseeB.draw();
 		popMatrix();
 		
 		pushMatrix();
 		translate(0, cos((frameCount+60)*.05f)*10, 0);
-		penseeC.draw(renderer);
+		penseeC.draw();
 		popMatrix();
 		
 		pushMatrix();
 		translate(0, cos((frameCount+90)*.05f)*10, 0);
-		penseeD.draw(renderer);
+		penseeD.draw();
 		popMatrix();
 		
 		pushMatrix();
 		translate(0, cos((frameCount+30)*.05f)*10, 0);
-		penseeE.draw(renderer);
+		penseeE.draw();
 		popMatrix();
 		}
 		
