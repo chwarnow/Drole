@@ -29,7 +29,7 @@ public class RibbonGroupTest {
 	private Ribbon3D[] particles;
 
 	private VerletPhysics physics;
-	private VerletParticle head;
+	private VerletParticle head, tail;
 	private int REST_LENGTH;
 	
 	private VerletParticle pivot;
@@ -41,10 +41,12 @@ public class RibbonGroupTest {
 	
 	private int vertexCount = 0;
 	
-	GLModel imageQuadModel;
-	GLSLShader imageShader; // should pe provided by mother class?
-	int cosDetail = 25;
-	float[] cosLUT = new float[cosDetail];
+	private GLModel imageQuadModel;
+	private GLSLShader imageShader; // should pe provided by mother class?
+	private int cosDetail = 25;
+	private float[] cosLUT = new float[cosDetail];
+	
+	private float seedSpeed = .01f;
 	
 	public RibbonGroupTest(PApplet parent, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
 		this.parent = parent;
@@ -102,6 +104,9 @@ public class RibbonGroupTest {
 		head = physics.particles.get(0);
 		head.lock();
 		
+		tail = physics.particles.get(physics.particles.size() - 1);
+		tail.lock();
+		
 		// create a model that uses quads
 		imageQuadModel = new GLModel(parent, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
 		imageQuadModel.initColors();
@@ -118,22 +123,25 @@ public class RibbonGroupTest {
 
 	public void update() {
 		if(!isPivoting) {
-			seed++;
+			seed += seedSpeed;
 			
 			// update particle movement
 			head.set(
 					parent.noise(seed * (.0015f + PApplet.cos(seed * .001f) * .0015f)) * parent.width -parent. width / 2,
 					parent.noise(seed * .0015f + PApplet.cos(seed * .001f) * .0015f) * parent.height - parent.height / 2,
 					parent.noise(seed * .001f + 100) * parent.width - parent.width / 2);
-			physics.particles.get(physics.particles.size() - 1).set(
-					parent.noise(seed * (.0015f + PApplet.cos(seed * .001f) * .0015f)) * parent.width - parent.width / 2,
-					parent.noise(seed * .0015f + PApplet.cos(seed * .001f) * .0015f) * parent.height - parent.height / 2,
-					parent.noise(seed * .01f + 100) * parent.width - parent.width / 2);
+			
+			float tailSeed = seed + 10.0f;
+			tail.set(
+					parent.noise(tailSeed * (.0015f + PApplet.cos(tailSeed * .001f) * .0015f)) * parent.width - parent.width / 2,
+					parent.noise(tailSeed * .0015f + PApplet.cos(tailSeed * .001f) * .0015f) * parent.height - parent.height / 2,
+					parent.noise(tailSeed * .01f + 100) * parent.width - parent.width / 2);
 	
 			// also apply sphere constraint to head
 			// this needs to be done manually because if this particle is locked
 			// it won't be updated automatically
 			head.applyConstraints();
+			tail.applyConstraints();
 		}
 		
 		// update sim
@@ -326,26 +334,11 @@ public class RibbonGroupTest {
 
 		imageShader.stop();
 		
-		// parent.g.pushStyle();
-		// parent.g.pushMatrix();
-			// TODO: get coords and create glmodel
-			/*
-			parent.startShader("JustColor");
-		
-			parent.g.translate(position.x, position.y, position.z);
-			parent.g.scale(scale.x, scale.y, scale.z);
-		*/	
-		/*
-			parent.fill(200, 200, 200);//, fade*255);
-			parent.noStroke();
-			for (int i = 0; i < numPhysicParticles; i++) {
-				particles[i].drawMeshRibbon(5);
-			}
-		*/
-			//parent.stopShader();
-
-		// parent.g.popMatrix();
-		// parent.g.popStyle();
+		parent.fill(255);
+		parent.pushMatrix();
+		parent.translate(head.x, head.y, head.z);
+		parent.ellipse(0,0, 30, 30);
+		parent.popMatrix();
 	}
 
 	public void drawAsLines() {

@@ -28,12 +28,13 @@ public class MenuAssoziationTest extends PApplet {
 	RibbonGroupTest[] swarms;
 	
 	boolean isSave = false;
+	boolean isAssociations = false;
 	
 	public void setup() {
 		size(1080, 1080, GLConstants.GLGRAPHICS);
 	
 		// TODO: send wandering length from here
-		
+		if(isAssociations) {
 		// init ribbon sculpture
 		float randomRadius = 150;
 		penseeA = new BildweltAssoziationPensee(this, "data/images/menuAssoziationA.png", sphereConstraintRadius, .75f, new PVector(random(-randomRadius, randomRadius),random(-randomRadius, randomRadius),random(-randomRadius, randomRadius)), new PVector());
@@ -44,7 +45,7 @@ public class MenuAssoziationTest extends PApplet {
 		
 		penseeB.currPosition += 90;
 		penseeC.currPosition += 150;
-		
+		}
 		
 		// background dtexture
 		bg = new GLTexture(this, "data/images/light_box_two_spots_02.png");
@@ -52,7 +53,7 @@ public class MenuAssoziationTest extends PApplet {
 		// a swarm
 		swarms = new RibbonGroupTest[swarmsAmount];
 		for(int i=0;i<swarmsAmount;i++) {
-			swarms[i] = new RibbonGroupTest(this, sphereConstraintRadius, 50 + (int)random(150), 3, 10 + (int)random(10));
+			swarms[i] = new RibbonGroupTest(this, sphereConstraintRadius, 50 + (int)random(150), 30, 10 + (int)random(10));
 		}
 	}
 	
@@ -60,6 +61,7 @@ public class MenuAssoziationTest extends PApplet {
 		// update globe swarm
 		for(RibbonGroupTest swarm:swarms) swarm.update();
 		
+		if(isAssociations) {
 		// update sculpture
 		penseeA.update();
 		
@@ -67,6 +69,7 @@ public class MenuAssoziationTest extends PApplet {
 		penseeC.update();
 		if(frameCount > 200) penseeD.update();
 		if(frameCount > 150) penseeE.update();
+		}
 		
 		background(55);
 		
@@ -78,12 +81,13 @@ public class MenuAssoziationTest extends PApplet {
 		pushMatrix();
 		
 		translate(width/2, height/2, 100);
-		rotateY(frameCount*.01f);//radians(mouseX));
+		rotateY(radians(mouseX));
 		
 		// draw sculpture
 		GLGraphics renderer = (GLGraphics)g;
 		renderer.beginGL();
 		
+		if(isAssociations) {
 		pushMatrix();
 		translate(0, cos(frameCount*.05f)*10, 0);
 		penseeA.draw(renderer);
@@ -108,6 +112,7 @@ public class MenuAssoziationTest extends PApplet {
 		translate(0, cos((frameCount+30)*.05f)*10, 0);
 		penseeE.draw(renderer);
 		popMatrix();
+		}
 		
 		for(RibbonGroupTest swarm:swarms) swarm.draw();
 		
