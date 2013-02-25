@@ -9,7 +9,7 @@ import processing.core.PVector;
 import drole.gfx.ribbon.Ribbon3D;
 
 class BildweltAssoziationAgent {
-	Engine parent;
+	Engine e;
 	PVector p, beginning;
 	float offset, stepSize, angleY, angleZ;
 	Ribbon3D ribbon;
@@ -25,7 +25,8 @@ class BildweltAssoziationAgent {
 
 	int pathPosition = 0;
 
-	BildweltAssoziationAgent(Engine e, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius, float quadHeight, int pathLength) {
+	BildweltAssoziationAgent(Engine e, PVector beginning, int thisColor, int positionSteps, float noiseScale, float noiseStrength, float beginX, float sphereConstraintRadius, float quadHeight, int pathLength, PVector constraintCenter) {
+		this.e = e;
 		p = new PVector(beginning.x, beginning.y, beginning.z);//new PVector(0, 0, 0);
 		this.myColor = thisColor;
 		this.beginning = beginning;
@@ -42,15 +43,15 @@ class BildweltAssoziationAgent {
 		pathLength = PApplet.max(1, pathLength);
 		int ribbonAmount = (int)e.p.random(1*pathLength, 2*pathLength);
 		if(ribbonAmount %2 != 0) ribbonAmount ++;
-		ribbon = new Ribbon3D(parent, p, ribbonAmount);
+		ribbon = new Ribbon3D(e, p, ribbonAmount);
 		int startPos = 0;
 		// precompute positions
 		for (int i=0;i<positionSteps;i++) {
 			PVector thisP = new PVector(p.x, p.y, p.z);
 			if (i>1 && i > beginX) {
 				float ratio = (float)(i-startPos)/(positionSteps-startPos);
-				float angle = ratio*parent.PI;
-				float distanceRatio = parent.sin(angle);//Sine.easeInOut ((float)(i-startPos)/(positionSteps-startPos), 0, 1.0f, 1.0f);//parent.cos((float)i/(positionSteps-startPos)*parent.TWO_PI);
+				float angle = ratio*PApplet.PI;
+				float distanceRatio = PApplet.sin(angle);//Sine.easeInOut ((float)(i-startPos)/(positionSteps-startPos), 0, 1.0f, 1.0f);//parent.cos((float)i/(positionSteps-startPos)*parent.TWO_PI);
 				
 				
 				thisP.x = positionsX[i-1];
@@ -62,9 +63,9 @@ class BildweltAssoziationAgent {
 				float angleZ = e.p.noise(thisP.x/noiseScale+offset, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength;
 
 				if(ratio < .75) {
-					thisP.x += parent.cos(angleZ) * parent.cos(angleY) * stepSize;
-					thisP.y += parent.sin(angleZ) * stepSize;
-					thisP.z += parent.cos(angleZ) * parent.sin(angleY) * stepSize;
+					thisP.x += PApplet.cos(angleZ) * PApplet.cos(angleY) * stepSize;
+					thisP.y += PApplet.sin(angleZ) * stepSize;
+					thisP.z += PApplet.cos(angleZ) * PApplet.sin(angleY) * stepSize;
 				}
 
 				// distance to center

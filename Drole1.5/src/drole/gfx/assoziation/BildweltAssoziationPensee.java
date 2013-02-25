@@ -45,7 +45,7 @@ public class BildweltAssoziationPensee {
 	int cosDetail = 25;
 	float[] cosLUT = new float[cosDetail];
 
-	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius) {
+	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter) {
 		this.e = e;
 		this.quadHeight = quadHeight;
 		e.p.noiseSeed((long)e.p.random(1000));
@@ -108,7 +108,7 @@ public class BildweltAssoziationPensee {
 		
 		// create cos lookup table
 		for(i=0;i<cosDetail;i++) {
-			cosLUT[i] = parent.cos(((float)i/cosDetail)*parent.PI);
+			cosLUT[i] = PApplet.cos(((float)i/cosDetail)*PApplet.PI);
 		}
 
 	}

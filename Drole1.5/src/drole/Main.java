@@ -187,7 +187,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 //		setupOptikWorld();
 		
-//		setupAssoziationWorld();
+		setupAssoziationWorld();
 		
 //		setupFabricWorld();
 		
@@ -243,7 +243,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-		globe = new RibbonGlobe(engine, globePosition, globeSize);
+//		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		
 //		engine.addDrawable("Globe", globe);
 	}	
@@ -259,6 +259,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	}
 	
 	private void setupAssoziationWorld() {
+		logLn("Initializing world 'Assoziation' ...");
+		
 		bildweltAssoziation = new BildweltAssoziation(engine);
 		bildweltAssoziation.hide();
 		
@@ -686,8 +688,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeAllOut(100);
 				globe.fadeOut(100);
 				
-				bildweltOptik.fadeIn(100);
-//				assoziationWorldDrawlist.fadeAllIn(100);
+//				bildweltOptik.fadeIn(100);
+				bildweltAssoziation.fadeIn(100);
 //				fabricWorldDrawlist.fadeAllIn(100);
 //				optikWorldDrawlist.fadeAllIn(100);
 //				assoziationWorldDrawlist.fadeAllIn(100);
@@ -699,8 +701,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeAllIn(100);
 				globe.fadeIn(100);
 
-				bildweltOptik.fadeOut(100);
-//				assoziationWorldDrawlist.fadeAllOut(100);
+//				bildweltOptik.fadeOut(100);
+				bildweltAssoziation.fadeOut(100);
 //				fabricWorldDrawlist.fadeAllOut(100);
 
 //				optikWorldDrawlist.fadeAllOut(100);
