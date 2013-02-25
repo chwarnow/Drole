@@ -1,5 +1,10 @@
 package drole.gfx.ribbon;
 
+import codeanticode.glgraphics.GLModel;
+
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
+
 import processing.core.PApplet;
 import processing.core.PVector;
 
@@ -22,80 +27,125 @@ import processing.core.PVector;
 //See the License for the specific language governing permissions and
 //limitations under the License.
 
-public class Ribbon3D {
+public class Ribbon3D extends Drawable {
 
 	private int numJoints; // how many points has the ribbon
-
+	private int numVertices;
+	
 	private PVector[] joints;
-
-	private PApplet parent;
-
-	public Ribbon3D(PApplet parent, PVector startPosition, int numJoints) {
-		this.parent = parent;
+	
+	private GLModel model;
+	
+	public Ribbon3D(Engine e, PVector startPosition, int numJoints) {
+		super(e);
 		this.numJoints = numJoints;
 		joints = new PVector[numJoints];
 		for(int i = 0; i < numJoints; i++) joints[i] = new PVector(startPosition.x, startPosition.y, startPosition.z);
+		
+		numVertices = (numJoints-1)*2;
+		
+		model = new GLModel(e.p, numVertices, GLModel.QUAD_STRIP, GLModel.DYNAMIC);
+		
+		model.initColors();
+		model.setColors(e.p.random(255), e.p.random(255));
+		
+		model.initNormals();
+		
+		model.initTextures(1);
+		model.setTexture(0, e.requestTexture("data/textures/globe/transparent-noise.png"));
+		
+		update(startPosition.x, startPosition.y, startPosition.z);
 	}
 
 	public void update(float x, float y, float z) {
 		// shift the values to the right side
 		// simple queue
-		for (int i = numJoints - 1; i > 0; i--)
-			joints[i].set(joints[i - 1]);
+		for(int i = numJoints - 1; i > 0; i--) joints[i].set(joints[i - 1]);
 
 		joints[0].set(new PVector(x, y, z));
-	}
-
-	public void drawMeshRibbon(float width) {
-		// draw the ribbons with meshes
-		parent.beginShape(PApplet.QUAD_STRIP);
 		
-		for(int i = 0; i < numJoints - 1; i++) {
-			PVector v1 = PVector.sub(joints[i], joints[i + 1]);
-			PVector v2 = PVector.add(joints[i + 1], joints[i]);
-			PVector v3 = v1.cross(v2);
-			v2 = v1.cross(v3);
-
-			float scaling = PApplet.max(.25f, (PApplet.sin(((float) i / numJoints) * PApplet.PI) * PApplet.cos(PApplet.atan2(v1.y, v1.x))));
-
-			v1.normalize();
-			v2.normalize();
-			v3.normalize();
-			v1.mult(width * scaling);
-			v2.mult(width * scaling);
-			v3.mult(width * scaling);
-			parent.vertex(joints[i].x + v3.x, joints[i].y + v3.y, joints[i].z + v3.z);
-			parent.vertex(joints[i].x - v3.x, joints[i].y - v3.y, joints[i].z - v3.z);
-		}
-
-		parent.endShape();
+		updateVertices();
+	}
+	
+	private void updateVertices() {
+		// draw the ribbons with meshes
+		model.beginUpdateVertices();
+		
+			int vi = 0;
+			for(int i = 0; i < numJoints - 1; i++) {
+				PVector v1 = PVector.sub(joints[i], joints[i + 1]);
+				PVector v2 = PVector.add(joints[i + 1], joints[i]);
+				PVector v3 = v1.cross(v2);
+				v2 = v1.cross(v3);
+	
+				float scaling = PApplet.max(.25f, (PApplet.sin(((float) i / numJoints) * PApplet.PI) * PApplet.cos(PApplet.atan2(v1.y, v1.x))));
+//				float scaling = 3f;
+	
+				v1.normalize();
+				v2.normalize();
+				v3.normalize();
+				v1.mult(dimension.x * scaling);
+				v2.mult(dimension.x * scaling);
+				v3.mult(dimension.x * scaling);
+				
+				model.updateVertex(vi++, joints[i].x + v3.x, joints[i].y + v3.y, joints[i].z + v3.z);
+				model.updateVertex(vi++, joints[i].x - v3.x, joints[i].y - v3.y, joints[i].z - v3.z);
+			}
+			
+		model.endUpdateVertices();
+		
+		// Calculate normals
+		model.beginUpdateNormals();
+			
+			PVector n;
+			for(int i = 0; i < numVertices; i++) {
+				n = new PVector(model.vertices.get(i), model.vertices.get(i+1), model.vertices.get(i+2));
+				n.normalize();
+				model.updateNormal(i, n.x, n.y, n.z);
+			}
+			
+		model.endUpdateNormals();
+		
+		// Calculate TextureCoords
+		model.beginUpdateTexCoords(0);
+			for(int i = 0; i < numVertices; i+=2) {
+				model.updateTexCoord(i, (1.0f/numVertices)*i, 1);
+				model.updateTexCoord(i+1, (1.0f/numVertices)*(i+1), 0);
+			}
+		model.endUpdateTexCoords();
 	}
 
 	public void drawStrokeRibbon(float color, float width) {
 		// draw the ribbons with lines
-		parent.pushMatrix();
-		parent.pushStyle();
+		g.pushMatrix();
+		g.pushStyle();
 		
-			parent.noFill();
-			parent.strokeWeight(width);
-			parent.stroke(color);
+			g.noFill();
+			g.strokeWeight(width);
+			g.stroke(color);
 			
-			parent.beginShape(PApplet.LINES);
-				for (int i = 0; i < numJoints; i++) {
-					parent.vertex(joints[i].x, joints[i].y, joints[i].z);
-				}
-			parent.endShape();
+			model.beginUpdateColors();
+				model.setColors(color);
+			model.endUpdateColors();
+			e.setupModel(model);
 			
-		parent.popMatrix();
-		parent.popStyle();
+			model.render();
+			
+		g.popMatrix();
+		g.popStyle();
 	}
 	
 	public int getVertexCount() {
 		return numJoints;
 	}
-
-	// TODO: incorporate gaps
+	
 	public PVector[] getVertices() {
 		return joints;
+	}
+	
+	@Override
+	public void draw() {
+		e.setupModel(model);
+		model.render();
 	}
 }

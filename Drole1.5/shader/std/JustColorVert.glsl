@@ -2,7 +2,7 @@
 
 void main() {
 	// vertex position
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	gl_Position = ftransform();
 
 	// Set the front color to the color passed through with glColor*f
 	gl_FrontColor = gl_Color;

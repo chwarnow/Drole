@@ -1,7 +1,9 @@
 package drole.gfx.ribbon;
 
-import drole.DroleMain;
-import drole.engine.Drawable;
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
+
+import drole.Main;
 import processing.core.PApplet;
 import processing.core.PVector;
 import toxi.geom.AABB;
@@ -11,6 +13,7 @@ import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.GravityBehavior;
+import toxi.physics.constraints.BoxConstraint;
 import toxi.physics.constraints.ParticleConstraint;
 import toxi.physics.constraints.SphereConstraint;
 
@@ -32,14 +35,15 @@ public class RibbonGroup extends Drawable {
 	private VerletParticle pivot;
 	private VerletSpring[] pivotSprings;
 	
-	private ParticleConstraint sphereA, sphereB; 
+	private AABB worldBox;
+	private ParticleConstraint sphereA, sphereB, cubeConst;
 	
 	private boolean isPivoting = false;
 	
-	public RibbonGroup(DroleMain parent, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
-		super(parent);
+	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH) {
+		super(e);
 		
-		this.seed				= parent.random(1000);
+		this.seed				= e.p.random(1000);
 		this.numPhysicParticles	= numRibbons;
 		this.numQuadsPerRibbon	= numJointsPerRibbon;
 		this.sphereSize			= sphereSize;
@@ -52,21 +56,25 @@ public class RibbonGroup extends Drawable {
 		for (int i = 0; i < numRibbons; i++) {			
 //			PVector startPosition = new PVector(parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f), parent.random(-3.1414f, 3.1414f));
 			PVector startPosition = new PVector(0, 0, 0);
-			particles[i] = new Ribbon3D(parent, startPosition, numJointsPerRibbon);
+			particles[i] = new Ribbon3D(e, startPosition, numJointsPerRibbon);
+			particles[i].dimension(30, 0, 0);
 		}
 
 		// create collision sphere at origin, replace OUTSIDE with INSIDE to
 		// keep particles inside the sphere
-		ParticleConstraint sphereA = new SphereConstraint(new Sphere(new Vec3D(), sphereSize * .8f), SphereConstraint.OUTSIDE);
-		ParticleConstraint sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
+		sphereA = new SphereConstraint(new Sphere(new Vec3D(), sphereSize * .8f), SphereConstraint.OUTSIDE);
+		sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
+		
+		worldBox = new AABB(new Vec3D(), 1500);
+		cubeConst = new BoxConstraint(worldBox);
 
 		physics = new VerletPhysics();
 
 		// weak gravity along Y axis
 		physics.addBehavior(new GravityBehavior(new Vec3D(0, 0.01f, 0)));
 
-		// set bounding box to 110% of sphere radius
-		physics.setWorldBounds(new AABB(new Vec3D(), new Vec3D(sphereSize, sphereSize, sphereSize).scaleSelf(1.1f)));
+		// set bounding box to 100% of out virtual world
+		physics.setWorldBounds(worldBox);
 
 		VerletParticle prev = null;
 
@@ -82,7 +90,7 @@ public class RibbonGroup extends Drawable {
 
 			if(prev != null) {
 				physics.addSpring(new VerletSpring(prev, p, REST_LENGTH * 5, 0.005f));
-				physics.addSpring(new VerletSpring(physics.particles.get((int) parent.random(i)), p, REST_LENGTH * 20, 0.00001f + i * .0005f));
+				physics.addSpring(new VerletSpring(physics.particles.get((int) e.p.random(i)), p, REST_LENGTH * 20, 0.00001f + i * .0005f));
 			}
 
 			prev = p;
@@ -98,8 +106,8 @@ public class RibbonGroup extends Drawable {
 			seed++;
 			
 			// update particle movement
-			head.set(parent.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * parent.width -parent. width / 2, parent.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(seed * .01f + 100) * parent.width - parent.width / 2);
-			physics.particles.get(physics.particles.size() - 1).set(parent.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * parent.width - parent.width / 2, parent.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * parent.height - parent.height / 2, parent.noise(seed * .01f + 100) * parent.width - parent.width / 2);
+			head.set(e.p.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * g.width -g.width / 2, e.p.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * g.height - g.height / 2, e.p.noise(seed * .01f + 100) * g.width - g.width / 2);
+			physics.particles.get(physics.particles.size() - 1).set(e.p.noise(seed * (.005f + PApplet.cos(seed * .001f) * .005f)) * g.width - g.width / 2, e.p.noise(seed * .005f + PApplet.cos(seed * .001f) * .005f) * g.height - g.height / 2, e.p.noise(seed * .01f + 100) * g.width - g.width / 2);
 	
 			// also apply sphere constraint to head
 			// this needs to be done manually because if this particle is locked
@@ -126,19 +134,29 @@ public class RibbonGroup extends Drawable {
 		
 		/* First tighten all springs*/
 		for(VerletSpring s : physics.springs) {
-			s.setRestLength(0.1f);
-			s.setStrength(0.001f);
+			s.setRestLength(0.00001f);
+			s.setStrength(0.000001f);
 		}
 		
 		// Add springs between all joints and the pivot
 		pivotSprings = new VerletSpring[numPhysicParticles];
 		for(int i = 0; i < numPhysicParticles; i++) {
-			pivotSprings[i] = new VerletSpring(head, pivot, 5, 0.000001f);
+			pivotSprings[i] = new VerletSpring(physics.particles.get(i), pivot, 5, 0.000001f);
 			pivotSprings[i].lockB(true);
 			
 			physics.addSpring(pivotSprings[i]);
 		}
 		
+		for(int i = 0; i < physics.particles.size()-2; i++) {
+			VerletParticle p = physics.particles.get(i);
+			p.removeConstraint(sphereA);
+			p.removeConstraint(sphereB);
+			p.addConstraint(cubeConst);
+			
+			p.applyConstraints();
+			p.update();
+		}
+
 		head.unlock();
 		
 		isPivoting = true;
@@ -146,9 +164,12 @@ public class RibbonGroup extends Drawable {
 	
 	public void deletePivot() {
 		// First remove all pivot prings
+		/*
 		for(int i = 0; i < numPhysicParticles; i++) {
 			physics.removeSpring(pivotSprings[i]);
 		}
+		*/
+		
 		// Remove pivot
 		physics.removeParticle(pivot);
 		
@@ -159,6 +180,12 @@ public class RibbonGroup extends Drawable {
 		for(VerletParticle p : physics.particles) {
 			p.lock();
 			p.set(Vec3D.randomVector().scaleSelf(sphereSize * 2));
+
+			p.addConstraint(sphereA);
+			p.addConstraint(sphereB);
+			p.removeConstraint(cubeConst);
+			
+			p.applyConstraints();
 			p.update();
 			p.unlock();
 		}
@@ -173,32 +200,21 @@ public class RibbonGroup extends Drawable {
 	}
 	
 	public void draw() {
-		parent.g.pushStyle();
-		parent.g.pushMatrix();
-
-			parent.startShader("JustColor");
+		g.pushStyle();
+		g.pushMatrix();
 		
-			parent.g.translate(position.x, position.y, position.z);
-			parent.g.scale(scale.x, scale.y, scale.z);
+			g.translate(position.x, position.y, position.z);
+			g.scale(scale.x, scale.y, scale.z);
 			
-			parent.fill(200, 200, 200, fade*255);
-			parent.noStroke();
+			g.fill(255, fade*255);
+			g.noStroke();
 			
 			for (int i = 0; i < numPhysicParticles; i++) {
-				particles[i].drawMeshRibbon(30);
+				particles[i].draw();
 			}
-		
-			parent.stopShader();
 			
-		parent.g.popMatrix();
-		parent.g.popStyle();
-	}
-
-	public void drawAsLines() {
-		for (int i = 0; i < numPhysicParticles; i++) {
-			if(i != numPhysicParticles-1) particles[i].drawStrokeRibbon(parent.color(200, 200, 0), 5);
-			else particles[i].drawStrokeRibbon(parent.color(200, 0, 0), 5);
-		}
+		g.popMatrix();
+		g.popStyle();
 	}
 	
 	public PVector getHead() {

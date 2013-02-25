@@ -1,9 +1,14 @@
 package drole.gfx.assoziation;
 
+
 import processing.core.PVector;
+import processing.core.PApplet;
+
+import com.madsim.engine.Engine;
+import com.madsim.engine.drawable.Drawable;
+
 import codeanticode.glgraphics.GLGraphics;
-import drole.DroleMain;
-import drole.engine.Drawable;
+import drole.Main;
 
 public class BildweltAssoziation extends Drawable {
 
@@ -14,16 +19,16 @@ public class BildweltAssoziation extends Drawable {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 	
-	public BildweltAssoziation(DroleMain parent) {
-		super(parent);
+	public BildweltAssoziation(Engine e) {
+		super(e);
 		// van she idea of happiness
 		scale(4.0f, 4.0f, 4.0f);
 		position(0.0f, -900.0f, 0.0f);
 		
 		// init ribbon sculpture
-		penseeA = new BildweltAssoziationPensee(parent, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
-		penseeB = new BildweltAssoziationPensee(parent, "data/images/associationB.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
-		penseeC = new BildweltAssoziationPensee(parent, "data/images/associationC.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
+		penseeA = new BildweltAssoziationPensee(e, "data/images/associationA.png", sphereConstraintRadius);
+		penseeB = new BildweltAssoziationPensee(e, "data/images/associationB.png", sphereConstraintRadius);
+		penseeC = new BildweltAssoziationPensee(e, "data/images/associationC.png", sphereConstraintRadius);
 		
 		penseeB.positionSteps = 33;
 		penseeC.positionSteps = 66;
@@ -43,42 +48,39 @@ public class BildweltAssoziation extends Drawable {
 	@Override
 	public void draw() {
 		
-		parent.g.pushStyle();
-		parent.g.pushMatrix();
+		g.pushStyle();
+		g.pushMatrix();
 
-		parent.g.translate(position.x, position.y, position.z);
-		parent.g.scale(scale.x, scale.y, scale.z);
-		parent.g.rotateY(smoothedRotation+parent.HALF_PI/2);
+		g.translate(position.x, position.y, position.z);
+		g.scale(scale.x, scale.y, scale.z);
+		g.rotateY(smoothedRotation+PApplet.HALF_PI/2);
 		
 		// draw sculpture
-		GLGraphics renderer = (GLGraphics)parent.g;
-		renderer.beginGL();
-		penseeA.draw(renderer);
-		penseeB.draw(renderer);
-		penseeC.draw(renderer);
-		renderer.endGL();
+		penseeA.draw(g);
+		penseeB.draw(g);
+		penseeC.draw(g);
 		
-		parent.g.noFill();
-		parent.g.stroke(155, 100);
-		parent.g.ellipse(0, 0, 300, 300);
+		g.noFill();
+		g.stroke(155, 100);
+		g.ellipse(0, 0, 300, 300);
 		
-		parent.g.pushMatrix();
-		parent.g.rotateY(parent.HALF_PI + parent.HALF_PI/2);
-		parent.g.ellipse(0, 0, 300, 300);
-		parent.g.popMatrix();
+		g.pushMatrix();
+		g.rotateY(PApplet.HALF_PI + PApplet.HALF_PI/2);
+		g.ellipse(0, 0, 300, 300);
+		g.popMatrix();
 		
-		parent.g.pushMatrix();
-		parent.g.rotateY(parent.HALF_PI - parent.HALF_PI/2);
-		parent.g.ellipse(0, 0, 300, 300);
-		parent.g.popMatrix();
+		g.pushMatrix();
+		g.rotateY(PApplet.HALF_PI - PApplet.HALF_PI/2);
+		g.ellipse(0, 0, 300, 300);
+		g.popMatrix();
 		
-		parent.g.pushMatrix();
-		parent.g.rotateY(parent.HALF_PI);
-		parent.g.ellipse(0, 0, 300, 300);
-		parent.g.popMatrix();
+		g.pushMatrix();
+		g.rotateY(PApplet.HALF_PI);
+		g.ellipse(0, 0, 300, 300);
+		g.popMatrix();
 		
-		parent.g.popMatrix();
-		parent.g.popStyle();
+		g.popMatrix();
+		g.popStyle();
 		
 	}
 

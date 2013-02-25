@@ -9,7 +9,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/GLGraphics.jar"/>
 	<classpathentry kind="lib" path="lib/opengl/gluegen-rt.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib/opengl"/>
@@ -22,5 +21,9 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/opengl/opengl.jar"/>
 	<classpathentry kind="lib" path="lib/core.jar"/>
+	<classpathentry kind="lib" path="lib/GLGraphics.jar" sourcepath="/GLGraphics/src/codeanticode/glgraphics"/>
+	<classpathentry kind="lib" path="lib/controlP5.jar"/>
+	<classpathentry kind="lib" path="lib/volumeutils.jar"/>
+	<classpathentry kind="lib" path="lib/simutils.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
