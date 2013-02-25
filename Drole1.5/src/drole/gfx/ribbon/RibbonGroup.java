@@ -31,11 +31,11 @@ public class RibbonGroup extends Drawable {
 	public float 				ribbonB = .0f;
 	
 	private float 				seed;
+	private float 				seedSpeed = .15f;
 	private int 				numPhysicParticles;
 	private int 				numQuadsPerRibbon;
 	private float 				sphereSize;
 	private int 				vertexCount = 0;
-	private float 				seedSpeed = .09f;
 	private float 				quadHeight;
 	
 	private Ribbon3D[] 			particles;
@@ -56,7 +56,7 @@ public class RibbonGroup extends Drawable {
 	private GLModel 			imageQuadModel;
 	
 	private int					noiseID = 0;
-	private int					maxNoiseID = 50;
+	private int					maxNoiseID = 250;
 	private float[]				noiseLUT = new float[maxNoiseID];
 	
 	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH, float quadHeight) {
@@ -113,8 +113,8 @@ public class RibbonGroup extends Drawable {
 				float thisLength = e.p.random(REST_LENGTH);
 				springLengths.add(thisLength);
 				physics.addSpring(new VerletSpring(prev, p, thisLength, 0.05f));
-				springLengths.add(thisLength * 20);
-				physics.addSpring(new VerletSpring(physics.particles.get((int) e.p.random(i)), p, thisLength * 20, 0.01f));
+				springLengths.add(thisLength * 15);
+				physics.addSpring(new VerletSpring(physics.particles.get((int) e.p.random(i)), p, thisLength * 15, 0.025f));
 			}
 
 			prev = p;
@@ -133,7 +133,8 @@ public class RibbonGroup extends Drawable {
 		
 		// create a noise lookuptable
 		for(int i=0;i<maxNoiseID;i++) {
-			noiseLUT[i] = e.p.noise((float)i*.01f);
+			noiseLUT[i] = e.p.noise((float)i*.07f);
+			if(noiseLUT[i] < .4f) noiseLUT[i] = 0;
 		}
 	}
 
@@ -162,10 +163,10 @@ public class RibbonGroup extends Drawable {
 			
 			// iterate through springs and stiffen or widen them to achieve noise like aesthetics?
 			int springID = 0;
-			for(VerletSpring s : physics.springs) {
-				s.setRestLength(springLengths.get(springID++) * noiseLUT[noiseID++]);
-				if(noiseID == maxNoiseID) noiseID = 0;
-			}
+			for(VerletSpring s : physics.springs) s.setRestLength(springLengths.get(springID++) * noiseLUT[noiseID]);
+			noiseID = (int)e.p.abs(e.p.cos(head.x*.02f)*49f);
+			// if(noiseID == maxNoiseID-1) noiseID = 0;
+			// else noiseID++;
 		}
 		
 		// update sim

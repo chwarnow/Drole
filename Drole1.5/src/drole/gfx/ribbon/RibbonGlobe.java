@@ -30,7 +30,7 @@ public class RibbonGlobe extends Drawlist {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 
-	private int numRibbonHandler 				= 25;
+	private int numRibbonHandler 				= 50;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 	
 	/* assoziationen that are flying around in the menu */
@@ -59,7 +59,7 @@ public class RibbonGlobe extends Drawlist {
 		
 		// create swarms
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 100, 50, 1 + (int)e.p.random(10), 2f));
+			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 25, 1 + ((i%2==0) ? 1 : 100), 1 + (int)e.p.random(10), 2f));
 		}
 	}
 	
