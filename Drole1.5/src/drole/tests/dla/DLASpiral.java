@@ -49,7 +49,7 @@ package drole.tests.dla;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.madsim.common.FileUtil;
+import com.madsim.common.FileUtils;
 
 import codeanticode.glgraphics.GLGraphics;
 
@@ -191,7 +191,7 @@ public class DLASpiral extends PApplet {
 		  for(int i = 0; i < dlaPoints.size(); i++) {
 			  points.add(new PVector(dlaPoints.get(i).x(), dlaPoints.get(i).y(), dlaPoints.get(i).z()));
 		  }
-		  FileUtil.serializeAndSaveObject(sketchPath("data/dla/spiral.dla"), points);
+		  FileUtils.serializeAndSaveObject(sketchPath("data/dla/spiral.dla"), points);
 	  }
 	}
 	

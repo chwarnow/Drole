@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-public class FileUtil {
+public class FileUtils {
 
 	public static void serializeAndSaveObject(String filename, Serializable s) {
 		try {

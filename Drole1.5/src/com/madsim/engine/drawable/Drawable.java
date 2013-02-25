@@ -40,6 +40,7 @@ public abstract class Drawable {
 	protected PVector 	position 				= 	new PVector(0, 0, 0);
 	protected PVector 	dimension 				= 	new PVector(0, 0, 0);
 	protected PVector 	scale 					= 	new PVector(1, 1, 1);
+	protected PVector 	rotation 				= 	new PVector(0, 0, 0);
 	
 	private PVector 	targetPosition 			= 	new PVector(0, 0, 0);
 	private PVector 	targetDimension			= 	new PVector(0, 0, 0);
@@ -130,6 +131,22 @@ public abstract class Drawable {
 		
 		return scale();
 	}	
+	
+	public PVector rotation() {
+		return rotation;
+	}
+	
+	public PVector rotation(float x, float y, float z) {
+		rotation 		= new PVector(x, y, z);
+
+		return rotation();
+	}
+	
+	public PVector rotation(PVector rotation) {
+		this.rotation	 		= rotation.get();
+
+		return rotation();
+	}
 	
 	public void easeToPosition(float x, float y, float z, long millis) {
 		targetPosition 				= new PVector(x, y, z);

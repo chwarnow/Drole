@@ -3,7 +3,9 @@ package drole.settings;
 public class Settings {
 
 	// Some standard settings
-	public static boolean USE_KINECT						= false;
+	public static boolean USE_KINECT						= 	false;
+	
+	public static boolean USE_GESTURES						= 	false;
 	
 	public static short MAX_LOG_ENTRYS						=	  30;
 	

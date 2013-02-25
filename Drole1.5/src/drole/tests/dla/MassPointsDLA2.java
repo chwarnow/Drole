@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
-import com.madsim.common.FileUtil;
+import com.madsim.common.FileUtils;
 
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
@@ -26,7 +26,7 @@ public class MassPointsDLA2 extends PApplet {
 		size(1200, 1000, GLGraphics.GLGRAPHICS);
 		smooth();
 		
-		points = (ArrayList<PVector>)FileUtil.loadSerializedObjectFromFile("data/dla/spiral.dla");
+		points = (ArrayList<PVector>)FileUtils.loadSerializedObjectFromFile("data/dla/spiral.dla");
 		
 		pointModel = initializeModelWithDLA(POINTS, points, 1);
 		
@@ -81,25 +81,14 @@ public class MassPointsDLA2 extends PApplet {
 		scale(30, 30, 30);
 		rotateX(map(mouseY, 0, height, radians(0), radians(360)));
 		rotateY(map(mouseX, 0, width, radians(0), radians(360)));
-		
-			strokeWeight(10);
-			beginShape(QUADS);
-				for(int i = 0; i < points.size(); i++) {
-					stroke(map(i, 0, points.size(), 100, 200), 0, 100, 200);
-//					fill(200, 20);
-					vertex(points.get(i).x, points.get(i).y, points.get(i).z);
-				}
-			endShape();
 			
-			
-//			glg.model(pointModel);
-			/*
 			glg.beginGL();
+			
+			glg.model(pointModel);
 			
 				glg.model(lineModel);
 			
 			glg.endGL();
-			*/
 	}
 	
 	public static void main(String[] args) {

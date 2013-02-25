@@ -92,20 +92,19 @@ public class Engine {
 		this.drawables.put(name, dl);
 	}
 	
-	public void update(String name, PGraphicsOpenGL cg) {
+	public void update(String name) {
 		Drawable dl = drawables.get(name);
 		if(
 			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
 			(dl.updateMode() == Drawable.ONLY_ONSCREEN && dl.mode() != Drawable.OFF_SCREEN)
 		) {
-			dl.setG(cg);
 			dl.update();
 		}
 	}
 	
-	public void updateAll(PGraphicsOpenGL cg) {
+	public void updateAll() {
 		for(Entry<String, Drawable> dle : drawables.entrySet()) {
-			update(dle.getKey(), cg);
+			update(dle.getKey());
 		}
 	}
 	
@@ -232,6 +231,8 @@ public class Engine {
 	public void draw() {
 		refreshGLG();
 		
+		updateAll();
+		
 		// Force GLGraphics to start with a fresh matrix
 		g.resetMatrix();
 		
@@ -239,7 +240,7 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(0.5f, 0.5f, 0.5f);
+		ambient(0.1f, 0.1f, 0.1f);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();
@@ -267,6 +268,7 @@ public class Engine {
 		
 		stopShader();
 
+		/*
 		startShader("PolyLightAndTextureAndEM");
 		
 			g.pushMatrix();
@@ -278,6 +280,7 @@ public class Engine {
 			g.popMatrix();
 		
 		stopShader();
+		*/
 		
 		startShader("PolyLightAndTexture");
 			

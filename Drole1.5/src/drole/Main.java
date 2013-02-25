@@ -8,6 +8,7 @@ import java.awt.event.MouseWheelListener;
 import codeanticode.glgraphics.GLConstants;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
+import com.madsim.drole.mmworld.MMWorld;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
@@ -110,6 +111,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private float rotationMapStart = 0, rotationMapEnd = 0;
 	
 	/* Bildwelten */
+	private MMWorld bildweltMicroMacro;
+	
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
 	private BildweltFabric bildweltFabric;
@@ -185,9 +188,11 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 		setupMenu();
 		
+		setupMicroMacroWorld();
+		
 //		setupOptikWorld();
 		
-		setupAssoziationWorld();
+//		setupAssoziationWorld();
 		
 //		setupFabricWorld();
 		
@@ -200,14 +205,6 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		switchMode(LIVE);
 	}
 	
-	public void startShader(String name) {
-		engine.startShader(name);
-	}
-	
-	public void stopShader() {
-		engine.stopShader();
-	}
-	
 	private void switchMode(String MODE) {
 		if(this.MODE != FORCED_DEBUG) {
 			logLn("Switching MODE from '" + this.MODE + "' to '" + MODE + "'");
@@ -217,6 +214,12 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		}
 	}
 
+	private void setupMicroMacroWorld() {
+		bildweltMicroMacro = new MMWorld(engine);
+		
+		engine.addDrawable("MicroMacro", bildweltMicroMacro);
+	}
+	
 	private void setupGestureDetection() {
 		TargetBox3D holdingTargetShapeBox = new TargetBox3D(0, -200, -800, 400, 400, 1000);
 		holdingTarget = new PositionTarget(this, "HOLDING_TARGET", context, holdingTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
@@ -337,13 +340,15 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 					if(context.isTrackingSkeleton(userList[i])) drawSkeleton(userList[i]);
 				}
 	
-				targetDetection.check();
-				
-				engine.g.pushStyle();
-				engine.g.stroke(0, 200, 0);
-				engine.g.noFill();
-					for(PositionTarget pt : targetDetection.targets) pt.drawTarget(engine.g);
-				engine.g.popStyle();
+				if(Settings.USE_GESTURES) {
+					targetDetection.check();
+					
+					engine.g.pushStyle();
+					engine.g.stroke(0, 200, 0);
+					engine.g.noFill();
+						for(PositionTarget pt : targetDetection.targets) pt.drawTarget(engine.g);
+					engine.g.popStyle();
+				}
 			}
 			
 			/*
@@ -385,7 +390,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			// Draw Real World Screen
 			// drawRealWorldScreen();
 			
-			if(!FREEMODE) {
+			if(!FREEMODE && Settings.USE_GESTURES) {
 				targetDetection.check();
 				
 				if(holdingTarget.inTarget()) {
@@ -688,8 +693,10 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeAllOut(100);
 				globe.fadeOut(100);
 				
+				bildweltMicroMacro.fadeIn(100);
+				
 //				bildweltOptik.fadeIn(100);
-				bildweltAssoziation.fadeIn(100);
+//				bildweltAssoziation.fadeIn(100);
 //				fabricWorldDrawlist.fadeAllIn(100);
 //				optikWorldDrawlist.fadeAllIn(100);
 //				assoziationWorldDrawlist.fadeAllIn(100);
@@ -701,8 +708,10 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeAllIn(100);
 				globe.fadeIn(100);
 
+				bildweltMicroMacro.fadeOut(100);
+				
 //				bildweltOptik.fadeOut(100);
-				bildweltAssoziation.fadeOut(100);
+//				bildweltAssoziation.fadeOut(100);
 //				fabricWorldDrawlist.fadeAllOut(100);
 
 //				optikWorldDrawlist.fadeAllOut(100);

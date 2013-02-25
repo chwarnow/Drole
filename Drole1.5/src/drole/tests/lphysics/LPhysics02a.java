@@ -69,7 +69,7 @@ public class LPhysics02a extends PApplet {
 	float REST_LENGTH = 100;
 	int DIM=200;
 	
-	int GRID=18;
+	int GRID=36;
 	float VS=2*DIM/GRID;
 	Vec3D SCALE=new Vec3D(DIM,DIM,DIM).scale(2);
 	float isoThreshold=3;
@@ -150,8 +150,8 @@ public class LPhysics02a extends PApplet {
 	  rotateX(mouseY*0.01f);
 	  rotateY(mouseX*0.01f);
 	  
-	  drawPhysicSystem();
-	  /*
+//	  drawPhysicSystem();
+	  
 	  noFill();
 	  stroke(255,192);
 	  strokeWeight(1);
@@ -187,7 +187,7 @@ public class LPhysics02a extends PApplet {
 	    }
 	    endShape();
 	  }
-	  */
+	  
 	  popMatrix();
 	  noLights();
 	  fill(0);
@@ -224,7 +224,6 @@ public class LPhysics02a extends PApplet {
 		  }
 		  surface.reset();
 		  surface.computeSurfaceMesh(mesh,isoThreshold*0.001f);
-//		  surface.computeSurfaceMesh(mesh,isoThreshold*0.001f);
 		}
 
 	public void drawFilledMesh() {
@@ -299,7 +298,7 @@ public class LPhysics02a extends PApplet {
 //				  VerletParticle s = new VerletParticle(center.x(), center.y(), center.z());
 				  VerletParticle s = new VerletParticle(random(-100, 100), random(-100, 100), random(-100, 100));
 				  physics.addParticle(s);
-				  physics.addSpring(new VerletSpring(center, s, REST_LENGTH, 0.001f));
+				  physics.addSpring(new VerletSpring(center, s, REST_LENGTH, 0.0001f));
 				  /*
 				  for(int ii = 0; ii < 4; ii++) {
 //					  VerletParticle s = new VerletParticle(center.x(), center.y(), center.z());
@@ -309,6 +308,7 @@ public class LPhysics02a extends PApplet {
 				  }
 				  */
 			  }
+			  /*
 			  for(int i = 0; i < numFirstBranch; i++) {
 				  if(i == numFirstBranch-1) {
 					  physics.addSpring(new VerletSpring(physics.particles.get(i), physics.particles.get(0), REST_LENGTH, 0.001f));
@@ -317,6 +317,7 @@ public class LPhysics02a extends PApplet {
 				  }
 				  
 			  }
+			  */
 		  }
 		  /*
 		  if (random(1)<0.8 && numP<NUM_PARTICLES) {
