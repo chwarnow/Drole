@@ -51,12 +51,14 @@ public class RibbonGlobe extends Drawlist {
 			// init menu pensees 
 			float randomRadius = dimension.x*scale.x*.5f;
 			drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationA.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
+			
 			BildweltAssoziationPensee b = (BildweltAssoziationPensee)drawables.get(drawables.size()-1);
 			b.currPosition += 50;
 			drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationB.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
 			b = (BildweltAssoziationPensee)drawables.get(drawables.size()-1);
 			b.currPosition += 100;
 			drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationC.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
+			
 			// drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationD.png", dimension.x*scale.x, .75f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
 			// drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationE.png", dimension.x*scale.x, .75f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
 		}
@@ -106,7 +108,7 @@ public class RibbonGlobe extends Drawlist {
 		g.pushStyle();
 		g.pushMatrix();
 		
-			g.translate(position.x, position.y, position.z);
+			g.translate(position.x, position.y, position.z + 300.0f);
 			g.scale(scale.x, scale.y, scale.z);
 			g.rotateY(smoothedRotation);
 			

@@ -210,9 +210,10 @@ public class BildweltAssoziationPensee extends Drawable {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				// compute face normal
-				// PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
-				// PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight) - thisP.y, nextP.z - thisP.z);
-				PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);//v1.cross(v2);
+				PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
+				PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight*ratio*2.0f) - thisP.y, nextP.z - thisP.z);
+				PVector v3 = v1.cross(v2);
+				// PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);
 				v3.normalize();
 
 				float nX = v3.x;
