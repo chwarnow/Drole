@@ -6,6 +6,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import codeanticode.glgraphics.GLConstants;
+import codeanticode.glgraphics.GLModel;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.drole.mmworld.MMWorld;
@@ -82,20 +83,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private RibbonGlobe globe;
 
 	private PFont mainFont;
-
-	// Position and Gesture Detection
-	private TargetDetection targetDetection = new TargetDetection();
-	private PositionTarget holdingTarget;
-	private PositionTarget rotationTarget;
-	
-	private float usersArmLength = 0;
-
-	private float[] leftHandSampling 		= new float[10];
-	private short leftHandSamplingIndex 	= 0;
-	private float[] rightHandSampling 		= new float[10];
-	private short rightHandSamplingIndex 	= 0;	
-	
-	private float rotationMapStart = 0, rotationMapEnd = 0;
 	
 	/* Bildwelten */
 	private MMWorld bildweltMicroMacro;
@@ -306,16 +293,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 				// draw the skeleton if it's available
 				KinectGFXUtils.drawSkeleton(kinect.getCurrentUserID());
-	
-				if(Settings.USE_GESTURES) {
-					targetDetection.check();
-					
-					engine.g.pushStyle();
-					engine.g.stroke(0, 200, 0);
-					engine.g.noFill();
-						for(PositionTarget pt : targetDetection.targets) pt.drawTarget(engine.g);
-					engine.g.popStyle();
-				}
 			}
 			
 			/*
@@ -348,6 +325,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// Draw Real World Screen
 			// drawRealWorldScreen();
 			
+			if(!FREEMODE) {
 			pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 			pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 			pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -375,6 +353,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			
 			
 			// bildweltMicroMacro.easeToPosition(0, 0, map(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)), 0f, 0.20f, -500, -1200), 100);
+			}
 			
 			/*
 			if(!FREEMODE && Settings.USE_GESTURES) {
@@ -481,6 +460,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		switch (keyCode) {
 		case LEFT:
 			rotY += 0.1f;
+			bildweltSpektakel.spawnNewToxicSystem();
 			break;
 		case RIGHT:
 			// zoom out

@@ -13,6 +13,7 @@ import toxi.geom.mesh.Face;
 import toxi.geom.mesh.SphericalHarmonics;
 import toxi.geom.mesh.SurfaceMeshBuilder;
 import toxi.geom.mesh.TriangleMesh;
+import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 
@@ -22,8 +23,7 @@ public class ToxicSystem extends ParticleSystem{
 	private int trailLength;
 
 	
-	public ToxicSystem(Engine e,
-			VerletPhysics _physics, float mySize, float x, float y, float z){
+	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x, float y, float z){
 		
 		super(e,_physics,mySize,x,y,z);
 		
@@ -49,7 +49,7 @@ public void draw(GLGraphics renderer){
 	void randomizeMesh() {
 		float[] m = new float[8];
 		for (int i = 0; i < 8; i++) {
-			m[i] = (int) p.random(20);
+			m[i] = (int) e.p.random(20);
 		}
 		SurfaceMeshBuilder b = new SurfaceMeshBuilder(new SphericalHarmonics(m));
 		toxiMesh = (TriangleMesh) b.createMesh(null,24, 100);
@@ -62,7 +62,7 @@ public void draw(GLGraphics renderer){
 
 		shockwave = true;
 		boomPower = initalBoomPower;
-		boomForce = new AttractionBehavior(this, 2000, boomPower * 0.3f, 0.1f);
+		boomForce = new AttractionBehavior(new VerletParticle(new Vec3D(x, y, z)), 2000, boomPower * 0.3f, 0.1f);
 		physics.addBehavior(boomForce);
 
 		randomizeMesh();
@@ -70,22 +70,22 @@ public void draw(GLGraphics renderer){
 		int targetSize = 10;
 		int targetYOffset = 1000;
 
-		Vec3D targetAngle = new Vec3D(p.random(-1, 1) * targetYOffset,
-				p.random(-1, 1) * targetYOffset, p.random(-1, 1)
+		Vec3D targetAngle = new Vec3D(e.p.random(-1, 1) * targetYOffset,
+				e.p.random(-1, 1) * targetYOffset, e.p.random(-1, 1)
 						* targetYOffset);
 
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
-			ShapedParticle newPart = new ShapedParticle(p, x() + face.a.x
-					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
-					z() + face.a.z - targetAngle.x / 2);
+			ShapedParticle newPart = new ShapedParticle(e.p, x + face.a.x
+					- targetAngle.x / 2, y + face.a.y - targetAngle.y / 2,
+					z + face.a.z - targetAngle.x / 2);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 
-			Vec3D toxicTarget = new Vec3D(x() + targetAngle.x + face.a.x
-					* targetSize, y() + targetAngle.x + face.a.y * targetSize,
-					z() + targetAngle.x + face.a.z * targetSize);
+			Vec3D toxicTarget = new Vec3D(x + targetAngle.x + face.a.x
+					* targetSize, y + targetAngle.x + face.a.y * targetSize,
+					z + targetAngle.x + face.a.z * targetSize);
 
 			
 			//maybe replacxe with low force spring to reduce bouncing
@@ -115,8 +115,7 @@ public void draw(GLGraphics renderer){
 		// one size fits all
 		trailLength = bigParticle.get(0).tailSize;
 
-		trails = new GLModel(p, numPoints * (trailLength + 1) * 4*2,
-				GLModel.LINES, GLModel.DYNAMIC);
+		trails = new GLModel(e.p, numPoints * (trailLength + 1) * 4*2, GLModel.LINES, GLModel.DYNAMIC);
 
 		updateTrailPositions();
 

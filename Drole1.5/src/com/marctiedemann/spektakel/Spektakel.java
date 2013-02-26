@@ -3,12 +3,15 @@ package com.marctiedemann.spektakel;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 import processing.core.PApplet;
 import toxi.geom.Vec3D;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 import toxi.physics.behaviors.GravityBehavior;
+
+import codeanticode.glgraphics.GLModel;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
@@ -41,9 +44,9 @@ public class Spektakel extends Drawable implements KeyListener {
 
 		ermitters = new ArrayList<ToxicSystem>();
 
-		for(int i=0;i<5;i++){
-		ToxicSystem startErmitter = new ToxicSystem(e, physics, 50, 0, 0, 0);
-		ermitters.add(startErmitter);
+		for(int i=0;i<1;i++){
+			ToxicSystem startErmitter = new ToxicSystem(e, physics, 50, 0, 0, 0);
+			ermitters.add(startErmitter);
 		}
 
 		
@@ -65,12 +68,16 @@ public class Spektakel extends Drawable implements KeyListener {
 			drag *= 1.0 - PAUSE_EASING;
 
 		physics.setDrag(drag);
-		if (drag < PAUSE_MOTION_AT)
-			physics.update();
-
+		if (drag < PAUSE_MOTION_AT) {
+			try {
+				physics.update();
+			} catch(ConcurrentModificationException e) {}
+		}
 		// always run system 2
 
-		physics2.update();
+		try {
+			physics2.update();
+		} catch(ConcurrentModificationException e) {}
 
 	}
 
@@ -89,10 +96,8 @@ public class Spektakel extends Drawable implements KeyListener {
 		g.pushMatrix();
 		// e.g.setDepthMask(false);
 
-		float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width,
-				-PApplet.PI / 2, PApplet.PI / 2);
-		float rotationY = PApplet.map(e.p.mouseX, 0, e.p.height,
-				-PApplet.PI / 2, -PApplet.PI / 2);
+		float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI / 2, PApplet.PI / 2);
+		float rotationY = PApplet.map(e.p.mouseX, 0, e.p.height, -PApplet.PI / 2, -PApplet.PI / 2);
 
 		g.rotateX(rotationX);
 		g.rotateY(rotationY);
@@ -112,7 +117,7 @@ public class Spektakel extends Drawable implements KeyListener {
 			}
 		}
 
-		// e.g.setDepthMask(true);
+//		 e.g.setDepthMask(true);
 
 		g.popMatrix();
 
@@ -125,10 +130,8 @@ public class Spektakel extends Drawable implements KeyListener {
 
 		
 			GravityBehavior gravity = new GravityBehavior(new Vec3D(0, 0.8f, 0));
-			AttractionBehavior center = new AttractionBehavior(new Vec3D(0, 0, 0),
-					3000, 0.1f, 0.5f);
-			AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0),
-					500, -2.8f, 0.5f);
+			AttractionBehavior center = new AttractionBehavior(new Vec3D(0, 0, 0), 3000, 0.1f, 0.5f);
+			AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0), 500, -2.8f, 0.5f);
 			thePhysics.addBehavior(center);
 //			thePhysics.addBehavior(ring);
 			thePhysics.addBehavior(gravity); 
@@ -136,6 +139,11 @@ public class Spektakel extends Drawable implements KeyListener {
 
 		}
 
+	
+	public void spawnNewToxicSystem() {
+		ToxicSystem newOne = new ToxicSystem(e, physics, 50, e.p.random(-1500, 1500), e.p.random(-1500, 1500), e.p.random(-1500, 1500));
+		ermitters.add(newOne);
+	}
 
 	@Override
 	public void keyPressed(KeyEvent event) {
@@ -144,10 +152,10 @@ public class Spektakel extends Drawable implements KeyListener {
 
 		if (key == 's') {
 
-			ToxicSystem newOne = new ToxicSystem(e, physics, 50, e.p.random(
-					-1500, 1500), e.p.random(-1500, 1500), e.p.random(-1500,
-					1500));
-			ermitters.add(newOne);
+			GLModel mog = new GLModel(e.p, 20, GLModel.POINT_SPRITES, GLModel.DYNAMIC);
+			
+//			ToxicSystem newOne = new ToxicSystem(e, physics, 50, e.p.random(-1500, 1500), e.p.random(-1500, 1500), e.p.random(-1500, 1500));
+//			ermitters.add(newOne);
 		}
 
 		if (key == 'a') {

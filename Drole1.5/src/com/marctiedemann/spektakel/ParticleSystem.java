@@ -15,7 +15,7 @@ import toxi.physics.behaviors.AttractionBehavior;
 
 
 
-public class ParticleSystem extends Particle {
+public class ParticleSystem {
 
 	protected boolean shockwave = false;
 	protected float initalBoomPower = -5.5f;
@@ -40,28 +40,21 @@ public class ParticleSystem extends Particle {
 
 	private int myID;
 	
+	protected float x, y, z;
+	
 	protected Engine e;
 
-	public ParticleSystem(Engine e, 
-			VerletPhysics _physics, float mySize, float x, float y, float z) {
-
-		super(e.p,x,y,z);
-
+	public ParticleSystem(Engine e, VerletPhysics _physics, float mySize, float x, float y, float z) {
 		this.e = e;
 		this.physics = _physics;
+		
+		this.x = x;
+		this.y = y;
+		this.z = z;
 
 		bigParticle = new ArrayList<ShapedParticle>();
 
-		myID = (p.frameCount);
-	
-		
-	}
-
-	protected void spawnNew(){
-
-		
-		initSprites();
-		
+		myID = (e.p.frameCount);	
 	}
 
 	protected void initSprites() {
@@ -73,8 +66,7 @@ public class ParticleSystem extends Particle {
 
 		e.p.logLn("sprites init 00");
 		
-		sprites = new GLModel(p, numPoints * 4, GLModel.POINT_SPRITES,
-				GLModel.DYNAMIC);
+		sprites = new GLModel(e.p, numPoints * 4, GLModel.POINT_SPRITES, GLModel.DYNAMIC);
 		
 		e.p.logLn("sprites init 0");
 
@@ -133,7 +125,7 @@ public class ParticleSystem extends Particle {
 		for (int i = 0; i < numPoints; i++) {
 
 			float newAlpha = (bigParticle.get(i).lifeSpan * 0.002f)
-					+ p.random(-0.5f, 0.5f);
+					+ e.p.random(-0.5f, 0.5f);
 
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
@@ -168,10 +160,10 @@ public class ParticleSystem extends Particle {
 			for (int j = i + 1; j < bigParticle.size(); j++) {
 
 				VerletParticle p2 = bigParticle.get(j);
-				p.pushStyle();
-				p.stroke(155, 50);
-				p.line(p1.x(), p1.y(), p1.z(), p2.x(), p2.y(), p2.z());
-				p.popStyle();
+				e.p.pushStyle();
+				e.p.stroke(155, 50);
+				e.p.line(p1.x(), p1.y(), p1.z(), p2.x(), p2.y(), p2.z());
+				e.p.popStyle();
 			}
 		}
 	}
@@ -218,7 +210,6 @@ public class ParticleSystem extends Particle {
 
 	
    public void update(){
-		super.update();
 		
 /*
 		for (int i = 0; i < bigParticle.size(); i++) {
@@ -277,10 +268,10 @@ public class ParticleSystem extends Particle {
 		// drawGrid();
 		// drawErmitter(renderer);
 
-	/*
+		/*
 		e.setupModel(sprites);	
 		renderer.model(sprites);
-*/
+		*/
 	}
 
 	public void drawErmitter(GLGraphics renderer) {
@@ -291,7 +282,7 @@ public class ParticleSystem extends Particle {
 
 		// this is strange and i have no clue why i have to translate back
 		// again....
-		renderer.translate(p.width / 2, p.height / 2, 950);
+		renderer.translate(e.g.width / 2, e.g.height / 2, 950);
 		renderer.translate(x, y, z);
 		renderer.stroke(255, ermitterAlpha);
 		renderer.strokeWeight(150);

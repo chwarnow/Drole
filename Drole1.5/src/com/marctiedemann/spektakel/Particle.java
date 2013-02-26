@@ -1,12 +1,11 @@
 package com.marctiedemann.spektakel;
 
+
 import toxi.physics.VerletParticle;
 import processing.core.PApplet;
 
 
-public class Particle extends VerletParticle{
-	
-
+public class Particle extends VerletParticle {
 	
 	protected float lifeSpan=0;
 	private float DECAY = 0.9f;
