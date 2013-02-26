@@ -31,7 +31,7 @@ public class RibbonGroup extends Drawable {
 	public float 				ribbonB = .0f;
 	
 	private float 				seed;
-	private float 				seedSpeed = .15f;
+	private float 				seedSpeed = .3f;
 	private int 				numPhysicParticles;
 	private int 				numQuadsPerRibbon;
 	private float 				sphereSize;
@@ -164,7 +164,7 @@ public class RibbonGroup extends Drawable {
 			// iterate through springs and stiffen or widen them to achieve noise like aesthetics?
 			int springID = 0;
 			for(VerletSpring s : physics.springs) s.setRestLength(springLengths.get(springID++) * noiseLUT[noiseID]);
-			noiseID = (int)e.p.abs(e.p.cos(head.x*.02f)*49f);
+			noiseID = (int)e.p.abs(e.p.cos(head.x*.01f)*49f);
 			// if(noiseID == maxNoiseID-1) noiseID = 0;
 			// else noiseID++;
 		}
