@@ -27,39 +27,10 @@ public class BildweltAssoziationDataItem extends Thread {
 	private float noiseScale;
 	private float noiseStrength;
 	private boolean running;
-	/*
-	public BildweltAssoziationDataItem(
-			Engine e,
-			String imagePath,
-			float sphereConstraintRadius,
-			float quadHeight,
-			PVector penseeCenter,
-			PVector constraintCenter,
-			int positionSteps,
-			float noiseScale,
-			float noiseStrength) {
-		super();
-		
-		
-		this.e = e;
-		this.imagePath = imagePath;
-		this.sphereConstraintRadius = sphereConstraintRadius;
-		this.quadHeight = quadHeight;
-		this.penseeCenter = penseeCenter;
-		this.constraintCenter = constraintCenter;
-		this.positionSteps = positionSteps;
-		this.noiseScale = noiseScale;
-		this.noiseStrength = noiseStrength;
-
-		createPenseeData(e, imagePath, sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
 	
-		
-	}
-	*/
 	@Override
 	public void start() {
 		running = true;
-		// e.p.println("starting thread");
 		super.start();
 	}
 	
@@ -69,12 +40,10 @@ public class BildweltAssoziationDataItem extends Thread {
 			initData();
 			running = false;
 		}
-		System.out.println(" thread is done!");  // The thread is done when we get to the end of run()
 	}
 	
 	// Our method that quits the thread
 	  void quit() {
-	    System.out.println("Quitting."); 
 	    running = false;  // Setting running to false ends the loop in run()
 	    // IUn case the thread is waiting. . .
 	    interrupt();

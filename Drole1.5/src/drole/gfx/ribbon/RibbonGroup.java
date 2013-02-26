@@ -31,7 +31,7 @@ public class RibbonGroup extends Drawable {
 	public float 				ribbonB = .01f;
 	
 	private float 				seed;
-	private float 				seedSpeed = .0015f;
+	private float 				seedSpeed = .0014f;
 	private int 				numPhysicParticles;
 	private int 				numQuadsPerRibbon;
 	private float 				sphereSize;
@@ -135,7 +135,12 @@ public class RibbonGroup extends Drawable {
 		
 		// create a noise lookuptable
 		for(int i=0;i<maxNoiseID;i++) {
-			noiseLUT[i] = e.p.noise((float)i*.07f);
+			noiseLUT[i] = 0;//
+			try {
+				noiseLUT[i] = e.p.noise((float)i*.07f);
+			} catch(Exception ex) {
+				// error calling noise function
+			}
 			if(noiseLUT[i] < .4f) noiseLUT[i] = 0;
 		}
 	}
