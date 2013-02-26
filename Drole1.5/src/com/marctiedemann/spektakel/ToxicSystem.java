@@ -1,6 +1,8 @@
-package drole.tests.spektakel;
-import java.util.ArrayList;
+package com.marctiedemann.spektakel;
+
 import java.util.Iterator;
+
+import com.madsim.engine.Engine;
 
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
@@ -16,26 +18,31 @@ import toxi.physics.behaviors.AttractionBehavior;
 
 public class ToxicSystem extends ParticleSystem{
 	
-	public ToxicSystem(PApplet p,
+	private TriangleMesh toxiMesh = new TriangleMesh();
+	private int trailLength;
+
+	
+	public ToxicSystem(Engine e,
 			VerletPhysics _physics, float mySize, float x, float y, float z){
 		
-		super(p,_physics,mySize,x,y,z);
+		super(e,_physics,mySize,x,y,z);
 		
 		spawnNew();
 	}
 	
 	
 public void update(){
-		super.update();
+	//	super.update();
 		
-		updateTrailPositions();
+	//	updateTrailPositions();
 	}
 	
 public void draw(GLGraphics renderer){
 	
-	super.draw(renderer);
+//	super.draw(renderer);
 	
-	renderer.model(trails);
+//	e.setupModel(trails);
+//	renderer.model(trails);
 	
 }
 	
@@ -45,7 +52,7 @@ public void draw(GLGraphics renderer){
 			m[i] = (int) p.random(20);
 		}
 		SurfaceMeshBuilder b = new SurfaceMeshBuilder(new SphericalHarmonics(m));
-		mesh = (TriangleMesh) b.createMesh(null,24, 100);
+		toxiMesh = (TriangleMesh) b.createMesh(null,24, 100);
 	}
 
 	public void spawnNew() {
@@ -67,10 +74,10 @@ public void draw(GLGraphics renderer){
 				p.random(-1, 1) * targetYOffset, p.random(-1, 1)
 						* targetYOffset);
 
-		for (Iterator i = mesh.faces.iterator(); i.hasNext();) {
+		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
-			TestShapeParticle newPart = new TestShapeParticle(p, mySize, x() + face.a.x
+			ShapedParticle newPart = new ShapedParticle(p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
 					z() + face.a.z - targetAngle.x / 2);
 
@@ -136,7 +143,7 @@ public void draw(GLGraphics renderer){
 		
 		for (int i = 0; i < numPoints; i++) {
 
-			TestShapeParticle oneParticle = bigParticle.get(i);
+			ShapedParticle oneParticle = bigParticle.get(i);
 			
 			
 			for (int j = 0; j < trailLength - 1; j++) {
@@ -180,3 +187,4 @@ public void draw(GLGraphics renderer){
 
 
 }
+

@@ -19,12 +19,11 @@ public class FireworksTest extends PApplet {
 	 * 
 	 */
 
-	VerletPhysics physics;
-	VerletPhysics physics2;
+	VerletPhysics physics, physics2;
 
 	ToxicSystem startErmitter;
 
-	ArrayList<ParticleSystem> ermitters;
+	ArrayList<testParticleSystem> ermitters;
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,10 +45,9 @@ public class FireworksTest extends PApplet {
 
 		background(0);
 
-		ermitters = new ArrayList<ParticleSystem>();
+		ermitters = new ArrayList<testParticleSystem>();
 
-		startErmitter = new ToxicSystem(this,physics, 50, 0, 0,
-				0);
+		startErmitter = new ToxicSystem(this,physics, 50, 0, 0, 0);
 
 	}
 
@@ -105,7 +103,7 @@ public class FireworksTest extends PApplet {
 			startErmitter.clean();
 
 		for (int i = 0; i < ermitters.size(); i++) {
-			ParticleSystem er = ermitters.get(i);
+			testParticleSystem er = ermitters.get(i);
 
 			er.update();
 			er.draw(renderer);
