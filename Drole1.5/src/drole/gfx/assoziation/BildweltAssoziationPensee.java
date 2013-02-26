@@ -41,8 +41,11 @@ public class BildweltAssoziationPensee extends Drawable {
 	private int animationDirection = -1;
 	private int delay = 0; // count up when delaying
 	private int delayTime = 100; // wait for 100 frames until next one begins
+	private int stopFrame = 0;
 	private float delaySteps = .33f;
 	private int easedPosition = 0;
+	private boolean isLooping = true;
+	private boolean isAnimationDone = false;
 	
 	// lookup table
 	private int cosDetail = 25;
@@ -52,15 +55,12 @@ public class BildweltAssoziationPensee extends Drawable {
 		super(e);
 		this.e = e;
 		this.quadHeight = quadHeight;
-		
 		e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
-		
 		e.p.noiseSeed((long)e.p.random(1000));
 
 		// create data
 		dataItem = new BildweltAssoziationDataItem();
 		dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
-		dataItem.start();
 		
 		// create cos lookup table
 		for(int i=0;i<cosDetail;i++) {
@@ -76,24 +76,35 @@ public class BildweltAssoziationPensee extends Drawable {
 				agents = dataItem.getAgentsData();
 				agentsCount = dataItem.getAgentsCount();
 				vertexCount = dataItem.getVertexCount();
+				
+				// clear existing glmodel
+				if(imageQuadModel != null) imageQuadModel.delete();
+				
+				// create a model that uses quads
+				imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
+				imageQuadModel.initColors();
+				imageQuadModel.initNormals();
+				
+				// when beginning in the middle, update the first agent position
+				if(currPosition != 0) {
+					for(int i=0;i<agentsCount;i++) {
+						BildweltAssoziationAgent agent = agents[i];
+						agent.update((int)currPosition);
+						agent.update((int)currPosition);
+						agent.update((int)currPosition);
+					}
+				}
+				isAnimationDone = false;
 			}
-			
-			// clear existing glmodel
-			if(imageQuadModel != null) imageQuadModel.delete();
-			
-			// create a model that uses quads
-			imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
-			imageQuadModel.initColors();
-			imageQuadModel.initNormals();
 		} else {
 			// update playhead on precomputed noise path
 			if (currPosition >= positionSteps-1) {
 				if ( delay++ ==delayTime) {
-					//animationDirection *= -1;
-					//currPosition += animationDirection;
 					currPosition = 0;
 					delay = 0;
 				}
+			} else if(!isLooping && (int)currPosition == stopFrame) {
+				isAnimationDone = true;
 			} else {
 				currPosition -= animationDirection*delaySteps;
 			}
@@ -104,8 +115,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	}
 
 	public void loadPensee() {
-		// TODO: be able to send other values
-		// dataItem.start();
+		dataItem.start();
 	}
 	
 	public void draw() {
@@ -127,7 +137,7 @@ public class BildweltAssoziationPensee extends Drawable {
 
 		// cosinus from lookup table
 		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))];
-
+		
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
 			
@@ -234,5 +244,43 @@ public class BildweltAssoziationPensee extends Drawable {
 		imageQuadModel.render();
 		}
 
+	}
+	
+	public int positionSteps() {
+		return this.positionSteps;
+	}
+	
+	/**
+	 * position between 0 and 1
+	 * @return
+	 */
+	public void setPosition(float playHead) {
+		playHead = e.p.constrain(playHead, 0, 1);
+		currPosition = playHead*positionSteps;
+		easedPosition = (int)currPosition;
+		oldEasedIndex = (int)currPosition;
+		stopFrame = (int)currPosition - 1;
+	}
+	
+	public void setLooping(boolean isLooping) {
+		this.isLooping = isLooping;
+	}
+	
+	public boolean isAnimationDone() {
+		return isAnimationDone;
+	}
+	
+	public boolean isReady() {
+		return isAgents;
+	}
+	
+	public void loadNewImage(String imagePath, float sphereConstraintRadius, PVector penseeCenter, PVector constraintCenter) {
+		e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+		isAnimationDone = false;
+		isAgents = false;
+		dataItem = null;
+		dataItem = new BildweltAssoziationDataItem();
+		dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+		loadPensee();
 	}
 }
