@@ -297,13 +297,13 @@ public class Engine {
 		startShader("JustColor");
 		
 		// TODO: set that globally
-		float basicLightValueX = 586.0f - p.noise(p.frameCount*.01f)*150f;
-		float basicLightValueY = 526.0f + p.noise(p.frameCount*.01f + 100)*50f;
+		float basicLightValueX = 586.0f - p.noise(p.frameCount*.005f)*250f;
+		float basicLightValueY = 426.0f + p.noise(p.frameCount*.005f + 100)*150f;
 		
 		PVector basicLightPosition = new PVector(
 				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
 				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
-				-1600 + p.noise(p.frameCount*.01f)*250f);
+				-1600 + p.noise(p.frameCount*.005f)*550f);
 		
 			g.pushMatrix();
 				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);

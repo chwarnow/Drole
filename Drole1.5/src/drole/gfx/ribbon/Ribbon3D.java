@@ -66,7 +66,7 @@ public class Ribbon3D extends Drawable {
 
 		joints[0].set(new PVector(x, y, z));
 		
-		// by Chris: Sorry, had change it, becaue it sucks LOTS of performance!!! have to find another way for that.
+		// by Chris: Sorry, had change it, because it sucks LOTS of performance!!! have to find another way for that.
 		if(isGLModel) updateVertices();
 	}
 	

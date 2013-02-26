@@ -59,8 +59,18 @@ class BildweltAssoziationAgent {
 				thisP.z = positionsZ[i-1];
 
 
-				float angleY = e.p.noise(thisP.x/noiseScale, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength; 
-				float angleZ = e.p.noise(thisP.x/noiseScale+offset, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength;
+				float angleY = 0;
+				try {
+					angleY = e.p.noise(thisP.x/noiseScale, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength; 
+				} catch(Exception ex) {
+					// not able to call noise function
+				}
+				float angleZ = 0;
+				try {
+					angleZ = e.p.noise(thisP.x/noiseScale+offset, thisP.y/noiseScale, thisP.z/noiseScale) * noiseStrength;
+				} catch(Exception ex) {
+					// not able to call noise function
+				}
 
 				if(ratio < .75) {
 					thisP.x += PApplet.cos(angleZ) * PApplet.cos(angleY) * stepSize;

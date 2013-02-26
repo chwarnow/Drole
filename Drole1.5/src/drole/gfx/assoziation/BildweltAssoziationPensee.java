@@ -13,7 +13,7 @@ import processing.opengl.PGraphicsOpenGL;
 import penner.easing.*;
 
 /**
- * loads an image and converts every pixel into an agent, wich wanders on a noise field trough the space
+ * loads an image and converts every pixel into an agent, which wanders on a noise field trough the space
  *
  * @Author Christopher Warnow, hello@christopherwarnow.com
  *
@@ -24,28 +24,30 @@ public class BildweltAssoziationPensee extends Drawable {
 	// ------ agents ------
 	BildweltAssoziationAgent[] agents;
 	int agentsCount;
+	BildweltAssoziationDataItem dataItem;
 
-	float noiseScale = 250, noiseStrength = 20; 
-	int vertexCount = 0;
-
-	GLTexture content;
-	GLModel imageQuadModel;
-	GLSLShader imageShader; // should pe provided by mother class?
-
-	// animation values
-
-	int positionSteps = 250;
-	public int currPosition = 0;
-	int animationDirection = -1;
-	int oldEasedIndex = 0;
-	float easedPosition = 0;
-	float quadHeight = 1.0f;
+	// model vars
+	private float noiseScale = 250, noiseStrength = 20; 
+	private int vertexCount = 0;
+	private GLTexture content;
+	private GLModel imageQuadModel;
+	private float quadHeight = 1.0f;
+	private boolean isAgents = false;
 	
+	// animation values
+	public float currPosition = 0;
+	private int positionSteps = 250;
+	private int oldEasedIndex = 0;
+	private int animationDirection = -1;
 	private int delay = 0; // count up when delaying
-	private int delayTime = 1; // wait for 100 frames until next one begins
-	int cosDetail = 25;
-	float[] cosLUT = new float[cosDetail];
-
+	private int delayTime = 100; // wait for 100 frames until next one begins
+	private float delaySteps = .33f;
+	private int easedPosition = 0;
+	
+	// lookup table
+	private int cosDetail = 25;
+	private float[] cosLUT = new float[cosDetail];
+	
 	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter) {
 		super(e);
 		this.e = e;
@@ -55,106 +57,63 @@ public class BildweltAssoziationPensee extends Drawable {
 		
 		e.p.noiseSeed((long)e.p.random(1000));
 
-		// load image
-		content = new GLTexture(e.p, imagePath);
-
-		// init agents pased on images pixels
-		agentsCount = 0;//content.width*content.height;
-		// count visible pixels
-		for (int x=0;x<content.width;x++) {
-			for (int y=0;y<content.height;y++) {
-				if(e.p.alpha(content.get(x, y)) != 0.0) {
-					agentsCount++;
-				}
-			}
-		}
-		agents = new BildweltAssoziationAgent[agentsCount];
-
-		int i=0;
-		for (int x=0;x<content.width;x++) {
-			for (int y=0;y<content.height;y++) {
-				if(e.p.alpha(content.get(x, y)) != 0.0) {
-				float starterThreshold = content.width/2 - e.p.dist(x, y, content.width/2, content.height/2);// * parent.noise(x*.1f, y*.1f);//x*.5;
-				starterThreshold *= .25f;
-				agents[i++]=new BildweltAssoziationAgent(
-						e,
-						new PVector((x-content.width/2)*quadHeight + penseeCenter.x, (y-content.height/2)*quadHeight + penseeCenter.y,  + penseeCenter.z),
-						content.get(x, y),
-						positionSteps,
-						noiseScale,
-						noiseStrength,
-						starterThreshold,
-						sphereConstraintRadius,
-						quadHeight,
-						1,
-						constraintCenter
-				);
-				vertexCount += agents[i-1].getVertexCount();
-				}
-			}
-		}
-
-		// extract agents vertices
-		PVector[] vertices = new PVector[vertexCount];
-		int vertexIndex = 0;
-		for (BildweltAssoziationAgent agent:agents) {
-			for (PVector p:agent.getVertices()) {
-				vertices[vertexIndex++] = new PVector(p.x, p.y, p.z);
-			}
-		}
-
-		// create a model that uses quads
-		imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
-		imageQuadModel.initColors();
-		imageQuadModel.initNormals();
-
-		// load shader
-		imageShader = new GLSLShader(e.p, "shader/std/PolyLightAndColorVert.glsl", "shader/std/PolyLightAndColorFrag.glsl");
+		// create data
+		dataItem = new BildweltAssoziationDataItem();
+		dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+		dataItem.start();
 		
 		// create cos lookup table
-		for(i=0;i<cosDetail;i++) {
+		for(int i=0;i<cosDetail;i++) {
 			cosLUT[i] = PApplet.cos(((float)i/cosDetail)*PApplet.PI);
 		}
 
 	}
 
 	public void update() {
-		// update playhead on precomputed noise path
-		if (currPosition == positionSteps-1) {
-			if (delay++==delayTime) {
-				//animationDirection *= -1;
-				//currPosition += animationDirection;
-				currPosition = 0;
-				delay = 0;
+		if(!isAgents) {
+			if(dataItem.isAvailable()) {
+				isAgents = true;
+				agents = dataItem.getAgentsData();
+				agentsCount = dataItem.getAgentsCount();
+				vertexCount = dataItem.getVertexCount();
 			}
-		}
-		/*
-		else if (currPosition == 0) {
-			if (delay++==delayTime) {
-				//animationDirection *= -1;
-				currPosition += animationDirection;
-				delay = 0;
+			
+			// clear existing glmodel
+			if(imageQuadModel != null) imageQuadModel.delete();
+			
+			// create a model that uses quads
+			imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
+			imageQuadModel.initColors();
+			imageQuadModel.initNormals();
+		} else {
+			// update playhead on precomputed noise path
+			if (currPosition >= positionSteps-1) {
+				if ( delay++ ==delayTime) {
+					//animationDirection *= -1;
+					//currPosition += animationDirection;
+					currPosition = 0;
+					delay = 0;
+				}
+			} else {
+				currPosition -= animationDirection*delaySteps;
 			}
+	
+			// eased value out of currStep/positionSteps
+			easedPosition = (int)currPosition;
 		}
-		*/
-		else {
-			// currPosition += animationDirection;
-			currPosition -= animationDirection;
-		}
-
-		// eased value out of currStep/positionSteps
-		easedPosition = currPosition;//Sine.easeInOut (currPosition, 0, positionSteps-1, positionSteps);
-
 	}
 
+	public void loadPensee() {
+		// TODO: be able to send other values
+		// dataItem.start();
+	}
+	
 	public void draw() {
-		// renderer.lights();
 
 		// update glmodel
 
 		// extract agents vertices
-
-		//if(frameCount%100==0) {
+		if(isAgents) {
 		float[] floatQuadVertices = new float[vertexCount*16];
 		float[] floatQuadNormals = new float[vertexCount*16];
 		float[] floatQuadColors = new float[vertexCount*16];
@@ -165,6 +124,9 @@ public class BildweltAssoziationPensee extends Drawable {
 		boolean isUpdate = false;
 		if(oldEasedIndex != easedIndex) isUpdate = true;
 		oldEasedIndex = easedIndex;
+
+		// cosinus from lookup table
+		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))];
 
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
@@ -181,8 +143,7 @@ public class BildweltAssoziationPensee extends Drawable {
 
 			for(int j=0;j<agentVertexNum-1;j++) {
 				
-				// cosinus from lookup table
-				float ratio = cosLUT[(int)(((float)j/agentVertexNum) * cosDetail)];
+				
 				
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
@@ -195,12 +156,12 @@ public class BildweltAssoziationPensee extends Drawable {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
-				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight*ratio;
 				floatQuadVertices[quadVertexIndex++] = thisP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = nextP.x;
-				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight*ratio;
 				floatQuadVertices[quadVertexIndex++] = nextP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
@@ -211,7 +172,7 @@ public class BildweltAssoziationPensee extends Drawable {
 
 				// compute face normal
 				PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
-				PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight*ratio*2.0f) - thisP.y, nextP.z - thisP.z);
+				PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight*ratio) - thisP.y, nextP.z - thisP.z);
 				PVector v3 = v1.cross(v2);
 				// PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);
 				v3.normalize();
@@ -270,25 +231,8 @@ public class BildweltAssoziationPensee extends Drawable {
 		imageQuadModel.updateColors(floatQuadColors);
 		imageQuadModel.updateNormals(floatQuadVertices);
 
-		// renderer.beginGL();  
-		/*
-	    imageShader.start();
-	    imageShader.setVecUniform("ambient", .1f, .1f, .1f);
-	    imageShader.setIntUniform("numLights", 2);
-	    */
-	    
-	    /*
-	    imageShader.setFloatUniform("zmin", 0.65f);
-	    imageShader.setFloatUniform("zmax", 0.85f);
-	    imageShader.setFloatUniform("shininess", 100.0f);
-	    imageShader.setVecUniform("lightPos", 100.0f, -10.0f, 30.0f);
-		*/
-		// A model can be drawn through the GLGraphics renderer:
-		// e.setupModel(imageQuadModel);
 		imageQuadModel.render();
+		}
 
-		// imageShader.stop();
-
-		// renderer.endGL();
 	}
 }
