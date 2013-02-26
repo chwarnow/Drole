@@ -13,21 +13,23 @@ import drole.Main;
 public class BildweltAssoziation extends Drawable {
 
 	private BildweltAssoziationPensee penseeA, penseeB, penseeC;
-	private float sphereConstraintRadius = 150.0f;
 	
 	public float rotation 						= 0;
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
-	
-	public BildweltAssoziation(Engine e) {
+	private int activePensee					= 0;
+	public BildweltAssoziation(Engine e, PVector position, PVector dimension) {
 		super(e);
-		// van she idea of happiness
-		scale(4.0f, 4.0f, 4.0f);
-		position(0.0f, -900.0f, 0.0f);
+		position(position);
+		dimension(dimension);
 		
 		// init ribbon sculpture
+		
+		penseeA = new BildweltAssoziationPensee(e, "data/images/menuAssoziationA.png", dimension.x*scale.x, 3.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
+		penseeA.loadPensee();
+		penseeA.setLooping(false);
+		// penseeA.setPosition(.5f);
 		/*
-		penseeA = new BildweltAssoziationPensee(e, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
 		penseeB = new BildweltAssoziationPensee(e, "data/images/associationB.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
 		penseeC = new BildweltAssoziationPensee(e, "data/images/associationC.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
 		
@@ -42,7 +44,7 @@ public class BildweltAssoziation extends Drawable {
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
 		// update sculpture
-		// penseeA.update();
+		penseeA.update();
 		// penseeB.update();
 		// penseeC.update();
 	}
@@ -53,32 +55,32 @@ public class BildweltAssoziation extends Drawable {
 		g.pushStyle();
 		g.pushMatrix();
 
-		g.translate(position.x, position.y, position.z);
+		g.translate(position.x, position.y, position.z + dimension.x*scale.x*.5f);
 		g.scale(scale.x, scale.y, scale.z);
-		g.rotateY(smoothedRotation+PApplet.HALF_PI/2);
+		g.rotateY(smoothedRotation);
 		
 		// draw sculpture
-		// penseeA.draw(g);
+		penseeA.draw();
 		// penseeB.draw(g);
 		// penseeC.draw(g);
 		
 		g.noFill();
 		g.stroke(155, 100);
-		g.ellipse(0, 0, 300, 300);
+		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
 		
 		g.pushMatrix();
 		g.rotateY(PApplet.HALF_PI + PApplet.HALF_PI/2);
-		g.ellipse(0, 0, 300, 300);
+		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
 		g.popMatrix();
 		
 		g.pushMatrix();
 		g.rotateY(PApplet.HALF_PI - PApplet.HALF_PI/2);
-		g.ellipse(0, 0, 300, 300);
+		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
 		g.popMatrix();
 		
 		g.pushMatrix();
 		g.rotateY(PApplet.HALF_PI);
-		g.ellipse(0, 0, 300, 300);
+		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
 		g.popMatrix();
 		
 		g.popMatrix();

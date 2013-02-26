@@ -128,7 +128,7 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
-		
+		if(mode().equals(ON_SCREEN)) {
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -185,5 +185,5 @@ public class RibbonGlobe extends Drawlist {
 		g.popMatrix();
 		g.popStyle();
 	}
-	
+	}
 }
