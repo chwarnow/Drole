@@ -1,15 +1,6 @@
-package drole.tests.spektakel;
+package com.marctiedemann.spektakel;
 
 import toxi.physics.VerletParticle;
-import processing.core.PApplet;
-import java.util.ArrayList;
-
-import codeanticode.glgraphics.GLConstants;
-
-import toxi.geom.AABB;
-import toxi.geom.Vec3D;
-import toxi.physics.VerletParticle;
-import toxi.physics.VerletPhysics;
 import processing.core.PApplet;
 
 
@@ -17,12 +8,16 @@ public class Particle extends VerletParticle{
 	
 
 	
-	private float lifeSpan=0;
+	protected float lifeSpan=0;
 	private float DECAY = 0.9f;
 
-	public Particle(float x, float y , float z){
+	public PApplet p;
+	
+	public Particle(PApplet p,float x, float y , float z){
 		
 		super(x,y,z);
+		
+		this.p = p;
 		
 	//	lifeSpan=p.random(mySize*2,mySize*4);
 		lifeSpan= 600;
@@ -31,6 +26,8 @@ public class Particle extends VerletParticle{
 	}
 
 		
+	
+
 	public void update(){
 		super.update();
 		lifeSpan-=DECAY;
@@ -43,10 +40,3 @@ public class Particle extends VerletParticle{
 	
 	
 }
-
-
-
-
-
-
-

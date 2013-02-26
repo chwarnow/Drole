@@ -9,11 +9,11 @@ import toxi.geom.mesh.Face;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 
-public class DudeSystem extends ParticleSystem {
+public class DudeSystem extends testParticleSystem {
 
 	PImage dudeImage;
 
-	float[][] pixelValues;
+	float[][] greyLevels;
 	
 	
 	public DudeSystem(PApplet p,VerletPhysics _physics, float mySize, float x,float y, float z) {
@@ -32,16 +32,16 @@ public class DudeSystem extends ParticleSystem {
 		dudeImage = p.loadImage("images/flyingDude.png");
 		dudeImage.loadPixels();
 		
-		pixelValues = new float[dudeImage.width][dudeImage.height];
+		greyLevels = new float[dudeImage.width][dudeImage.height];
 		
 		for(int i=0;i<dudeImage.height;i++){
 			for(int j=0;j<dudeImage.width;j++){
 				
 				int getPixel = (i*dudeImage.width)+j;
 				
-				float color = p.red(dudeImage.pixels[getPixel])/255;
+				float greyLevel = p.red(dudeImage.pixels[getPixel])/255;
 		
-			    pixelValues[j][i] = color;
+			    greyLevels[j][i] = color;
 				
 			    
 			}
@@ -60,8 +60,8 @@ public class DudeSystem extends ParticleSystem {
 
 	
 
-		for (int i =0;i<pixelValues.length;i++) {
-			for (int j=0;j<pixelValues[i].length;j++){
+		for (int i =0;i<greyLevels.length;i++) {
+			for (int j=0;j<greyLevels[i].length;j++){
 			
 			
 /*

@@ -24,6 +24,7 @@ import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
 import com.madsim.tracking.kinect.targeting.PositionTarget;
 import com.madsim.tracking.kinect.targeting.TargetDetection;
+import com.marctiedemann.spektakel.Spektakel;
 
 import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.fabric.BildweltFabric;
@@ -102,6 +103,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
 	private BildweltFabric bildweltFabric;
+	private Spektakel bildweltSpektakel;
 	
 	public void setup() {
 		size(Settings.VIRTUAL_SCREEN_WIDTH, Settings.VIRTUAL_SCREEN_HEIGHT, GLConstants.GLGRAPHICS);
@@ -160,6 +162,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
+		setupSpektakel();
+		
 //		setupMenu();
 		
 //		setupMicroMacroWorld();
@@ -174,6 +178,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		switchMode(LIVE);
 	}
 	
+	
+	
 	private void switchMode(String MODE) {
 		if(this.MODE != FORCED_DEBUG) {
 			logLn("Switching MODE from '" + this.MODE + "' to '" + MODE + "'");
@@ -182,6 +188,13 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			logLn("Switching MODE from '" + this.MODE + "' to '" + MODE + "' DENIED!");
 		}
 	}
+	
+	private void setupSpektakel(){
+		bildweltSpektakel = new Spektakel(engine);
+		engine.addDrawable("Spektakel", bildweltSpektakel);
+		
+	}
+
 
 	private void setupMicroMacroWorld() {
 		bildweltMicroMacro = new MMWorld(engine);
