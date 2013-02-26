@@ -14,12 +14,12 @@ import toxi.geom.mesh.TriangleMesh;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 
-public class ToxicSystem extends ParticleSystem{
+public class T_ToxicSystem extends T_ParticleSystem{
 	
-	public ToxicSystem(PApplet p,
-			VerletPhysics _physics, float mySize, float x, float y, float z){
+	public T_ToxicSystem(PApplet p,
+			VerletPhysics _physics,float x, float y, float z){
 		
-		super(p,_physics,mySize,x,y,z);
+		super(p,_physics,x,y,z);
 		
 		spawnNew();
 	}
@@ -70,7 +70,7 @@ public void draw(GLGraphics renderer){
 		for (Iterator i = mesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
-			TestShapeParticle newPart = new TestShapeParticle(p, mySize, x() + face.a.x
+			T_ShapeParticle newPart = new T_ShapeParticle(p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
 					z() + face.a.z - targetAngle.x / 2);
 
@@ -136,7 +136,7 @@ public void draw(GLGraphics renderer){
 		
 		for (int i = 0; i < numPoints; i++) {
 
-			TestShapeParticle oneParticle = bigParticle.get(i);
+			T_ShapeParticle oneParticle = bigParticle.get(i);
 			
 			
 			for (int j = 0; j < trailLength - 1; j++) {

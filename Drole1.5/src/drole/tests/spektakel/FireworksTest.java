@@ -21,9 +21,9 @@ public class FireworksTest extends PApplet {
 
 	VerletPhysics physics, physics2;
 
-	ToxicSystem startErmitter;
+	T_ToxicSystem startErmitter;
 
-	ArrayList<testParticleSystem> ermitters;
+	ArrayList<T_ParticleSystem> ermitters;
 
 	private static final long serialVersionUID = 1L;
 
@@ -45,9 +45,9 @@ public class FireworksTest extends PApplet {
 
 		background(0);
 
-		ermitters = new ArrayList<testParticleSystem>();
+		ermitters = new ArrayList<T_ParticleSystem>();
 
-		startErmitter = new ToxicSystem(this,physics, 50, 0, 0, 0);
+		startErmitter = new T_ToxicSystem(this,physics, 0, 0, 0);
 
 	}
 
@@ -103,7 +103,7 @@ public class FireworksTest extends PApplet {
 			startErmitter.clean();
 
 		for (int i = 0; i < ermitters.size(); i++) {
-			testParticleSystem er = ermitters.get(i);
+			T_ParticleSystem er = ermitters.get(i);
 
 			er.update();
 			er.draw(renderer);
@@ -125,16 +125,16 @@ public class FireworksTest extends PApplet {
 
 		if (key == 's') {
 
-			ToxicSystem newOne = new ToxicSystem(this,
-					physics, 50, random(-1500, 1500), random(-1500, 1500),
+			T_ToxicSystem newOne = new T_ToxicSystem(this,
+					physics, random(-1500, 1500), random(-1500, 1500),
 					random(-1500, 1500));
 			ermitters.add(newOne);
 		}
 
 		if (key == 'a') {
 
-			ToxicSystem newOne = new ToxicSystem(this,
-					physics2, 50, random(-1500, 1500), random(-1500, 1500),
+			T_ToxicSystem newOne = new T_ToxicSystem(this,
+					physics2, random(-1500, 1500), random(-1500, 1500),
 					random(-1500, 1500));
 			ermitters.add(newOne);
 		}

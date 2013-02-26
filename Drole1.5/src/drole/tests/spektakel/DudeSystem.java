@@ -9,7 +9,7 @@ import toxi.geom.mesh.Face;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 
-public class DudeSystem extends testParticleSystem {
+public class DudeSystem extends T_ParticleSystem {
 
 	PImage dudeImage;
 

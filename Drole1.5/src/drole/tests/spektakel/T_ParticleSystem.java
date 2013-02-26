@@ -20,7 +20,7 @@ import toxi.geom.mesh.*;
 
 import processing.core.PApplet;
 
-public class testParticleSystem extends Particle {
+public class T_ParticleSystem extends T_Particle {
 
 	boolean shockwave = false;
 	float initalBoomPower = -5.5f;
@@ -33,7 +33,7 @@ public class testParticleSystem extends Particle {
 	PApplet p;
 	VerletPhysics physics;
 
-	ArrayList<TestShapeParticle> bigParticle;
+	ArrayList<T_ShapeParticle> bigParticle;
 
 	TriangleMesh mesh = new TriangleMesh();
 
@@ -49,16 +49,16 @@ public class testParticleSystem extends Particle {
 
 	int myID;
 
-	public testParticleSystem(PApplet p, 
-			VerletPhysics _physics, float mySize, float x, float y, float z) {
+	public T_ParticleSystem(PApplet p, 
+			VerletPhysics _physics, float x, float y, float z) {
 
-		super(p, mySize, x, y, z);
+		super(p,  x, y, z);
 
 		this.p = p;
 
 		this.physics = _physics;
 
-		bigParticle = new ArrayList<TestShapeParticle>();
+		bigParticle = new ArrayList<T_ShapeParticle>();
 
 		myID = (p.frameCount);
 	
@@ -108,7 +108,7 @@ public class testParticleSystem extends Particle {
 
 		for (int i = 0; i < numPoints; i++) {
 
-			Particle oneParticle = bigParticle.get(i);
+			T_Particle oneParticle = bigParticle.get(i);
 
 			coords[4 * i + 0] = oneParticle.x;
 			coords[4 * i + 1] = oneParticle.y;
@@ -215,7 +215,7 @@ public class testParticleSystem extends Particle {
 
 		for (int i = 0; i < bigParticle.size(); i++) {
 
-			Particle pa = bigParticle.get(i);
+			T_Particle pa = bigParticle.get(i);
 
 			if (pa.isDead()) {
 
