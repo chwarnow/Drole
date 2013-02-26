@@ -32,17 +32,17 @@ public class ToxicSystem extends ParticleSystem{
 	
 	
 public void update(){
-	//	super.update();
+		super.update();
 		
-	//	updateTrailPositions();
+		updateTrailPositions();
 	}
 	
 public void draw(GLGraphics renderer){
 	
-//	super.draw(renderer);
+	super.draw(renderer);
 	
-//	e.setupModel(trails);
-//	renderer.model(trails);
+	e.setupModel(trails);
+	renderer.model(trails);
 	
 }
 	

@@ -41,8 +41,10 @@ public class Spektakel extends Drawable implements KeyListener {
 
 		ermitters = new ArrayList<ToxicSystem>();
 
+		for(int i=0;i<5;i++){
 		ToxicSystem startErmitter = new ToxicSystem(e, physics, 50, 0, 0, 0);
 		ermitters.add(startErmitter);
+		}
 
 		
 		e.requestTexture("images/particle.png");
