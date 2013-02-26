@@ -60,13 +60,8 @@ public class ParticleSystem extends Particle {
 
 		bigParticle = new ArrayList<ShapeParticle>();
 
-		// if(mySize>20)
-		//
-
 		myID = (p.frameCount);
-
-		spawnNew();
-		
+	
 		
 	}
 

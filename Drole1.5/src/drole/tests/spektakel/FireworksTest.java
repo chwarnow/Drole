@@ -140,6 +140,14 @@ public class FireworksTest extends PApplet {
 					random(-1500, 1500));
 			ermitters.add(newOne);
 		}
+		
+		if (key == 'i') {
+
+			DudeSystem newOne = new DudeSystem(this,
+					physics2, 50, random(-1500, 1500), random(-1500, 1500),
+					random(-1500, 1500));
+			ermitters.add(newOne);
+		}
 
 		if (key == ' ')
 			pauseMotion = !pauseMotion;
