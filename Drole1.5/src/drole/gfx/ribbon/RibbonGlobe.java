@@ -41,7 +41,15 @@ public class RibbonGlobe extends Drawlist {
 		"data/images/menuAssoziationB.png",
 		"data/images/menuAssoziationC.png",
 		"data/images/menuAssoziationD.png",
-		"data/images/menuAssoziationE.png"
+		"data/images/menuAssoziationE.png",
+		"data/images/menuAssoziationF.png",
+		"data/images/menuAssoziationG.png",
+		"data/images/menuAssoziationH.png",
+		"data/images/menuAssoziationI.png",
+		"data/images/menuAssoziationJ.png",
+		"data/images/menuAssoziationK.png",
+		"data/images/menuAssoziationL.png",
+		"data/images/menuAssoziationM.png"
 	};
 	
 	public RibbonGlobe(Engine e, PVector position, PVector dimension) {
@@ -55,7 +63,7 @@ public class RibbonGlobe extends Drawlist {
 		for(int i=0;i<associationsAmount;i++) {
 			BildweltAssoziationPensee b = new BildweltAssoziationPensee(
 				e,
-				penseeImages[i],
+				penseeImages[(int)e.p.random(penseeImages.length-1)],
 				dimension.x*scale.x,
 				2.0f,
 				new PVector(e.p.random(-randomRadius, randomRadius),
