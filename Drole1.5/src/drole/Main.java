@@ -5,16 +5,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import SimpleOpenNI.SimpleOpenNI;
 import codeanticode.glgraphics.GLConstants;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.drole.mmworld.MMWorld;
-import com.madsim.drole.mmworld.drop.Drop;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
-import com.madsim.engine.drawable.Drawable;
-import com.madsim.engine.drawable.file.Image;
-import com.madsim.engine.drawable.geom.Ellipse;
 import com.madsim.engine.optik.LookAt;
 import com.madsim.engine.optik.OffCenterOptik;
 import com.madsim.engine.optik.OrthoOptik;
@@ -27,10 +24,7 @@ import com.madsim.engine.shader.RoomShader;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
 import com.madsim.tracking.kinect.targeting.PositionTarget;
-import com.madsim.tracking.kinect.targeting.PositionTargetListener;
-import com.madsim.tracking.kinect.targeting.TargetBox3D;
 import com.madsim.tracking.kinect.targeting.TargetDetection;
-import com.madsim.tracking.kinect.targeting.TargetSphere;
 
 import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.fabric.BildweltFabric;
@@ -40,9 +34,7 @@ import drole.settings.Settings;
 
 import processing.core.PApplet;
 import processing.core.PFont;
-import processing.core.PMatrix3D;
 import processing.core.PVector;
-import SimpleOpenNI.*;
 
 public class Main extends EngineApplet implements MouseWheelListener {
 
@@ -67,13 +59,10 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	// the data from openni comes upside down
 	private float rotY = radians(0);
-	private boolean autoCalib = true;
-	
-	private PVector bodyCenter = new PVector();
-	private PVector bodyDir = new PVector();
 
 	/* Users Head */
-	private PVector head = new PVector(0, 0, 3000);
+	private PVector stdHeadPosition = new PVector(0, 0, 3000);
+	private PVector head = new PVector(0, 0, 0);
 	private PVector mouseHead = new PVector(0, 0, 3000);
 	
 	/* Engine */
@@ -167,13 +156,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		if(FREEMODE) logLn("We are using forced FREEMODE!");
 		else logLn("FREEMODE was NOT forced, checking the kinect!");
 		
-		kinect = new Kinect(this, FREEMODE);
-
-		// Enable depthMap generation
-		if(kinect.enableDepth() == false) {
-			logLn("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
-			FREEMODE = true;
-		}
+		kinect = new Kinect(this, Kinect.VERBOSE, FREEMODE);
 
 		/* CONTENT */
 		setupRoom();
@@ -188,12 +171,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 //		setupFabricWorld();
 		
-		/* START */
-		if(FREEMODE) {
-//			globe.fadeIn(500);
-			switchMode(LIVE);
-		}
-		
+		/* START */		
 		switchMode(LIVE);
 	}
 	
@@ -267,7 +245,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 
 	private void updateHead() {
-		PVector thead = kinect.getJoint(Kinect.SKEL_HEAD);
+		PVector thead = kinect.getJoint(Kinect.SKEL_HEAD, stdHeadPosition);
 		head = offCenterOptik.updateHeadPosition(thead);
 	}
 

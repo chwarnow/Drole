@@ -1,6 +1,6 @@
 package com.madsim.tracking.kinect;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
 
 import processing.core.PVector;
@@ -12,6 +12,12 @@ import SimpleOpenNI.SimpleOpenNIConstants;
 
 public class Kinect implements SimpleOpenNIConstants {
 	
+	public static short VERBOSE = 2;
+	public static short CHATTY = 1;
+	public static short QUIET = 0;
+	
+	private short logLevel = VERBOSE;
+	
 	private EngineApplet p;
 	
 	private SimpleOpenNI c;
@@ -19,8 +25,6 @@ public class Kinect implements SimpleOpenNIConstants {
 	private HashMap<Integer, PVector> stdMotionData = new HashMap<Integer, PVector>();
 	
 	private boolean autoCalib = true;
-	
-	private ArrayList<Integer> userPool = new ArrayList<Integer>();
 
 	private static int NO_USER = 9999999;
 	
@@ -28,20 +32,36 @@ public class Kinect implements SimpleOpenNIConstants {
 
 	private boolean fakeMode;
 	
-	public Kinect(EngineApplet p) {
-		this(p, false);
+	public Kinect(EngineApplet p, short logLevel) {
+		this(p, logLevel, false);
 	}
 	
-	public Kinect(EngineApplet p, boolean fakeMode) {
+	public Kinect(EngineApplet p, short logLevel, boolean fakeMode) {
 		this.p = p;
 		this.fakeMode = fakeMode;
 		
 		init();
-		startTracking();
+	}
+	
+	private void init() {
+		if(!fakeMode) {
+			c = new SimpleOpenNI(p, SimpleOpenNI.RUN_MODE_MULTI_THREADED);
+			if(logLevel >= 1) p.logLn("[Kinect]: Hardware is running!");
+
+			// !!! NEEDS TO BE ENABLED FOR USER TRACKING !!!
+			c.enableDepth();
+			if(logLevel >= 1) p.logLn("[Kinect]: DepthMap initialized.");
+			
+			c.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
+			if(logLevel >= 1) p.logLn("[Kinect]: User tracking is running.");
+		}
 	}
 	
 	public void update() {
-		if(c != null) c.update();
+		if(c != null) {
+			c.update();
+			updateCurrentUser();
+		}
 	}
 	
 	public int[] getDepthMap() {
@@ -68,26 +88,13 @@ public class Kinect implements SimpleOpenNIConstants {
 		stdMotionData.put(joint, std);
 	}
 	
-	private void init() {
-		if(!fakeMode) {
-			c = new SimpleOpenNI(p);
-		}
-	}
-	
-	private void startTracking() {
-		// enable skeleton generation for all joints
-		if(c != null) c.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
-	}
-	
-	public boolean enableDepth() {
-		if(c != null) return c.enableDepth();
-		return true;
-	}
-	
 	public PVector getJoint(int joint) {
-		PVector j = new PVector(0, 0, 0);
-		if(currentUser != 0) c.getJointPositionSkeleton(currentUser, joint, j);
-		return j;
+		return getJoint(joint, new PVector(0, 0, 0));
+	}	
+	
+	public PVector getJoint(int joint, PVector std) {
+		if(currentUser != NO_USER) c.getJointPositionSkeleton(currentUser, joint, std);
+		return std;
 	}
 
 	// Handle Users
@@ -95,7 +102,7 @@ public class Kinect implements SimpleOpenNIConstants {
 	// SimpleOpenNI user events
 
 	public void onNewUser(int uid) {
-		p.logLn("[Kinect]: new user ("+uid+")");
+		if(logLevel >= 2) p.logLn("[Kinect]: New user ("+uid+")");
 
 		if(autoCalib) {
 			c.requestCalibrationSkeleton(uid, true);
@@ -105,56 +112,63 @@ public class Kinect implements SimpleOpenNIConstants {
 	}
 
 	public void onLostUser(int uid) {
-		p.logLn("[Kinect]: lost user ("+uid+")");
+		if(logLevel >= 2) p.logLn("[Kinect]: Lost user ("+uid+")");
+		c.stopTrackingSkeleton(uid);
 	}
 
 	public void onExitUser(int uid) {
-		p.logLn("[Kinect]: exit user ("+uid+")");
-		userPool.remove(uid);
-		updateCurrentUser();
+		if(logLevel >= 2) p.logLn("[Kinect]: Exit user ("+uid+")");
+		c.stopTrackingSkeleton(uid);
 	}
 
 	public void onReEnterUser(int uid) {
-		p.logLn("[Kinect]: reenter user ("+uid+")");
+		if(logLevel >= 2) p.logLn("[Kinect]: Reenter user ("+uid+")");
+		c.startTrackingSkeleton(uid);
 	}
 
 	public void onStartCalibration(int uid) {
-		p.logLn("[Kinect]: start calibration for user ("+uid+")");
+		if(logLevel >= 2) p.logLn("[Kinect]: Start calibration for user ("+uid+")");
 	}
 
 	public void onEndCalibration(int uid, boolean successfull) {
 		if (successfull) {
-			p.logLn("[Kinect]: user ("+uid+") calibrated.");
+			if(logLevel >= 2) p.logLn("[Kinect]: User ("+uid+") calibrated.");
 			c.startTrackingSkeleton(uid);
-			userPool.add(uid);
-			updateCurrentUser();
 		} else {
-			p.logLn("[Kinect]: failed to calibrate user ("+uid+")");
+			if(logLevel >= 2) p.logLn("[Kinect]: Failed to calibrate user ("+uid+")");
 			c.startPoseDetection("Psi", uid);
 		}
 	}
 
 	public void onStartPose(String pose, int uid) {
-		p.logLn("[Kinect]: start pose for user ("+uid+")");
+		if(logLevel >= 2) p.logLn("[Kinect]: Start pose for user ("+uid+")");
 
 		c.stopPoseDetection(uid);
 		c.requestCalibrationSkeleton(uid, true);
 	}
 
 	public void onEndPose(String pose, int uid) {
-		p.logLn("[Kinect]: end pose for user ("+uid+")");
+		if(logLevel >= 2) p.logLn("[Kinect]: End pose for user ("+uid+")");
 	}	
 	
 	public void updateCurrentUser() {
-		if(!c.isTrackingSkeleton(currentUser) || !userPool.contains(currentUser)) {
-			// WAH, we lost a user it seems ...
-			int newUser = NO_USER;
-			for(Integer uid : userPool) {
-				if(uid < newUser) newUser = uid;
-			}
+//		p.logLn("[Kinect]: Revalidating users ...");
+//		
+//		p.logLn("[Kinect]: Current user pool: "+c.getUsers().length);
+		
+		// WAH, we lost a user it seems ...
+		int newUser = NO_USER;
+		for(int uid : c.getUsers()) {
+			if(uid < newUser && c.isTrackingSkeleton(uid)) newUser = uid;
+		}
+		
+		if(currentUser != NO_USER && newUser == NO_USER) {
 			currentUser = newUser;
-			
-			p.logLn("[Kinect]: Giving control to user ("+currentUser+")");
+			if(logLevel >= 1) p.logLn("[Kinect]: No user to track ...");
+		}
+		if(newUser != NO_USER && newUser != currentUser) {
+			currentUser = newUser;
+			if(logLevel >= 1) p.logLn("[Kinect]: Giving control to user ("+currentUser+")");
 		}
 	}
 	
