@@ -22,7 +22,7 @@ public class FireworksTest extends PApplet {
 	VerletPhysics physics;
 	VerletPhysics physics2;
 
-	ParticleSystem startErmitter;
+	ToxicSystem startErmitter;
 
 	ArrayList<ParticleSystem> ermitters;
 
@@ -48,7 +48,7 @@ public class FireworksTest extends PApplet {
 
 		ermitters = new ArrayList<ParticleSystem>();
 
-		startErmitter = new ParticleSystem(this, ermitters, physics, 50, 0, 0,
+		startErmitter = new ToxicSystem(this,physics, 50, 0, 0,
 				0);
 
 	}
@@ -97,15 +97,20 @@ public class FireworksTest extends PApplet {
 		update();
 		// startErmitter.drawErmitter();
 
-		if (!startErmitter.isEmpty())
-			startErmitter.updateAndDraw(renderer);
+		if (!startErmitter.isEmpty()){
+			startErmitter.update();
+			startErmitter.draw(renderer);}
+		
 		else
 			startErmitter.clean();
 
 		for (int i = 0; i < ermitters.size(); i++) {
 			ParticleSystem er = ermitters.get(i);
 
-			er.updateAndDraw(renderer);
+			er.update();
+			er.draw(renderer);
+			
+			
 			if (er.isEmpty()) {
 				er.clean();
 				ermitters.remove(i);
@@ -122,7 +127,7 @@ public class FireworksTest extends PApplet {
 
 		if (key == 's') {
 
-			ParticleSystem newOne = new ParticleSystem(this, ermitters,
+			ToxicSystem newOne = new ToxicSystem(this,
 					physics, 50, random(-1500, 1500), random(-1500, 1500),
 					random(-1500, 1500));
 			ermitters.add(newOne);
@@ -130,7 +135,7 @@ public class FireworksTest extends PApplet {
 
 		if (key == 'a') {
 
-			ParticleSystem newOne = new ParticleSystem(this, ermitters,
+			ToxicSystem newOne = new ToxicSystem(this,
 					physics2, 50, random(-1500, 1500), random(-1500, 1500),
 					random(-1500, 1500));
 			ermitters.add(newOne);
