@@ -95,15 +95,12 @@ public class Kinect implements SimpleOpenNIConstants {
 	}	
 	
 	public PVector getJoint(int joint, PVector std) {
-		return std;
-		/*
 		if(c != null) {
 			 if(currentUser != NO_USER) {
 				 c.getJointPositionSkeleton(currentUser, joint, std); 
 			 }
 		}
 		return std;
-		*/
 	}
 
 	// Handle Users

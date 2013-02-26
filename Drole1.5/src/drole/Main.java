@@ -104,6 +104,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			engine = new Engine(this);
 			
 			engine.addShader("JustColor", new JustColorShader(this));
+			engine.addShader("JustTexture", new JustColorShader(this));
 			engine.addShader("PolyLightAndColor", new PolyLightAndColorShader(this));
 			engine.addShader("PolyLightAndTexture", new PolyLightAndTextureShader(this));
 			engine.addShader("PolyLightAndTextureAndEM", new PolyLightAndTextureAndEMShader(this));
@@ -338,7 +339,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)) < 0.16f) {
 				pinLog("Scale Gesture", "ON");
 				
-				bildweltMicroMacro.position(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
+				globe.position(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
 			} else {
 				pinLog("Scale Gesture", "OFF");
 			}
@@ -346,7 +347,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_RIGHT_HAND), kinect.getJoint(Kinect.SKEL_RIGHT_SHOULDER)) < 0.06f) {
 				pinLog("Rotate Gesture", "ON");
 				
-				bildweltMicroMacro.rotation(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
+				globe.rotation(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
 			} else {
 				pinLog("Rotate Gesture", "OFF");
 			}
@@ -494,7 +495,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	public void mouseMoved(MouseEvent e) {
 		if(FREEMODE) {
 			mouseHead.x = map(e.getX(), width, 0, -offCenterOptik.realScreenDim.x/2f, offCenterOptik.realScreenDim.x/2f);
-			mouseHead.y = map(e.getY(), 0, height, offCenterOptik.realScreenPos.y, offCenterOptik.realScreenPos.y+offCenterOptik.realScreenDim.y);
+			mouseHead.y = map(e.getY(), 0, height, offCenterOptik.realScreenPos.y+Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM, offCenterOptik.realScreenPos.y+offCenterOptik.realScreenDim.y);
 			
 			offCenterOptik.updateHeadPosition(mouseHead);
 //			println(mouseHead);
