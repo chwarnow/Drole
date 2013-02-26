@@ -82,6 +82,11 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private PVector globeSize = new PVector(600, 0, 0);
 	private RibbonGlobe globe;
 
+	private float rotationSpeedY = 0.0f;
+	private PVector lastRightHand = new PVector(0, 0, 0);
+	private PVector rightHandSpeedDir = new PVector(0, 0, 0);
+	private boolean isRotating = false;
+	
 	private PFont mainFont;
 	
 	/* Bildwelten */
@@ -150,11 +155,11 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-		setupMenu();
+//		setupMenu();
 		
 //		setupSpektakel();
 		
-//		setupMicroMacroWorld();
+		setupMicroMacroWorld();
 		
 //		setupOptikWorld();
 		
@@ -327,33 +332,52 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// drawRealWorldScreen();
 			
 			if(!FREEMODE) {
-			pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
-			pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
-			pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
-			pinLog("Angle (Hand & Shoulder)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)));
-			pinLog("Angle (Hand & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
-			pinLog("Angle (Hand & Elbow)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_ELBOW)));
-			pinLog("Angle (Elbow & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_ELBOW), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
-			pinLog("Dist (Hand & Hip)", PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
-			
-			if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)) < 0.16f) {
-				pinLog("Scale Gesture", "ON");
+				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
+				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
+				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
+				pinLog("Angle (Hand & Shoulder)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)));
+				pinLog("Angle (Hand & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
+				pinLog("Angle (Hand & Elbow)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_ELBOW)));
+				pinLog("Angle (Elbow & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_ELBOW), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
+				pinLog("Dist (Hand & Hip)", PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
 				
-				globe.position(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
-			} else {
-				pinLog("Scale Gesture", "OFF");
-			}
+				if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)) < 0.16f) {
+					pinLog("Scale Gesture", "ON");
+					
+					bildweltMicroMacro.position(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
+				} else {
+					pinLog("Scale Gesture", "OFF");
+				}
+	
+				if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_RIGHT_HAND), kinect.getJoint(Kinect.SKEL_RIGHT_SHOULDER)) < 0.12f) {
+					pinLog("Rotate Gesture", "ON");
+					
+					if(!isRotating) {
+						lastRightHand = kinect.getJoint(Kinect.SKEL_RIGHT_HAND);
+						isRotating = true;
+					}
+					
+					float rightHandSpeed = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).x - lastRightHand.x;
+					
+					lastRightHand = kinect.getJoint(Kinect.SKEL_RIGHT_HAND);
+					
+					pinLog("Right Hand Speed", rightHandSpeed);
+					
+					if(abs(rightHandSpeed) > 60) {
+						rotationSpeedY += map(rightHandSpeed, -500, 500, -1.0f, 1.0f);
+					}
+				} else {
+					pinLog("Rotate Gesture", "OFF");
+					isRotating = false;
+				}
+				
+				rotationSpeedY *= 0.92;
+				
+				if(abs(rotationSpeedY) < 0.001f) rotationSpeedY = 0.0f;
 
-			if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_RIGHT_HAND), kinect.getJoint(Kinect.SKEL_RIGHT_SHOULDER)) < 0.06f) {
-				pinLog("Rotate Gesture", "ON");
+				pinLog("rotationSpeedY", rotationSpeedY);
 				
-				globe.rotation(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
-			} else {
-				pinLog("Rotate Gesture", "OFF");
-			}
-			
-			
-			// bildweltMicroMacro.easeToPosition(0, 0, map(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)), 0f, 0.20f, -500, -1200), 100);
+				bildweltMicroMacro.rotation(0, bildweltMicroMacro.rotation().y+rotationSpeedY, 0);
 			}
 			
 			/*

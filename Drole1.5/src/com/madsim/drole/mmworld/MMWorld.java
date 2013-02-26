@@ -30,8 +30,7 @@ public class MMWorld extends Drawable {
 		
 		points = DLAUtils.getDLAFromFile("data/dla/spiral.dla");
 		
-		pointDLA = DLAUtils.initializeModelWithDLA(e.p, GLModel.POINT_SPRITES, points);
-		pointDLA.setSpriteSize(20f);
+		pointDLA = DLAUtils.initializeModelWithDLA(e.p, GLModel.POINTS, points);
 		lineDLA = DLAUtils.initializeModelWithDLA(e.p, GLModel.LINES, points);
 		
 		pointDLA.centerVertices(0, 0, 0);

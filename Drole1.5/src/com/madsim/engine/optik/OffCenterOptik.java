@@ -58,8 +58,8 @@ public class OffCenterOptik extends Optik {
 		stdPOV = pe.get();
 		
 //		p.logLn(stdPOV.y + " : " + (realScreenPos.y + (realScreenDim.y / 2f)));
-		stdPOV.y -= (realScreenDim.y / 2f);
-//		stdPOV.y *= -1;
+		stdPOV.y -= (realScreenDim.y / 2f)+55;
+//		stdPOV.z *= -1;
 //		stdPOV.x *= -1;
 		
 		return stdPOV;
