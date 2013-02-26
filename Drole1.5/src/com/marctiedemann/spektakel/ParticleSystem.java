@@ -44,9 +44,9 @@ public class ParticleSystem {
 	
 	protected Engine e;
 
-	public ParticleSystem(Engine e, VerletPhysics _physics, float mySize, float x, float y, float z) {
+	public ParticleSystem(Engine e, VerletPhysics physics, float mySize, float x, float y, float z) {
 		this.e = e;
-		this.physics = _physics;
+		this.physics = physics;
 		
 		this.x = x;
 		this.y = y;
