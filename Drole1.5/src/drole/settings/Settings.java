@@ -3,7 +3,7 @@ package drole.settings;
 public class Settings {
 
 	// Some standard settings
-	public static boolean USE_KINECT						= 	true;
+	public static boolean USE_KINECT						= 	false;
 	
 	public static boolean USE_GESTURES						= 	false;
 	
@@ -20,7 +20,7 @@ public class Settings {
 	// Dimension of the real worlds screen in mm
 	public static int REAL_SCREEN_DIMENSIONS_WIDTH_MM 		= 	1800;
 	public static int REAL_SCREEN_DIMENSIONS_HEIGHT_MM 		= 	1800;
-	public static int REAL_SCREEN_DIMENSIONS_DEPTH_MM 		= 	   0;
+	public static int REAL_SCREEN_DIMENSIONS_DEPTH_MM 		= 	1800;
 	
 	// Position of the real world screens left lower corner in TRACKER SPACE (in relation to the kinect) given in mm!
 	public static int REAL_SCREEN_POSITION_X_MM				=  	 -900;

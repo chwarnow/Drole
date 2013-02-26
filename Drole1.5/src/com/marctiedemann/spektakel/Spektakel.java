@@ -69,17 +69,11 @@ public class Spektakel extends Drawable {
 
 		physics.setDrag(drag);
 		if (drag < PAUSE_MOTION_AT) {
-			try {
-				physics.update();
-			} catch (ConcurrentModificationException e) {
+		
+			physics.update();
 			}
-		}
-		// always run system 2
-
-		try {
 			physics2.update();
-		} catch (ConcurrentModificationException e) {
-		}
+		
 
 	}
 
@@ -151,7 +145,7 @@ public class Spektakel extends Drawable {
 				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2,
 				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2), 
 				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM / 2, 0), 
-				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM, 0));
+				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM, -Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM/2));
 		ermitters.add(newOne);
 	}
 
