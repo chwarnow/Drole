@@ -94,6 +94,7 @@ public class DLASpiral extends PApplet {
 	  dla.setGuidelines(guides);
 	  // set leaf size of octree
 	  dla.getParticleOctree().setMinNodeSize(1);
+
 	  // add a listener for simulation events
 	  listener=new DLAListener();
 	  dla.addListener(listener);

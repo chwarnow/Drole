@@ -8,18 +8,13 @@ import javax.media.opengl.GL;
 
 import processing.core.PApplet;
 import processing.core.PVector;
-import processing.opengl.PGraphicsOpenGL;
 
 import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.drawable.FilterSets;
-import com.madsim.engine.optik.LookAt;
 import com.madsim.engine.optik.Optik;
-import com.madsim.engine.renderpass.ShadowMapPass;
-import com.madsim.engine.renderpass.VSMShadowPass;
 import com.madsim.engine.shader.Shader;
 
 import codeanticode.glgraphics.GLGraphics;
-import codeanticode.glgraphics.GLGraphicsOffScreen;
 import codeanticode.glgraphics.GLModel;
 import codeanticode.glgraphics.GLTexture;
 
@@ -52,8 +47,6 @@ public class Engine {
 	private GLTexture environmentMap;
 	
 	public boolean drawStarted = false;
-	
-	private boolean usePixelKnockOut = false;
 	
 	public Engine(EngineApplet p) {
 		this.p = p;
@@ -154,17 +147,10 @@ public class Engine {
 		activeShader().glsl().setFloatUniform("usePixelKnockOut", k);
 	}
 	
-	private void setupShader() {
-		if(activeShader() != null) {
-			
-		}
-	}
-	
 	public void resetShader() {
 		if(activeShader() != null) {
 			// Set texture informations for the shader
 			activeShader().glsl().setIntUniform("numTextures", 0);
-			activeShader().glsl().setFloatUniform("usePixelKnockOut", -1.0f);
 		}
 	}
 	
@@ -307,8 +293,6 @@ public class Engine {
 				// g.sphere(10);
 		g.popMatrix();
 		
-		p.println(p.mouseX);
-		
 		stopShader();
 
 		/*
@@ -326,7 +310,7 @@ public class Engine {
 		*/
 		
 		// edit by chris, testing a shader spinoff
-		// startShader("PolyLightAndTexture");
+//		startShader("PolyLightAndTexture");
 		startShader("RoomShader");
 			
 			drawContent();
