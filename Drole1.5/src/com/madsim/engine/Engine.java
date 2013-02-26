@@ -349,8 +349,8 @@ public class Engine {
 		*/
 		
 		// edit by chris, testing a shader spinoff
-		startShader("PolyLightAndTexture");
-//		startShader("RoomShader");
+//		startShader("PolyLightAndTexture");
+		startShader("RoomShader");
 			
 			drawContent();
 			
