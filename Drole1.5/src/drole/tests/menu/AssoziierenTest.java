@@ -35,6 +35,7 @@ public class AssoziierenTest extends EngineApplet implements PositionTargetListe
 		
 		// init ribbon sculpture
 		penseeA = new BildweltAssoziationPensee(engine, "data/images/associationA.png", sphereConstraintRadius, 1.0f, new PVector(), new PVector());
+		penseeA.loadPensee();
 	}
 	
 	public void draw() {

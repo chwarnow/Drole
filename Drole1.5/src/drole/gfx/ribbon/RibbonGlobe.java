@@ -46,7 +46,6 @@ public class RibbonGlobe extends Drawlist {
 		// init menu pensees 
 		float randomRadius = dimension.x*scale.x*.5f;
 		drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationA.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
-			
 		BildweltAssoziationPensee b = (BildweltAssoziationPensee)drawables.get(drawables.size()-1);
 		b.currPosition += 50;
 		drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationB.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
@@ -56,7 +55,7 @@ public class RibbonGlobe extends Drawlist {
 		b.currPosition += 130;
 		drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationD.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
 		drawables.add(new BildweltAssoziationPensee(e, "data/images/menuAssoziationE.png", dimension.x*scale.x, 2.0f, new PVector(e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius), e.p.random(-randomRadius, randomRadius)), new PVector()));
-		
+
 		// create swarms
 		for(int i = 0; i < numRibbonHandler; i++) {
 			drawables.add(new RibbonGroup(e, dimension.x*scale.x, (int)e.p.random(15, 30), 1 + ((i%2==0) ? 1 : 80), 1 + (int)e.p.random(10), 2f));
@@ -105,6 +104,19 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
+		
+		// load pensees now
+		if(e.p.frameCount == 100) {
+			int drawableIndex = 0;
+			for(Drawable r : drawables) {
+				// draw associations
+				if(drawableIndex < associationsAmount) {
+					BildweltAssoziationPensee b = (BildweltAssoziationPensee) drawables.get(drawableIndex);
+					b.loadPensee();
+				}
+			}
+		}
+		
 		g.pushStyle();
 		g.pushMatrix();
 		
