@@ -16,8 +16,9 @@ import codeanticode.glgraphics.GLModel;
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 
+import drole.settings.Settings;
 
-public class Spektakel extends Drawable implements KeyListener {
+public class Spektakel extends Drawable {
 
 	VerletPhysics physics, physics2;
 
@@ -44,20 +45,19 @@ public class Spektakel extends Drawable implements KeyListener {
 
 		ermitters = new ArrayList<ToxicSystem>();
 
-		for(int i=0;i<1;i++){
+		for (int i = 0; i < 1; i++) {
 			ToxicSystem startErmitter = new ToxicSystem(e, physics, 50, 0, 0, 0);
 			ermitters.add(startErmitter);
 		}
 
-		
 		e.requestTexture("images/particle.png");
-		
-		e.p.addKeyListener(this);
+
 	}
 
 	@Override
 	public void update() {
 
+		
 		super.update();
 
 		// pause system 1
@@ -71,13 +71,15 @@ public class Spektakel extends Drawable implements KeyListener {
 		if (drag < PAUSE_MOTION_AT) {
 			try {
 				physics.update();
-			} catch(ConcurrentModificationException e) {}
+			} catch (ConcurrentModificationException e) {
+			}
 		}
 		// always run system 2
 
 		try {
 			physics2.update();
-		} catch(ConcurrentModificationException e) {}
+		} catch (ConcurrentModificationException e) {
+		}
 
 	}
 
@@ -94,13 +96,15 @@ public class Spektakel extends Drawable implements KeyListener {
 		g.rotateZ(rotation.z);
 
 		g.pushMatrix();
-		// e.g.setDepthMask(false);
+		e.g.setDepthMask(false);
 
-		float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI / 2, PApplet.PI / 2);
-		float rotationY = PApplet.map(e.p.mouseX, 0, e.p.height, -PApplet.PI / 2, -PApplet.PI / 2);
+		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
+		// 2, PApplet.PI / 2);
+		// float rotationY = PApplet.map(e.p.mouseX, 0, e.p.height, -PApplet.PI
+		// / 2, -PApplet.PI / 2);
 
-		g.rotateX(rotationX);
-		g.rotateY(rotationY);
+		// g.rotateX(rotationX);
+		// g.rotateY(rotationY);
 
 		update();
 		// startErmitter.drawErmitter();
@@ -114,10 +118,12 @@ public class Spektakel extends Drawable implements KeyListener {
 			if (er.isEmpty()) {
 				er.clean();
 				ermitters.remove(i);
+				
+				spawnNewToxicSystem();
 			}
 		}
 
-//		 e.g.setDepthMask(true);
+		e.g.setDepthMask(true);
 
 		g.popMatrix();
 
@@ -125,70 +131,28 @@ public class Spektakel extends Drawable implements KeyListener {
 		g.popStyle();
 
 	}
-	
+
 	private void initPhysics(VerletPhysics thePhysics) {
 
-		
-			GravityBehavior gravity = new GravityBehavior(new Vec3D(0, 0.8f, 0));
-			AttractionBehavior center = new AttractionBehavior(new Vec3D(0, 0, 0), 3000, 0.1f, 0.5f);
-			AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0), 500, -2.8f, 0.5f);
-			thePhysics.addBehavior(center);
-//			thePhysics.addBehavior(ring);
-			thePhysics.addBehavior(gravity); 
-			thePhysics.setDrag(drag);
+		GravityBehavior gravity = new GravityBehavior(new Vec3D(0, 0.8f, 0));
+		AttractionBehavior center = new AttractionBehavior(new Vec3D(0, 0, 0),
+				3000, 0.1f, 0.5f);
+		AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0),
+				500, -2.8f, 0.5f);
+		thePhysics.addBehavior(center);
+		thePhysics.addBehavior(ring);
+		thePhysics.addBehavior(gravity);
+		thePhysics.setDrag(drag);
 
-		}
+	}
 
-	
 	public void spawnNewToxicSystem() {
-		ToxicSystem newOne = new ToxicSystem(e, physics, 50, e.p.random(-1500, 1500), e.p.random(-1500, 1500), e.p.random(-1500, 1500));
+		ToxicSystem newOne = new ToxicSystem(e, physics, 50,
+				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2,
+				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2), 
+				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM / 2, 0), 
+				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
 	}
 
-	@Override
-	public void keyPressed(KeyEvent event) {
-
-		char key = event.getKeyChar();
-
-		if (key == 's') {
-
-			GLModel mog = new GLModel(e.p, 20, GLModel.POINT_SPRITES, GLModel.DYNAMIC);
-			
-//			ToxicSystem newOne = new ToxicSystem(e, physics, 50, e.p.random(-1500, 1500), e.p.random(-1500, 1500), e.p.random(-1500, 1500));
-//			ermitters.add(newOne);
-		}
-
-		if (key == 'a') {
-
-			ToxicSystem newOne = new ToxicSystem(e, physics2, 50, e.p.random(
-					-1500, 1500), e.p.random(-1500, 1500), e.p.random(-1500,
-					1500));
-			ermitters.add(newOne);
-		}
-
-		if (key == 'i') {
-/*
-			DudeSystem newOne = new DudeSystem(e.p, physics2, 50, e.p.random(
-					-1500, 1500), e.p.random(-1500, 1500), e.p.random(-1500,
-					1500));
-			ermitters.add(newOne);
-			*/
-		}
-
-		if (key == ' ')
-			pauseMotion = !pauseMotion;
-
-	}
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
 }

@@ -62,13 +62,13 @@ public void draw(GLGraphics renderer){
 
 		shockwave = true;
 		boomPower = initalBoomPower;
-		boomForce = new AttractionBehavior(new VerletParticle(new Vec3D(x, y, z)), 2000, boomPower * 0.3f, 0.1f);
+		boomForce = new AttractionBehavior(new VerletParticle(new Vec3D(x, y, z)), 1000, boomPower * 0.3f, 0.1f);
 		physics.addBehavior(boomForce);
 
 		randomizeMesh();
 
-		int targetSize = 10;
-		int targetYOffset = 1000;
+		int targetSize = 5;
+		int targetYOffset = 500;
 
 		Vec3D targetAngle = new Vec3D(e.p.random(-1, 1) * targetYOffset,
 				e.p.random(-1, 1) * targetYOffset, e.p.random(-1, 1)
@@ -120,7 +120,9 @@ public void draw(GLGraphics renderer){
 		updateTrailPositions();
 
 		trails.initColors();
-		trails.setColors(200, 30);
+		trails.setColors(250, 10);
+		
+		trails.setLineWidth(2);
 
 		trails.setBlendMode(PApplet.ADD);
 

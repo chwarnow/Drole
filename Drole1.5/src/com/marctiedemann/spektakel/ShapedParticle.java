@@ -25,7 +25,7 @@ public class ShapedParticle extends Particle {
 
 		bounce();
 
-		if (p.frameCount % 2 == 0) {
+	
 			for (int i = tailSize - 1; i > 0; i--) {
 				tailPoint[i].x = tailPoint[i - 1].x;
 				tailPoint[i].y = tailPoint[i - 1].y;
@@ -36,7 +36,7 @@ public class ShapedParticle extends Particle {
 			tailPoint[0].x = this.x;
 			tailPoint[0].y = this.y;
 			tailPoint[0].z = this.z;
-		}
+		
 
 		super.update();
 
@@ -44,7 +44,7 @@ public class ShapedParticle extends Particle {
 
 	private void bounce() {
 
-		int bounds = 3000;
+		int bounds = 1500;
 
 		Vec3D vel = getVelocity();
 
