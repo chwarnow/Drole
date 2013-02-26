@@ -297,6 +297,9 @@ public class RibbonGroup extends Drawable {
 		int quadNormalIndex = 0;
 		int quadColorIndex = 0;
 		
+		// put noise on quadeight
+		
+		
 		for (int i = 0; i < numPhysicParticles; i++) {
 			
 			
@@ -308,10 +311,11 @@ public class RibbonGroup extends Drawable {
 			for(int j=0;j<agentVertexNum-1;j++) {
 				
 				// cosinus from lookup table
-				// float ratio = cosLUT[(int)(((float)j/agentVertexNum) * cosDetail)];
+				// float ratio = noiseLUT[(int)(((float)j/agentVertexNum) * maxNoiseID)];
 				
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
+				// float ratio = e.p.noise(thisP.x*.01f, thisP.y*.01f, thisP.z*.01f);
 				//PVector thirdP = agentsVertices[j+1];
 
 				// create quad from above vertices and save in glmodel, then add colors
@@ -366,7 +370,7 @@ public class RibbonGroup extends Drawable {
 				floatQuadNormals[quadNormalIndex++] = 1.0f;
 
 				// add colors
-				float theAlpha = 1.0f;//agent.a;// * ((!gaps[gapIndex++]) ? 1.0f : 0.0f);
+				float theAlpha = .8f;//agent.a;// * ((!gaps[gapIndex++]) ? 1.0f : 0.0f);
 
 				floatQuadColors[quadColorIndex++] = ribbonR;
 				floatQuadColors[quadColorIndex++] = ribbonG;

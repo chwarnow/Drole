@@ -168,6 +168,9 @@ public class BildweltAssoziationPensee extends Drawable {
 		if(oldEasedIndex != easedIndex) isUpdate = true;
 		oldEasedIndex = easedIndex;
 
+		// cosinus from lookup table
+		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))];
+
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
 			
@@ -183,8 +186,7 @@ public class BildweltAssoziationPensee extends Drawable {
 
 			for(int j=0;j<agentVertexNum-1;j++) {
 				
-				// cosinus from lookup table
-				float ratio = cosLUT[(int)(((float)j/agentVertexNum) * cosDetail)];
+				
 				
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
@@ -197,12 +199,12 @@ public class BildweltAssoziationPensee extends Drawable {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
-				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight*ratio;
 				floatQuadVertices[quadVertexIndex++] = thisP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = nextP.x;
-				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight*ratio;
 				floatQuadVertices[quadVertexIndex++] = nextP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
@@ -213,7 +215,7 @@ public class BildweltAssoziationPensee extends Drawable {
 
 				// compute face normal
 				PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
-				PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight*ratio*2.0f) - thisP.y, nextP.z - thisP.z);
+				PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight*ratio) - thisP.y, nextP.z - thisP.z);
 				PVector v3 = v1.cross(v2);
 				// PVector v3 = new PVector(thisP.x, thisP.y, thisP.z);
 				v3.normalize();
@@ -272,25 +274,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		imageQuadModel.updateColors(floatQuadColors);
 		imageQuadModel.updateNormals(floatQuadVertices);
 
-		// renderer.beginGL();  
-		/*
-	    imageShader.start();
-	    imageShader.setVecUniform("ambient", .1f, .1f, .1f);
-	    imageShader.setIntUniform("numLights", 2);
-	    */
-	    
-	    /*
-	    imageShader.setFloatUniform("zmin", 0.65f);
-	    imageShader.setFloatUniform("zmax", 0.85f);
-	    imageShader.setFloatUniform("shininess", 100.0f);
-	    imageShader.setVecUniform("lightPos", 100.0f, -10.0f, 30.0f);
-		*/
-		// A model can be drawn through the GLGraphics renderer:
-		// e.setupModel(imageQuadModel);
 		imageQuadModel.render();
 
-		// imageShader.stop();
-
-		// renderer.endGL();
 	}
 }
