@@ -5,16 +5,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import SimpleOpenNI.SimpleOpenNI;
 import codeanticode.glgraphics.GLConstants;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.drole.mmworld.MMWorld;
-import com.madsim.drole.mmworld.drop.Drop;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
-import com.madsim.engine.drawable.Drawable;
-import com.madsim.engine.drawable.file.Image;
-import com.madsim.engine.drawable.geom.Ellipse;
 import com.madsim.engine.optik.LookAt;
 import com.madsim.engine.optik.OffCenterOptik;
 import com.madsim.engine.optik.OrthoOptik;
@@ -24,11 +21,10 @@ import com.madsim.engine.shader.PolyLightAndColorShader;
 import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.engine.shader.RoomShader;
-import com.madsim.tracking.kinect.PositionTarget;
-import com.madsim.tracking.kinect.PositionTargetListener;
-import com.madsim.tracking.kinect.TargetBox3D;
-import com.madsim.tracking.kinect.TargetDetection;
-import com.madsim.tracking.kinect.TargetSphere;
+import com.madsim.tracking.kinect.Kinect;
+import com.madsim.tracking.kinect.KinectGFXUtils;
+import com.madsim.tracking.kinect.targeting.PositionTarget;
+import com.madsim.tracking.kinect.targeting.TargetDetection;
 
 import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.fabric.BildweltFabric;
@@ -38,20 +34,14 @@ import drole.settings.Settings;
 
 import processing.core.PApplet;
 import processing.core.PFont;
-import processing.core.PMatrix3D;
 import processing.core.PVector;
-import SimpleOpenNI.*;
 
-public class Main extends EngineApplet implements PositionTargetListener, MouseWheelListener {
+public class Main extends EngineApplet implements MouseWheelListener {
 
 	private static final long serialVersionUID = 1L;
 
 	private String DEBUG 				= "DEBUG";
 	private String FORCED_DEBUG 		= "FORCED_DEBUG";
-	private String LOGO 				= "LOGO";
-	private String LOGO2 				= "LOGO2";
-	private String TRANSIT_TO_LIVE 		= "TRANSIT_TO_LIVE";
-	private String TRANSIT_FROM_LIVE	= "TRANSIT_FROM_LIVE";
 	private String LIVE 				= "LIVE";
 	private String ZOOMING 				= "ZOOMING";
 	private String ROTATING 			= "ROTATING";
@@ -60,24 +50,19 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private boolean FREEMODE			= !Settings.USE_KINECT;
 	
 	/* GUI */
-	private Image logoGrey;
-	private Image logoColor;
-	private Ellipse logoBG;
-
-	private SimpleOpenNI context;
 	private float zoomF = 0.5f;
 	private float rotX = radians(180); // by default rotate the hole scene
 										// 180deg around the x-axis,
 
+	// Kinect
+	private Kinect kinect;
+	
 	// the data from openni comes upside down
 	private float rotY = radians(0);
-	private boolean autoCalib = true;
-
-	private PVector bodyCenter = new PVector();
-	private PVector bodyDir = new PVector();
 
 	/* Users Head */
-	private PVector head = new PVector(0, 0, 3000);
+	private PVector stdHeadPosition = new PVector(0, 0, 3000);
+	private PVector head = new PVector(0, 0, 0);
 	private PVector mouseHead = new PVector(0, 0, 3000);
 	
 	/* Engine */
@@ -171,29 +156,14 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		if(FREEMODE) logLn("We are using forced FREEMODE!");
 		else logLn("FREEMODE was NOT forced, checking the kinect!");
 		
-		if(!FREEMODE) context = new SimpleOpenNI(this);
-
-		// enable depthMap generation
-		if(!FREEMODE) {
-			if(context.enableDepth() == false) {
-				logLn("Can't open the depthMap, maybe the camera is not connected ... switching to free mode!");
-				FREEMODE = true;
-			}
-		}
-		
-		// enable skeleton generation for all joints
-		if(!FREEMODE) context.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
-		
-		if(!FREEMODE) setupGestureDetection();
+		kinect = new Kinect(this, Kinect.VERBOSE, FREEMODE);
 
 		/* CONTENT */
-//		setupLogo();
-		
 		setupRoom();
 		
-		setupMenu();
+//		setupMenu();
 		
-		setupMicroMacroWorld();
+//		setupMicroMacroWorld();
 		
 //		setupOptikWorld();
 		
@@ -201,12 +171,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 //		setupFabricWorld();
 		
-		/* START */
-		if(FREEMODE) {
-//			globe.fadeIn(500);
-			switchMode(LIVE);
-		}
-		
+		/* START */		
 		switchMode(LIVE);
 	}
 	
@@ -226,6 +191,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 //		engine.addDrawable("MicroMacro", new Drop(engine));
 	}
 	
+	/*
 	private void setupGestureDetection() {
 		TargetBox3D holdingTargetShapeBox = new TargetBox3D(0, -200, -800, 400, 400, 1000);
 		holdingTarget = new PositionTarget(this, "HOLDING_TARGET", context, holdingTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
@@ -234,13 +200,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		TargetSphere rotationTargetShapeSphere = new TargetSphere(0, 200, 0, 700);
 		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeSphere, SimpleOpenNI.SKEL_LEFT_HAND, SimpleOpenNI.SKEL_RIGHT_HAND);
 		targetDetection.targets.add(rotationTarget);
-
-		/*
-		TargetBox3D rotationTargetShapeBox = new TargetBox3D(0, 200, 0, 1200, 1000, 1000);
-		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
-		targetDetection.targets.add(rotationTarget);
-		*/
 	}
+	*/
 
 	private void setupRoom() {
 		logLn("Initializing Room ...");
@@ -283,23 +244,14 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		engine.addDrawable("FabricWorld", bildweltFabric);
 	}
 
-	private void setupLogo() {
-		logoGrey = new Image(engine, "images/logo-grey.png");
-		logoColor = new Image(engine, "images/logo-color.png");
-		logoBG = new Ellipse(engine, 250, 250, 90);
-	}
-
 	private void updateHead() {
-		if(context.isTrackingSkeleton(1)) {
-			PVector thead = new PVector();
-			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_HEAD, thead);
-			head = offCenterOptik.updateHeadPosition(thead);
-		}
+		PVector thead = kinect.getJoint(Kinect.SKEL_HEAD, stdHeadPosition);
+		head = offCenterOptik.updateHeadPosition(thead);
 	}
 
 	public void draw() {
-		// update the cam
-		if(!FREEMODE) context.update();
+		// Update the cam
+		kinect.update();
 
 		if(!FREEMODE) updateHead();
 
@@ -322,29 +274,26 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			drawMainScene();
 			
 			if(!FREEMODE) { 
-				int[] depthMap = context.depthMap();
+				int[] depthMap = kinect.getDepthMap();
 				int steps = 3; // to speed up the drawing, draw every third point
 				int index;
 				PVector realWorldPoint;
 	
 				engine.g.strokeWeight(1);
 				engine.g.stroke(100);
-				for (int y = 0; y < context.depthHeight(); y += steps) {
-					for (int x = 0; x < context.depthWidth(); x += steps) {
-						index = x + y * context.depthWidth();
+				for (int y = 0; y < kinect.depthHeight(); y += steps) {
+					for (int x = 0; x < kinect.depthWidth(); x += steps) {
+						index = x + y * kinect.depthWidth();
 						if (depthMap[index] > 0) {
 							// draw the projected point
-							realWorldPoint = context.depthMapRealWorld()[index];
+							realWorldPoint = kinect.depthMapRealWorld()[index];
 							engine.g.point(realWorldPoint.x, realWorldPoint.y, realWorldPoint.z);
 						}
 					}
 				}
 	
 				// draw the skeleton if it's available
-				int[] userList = context.getUsers();
-				for(int i = 0; i < userList.length; i++) {
-					if(context.isTrackingSkeleton(userList[i])) drawSkeleton(userList[i]);
-				}
+				KinectGFXUtils.drawSkeleton(kinect.getCurrentUserID());
 	
 				if(Settings.USE_GESTURES) {
 					targetDetection.check();
@@ -373,19 +322,10 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			}
 			*/
 			
-			// draw the kinect cam
-			if(!FREEMODE) context.drawCamFrustum();
-			
 			engine.endDraw();
 		}
 
-		if (MODE == LOGO || MODE == LOGO2 || MODE == TRANSIT_TO_LIVE) drawLogo();
-		
-		if (MODE == TRANSIT_TO_LIVE && logoBG.mode() == Drawable.OFF_SCREEN) switchMode(LIVE);
-		
-		if (MODE == TRANSIT_FROM_LIVE && globe.mode() == Drawable.OFF_SCREEN) backToLogo();
-
-		if (MODE == LIVE || MODE == TRANSIT_FROM_LIVE || MODE == ZOOMING || MODE == ROTATING) {
+		if (MODE == LIVE) {
 			engine.useOptik("OffCenter");
 
 			//drawOffCenterVectors(head);
@@ -396,6 +336,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 			// Draw Real World Screen
 			// drawRealWorldScreen();
 			
+			/*
 			if(!FREEMODE && Settings.USE_GESTURES) {
 				targetDetection.check();
 				
@@ -450,219 +391,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 					}
 				}
 			}
+			*/
 		}
-	}
-
-	private void drawLogo() {
-		engine.useOptik("Std");
-		
-		engine.beginDraw();	
-		
-			engine.g.pushStyle();
-			engine.g.pushMatrix();
-			
-				engine.g.translate(0, 0, -1400);
-		
-					logoBG.update();
-					logoBG.draw();
-					logoGrey.update();
-					logoGrey.draw();
-					logoColor.update();
-					logoColor.draw();
-					
-			engine.g.popMatrix();
-			engine.g.pushStyle();
-			
-		engine.endDraw();
-	}
-
-	// draw the skeleton with the selected joints
-	public void drawSkeleton(int userId) {
-		strokeWeight(3);
-
-		// to get the 3d joint data
-		drawLimb(userId, SimpleOpenNI.SKEL_HEAD, SimpleOpenNI.SKEL_NECK);
-
-		drawLimb(userId, SimpleOpenNI.SKEL_NECK, SimpleOpenNI.SKEL_LEFT_SHOULDER);
-		drawLimb(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, SimpleOpenNI.SKEL_LEFT_ELBOW);
-		drawLimb(userId, SimpleOpenNI.SKEL_LEFT_ELBOW, SimpleOpenNI.SKEL_LEFT_HAND);
-
-		drawLimb(userId, SimpleOpenNI.SKEL_NECK, SimpleOpenNI.SKEL_RIGHT_SHOULDER);
-		drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, SimpleOpenNI.SKEL_RIGHT_ELBOW);
-		drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_ELBOW, SimpleOpenNI.SKEL_RIGHT_HAND);
-
-		drawLimb(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, SimpleOpenNI.SKEL_TORSO);
-		drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, SimpleOpenNI.SKEL_TORSO);
-
-		drawLimb(userId, SimpleOpenNI.SKEL_TORSO, SimpleOpenNI.SKEL_LEFT_HIP);
-		drawLimb(userId, SimpleOpenNI.SKEL_LEFT_HIP, SimpleOpenNI.SKEL_LEFT_KNEE);
-		drawLimb(userId, SimpleOpenNI.SKEL_LEFT_KNEE, SimpleOpenNI.SKEL_LEFT_FOOT);
-
-		drawLimb(userId, SimpleOpenNI.SKEL_TORSO, SimpleOpenNI.SKEL_RIGHT_HIP);
-		drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_HIP, SimpleOpenNI.SKEL_RIGHT_KNEE);
-		drawLimb(userId, SimpleOpenNI.SKEL_RIGHT_KNEE, SimpleOpenNI.SKEL_RIGHT_FOOT);
-
-		// draw body direction
-		getBodyDirection(userId, bodyCenter, bodyDir);
-
-		bodyDir.mult(200); // 200mm length
-		bodyDir.add(bodyCenter);
-
-		stroke(255, 200, 200);
-		line(bodyCenter.x, bodyCenter.y, bodyCenter.z, bodyDir.x, bodyDir.y,
-				bodyDir.z);
-
-		strokeWeight(1);
-	}
-
-	public void drawLimb(int userId, int jointType1, int jointType2) {
-		PVector jointPos1 = new PVector();
-		PVector jointPos2 = new PVector();
-		float confidence;
-
-		// draw the joint position
-		confidence = context.getJointPositionSkeleton(userId, jointType1, jointPos1);
-		confidence = context.getJointPositionSkeleton(userId, jointType2, jointPos2);
-
-		stroke(255, 0, 0, confidence * 200 + 55);
-		line(jointPos1.x, jointPos1.y, jointPos1.z, jointPos2.x, jointPos2.y, jointPos2.z);
-
-		drawJointOrientation(userId, jointType1, jointPos1, 50);
-	}
-
-	public void drawJointOrientation(int userId, int jointType, PVector pos,
-			float length) {
-		// draw the joint orientation
-		PMatrix3D orientation = new PMatrix3D();
-		float confidence = context.getJointOrientationSkeleton(userId, jointType, orientation);
-		if(confidence < 0.001f)
-			// nothing to draw, orientation data is useless
-		return;
-
-		pushMatrix();
-		translate(pos.x, pos.y, pos.z);
-
-		// set the local coordsys
-		applyMatrix(orientation);
-
-		// coordsys lines are 100mm long
-		// x - r
-		stroke(255, 0, 0, confidence * 200 + 55);
-		line(0, 0, 0, length, 0, 0);
-		// y - g
-		stroke(0, 255, 0, confidence * 200 + 55);
-		line(0, 0, 0, 0, length, 0);
-		// z - b
-		stroke(0, 0, 255, confidence * 200 + 55);
-		line(0, 0, 0, 0, 0, length);
-		popMatrix();
-	}
-
-	// -----------------------------------------------------------------
-	// SimpleOpenNI user events
-
-	public void onNewUser(int userId) {
-		println("onNewUser - userId: " + userId);
-		println("  start pose detection");
-
-		if (autoCalib) {
-			context.requestCalibrationSkeleton(userId, true);
-//			if (userId == 1) switchToLogo2();
-		} else {
-			context.startPoseDetection("Psi", userId);
-		}
-	}
-
-	public void onLostUser(int userId) {
-		println("onLostUser - userId: " + userId);
-//		if (userId == 1) backToLogo();
-	}
-
-	public void onExitUser(int userId) {
-		println("onExitUser - userId: " + userId);
-//		if(userId == 1) backToLogo();
-	}
-
-	public void onReEnterUser(int userId) {
-		println("onReEnterUser - userId: " + userId);
-//		if(userId == 1) switchToLive();
-	}
-
-	public void onStartCalibration(int userId) {
-		println("onStartCalibration - userId: " + userId);
-	}
-
-	public void onEndCalibration(int userId, boolean successfull) {
-		println("onEndCalibration - userId: " + userId + ", successfull: " + successfull);
-
-		if (successfull) {
-			println("  User calibrated !!!");
-			context.startTrackingSkeleton(userId);
-			
-//			if(userId == 1) switchToLive();
-		} else {
-			println("  Failed to calibrate user !!!");
-			println("  Start pose detection");
-			context.startPoseDetection("Psi", userId);
-		}
-	}
-
-	public void onStartPose(String pose, int userId) {
-		println("onStartdPose - userId: " + userId + ", pose: " + pose);
-		println(" stop pose detection");
-
-		context.stopPoseDetection(userId);
-		context.requestCalibrationSkeleton(userId, true);
-
-	}
-
-	public void onEndPose(String pose, int userId) {
-		println("onEndPose - userId: " + userId + ", pose: " + pose);
-	}
-
-	private void switchToLogo() {
-		logoColor.hide();
-		logoBG.fadeIn(50);
-		logoGrey.fadeIn(50);
-
-		switchMode(LOGO);
-	}
-
-	private void switchToLogo2() {
-		logoGrey.fadeOut(50);
-		logoColor.fadeIn(50);
-
-		switchMode(LOGO2);
-	}
-
-	private void backToLogo() {
-		if (MODE == LOGO2 || MODE == TRANSIT_TO_LIVE) {
-
-			logoColor.fadeOut(50);
-			logoGrey.fadeIn(50);
-			switchMode(LOGO);
-
-		} else if (MODE == LIVE) {
-
-			globe.fadeOut(50);
-			switchMode(TRANSIT_FROM_LIVE);
-
-		} else if (MODE == TRANSIT_FROM_LIVE) {
-			logoBG.fadeIn(50);
-			logoColor.fadeIn(50);
-			switchMode(LOGO2);
-		}
-
-	}
-
-	private void switchToLive() {
-		logoColor.fadeOut(50);
-		logoGrey.fadeOut(50);
-		logoBG.fadeOut(50);
-
-		globe.fadeIn(100);
-
-		switchMode(TRANSIT_TO_LIVE);
 	}
 
 	// -----------------------------------------------------------------
@@ -670,26 +400,9 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 
 	public void keyPressed() {
 		switch (key) {
-		case ' ':
-			context.setMirror(!context.mirror());
-			break;
 		case 'd':
 //			switchToDebug();
 			switchMode(FORCED_DEBUG);
-			break;
-		case 'l':
-			if (MODE == LOGO) {
-				switchToLogo2();
-			}
-			if (MODE == LOGO2) {
-				switchToLive();
-			}
-			if (MODE == LIVE || MODE == DEBUG) {
-				switchToLogo();
-			}
-			break;
-		case 'g':
-			switchToLive();
 			break;
 		case 'r': 
 			if(globe.menuMode() == RibbonGlobe.MENU) {
@@ -750,36 +463,6 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		}
 	}
 
-	public void getBodyDirection(int userId, PVector centerPoint, PVector dir) {
-		PVector jointL = new PVector();
-		PVector jointH = new PVector();
-		PVector jointR = new PVector();
-
-		// draw the joint position
-		context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_LEFT_SHOULDER, jointL);
-		context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_HEAD, jointH);
-		context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_RIGHT_SHOULDER, jointR);
-
-		// take the neck as the center point
-		context.getJointPositionSkeleton(userId, SimpleOpenNI.SKEL_NECK, centerPoint);
-
-		/*
-		 * // manually calc the centerPoint PVector shoulderDist =
-		 * PVector.sub(jointL,jointR);
-		 * centerPoint.set(PVector.mult(shoulderDist,.5));
-		 * centerPoint.add(jointR);
-		 */
-
-		PVector up = new PVector();
-		PVector left = new PVector();
-
-		up.set(PVector.sub(jointH, centerPoint));
-		left.set(PVector.sub(jointR, centerPoint));
-
-		dir.set(up.cross(left));
-		dir.normalize();
-	}
-
 	public void drawMainScene() {
 		engine.draw();
 	}
@@ -787,33 +470,6 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private void drawRealWorldScreen() {
 		offCenterOptik.drawRealWorldScreen();
 	}
-	
-	@Override
-	public void jointEnteredTarget(String name) {
-		println("Joint in " + name);
-		if(name == "ROTATION_TARGET" && holdingTarget.inTarget()) {
-			switchMode(ROTATING);
-			globe.rotationSpeed = 0.0f;
-			PVector rightHand = new PVector(0, 0, 0);
-			context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, rightHand);
-			rotationMapStart = rightHand.x - 600;
-			rotationMapStart = rightHand.x + 600;
-		}
-	}
-	
-	@Override
-	public void jointLeftTarget(String name) {
-		println("Joint left " + name);
-		if(name == "HOLDING_TARGET") {
-			globe.easeToScale(new PVector(1, 1, 1), 300);
-			globe.rotationSpeed = 0.04f;
-			switchMode(LIVE);
-		}
-		if(name == "ROTATION_TARGET" && holdingTarget.inTarget()) {
-			switchMode(ZOOMING);
-			globe.rotationSpeed = 0.04f;
-		}
-	}	
 	
 	public void mouseMoved(MouseEvent e) {
 		if(FREEMODE) {
@@ -833,6 +489,21 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 //			println(mouseHead);
 		}
 	}
+	
+
+	/*
+	 * SimpleOpenNI user events
+	 * Redirect to Kinect because SimpleOpenNI can only handle PApplet as a listener
+	 */
+	public void onNewUser(int uid) { kinect.onNewUser(uid); }
+	public void onLostUser(int uid) { kinect.onLostUser(uid); }
+	public void onExitUser(int uid) { kinect.onExitUser(uid); }
+	public void onReEnterUser(int uid) { kinect.onReEnterUser(uid); }
+	public void onStartCalibration(int uid) { kinect.onStartCalibration(uid); }
+	public void onEndCalibration(int uid, boolean successfull) { kinect.onEndCalibration(uid, successfull); }
+	public void onStartPose(String pose, int uid) { kinect.onStartPose(pose, uid); }
+	public void onEndPose(String pose, int uid) { kinect.onEndPose(pose, uid); }
+	
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {

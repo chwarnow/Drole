@@ -1,4 +1,4 @@
-package com.madsim.tracking.kinect;
+package com.madsim.tracking.kinect.targeting;
 
 import java.util.ArrayList;
 

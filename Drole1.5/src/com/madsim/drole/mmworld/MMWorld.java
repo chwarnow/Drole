@@ -18,6 +18,8 @@ public class MMWorld extends Drawable {
 	
 	private GLModel pointDLA, lineDLA;
 	
+	private float knockOut = 1.0f;
+	
 	public MMWorld(Engine e) {
 		super(e);
 		
@@ -42,7 +44,7 @@ public class MMWorld extends Drawable {
 		pointDLA.initTextures(1);
 		pointDLA.setTexture(0, e.requestTexture("data/images/1d-white.jpg"));
 		pointDLA.beginUpdateTexCoords(0);
-			for(int i = 0; i < points.size(); i++) pointDLA.updateTexCoord(i, (1.0f/points.size())*i, 0.0f);
+			for(int i = 0; i < points.size(); i++) pointDLA.updateTexCoord(i, (1.0f/points.size())*i, (1.0f/points.size())*i);
 		pointDLA.endUpdateTexCoords();
 	}
 
@@ -64,13 +66,14 @@ public class MMWorld extends Drawable {
 			g.rotateY(rotation.y);
 			g.rotateZ(rotation.z);
 			
-			e.setPixelKnockOut(0.5f);
+			e.setPixelKnockOut(knockOut);
+			knockOut -= 0.001f;
 			
 			e.setupModel(pointDLA);
 				pointDLA.render();
 			
-			e.setupModel(lineDLA);
-				lineDLA.render();
+//			e.setupModel(lineDLA);
+//				lineDLA.render();
 			
 		g.popMatrix();
 		g.popStyle();

@@ -14,6 +14,8 @@ uniform int numLights;
 
 uniform vec4 ambient;
 
+uniform float usePixelKnockOut;
+
 varying vec4 ecPos;
 
 vec4 pointLight(int lightIndex) {
@@ -72,4 +74,6 @@ void main() {
 	}
 	
     gl_FragColor = color;
+    
+    if(gl_TexCoord[0].s < usePixelKnockOut) gl_FragColor *= 0.0;
 }
