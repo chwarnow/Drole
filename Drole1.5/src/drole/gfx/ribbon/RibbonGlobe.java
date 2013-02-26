@@ -59,7 +59,7 @@ public class RibbonGlobe extends Drawlist {
 		
 		// create swarms
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(e, dimension.x*scale.x, 25, 1 + ((i%2==0) ? 1 : 100), 1 + (int)e.p.random(10), 2f));
+			drawables.add(new RibbonGroup(e, dimension.x*scale.x, (int)e.p.random(15, 30), 1 + ((i%2==0) ? 1 : 80), 1 + (int)e.p.random(10), 2f));
 		}
 	}
 	
