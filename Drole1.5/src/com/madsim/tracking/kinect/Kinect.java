@@ -54,6 +54,8 @@ public class Kinect implements SimpleOpenNIConstants {
 			
 			c.enableUser(SimpleOpenNI.SKEL_PROFILE_ALL);
 			if(logLevel >= 1) p.logLn("[Kinect]: User tracking is running.");
+			
+			c.setMirror(true);
 		}
 	}
 	

@@ -9,6 +9,8 @@ public class Settings {
 	
 	public static short MAX_LOG_ENTRYS						=	  30;
 	
+	public static boolean DRAW_LOGS							=	true;
+	
 	// Settings LEAP
 	
 	// Pixel Dimension of screen

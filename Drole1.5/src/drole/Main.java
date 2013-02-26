@@ -5,7 +5,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
-import SimpleOpenNI.SimpleOpenNI;
 import codeanticode.glgraphics.GLConstants;
 
 import com.christopherwarnow.bildwelten.BildweltOptik;
@@ -335,6 +334,34 @@ public class Main extends EngineApplet implements MouseWheelListener {
 
 			// Draw Real World Screen
 			// drawRealWorldScreen();
+			
+			pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
+			pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
+			pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
+			pinLog("Angle (Hand & Shoulder)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)));
+			pinLog("Angle (Hand & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
+			pinLog("Angle (Hand & Elbow)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_ELBOW)));
+			pinLog("Angle (Elbow & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_ELBOW), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
+			pinLog("Dist (Hand & Hip)", PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
+			
+			if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)) < 0.16f) {
+				pinLog("Scale Gesture", "ON");
+				
+				bildweltMicroMacro.position(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
+			} else {
+				pinLog("Scale Gesture", "OFF");
+			}
+
+			if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_RIGHT_HAND), kinect.getJoint(Kinect.SKEL_RIGHT_SHOULDER)) < 0.06f) {
+				pinLog("Rotate Gesture", "ON");
+				
+				bildweltMicroMacro.rotation(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
+			} else {
+				pinLog("Rotate Gesture", "OFF");
+			}
+			
+			
+			// bildweltMicroMacro.easeToPosition(0, 0, map(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)), 0f, 0.20f, -500, -1200), 100);
 			
 			/*
 			if(!FREEMODE && Settings.USE_GESTURES) {

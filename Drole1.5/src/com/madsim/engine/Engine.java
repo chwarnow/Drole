@@ -2,11 +2,14 @@ package com.madsim.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.media.opengl.GL;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 import processing.core.PVector;
 
 import com.madsim.engine.drawable.Drawable;
@@ -17,6 +20,7 @@ import com.madsim.engine.shader.Shader;
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
 import codeanticode.glgraphics.GLTexture;
+import drole.settings.Settings;
 
 public class Engine {
 
@@ -29,6 +33,8 @@ public class Engine {
 //	private ShadowMapPass shadowPass;
 	
 //	private VSMShadowPass vsmShadowPass;
+	
+	private PFont logFont;
 	
 	private HashMap<String, Drawable> drawables = new HashMap<String, Drawable>();
 	
@@ -54,6 +60,8 @@ public class Engine {
 		
 		p.logLn("[Engine]: Setting rendering defaults.");
 		g.smooth();
+		
+		logFont = p.createFont("Helvetica", 12);
 		
 		p.logLn("[Engine]: Initializing Render Passes.");
 //		shadowPass = new ShadowMapPass(this);
@@ -173,6 +181,37 @@ public class Engine {
 		ambientLight[0] = r;
 		ambientLight[1] = g;
 		ambientLight[2] = b;
+	}
+	
+	public void drawLogs() {
+		String ao = activeOptik;
+		useOptik("Ortho");
+		activeOptik().calculate();
+		activeOptik().set();
+		
+		g.noLights();
+		g.noStroke();
+		g.fill(255, 200);
+		g.textFont(logFont);
+		
+		g.pushMatrix();
+		g.translate(-(g.width/2)+30, -(g.height/2)+35, -1);
+			for(int i = 0; i < p.logs.size(); i++) {
+				g.text(p.logs.get(i), 0, 17*i);
+			}
+		g.popMatrix();
+			
+		g.pushMatrix();
+		g.translate(200, -(g.height/2)+35, -1);
+			int i = 0;
+			for(Entry<String, String> es : p.pinLog.entrySet()) {
+				g.text(es.getKey(), 0, 17*i);
+				g.text(es.getValue(), 250, 17*i);
+				i++;
+			}
+		g.popMatrix();		
+		
+		useOptik(ao);
 	}
 	
 	public void drawContent() {
@@ -310,12 +349,15 @@ public class Engine {
 		*/
 		
 		// edit by chris, testing a shader spinoff
-//		startShader("PolyLightAndTexture");
-		startShader("RoomShader");
+		startShader("PolyLightAndTexture");
+//		startShader("RoomShader");
 			
 			drawContent();
 			
 		stopShader();
+		
+		// LOGGING
+		if(Settings.DRAW_LOGS) drawLogs();
 		
 		endDraw();
 	}

@@ -1,5 +1,6 @@
 package com.madsim.drole.mmworld;
 
+
 import java.util.ArrayList;
 
 import processing.core.PApplet;
@@ -29,7 +30,8 @@ public class MMWorld extends Drawable {
 		
 		points = DLAUtils.getDLAFromFile("data/dla/spiral.dla");
 		
-		pointDLA = DLAUtils.initializeModelWithDLA(e.p, GLModel.POINTS, points);
+		pointDLA = DLAUtils.initializeModelWithDLA(e.p, GLModel.POINT_SPRITES, points);
+		pointDLA.setSpriteSize(20f);
 		lineDLA = DLAUtils.initializeModelWithDLA(e.p, GLModel.LINES, points);
 		
 		pointDLA.centerVertices(0, 0, 0);
