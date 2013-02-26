@@ -6,6 +6,7 @@ import processing.core.PApplet;
 import java.util.ArrayList;
 
 import com.madsim.engine.Engine;
+import com.madsim.engine.shader.JustColorShader;
 
 import codeanticode.glgraphics.*;
 
@@ -44,9 +45,9 @@ public class ParticleSystem {
 	
 	protected Engine e;
 
-	public ParticleSystem(Engine e, VerletPhysics _physics, float mySize, float x, float y, float z) {
+	public ParticleSystem(Engine e, VerletPhysics physics, float mySize, float x, float y, float z) {
 		this.e = e;
-		this.physics = _physics;
+		this.physics = physics;
 		
 		this.x = x;
 		this.y = y;
@@ -131,6 +132,7 @@ public class ParticleSystem {
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
 			colors[4 * i + 3] = newAlpha;
+			
 
 		}
 
@@ -211,16 +213,14 @@ public class ParticleSystem {
 	
    public void update(){
 		
-/*
+
 		for (int i = 0; i < bigParticle.size(); i++) {
 
 			Particle pa = bigParticle.get(i);
 
 			if (pa.isDead()) {
 
-				// if dead make new system
-				p.println("p system dead");
-
+		
 			
 				// as it's tricky to delete from VBO just make invisible.
 			//	sprites.updateColor(i, 0, 0);
@@ -230,7 +230,7 @@ public class ParticleSystem {
 			}
 		}
 
-*/
+
 		/*
 		 * int count=0; Iterator<Particle> ip = bigParticle.iterator(); while
 		 * (ip.hasNext()) { Particle pa = ip.next(); // pa.draw(); count++; if
@@ -253,14 +253,12 @@ public class ParticleSystem {
 		 * ip.remove(); } }
 		 */
 		
-		/*
+		
 		updateSpritePositions();
 		updateSpriteColors();
 		updateForce();
-//		updateTrailPositions();
- * 
- * 
- */
+	//	updateTrailPositions();
+
 	}
 	
 	public void draw(GLGraphics renderer) {
@@ -268,10 +266,11 @@ public class ParticleSystem {
 		// drawGrid();
 		// drawErmitter(renderer);
 
-		/*
+	
+//		e.startShader("JustTexture");
 		e.setupModel(sprites);	
 		renderer.model(sprites);
-		*/
+	
 	}
 
 	public void drawErmitter(GLGraphics renderer) {
