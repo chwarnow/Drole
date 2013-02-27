@@ -157,7 +157,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 //		setupMenu();
 		
-//		setupSpektakel();
+		setupSpektakel();
 		
 		setupMicroMacroWorld();
 		

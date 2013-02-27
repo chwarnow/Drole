@@ -120,7 +120,7 @@ public void draw(GLGraphics renderer){
 		updateTrailPositions();
 
 		trails.initColors();
-		trails.setColors(250, 10);
+		trails.setColors(250, 100);
 		
 		trails.setLineWidth(2);
 
