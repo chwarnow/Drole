@@ -17,6 +17,8 @@ public class T_ShapeParticle extends T_Particle {
 	int tailSize = 50;
 	Vec3D[] tailPoint = new Vec3D[tailSize];
 
+	public float myAlpha = 1.0f;
+	
 	public T_ShapeParticle(PApplet p,  float x, float y, float z) {
 		super(p,x, y, z);
 		
@@ -26,6 +28,11 @@ public class T_ShapeParticle extends T_Particle {
 		}
 		
 	
+	}
+	
+	public T_ShapeParticle(PApplet p,  float x, float y, float z,float myAlpha) {
+		this(p,x, y, z);
+		this.myAlpha = myAlpha;
 	}
 
 	public void update() {
@@ -93,6 +100,7 @@ public class T_ShapeParticle extends T_Particle {
 		
 		
 	}
+	
 	
 	public Vec3D getTailPoint(int num) {
 		return tailPoint[num];

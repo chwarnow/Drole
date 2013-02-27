@@ -21,7 +21,7 @@ public class FireworksTest extends PApplet {
 
 	VerletPhysics physics, physics2;
 
-	T_ToxicSystem startErmitter;
+	T_ParticleSystem startErmitter;
 
 	ArrayList<T_ParticleSystem> ermitters;
 
@@ -47,7 +47,7 @@ public class FireworksTest extends PApplet {
 
 		ermitters = new ArrayList<T_ParticleSystem>();
 
-		startErmitter = new T_ToxicSystem(this,physics, 0, 0, 0);
+		startErmitter = new T_DudeSystem(this,physics, 0, 0, 0);
 
 	}
 
@@ -141,8 +141,8 @@ public class FireworksTest extends PApplet {
 		
 		if (key == 'i') {
 
-			DudeSystem newOne = new DudeSystem(this,
-					physics2, 50, random(-1500, 1500), random(-1500, 1500),
+			T_DudeSystem newOne = new T_DudeSystem(this,
+					physics2,  random(-1500, 1500), random(-1500, 1500),
 					random(-1500, 1500));
 			ermitters.add(newOne);
 		}

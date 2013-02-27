@@ -25,7 +25,7 @@ public class ToxicSystem extends ParticleSystem{
 	
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x, float y, float z){
 		
-		super(e,_physics,mySize,x,y,z);
+		super(e,_physics,x,y,z);
 		
 		spawnNew();
 	}

@@ -45,7 +45,7 @@ public class ParticleSystem {
 	
 	protected Engine e;
 
-	public ParticleSystem(Engine e, VerletPhysics physics, float mySize, float x, float y, float z) {
+	public ParticleSystem(Engine e, VerletPhysics physics, float x, float y, float z) {
 		this.e = e;
 		this.physics = physics;
 		
@@ -120,7 +120,7 @@ public class ParticleSystem {
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
-			colors[4 * i + 3] = newAlpha;
+			colors[4 * i + 3] = newAlpha*(bigParticle.get(i).myAlpha;
 			colors[4 * i + 3] = 1;
 			
 

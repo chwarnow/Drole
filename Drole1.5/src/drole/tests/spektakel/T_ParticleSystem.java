@@ -133,7 +133,7 @@ public class T_ParticleSystem extends T_Particle {
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
-			colors[4 * i + 3] = newAlpha;
+			colors[4 * i + 3] = newAlpha*bigParticle.get(i).myAlpha;
 
 		}
 
@@ -168,7 +168,7 @@ public class T_ParticleSystem extends T_Particle {
 		}
 	}
 
-	void updateForce() {
+	protected void updateForce() {
 
 		if (shockwave) {
 
