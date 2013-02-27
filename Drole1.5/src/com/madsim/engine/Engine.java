@@ -46,6 +46,9 @@ public class Engine {
 	private int activeLights = 0;
 	private float[] ambientLight = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
 	
+	private float pointSize = 1.0f;
+	private boolean usePoints = false;
+	
 	private GLTexture environmentMap;
 	
 	public boolean drawStarted = false;
@@ -135,6 +138,14 @@ public class Engine {
 		}
 	}
 	
+	public void usePoints() {
+		usePoints = true;
+	}
+	
+	public void setPointSize(float ps) {
+		activeShader().glsl().setFloatUniform("pointSize", ps);
+	}
+	
 	public void setEnvironment() {
 		if(activeShader() != null && activeShader().environmentMapHint() == Shader.NO_ENVIRONMENT_MAP && environmentMap != null) {
 			
@@ -154,6 +165,14 @@ public class Engine {
 		if(activeShader() != null) {
 			// Set texture informations for the shader
 			activeShader().glsl().setIntUniform("numTextures", 0);
+			activeShader().glsl().setFloatUniform("pointSize", 1.0f);
+			if(usePoints) {
+				gl.glEnable(GL.GL_POINT_SPRITE);
+				gl.glEnable(GL.GL_VERTEX_PROGRAM_POINT_SIZE);
+				gl.glDepthMask(false);
+			} else {
+				gl.glDepthMask(true);
+			}
 		}
 	}
 	
@@ -357,11 +376,7 @@ public class Engine {
 		
 		stopShader();
 		*/
-		
-		// edit by chris, testing a shader spinoff
-//		startShader("PolyLightAndTexture");
-//		startShader("JustColor");
-//		startShader("JustTexture");
+
 		startShader("RoomShader");
 		
 			drawContent();

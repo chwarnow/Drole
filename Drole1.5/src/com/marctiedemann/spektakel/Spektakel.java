@@ -80,6 +80,8 @@ public class Spektakel extends Drawable {
 
 	@Override
 	public void draw() {
+		e.usePoints();
+		
 		g.pushStyle();
 		g.pushMatrix();
 
@@ -108,6 +110,8 @@ public class Spektakel extends Drawable {
 		// startErmitter.drawErmitter();
 
 		for (int i = 0; i < ermitters.size(); i++) {
+			e.setPointSize(20);
+			
 			ToxicSystem er = ermitters.get(i);
 
 			if(i<4)
