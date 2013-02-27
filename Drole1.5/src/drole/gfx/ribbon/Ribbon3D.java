@@ -36,6 +36,12 @@ public class Ribbon3D extends Drawable {
 	
 	private GLModel model;
 	private boolean isGLModel;
+	
+	public boolean isDying = false;
+	public int age = 0;
+	public int maxAge = 100;
+	public int currAge = 100;
+	
 	public Ribbon3D(Engine e, PVector startPosition, int numJoints, boolean isGLModel) {
 		super(e);
 		this.numJoints = numJoints;
@@ -154,5 +160,16 @@ public class Ribbon3D extends Drawable {
 			e.setupModel(model);
 			model.render();
 		}
+	}
+	
+	public PVector getFirstPoint() {
+		return joints[0];
+	}
+	
+	public void reset(PVector startPosition) {
+		age = 0;
+		currAge = (int)e.p.random(maxAge);
+		for(int i = 0; i < numJoints; i++) joints[i] = new PVector(startPosition.x, startPosition.y, startPosition.z);
+		isDying = false;
 	}
 }

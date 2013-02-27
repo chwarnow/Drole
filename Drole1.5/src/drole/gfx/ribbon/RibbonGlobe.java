@@ -34,8 +34,7 @@ public class RibbonGlobe extends Drawlist {
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 	
 	/* assoziationen that are flying around in the menu */
-	BildweltAssoziationPensee penseeA, penseeB, penseeC, penseeD, penseeE;
-	private int associationsAmount = 3;
+	private int associationsAmount = 5;
 	private String[] penseeImages = {
 		"data/images/menuAssoziationA.png",
 		"data/images/menuAssoziationB.png",
@@ -82,7 +81,14 @@ public class RibbonGlobe extends Drawlist {
 		
 		// create swarms
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(e, dimension.x*scale.x, (int)e.p.random(15, 30), 1 + ((i%2==0) ? 1 : 80), 1 + (int)e.p.random(10), 2f));
+			drawables.add(new RibbonGroup(
+					e,
+					dimension.x*scale.x,
+					(int)e.p.random(50, 100),
+					4 + (int)e.p.random(100),
+					1 + (int)e.p.random(10),
+					2f,
+					i));
 		}
 	}
 	
@@ -128,7 +134,11 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
+		// change noise seed for menu ribbons
 		if(mode().equals(ON_SCREEN)) {
+			if(e.p.frameCount % 100 == 0) {
+				e.p.noiseSeed((long)e.p.random(1000));
+			}
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
