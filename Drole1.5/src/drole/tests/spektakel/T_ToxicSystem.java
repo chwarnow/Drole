@@ -85,7 +85,6 @@ public void draw(GLGraphics renderer){
 			VerletParticle targetPoint = new VerletParticle(toxicTarget);
 			targetPoint.lock();
 			
-			p.println(" target "+toxicTarget.x+ " "+toxicTarget.y+" "+toxicTarget.z);
 			
 			//maybe replacxe with low force spring to reduce bouncing
 			VerletSpring toxicForce = new VerletSpring(newPart,targetPoint,

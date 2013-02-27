@@ -25,9 +25,12 @@ public class T_ParticleSystem extends T_Particle {
 	boolean shockwave = false;
 	float initalBoomPower = -5.5f;
 	float boomPower = initalBoomPower;
+	float boomFalloff = 0.01f;
 	
 	float initalSpringPower = 0.0001f;
 	float springPower = initalSpringPower;
+	float springFallOff = 0.001f;
+	
 	AttractionBehavior boomForce;
 
 	boolean exploded = false;
@@ -130,8 +133,7 @@ public class T_ParticleSystem extends T_Particle {
 
 		for (int i = 0; i < numPoints; i++) {
 
-			float newAlpha = (bigParticle.get(i).lifeSpan * 0.002f)
-					+ p.random(-0.5f, 0.5f);
+			float newAlpha = (bigParticle.get(i).getTimeToLife() * 0.003921f)+ p.random(-0.5f, 0.5f);
 
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
@@ -175,8 +177,8 @@ public class T_ParticleSystem extends T_Particle {
 
 		if (shockwave) {
 
-			boomPower *= 0.90f;
-			springPower *= 0.990f;
+			boomPower *= 1-boomFalloff;
+			springPower *= 1-springFallOff;
 			
 			boomForce.setStrength(boomPower * 0.5f);
 

@@ -23,7 +23,6 @@ public class T_ShapeParticle extends T_Particle {
 	public T_ShapeParticle(PApplet p,  float x, float y, float z) {
 		super(p,x, y, z);
 		
-
 		for (int i = 0; i < tailSize; i++) {
 			tailPoint[i] = new Vec3D(x, y, z);
 		}
@@ -31,9 +30,10 @@ public class T_ShapeParticle extends T_Particle {
 	
 	}
 	
-	public T_ShapeParticle(PApplet p,  float x, float y, float z,float myAlpha) {
+	public T_ShapeParticle(PApplet p,  float x, float y, float z,float newDecay, float myAlpha) {
 		this(p,x, y, z);
 		this.myAlpha = myAlpha;
+		this.decay=newDecay;
 	}
 
 	public void update() {
