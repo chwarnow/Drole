@@ -96,7 +96,7 @@ public class ParticleSystem extends VerletParticle{
 		// is 20 when the distance to the camera is 400.
 
 		// sprites.setColors(255);
-		sprites.setSpriteSize(10, 500);
+		sprites.setSpriteSize(50, 700);
 		sprites.setBlendMode(PApplet.ADD);
 
 	}
@@ -134,8 +134,14 @@ public class ParticleSystem extends VerletParticle{
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
+			
+			
+			colors[4 * i + 0] = 1;
+			colors[4 * i + 1] = 1;
+			colors[4 * i + 2] = 1;
+			
+			
 			colors[4 * i + 3] = newAlpha*bigParticle.get(i).myAlpha;
-			colors[4 * i + 3] = 1;
 
 			
 	//		System.out.println(colors[4 * i + 3]);
@@ -147,17 +153,9 @@ public class ParticleSystem extends VerletParticle{
 	
 		sprites.updateColors(colors);
 
-		/*
-		 * // THISNOGOOD try { } catch (Exception e) {
-		 * System.out.println("UUUUUUUPAS  " + e); }
-		 */
-
 	}
 
-	private void updateSpriteColor(int num, float rgb, float alpha) {
 
-		sprites.updateColor(num, rgb, alpha);
-	}
 
 	void initTrails() {
 
@@ -167,7 +165,7 @@ public class ParticleSystem extends VerletParticle{
 		updateTrailPositions();
 
 		trails.initColors();
-		trails.setColors(250, 30);
+		trails.setColors(250, 20);
 
 		trails.setLineWidth(2);
 
@@ -277,34 +275,12 @@ public class ParticleSystem extends VerletParticle{
 				// as it's tricky to delete from VBO just make invisible.
 				// sprites.updateColor(i, 0, 0);
 
-				System.out.println("particle dead");
+			//	System.out.println("particle dead");
 				cleanParticleForces(i);
 				bigParticle.remove(i);
 				
 			}
 		}
-
-		/*
-		 * int count=0; Iterator<Particle> ip = bigParticle.iterator(); while
-		 * (ip.hasNext()) { Particle pa = ip.next(); // pa.draw(); count++; if
-		 * (pa.isDead()) {
-		 * 
-		 * // if dead make new system p.println("aaahhhhhrrrrrgggg.........");
-		 * 
-		 * float chance = p.random(1000);
-		 * 
-		 * if (chance < 2) { p.println("yipee i am born again!!"); float newSize
-		 * = mySize * 0.75f; ParticleSystem newSystem = new ParticleSystem(p,
-		 * pSystem, physics, newSize, pa.x, pa.y, pa.z); pSystem.add(newSystem);
-		 * }
-		 * 
-		 * // p.println(ip.hashCode());
-		 * 
-		 * //as it's tricky to delete from VBO just make invisible.
-		 * model.updateColor(count, 0,0);
-		 * 
-		 * ip.remove(); } }
-		 */
 
 		updateSpritePositions();
 		updateSpriteColors();

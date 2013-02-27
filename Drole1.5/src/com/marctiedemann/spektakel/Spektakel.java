@@ -50,7 +50,7 @@ public class Spektakel extends Drawable {
 		e.requestTexture("images/particle.png");
 		
 		useLights();
-		/// i x y z r g b f1 f2 f3
+		// i x y z r g b f1 f2 f3
 		
 
 	}
@@ -81,7 +81,8 @@ public class Spektakel extends Drawable {
 	@Override
 	public void draw() {
 		e.usePoints();
-		
+
+		e.g.setDepthMask(false);
 		g.pushStyle();
 		g.pushMatrix();
 
@@ -93,10 +94,6 @@ public class Spektakel extends Drawable {
 
 		g.pushMatrix();
 		
-		g.noFill();
-		g.noStroke();
-		g.texture(e.requestTexture("data/images/particle.png"));
-		g.rect(0, 0, 100, 100);
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -110,7 +107,7 @@ public class Spektakel extends Drawable {
 		update();
 		// startErmitter.drawErmitter();
 
-		e.setPointSize(10);
+		e.setPointSize(8);
 		
 //		System.out.println("systemcount "+ermitters.size());
 		
@@ -120,7 +117,7 @@ public class Spektakel extends Drawable {
 			ToxicSystem er = ermitters.get(i);
 
 			if(i<4)
-			setPointLight(i, er.x, er.y, er.z, 255, 150, 100, 0.3f, .01f,0.0f );
+			setPointLight(i, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 0, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
 			
 			
 			er.update();
@@ -137,6 +134,9 @@ public class Spektakel extends Drawable {
 		g.popMatrix();
 
 		g.popMatrix();
+		
+		e.g.setDepthMask(true);
+
 	}
 
 	private void initPhysics(VerletPhysics thePhysics) {

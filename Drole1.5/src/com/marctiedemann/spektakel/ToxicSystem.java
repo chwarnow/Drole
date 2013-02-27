@@ -28,7 +28,8 @@ public class ToxicSystem extends ParticleSystem {
 			float y, float z) {
 
 		super(e, _physics, x, y, z);
-		trailLength=40;
+		
+		trailLength=30;
 
 		spawnNew();
 	}
