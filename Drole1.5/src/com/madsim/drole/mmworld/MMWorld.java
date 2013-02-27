@@ -28,6 +28,10 @@ public class MMWorld extends Drawable {
 		scale(35, 35, 35);
 		rotation(PApplet.radians(-90), 0, 0);
 		
+		useLights();
+		setPointLight(0, -800, 0, -1000, 0, 0, 255, 0.3f, 0.01f, 0.0f);
+		setPointLight(1, 700, 0, -800, 255, 0, 0, 0.3f, 0.01f, 0.0f);
+		
 		points = DLAUtils.getDLAFromFile("data/dla/spiral.dla");
 		
 		pointDLA = DLAUtils.initializeModelWithDLA(e.p, GLModel.POINTS, points);
