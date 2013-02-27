@@ -43,7 +43,7 @@ public class T_DudeSystem extends T_ParticleSystem {
 
 				greyLevels[j][i] = greyLevel;
 
-				p.println("grey " + greyLevel);
+	//			p.println("grey " + greyLevel);
 
 			}
 		}

@@ -48,6 +48,10 @@ public class Spektakel extends Drawable {
 		}
 
 		e.requestTexture("images/particle.png");
+		
+		useLights();
+		/// i x y z r g b f1 f2 f3
+		
 
 	}
 
@@ -76,16 +80,7 @@ public class Spektakel extends Drawable {
 
 	@Override
 	public void draw() {
-//		e.g.setDepthMask(false);
-		
-		/*
-		e.stopShader();
-		
-		e.g.noLights();
-		
-		
-
-		*/
+		g.pushStyle();
 		g.pushMatrix();
 
 		g.translate(position.x, position.y, position.z);
@@ -115,6 +110,10 @@ public class Spektakel extends Drawable {
 		for (int i = 0; i < ermitters.size(); i++) {
 			ToxicSystem er = ermitters.get(i);
 
+			if(i<4)
+			setPointLight(i, er.x, er.y, er.z, 155, 135, 120, 0.8f, 0.01f,0.0f );
+			
+			
 			er.update();
 			er.draw(e.g);
 
@@ -129,8 +128,6 @@ public class Spektakel extends Drawable {
 		g.popMatrix();
 
 		g.popMatrix();
-
-//		e.g.setDepthMask(true);
 	}
 
 	private void initPhysics(VerletPhysics thePhysics) {
@@ -140,8 +137,8 @@ public class Spektakel extends Drawable {
 				3000, 0.1f, 0.5f);
 		AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0),
 				500, -2.8f, 0.5f);
-		thePhysics.addBehavior(center);
-		thePhysics.addBehavior(ring);
+//		thePhysics.addBehavior(center);
+//		thePhysics.addBehavior(ring);
 		thePhysics.addBehavior(gravity);
 		thePhysics.setDrag(drag);
 
