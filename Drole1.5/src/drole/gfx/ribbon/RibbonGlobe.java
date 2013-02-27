@@ -63,7 +63,7 @@ public class RibbonGlobe extends Drawlist {
 			BildweltAssoziationPensee b = new BildweltAssoziationPensee(
 				e,
 				penseeImages[(int)e.p.random(penseeImages.length-1)],
-				dimension.x*scale.x,
+				dimension.x*scale.x*4.0f,
 				2.0f,
 				new PVector(e.p.random(-randomRadius, randomRadius),
 						e.p.random(-randomRadius, randomRadius),
@@ -134,7 +134,7 @@ public class RibbonGlobe extends Drawlist {
 	@Override
 	public void draw() {
 		if(mode().equals(ON_SCREEN)) {
-		/*
+		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -151,7 +151,7 @@ public class RibbonGlobe extends Drawlist {
 						new PVector(0, 0, 0));
 			}
 		}
-		*/
+		
 		g.pushStyle();
 		g.pushMatrix();
 		
@@ -193,6 +193,6 @@ public class RibbonGlobe extends Drawlist {
 		g.popMatrix();
 		g.popStyle();
 	}
-		e.p.println(e.p.frameRate);
+		// e.p.println(e.p.frameRate);
 	}
 }
