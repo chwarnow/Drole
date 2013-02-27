@@ -45,7 +45,7 @@ public class ParticleSystem {
 	
 	protected Engine e;
 
-	public ParticleSystem(Engine e, VerletPhysics physics, float mySize, float x, float y, float z) {
+	public ParticleSystem(Engine e, VerletPhysics physics, float x, float y, float z) {
 		this.e = e;
 		this.physics = physics;
 		
@@ -60,26 +60,17 @@ public class ParticleSystem {
 
 	protected void initSprites() {
 
-		e.p.logLn("sprites init start");
 
 		
 		numPoints = bigParticle.size();
-
-		e.p.logLn("sprites init 00");
-		
+	
 		sprites = new GLModel(e.p, numPoints * 4, GLModel.POINT_SPRITES, GLModel.DYNAMIC);
 		
-		e.p.logLn("sprites init 0");
-
 		tex = e.requestTexture("images/particle.png");
-
-		e.p.logLn("sprites init 1");
 		
 		updateSpritePositions();
 		sprites.initColors();
 		updateSpriteColors();
-
-		e.p.logLn("sprites init 2");
 		
 		sprites.initTextures(1);
 		sprites.setTexture(0, tex);
@@ -90,8 +81,6 @@ public class ParticleSystem {
 		sprites.setSpriteSize(100, 1000);
 		sprites.setBlendMode(PApplet.ADD);
 	
-		
-		e.p.logLn("sprites init compl");
 	}
 
 	
@@ -131,7 +120,8 @@ public class ParticleSystem {
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
-			colors[4 * i + 3] = newAlpha;
+			colors[4 * i + 3] = newAlpha*(bigParticle.get(i).myAlpha;
+			colors[4 * i + 3] = 1;
 			
 
 		}
@@ -153,22 +143,7 @@ public class ParticleSystem {
 		sprites.updateColor(num, rgb, alpha);
 	}
 
-	public void drawGrid() {
 
-		for (int i = 0; i < bigParticle.size(); i++) {
-
-			VerletParticle p1 = bigParticle.get(i);
-
-			for (int j = i + 1; j < bigParticle.size(); j++) {
-
-				VerletParticle p2 = bigParticle.get(j);
-				e.p.pushStyle();
-				e.p.stroke(155, 50);
-				e.p.line(p1.x(), p1.y(), p1.z(), p2.x(), p2.y(), p2.z());
-				e.p.popStyle();
-			}
-		}
-	}
 
 	private void updateForce() {
 
@@ -267,7 +242,6 @@ public class ParticleSystem {
 		// drawErmitter(renderer);
 
 	
-//		e.startShader("JustTexture");
 		e.setupModel(sprites);	
 		renderer.model(sprites);
 	

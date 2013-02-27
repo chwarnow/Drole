@@ -8,7 +8,7 @@ import toxi.physics.VerletConstrainedSpring;
 import toxi.physics.behaviors.AttractionBehavior;
 import processing.core.PApplet;
 
-public class TestShapeParticle extends Particle {
+public class T_ShapeParticle extends T_Particle {
 
 	VerletPhysics physics;
 
@@ -17,7 +17,9 @@ public class TestShapeParticle extends Particle {
 	int tailSize = 50;
 	Vec3D[] tailPoint = new Vec3D[tailSize];
 
-	public TestShapeParticle(PApplet p, float mySize, float x, float y, float z) {
+	public float myAlpha = 1.0f;
+	
+	public T_ShapeParticle(PApplet p,  float x, float y, float z) {
 		super(p,x, y, z);
 		
 
@@ -26,6 +28,11 @@ public class TestShapeParticle extends Particle {
 		}
 		
 	
+	}
+	
+	public T_ShapeParticle(PApplet p,  float x, float y, float z,float myAlpha) {
+		this(p,x, y, z);
+		this.myAlpha = myAlpha;
 	}
 
 	public void update() {
@@ -93,6 +100,7 @@ public class TestShapeParticle extends Particle {
 		
 		
 	}
+	
 	
 	public Vec3D getTailPoint(int num) {
 		return tailPoint[num];

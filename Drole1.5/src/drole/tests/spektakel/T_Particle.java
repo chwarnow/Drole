@@ -13,16 +13,18 @@ import toxi.physics.VerletPhysics;
 import processing.core.PApplet;
 
 
-public class Particle extends VerletParticle{
+public class T_Particle extends VerletParticle{
 	
 
 	
-	private float lifeSpan=0;
+	protected float lifeSpan=0;
 	private float DECAY = 0.9f;
+	PApplet p;
 
-	public Particle(float x, float y , float z){
+	public T_Particle(PApplet p,float x, float y , float z){
 		
 		super(x,y,z);
+		this.p =p;
 		
 	//	lifeSpan=p.random(mySize*2,mySize*4);
 		lifeSpan= 600;
