@@ -33,7 +33,7 @@ public class Particle extends VerletParticle {
 
 		int boundsX = (int)Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM/2;
 		int boundsY = (int)Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM/2;
-		int boundsZ = (int)Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM/2;
+		int boundsZ = (int)Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM;
 		
 //		p.println("z depth "+boundsZ);
 
