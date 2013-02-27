@@ -204,7 +204,7 @@ public class RibbonGroup extends Drawable {
 				currPosition.z += e.p.cos(angleZ) * e.p.sin(angleY) * stepSize;// + e.p.sin(id*.1f);
 				
 				currPosition.normalize();
-				currPosition.mult(sphereSize);
+				currPosition.mult(sphereSize + e.p.abs(e.p.cos(e.p.frameCount*.01f + i*.001f)) * sphereSize*.125f);
 				
 				
 				if(agent.age == agent.currAge) {
@@ -220,7 +220,7 @@ public class RibbonGroup extends Drawable {
 							e.p.random(-sphereSize, sphereSize),
 							e.p.random(-sphereSize, sphereSize));
 					startPosition.normalize();
-					startPosition.mult(sphereSize);
+					startPosition.mult(sphereSize + e.p.abs(e.p.cos(e.p.frameCount*.01f + i*.001f)) * sphereSize*.125f);
 					
 					agent.reset(startPosition);
 				} else {

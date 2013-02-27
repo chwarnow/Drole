@@ -63,8 +63,8 @@ public class RibbonGlobe extends Drawlist {
 			BildweltAssoziationPensee b = new BildweltAssoziationPensee(
 				e,
 				penseeImages[(int)e.p.random(penseeImages.length-1)],
-				dimension.x*scale.x*4.0f,
-				2.0f,
+				dimension.x*scale.x*1.0f,
+				1.0f,
 				new PVector(e.p.random(-randomRadius, randomRadius),
 						e.p.random(-randomRadius, randomRadius),
 						e.p.random(-randomRadius, randomRadius)
@@ -85,7 +85,7 @@ public class RibbonGlobe extends Drawlist {
 					e,
 					dimension.x*scale.x, // sphere size
 					500, // amount
-					10 + (int)e.p.random(100), // joints per ribbon
+					10 + (int)e.p.random(50), // joints per ribbon
 					2f, // quadheight
 					i)); // id
 		}
