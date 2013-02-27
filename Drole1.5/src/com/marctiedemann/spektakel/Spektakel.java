@@ -1,17 +1,14 @@
 package com.marctiedemann.spektakel;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 
-import processing.core.PApplet;
+import java.util.ArrayList;
+
+import javax.media.opengl.GL;
+
 import toxi.geom.Vec3D;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 import toxi.physics.behaviors.GravityBehavior;
-
-import codeanticode.glgraphics.GLModel;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
@@ -79,8 +76,16 @@ public class Spektakel extends Drawable {
 
 	@Override
 	public void draw() {
+//		e.g.setDepthMask(false);
+		
+		/*
+		e.stopShader();
+		
+		e.g.noLights();
+		
+		
 
-		g.pushStyle();
+		*/
 		g.pushMatrix();
 
 		g.translate(position.x, position.y, position.z);
@@ -90,7 +95,11 @@ public class Spektakel extends Drawable {
 		g.rotateZ(rotation.z);
 
 		g.pushMatrix();
-		e.g.setDepthMask(false);
+		
+		g.noFill();
+		g.noStroke();
+		g.texture(e.requestTexture("data/images/particle.png"));
+		g.rect(0, 0, 100, 100);
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -117,13 +126,11 @@ public class Spektakel extends Drawable {
 			}
 		}
 
-		e.g.setDepthMask(true);
-
 		g.popMatrix();
 
 		g.popMatrix();
-		g.popStyle();
 
+//		e.g.setDepthMask(true);
 	}
 
 	private void initPhysics(VerletPhysics thePhysics) {
@@ -145,7 +152,7 @@ public class Spektakel extends Drawable {
 				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2,
 				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2), 
 				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM / 2, 0), 
-				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM, -Settings.REAL_SCREEN_DIMENSIONS_DEPTH_MM/2));
+				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
 	}
 

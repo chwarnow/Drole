@@ -111,7 +111,7 @@ public class Room extends Drawable {
 		model.initTextures(1);
 		model.setTexture(0, new GLTexture(e.p, cubeMapFilename));
 		
-		model.setColors(255);
+		model.setColors(100);
 		
 		/*
 		model.beginUpdateColors();

@@ -77,7 +77,7 @@ public class FireworksTest extends PApplet {
 
 		GLGraphics renderer = (GLGraphics) g;
 		renderer.beginGL();
-
+		
 		renderer.background(0);
 		renderer.setDepthMask(false);
 		// println(frameRate);

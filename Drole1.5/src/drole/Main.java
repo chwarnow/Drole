@@ -31,6 +31,7 @@ import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.fabric.BildweltFabric;
 import drole.gfx.ribbon.RibbonGlobe;
 import drole.gfx.room.Room;
+import drole.menu.Menu;
 import drole.settings.Settings;
 
 import processing.core.PApplet;
@@ -76,6 +77,9 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	/* Skybox */
 	private Room room;
+	
+	/* Menu */
+	private Menu menu;
 	
 	/* Globe */
 	private PVector globePosition = new PVector(0, 0, -1000);
@@ -155,9 +159,9 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-//		setupMenu();
+		setupMenu();
 		
-		setupSpektakel();
+//		setupSpektakel();
 		
 //		setupMicroMacroWorld();
 		
@@ -218,9 +222,12 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-		globe = new RibbonGlobe(engine, globePosition, globeSize);
+//		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		
-		engine.addDrawable("Globe", globe);
+//		engine.addDrawable("Globe", globe);
+		
+		menu = new Menu(engine);
+		engine.addDrawable("Menu", menu);
 	}	
 	
 	private void setupOptikWorld() {
@@ -377,7 +384,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 
 				pinLog("rotationSpeedY", rotationSpeedY);
 				
-				bildweltMicroMacro.rotation(0, bildweltMicroMacro.rotation().y+rotationSpeedY, 0);
+				menu.rotation(0, bildweltMicroMacro.rotation().y+rotationSpeedY, 0);
 			}
 			
 			/*
