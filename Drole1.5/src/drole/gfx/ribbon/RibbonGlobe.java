@@ -71,9 +71,10 @@ public class RibbonGlobe extends Drawlist {
 				),
 				new PVector(0, 0, 0)
 			);
+			b.setDelayTime(0);
 			// let animation begin from right point
 			b.setPosition(.4f);
-			b.setLooping(true);
+			b.setLooping(false);
 			b.loadPensee();
 			// add to drawables list
 			drawables.add( b );
@@ -85,8 +86,8 @@ public class RibbonGlobe extends Drawlist {
 					e,
 					dimension.x*scale.x, // sphere size
 					500, // amount
-					10 + (int)e.p.random(50), // joints per ribbon
-					1.5f, // quadheight
+					2 + (int)e.p.random(50), // joints per ribbon
+					2f, // quadheight
 					i)); // id
 		}
 	}
@@ -174,7 +175,7 @@ public class RibbonGlobe extends Drawlist {
 					// r.update();
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
-					g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
+					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
 					r.draw();
 					g.popMatrix();
 					

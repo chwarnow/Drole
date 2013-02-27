@@ -183,7 +183,7 @@ public class RibbonGroup extends Drawable {
 
 		float offsetA = 0;//e.p.frameCount*.01f;
 		float offsetB = 10000;// + e.p.frameCount*.01f;
-		float stepSize = 10;
+		float stepSize = 12;
 		float noiseScale = 750;// + e.p.cos(e.p.frameCount*.1f + id) * 120;
 		float noiseStrength = 20;
 		
