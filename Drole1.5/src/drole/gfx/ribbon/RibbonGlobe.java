@@ -64,7 +64,7 @@ public class RibbonGlobe extends Drawlist {
 				e,
 				penseeImages[(int)e.p.random(penseeImages.length-1)],
 				dimension.x*scale.x*1.0f,
-				1.0f,
+				2.0f,
 				new PVector(e.p.random(-randomRadius, randomRadius),
 						e.p.random(-randomRadius, randomRadius),
 						e.p.random(-randomRadius, randomRadius)
@@ -86,7 +86,7 @@ public class RibbonGlobe extends Drawlist {
 					dimension.x*scale.x, // sphere size
 					500, // amount
 					10 + (int)e.p.random(50), // joints per ribbon
-					2f, // quadheight
+					1.5f, // quadheight
 					i)); // id
 		}
 	}
