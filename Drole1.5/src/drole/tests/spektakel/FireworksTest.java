@@ -53,7 +53,7 @@ public class FireworksTest extends PApplet {
 
 	public void update() {
 
-		println(drag);
+	//	println(drag);
 
 		float pauseEasing = 0.5f;
 		float pauseAt = 2;

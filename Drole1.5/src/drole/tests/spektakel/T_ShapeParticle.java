@@ -4,6 +4,7 @@ import toxi.geom.Vec3D;
 import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletConstrainedSpring;
+import toxi.physics.VerletSpring;
 
 import toxi.physics.behaviors.AttractionBehavior;
 import processing.core.PApplet;
@@ -12,7 +13,7 @@ public class T_ShapeParticle extends T_Particle {
 
 	VerletPhysics physics;
 
-	AttractionBehavior shapeForce;
+	VerletSpring shapeForce;
 
 	int tailSize = 50;
 	Vec3D[] tailPoint = new Vec3D[tailSize];
@@ -36,6 +37,8 @@ public class T_ShapeParticle extends T_Particle {
 	}
 
 	public void update() {
+		
+	//	p.println(" x "+ x+ " y "+y+" z "+z);
 
 		bounce();
 		
@@ -96,9 +99,7 @@ public class T_ShapeParticle extends T_Particle {
 			z=-bounds;
 			addVelocity(new Vec3D(vel.x/2,vel.y/2,-vel.z/2));
 		}
-		
-		
-		
+	
 	}
 	
 	
@@ -106,9 +107,9 @@ public class T_ShapeParticle extends T_Particle {
 		return tailPoint[num];
 	}
 
-	public void setUniqueTarget(AttractionBehavior shapeForce) {
+	public void giveSpring(VerletSpring shapeForce) {
 		this.shapeForce = shapeForce;
-		this.addBehavior(shapeForce);
+	//	this.addBehavior(shapeForce);
 	}
 
 	public void setBehaviorStrenght(float newStrenght) {

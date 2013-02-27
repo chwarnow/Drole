@@ -11,7 +11,9 @@ import toxi.geom.mesh.Face;
 import toxi.geom.mesh.SphericalHarmonics;
 import toxi.geom.mesh.SurfaceMeshBuilder;
 import toxi.geom.mesh.TriangleMesh;
+import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
+import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.AttractionBehavior;
 
 public class T_ToxicSystem extends T_ParticleSystem{
@@ -45,7 +47,7 @@ public void draw(GLGraphics renderer){
 			m[i] = (int) p.random(20);
 		}
 		SurfaceMeshBuilder b = new SurfaceMeshBuilder(new SphericalHarmonics(m));
-		mesh = (TriangleMesh) b.createMesh(null,24, 100);
+		mesh = (TriangleMesh) b.createMesh(null,18, 100);
 	}
 
 	public void spawnNew() {
@@ -55,17 +57,17 @@ public void draw(GLGraphics renderer){
 
 		shockwave = true;
 		boomPower = initalBoomPower;
-		boomForce = new AttractionBehavior(this, 2000, boomPower * 0.3f, 0.1f);
+		boomForce = new AttractionBehavior(this, 1000, boomPower * 0.3f, 0.1f);
 		physics.addBehavior(boomForce);
 
 		randomizeMesh();
 
-		int targetSize = 10;
-		int targetYOffset = 1000;
+		int targetSize = 7;
+		int targetYOffset = 400;
 
-		Vec3D targetAngle = new Vec3D(p.random(-1, 1) * targetYOffset,
-				p.random(-1, 1) * targetYOffset, p.random(-1, 1)
-						* targetYOffset);
+		Vec3D targetAngle = new Vec3D(p.random(-1, 1)*targetYOffset ,
+				p.random(-1, 1)*targetYOffset , p.random(-1, 1)*targetYOffset
+						);
 
 		for (Iterator i = mesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
@@ -80,15 +82,22 @@ public void draw(GLGraphics renderer){
 					* targetSize, y() + targetAngle.x + face.a.y * targetSize,
 					z() + targetAngle.x + face.a.z * targetSize);
 
+			VerletParticle targetPoint = new VerletParticle(toxicTarget);
+			targetPoint.lock();
+			
+			p.println(" target "+toxicTarget.x+ " "+toxicTarget.y+" "+toxicTarget.z);
 			
 			//maybe replacxe with low force spring to reduce bouncing
-			AttractionBehavior toxicForce = new AttractionBehavior(toxicTarget,
-					3000, -boomPower * 2, 0.005f);
-			newPart.setUniqueTarget(toxicForce);
+			VerletSpring toxicForce = new VerletSpring(newPart,targetPoint,
+					0, springPower);
+//			physics.addParticle(targetPoint);
+			physics.addParticle(newPart);
+			physics.addSpring(toxicForce);
+			newPart.giveSpring(toxicForce);
 			// newPart.addBehavior(boomForce);
 
 			bigParticle.add(newPart);
-			physics.addParticle(newPart);
+		
 
 			/*
 			 * newPart = new Particle(p, mySize / 2, f.c.x+x, f.c.y+y, f.c.z+z);

@@ -123,6 +123,7 @@ public class ParticleSystem {
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
 			colors[4 * i + 3] = newAlpha;
+
 			
 
 		}

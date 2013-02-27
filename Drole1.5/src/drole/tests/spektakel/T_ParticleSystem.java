@@ -25,6 +25,9 @@ public class T_ParticleSystem extends T_Particle {
 	boolean shockwave = false;
 	float initalBoomPower = -5.5f;
 	float boomPower = initalBoomPower;
+	
+	float initalSpringPower = 0.0001f;
+	float springPower = initalSpringPower;
 	AttractionBehavior boomForce;
 
 	boolean exploded = false;
@@ -172,13 +175,14 @@ public class T_ParticleSystem extends T_Particle {
 
 		if (shockwave) {
 
-			boomPower *= 0.98;
-
+			boomPower *= 0.90f;
+			springPower *= 0.990f;
+			
 			boomForce.setStrength(boomPower * 0.5f);
 
 			for (int i = 0; i < bigParticle.size(); i++) {
 				// boomForce.setStrength(boomPower);
-				bigParticle.get(i).setBehaviorStrenght(-boomPower*2);
+				bigParticle.get(i).setBehaviorStrenght(springPower);
 			}
 
 			if (boomPower > -0.00001) {
@@ -194,9 +198,13 @@ public class T_ParticleSystem extends T_Particle {
 				 */
 
 				physics.removeBehavior(boomForce);
+			}
+				if (springPower < 0.0000001) {
 
 				for (int i = 0; i < bigParticle.size(); i++) {
-					bigParticle.get(i).removeBehavior(boomForce);
+				//	bigParticle.get(i).removeBehavior(boomForce);
+					
+					physics.removeSpring(bigParticle.get(i).shapeForce);
 				}
 
 				shockwave = false;
