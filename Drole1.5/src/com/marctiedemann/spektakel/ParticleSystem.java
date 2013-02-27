@@ -1,6 +1,6 @@
 package com.marctiedemann.spektakel;
 
-
+import toxi.geom.Vec3D;
 import toxi.physics.VerletParticle;
 import processing.core.PApplet;
 import java.util.ArrayList;
@@ -9,27 +9,34 @@ import com.madsim.engine.Engine;
 import com.madsim.engine.shader.JustColorShader;
 
 import codeanticode.glgraphics.*;
-
+import drole.tests.spektakel.T_ShapeParticle;
 
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 
-
-
-public class ParticleSystem {
+public class ParticleSystem extends VerletParticle{
 
 	protected boolean shockwave = false;
-	protected float initalBoomPower = -5.5f;
-	protected float boomPower = initalBoomPower;
+
+	protected float initalBoomPower = -2.5f;
+
+	protected float initalSpringPower = 0.0001f;
+
+	protected float boomFalloff = 0.01f;
+
+	protected float springFallOff = 0.01f;
+
+	private float boomPower = initalBoomPower;
+
+	private float springPower = initalSpringPower;
+
 	protected AttractionBehavior boomForce;
 
 	protected boolean exploded = false;
-	
-	
+
 	protected VerletPhysics physics;
 
 	protected ArrayList<ShapedParticle> bigParticle;
-
 
 	protected GLModel sprites, trails;
 
@@ -40,52 +47,57 @@ public class ParticleSystem {
 	protected int numPoints = 0;
 
 	private int myID;
+
+	private int trailLength = 5;
+
 	
 	protected float x, y, z;
-	
+
 	protected Engine e;
 
-	public ParticleSystem(Engine e, VerletPhysics physics, float x, float y, float z) {
+	public ParticleSystem(Engine e, VerletPhysics physics, float x, float y,
+			float z) {
+		
+		super(x,y,z);
+		
 		this.e = e;
 		this.physics = physics;
-		
+
 		this.x = x;
 		this.y = y;
 		this.z = z;
 
 		bigParticle = new ArrayList<ShapedParticle>();
 
-		myID = (e.p.frameCount);	
+		myID = (e.p.frameCount);
 	}
 
 	protected void initSprites() {
 
-
-		
 		numPoints = bigParticle.size();
-	
-		sprites = new GLModel(e.p, numPoints * 4, GLModel.POINT_SPRITES, GLModel.DYNAMIC);
-		
+
+		sprites = new GLModel(e.p, numPoints * 4, GLModel.POINT_SPRITES,
+				GLModel.DYNAMIC);
+
 		tex = e.requestTexture("images/particle.png");
-		
+
 		updateSpritePositions();
 		sprites.initColors();
 		updateSpriteColors();
-		
+
 		sprites.initTextures(1);
 		sprites.setTexture(0, tex);
 		// Setting the maximum sprite to the 90% of the maximum point size.
 		// model.setMaxSpriteSize(0.9f * pmax);
 		// Setting the distance attenuation function so that the sprite size
 		// is 20 when the distance to the camera is 400.
-		
-	//	sprites.setColors(255);
-		sprites.setSpriteSize(10,500);
+
+		// sprites.setColors(255);
+		sprites.setSpriteSize(10, 500);
 		sprites.setBlendMode(PApplet.ADD);
-	
+
 	}
 
-	
 	protected void updateSpritePositions() {
 
 		numPoints = bigParticle.size();
@@ -102,11 +114,9 @@ public class ParticleSystem {
 			coords[4 * i + 0] = oneParticle.x;
 			coords[4 * i + 1] = oneParticle.y;
 			coords[4 * i + 2] = oneParticle.z;
-
-			coords[4 * i + 3] = 1.0f; // The W coordinate of each point must
-										// be
+			coords[4 * i + 3] = 1.0f; 
 		}
-
+		
 		sprites.updateVertices(coords);
 	}
 
@@ -116,54 +126,118 @@ public class ParticleSystem {
 
 		for (int i = 0; i < numPoints; i++) {
 
-			float newAlpha = (bigParticle.get(i).lifeSpan * 0.002f)
-					+ e.p.random(-0.5f, 0.5f);
+			float newAlpha = (bigParticle.get(i).getTimeToLife() * 0.003921f)+ e.p.random(-0.5f, 0.5f);
 
 			colors[4 * i + 0] = 1;
-			colors[4 * i + 1] = 0.3f + newAlpha * 0.4f;
-			colors[4 * i + 2] = newAlpha - 1+0.3f;
-			colors[4 * i + 3] = newAlpha;
+			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
+			colors[4 * i + 2] = newAlpha - 1;
+			colors[4 * i + 3] = newAlpha*bigParticle.get(i).myAlpha;
 
-			
-	//		colors[4 * i + 3] = 1;
-			
+			// colors[4 * i + 3] = 1;
 
 		}
 
 		sprites.updateColors(colors);
 
-		
 		/*
-		// THISNOGOOD
-		try {
-		} catch (Exception e) {
-			System.out.println("UUUUUUUPAS  " + e);
-		}
-		*/
-		
+		 * // THISNOGOOD try { } catch (Exception e) {
+		 * System.out.println("UUUUUUUPAS  " + e); }
+		 */
+
 	}
-	
-	
-	
 
 	private void updateSpriteColor(int num, float rgb, float alpha) {
 
 		sprites.updateColor(num, rgb, alpha);
 	}
 
+	void initTrails() {
 
+		trails = new GLModel(e.p, numPoints * (trailLength + 1) * 4 * 2,
+				GLModel.LINES, GLModel.DYNAMIC);
 
-	private void updateForce() {
+		updateTrailPositions();
+
+		trails.initColors();
+		trails.setColors(250, 30);
+
+		trails.setLineWidth(2);
+
+		trails.setBlendMode(PApplet.ADD);
+		
+		
+
+	}
+
+	void updateTrailPositions() {
+
+		e.p.println("traillenght "+trailLength);
+		
+		numPoints = bigParticle.size();
+
+		coords = new float[4 * numPoints * (trailLength + 1) * 2];
+
+		// p.println("updatimng" + myID + " num " + numPoints + " size "
+		// + bigParticle.size());
+
+		int numSections = trailLength + 1;
+		int pointsToMesh = 2;
+
+		for (int i = 0; i < numPoints; i++) {
+
+			ShapedParticle oneParticle = bigParticle.get(i);
+
+			for (int j = 0; j < trailLength - 1; j++) {
+
+				int step = (i * numSections * pointsToMesh * 4)
+						+ (j * pointsToMesh * 4);
+
+				coords[step + 0] = bigParticle.get(i).x;
+				coords[step + 1] = bigParticle.get(i).y;
+				coords[step + 2] = bigParticle.get(i).z;
+				coords[step + 3] = 1.0f; // The W coordinate of each point
+
+				Vec3D trailPoint = oneParticle.getTailPoint(0);
+
+				coords[step + 0] = trailPoint.x;
+				coords[step + 1] = trailPoint.y;
+				coords[step + 2] = trailPoint.z;
+				coords[step + 3] = 1.0f; // The W coordinate of each point
+
+				for (int k = 0; k < pointsToMesh; k++) {
+
+					step += (k * 4);
+
+					trailPoint = oneParticle.getTailPoint(j + k);
+
+					coords[step + 0] = trailPoint.x;
+					coords[step + 1] = trailPoint.y;
+					coords[step + 2] = trailPoint.z;
+					coords[step + 3] = 1.0f; // The W coordinate of each point
+												// must
+												// be
+				}
+
+			}
+		}
+
+		// p.println(coords);
+
+		trails.updateVertices(coords);
+	}
+
+	protected void updateForce() {
 
 		if (shockwave) {
 
-			boomPower *= 0.98;
+			boomPower *= 1 - boomFalloff;
+			springPower *= 1 - springFallOff;
 
 			boomForce.setStrength(boomPower * 0.5f);
 
 			for (int i = 0; i < bigParticle.size(); i++) {
 				// boomForce.setStrength(boomPower);
-				bigParticle.get(i).setBehaviorStrenght(-boomPower*2);
+				bigParticle.get(i).setBehaviorStrenght(springPower);
 			}
 
 			if (boomPower > -0.00001) {
@@ -179,9 +253,13 @@ public class ParticleSystem {
 				 */
 
 				physics.removeBehavior(boomForce);
+			}
+			if (springPower < 0.0000001) {
 
 				for (int i = 0; i < bigParticle.size(); i++) {
-					bigParticle.get(i).removeBehavior(boomForce);
+					// bigParticle.get(i).removeBehavior(boomForce);
+
+					physics.removeSpring(bigParticle.get(i).getSpring());
 				}
 
 				shockwave = false;
@@ -190,12 +268,8 @@ public class ParticleSystem {
 		}
 
 	}
-	
-	
 
-	
-   public void update(){
-		
+	public void update() {
 
 		for (int i = 0; i < bigParticle.size(); i++) {
 
@@ -203,16 +277,13 @@ public class ParticleSystem {
 
 			if (pa.isDead()) {
 
-		
-			
 				// as it's tricky to delete from VBO just make invisible.
-			//	sprites.updateColor(i, 0, 0);
+				// sprites.updateColor(i, 0, 0);
 
 				bigParticle.remove(i);
 
 			}
 		}
-
 
 		/*
 		 * int count=0; Iterator<Particle> ip = bigParticle.iterator(); while
@@ -235,40 +306,28 @@ public class ParticleSystem {
 		 * 
 		 * ip.remove(); } }
 		 */
-		
-		
+
 		updateSpritePositions();
 		updateSpriteColors();
+		
+		updateTrailPositions();
+
+		
 		updateForce();
-	//	updateTrailPositions();
 
 	}
-	
+
 	public void draw(GLGraphics renderer) {
 
 		// drawGrid();
 		// drawErmitter(renderer);
 
-	
-		e.setupModel(sprites);	
+		e.setupModel(sprites);
 		renderer.model(sprites);
-	
-	}
 
-	public void drawErmitter(GLGraphics renderer) {
+		e.setupModel(trails);
+		renderer.model(trails);
 
-		renderer.pushMatrix();
-
-		float ermitterAlpha = PApplet.map(boomPower, 0, -1.5f, 0, 255);
-
-		// this is strange and i have no clue why i have to translate back
-		// again....
-		renderer.translate(e.g.width / 2, e.g.height / 2, 950);
-		renderer.translate(x, y, z);
-		renderer.stroke(255, ermitterAlpha);
-		renderer.strokeWeight(150);
-		renderer.point(0, 0);
-		renderer.popMatrix();
 	}
 
 	public void clean() {
@@ -285,5 +344,24 @@ public class ParticleSystem {
 		else
 			return false;
 	}
+
+	public void setBoomPower(float newPower) {
+		boomPower = newPower;
+		initalBoomPower = boomPower;
+	}
+
+	public void setSpringPower(float newPower) {
+		springPower = newPower;
+		initalSpringPower = boomPower;
+	}
+	
+	public float getBoomPower(){
+		return boomPower;	
+	}
+	
+	public float getSpringPower(){
+		return springPower;
+	}
+	
 
 }

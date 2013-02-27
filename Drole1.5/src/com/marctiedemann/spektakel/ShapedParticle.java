@@ -4,15 +4,20 @@ import com.madsim.engine.EngineApplet;
 
 import toxi.geom.Vec3D;
 
+import toxi.physics.VerletPhysics;
+import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.AttractionBehavior;
 import processing.core.PApplet;
 
 public class ShapedParticle extends Particle {
 
-	private AttractionBehavior shapeForce;
 
-	public int tailSize = 50;
+	private VerletSpring shapeForce;
+
+	protected int tailSize = 50;
 	private Vec3D[] tailPoint = new Vec3D[tailSize];
+
+	public float myAlpha = 1.0f;
 
 	public ShapedParticle(EngineApplet p, float x, float y, float z) {
 		super(p, x, y, z);
@@ -22,12 +27,17 @@ public class ShapedParticle extends Particle {
 		}
 
 	}
+	
+	public ShapedParticle(EngineApplet p,  float x, float y, float z,float newDecay, float myAlpha) {
+		this(p,x, y, z);
+		this.myAlpha = myAlpha;
+		this.decay=newDecay;
+	}
 
 	public void update() {
 
 		bounce();
 
-	
 			for (int i = tailSize - 1; i > 0; i--) {
 				tailPoint[i].x = tailPoint[i - 1].x;
 				tailPoint[i].y = tailPoint[i - 1].y;
@@ -50,13 +60,17 @@ public class ShapedParticle extends Particle {
 		return tailPoint[num];
 	}
 
-	public void setUniqueTarget(AttractionBehavior shapeForce) {
+	public void giveSpring(VerletSpring shapeForce) {
 		this.shapeForce = shapeForce;
-		this.addBehavior(shapeForce);
+	//	this.addBehavior(shapeForce);
 	}
 
 	public void setBehaviorStrenght(float newStrenght) {
 		shapeForce.setStrength(newStrenght);
 	}
-
+	
+	public VerletSpring getSpring(){
+		return shapeForce;
+	}
+	
 }

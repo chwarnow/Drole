@@ -107,7 +107,7 @@ public void draw(GLGraphics renderer){
 		numPoints = bigParticle.size();
 
 		// one size fits all
-		trailLength = bigParticle.get(0).tailSize;
+		trailLength = 10;
 
 		initSprites();
 		initTrails();

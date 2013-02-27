@@ -53,7 +53,7 @@ public class T_ParticleSystem extends T_Particle {
 	float[] colors;
 
 	int numPoints = 0;
-	int trailLength;
+	int trailLength =0;
 
 	int myID;
 
@@ -158,22 +158,7 @@ public class T_ParticleSystem extends T_Particle {
 		sprites.updateColor(num, rgb, alpha);
 	}
 
-	public void drawGrid() {
 
-		for (int i = 0; i < bigParticle.size(); i++) {
-
-			VerletParticle p1 = bigParticle.get(i);
-
-			for (int j = i + 1; j < bigParticle.size(); j++) {
-
-				VerletParticle p2 = bigParticle.get(j);
-				p.pushStyle();
-				p.stroke(155, 50);
-				p.line(p1.x(), p1.y(), p1.z(), p2.x(), p2.y(), p2.z());
-				p.popStyle();
-			}
-		}
-	}
 
 	protected void updateForce() {
 
@@ -281,8 +266,6 @@ public class T_ParticleSystem extends T_Particle {
 	
 
 		renderer.model(sprites);
-
-		
 		renderer.model(trails);
 	}
 	
