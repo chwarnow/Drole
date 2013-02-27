@@ -28,6 +28,7 @@ public class BildweltAssoziation extends Drawable {
 		penseeA = new BildweltAssoziationPensee(e, "data/images/menuAssoziationA.png", dimension.x*scale.x, 3.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
 		penseeA.loadPensee();
 		penseeA.setLooping(false);
+		penseeA.stop();
 		// penseeA.setPosition(.5f);
 		/*
 		penseeB = new BildweltAssoziationPensee(e, "data/images/associationB.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
@@ -43,6 +44,8 @@ public class BildweltAssoziation extends Drawable {
 		super.update();
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
+		if(e.p.frameCount == 1000) penseeA.show();
+		if(e.p.frameCount == 1500) penseeA.hide();
 		// update sculpture
 		penseeA.update();
 		// penseeB.update();
