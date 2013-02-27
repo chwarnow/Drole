@@ -105,17 +105,20 @@ public class Spektakel extends Drawable {
 
 		// g.rotateX(rotationX);
 		// g.rotateY(rotationY);
+		
 
 		update();
 		// startErmitter.drawErmitter();
 
+		e.setPointSize(30);
+		
 		for (int i = 0; i < ermitters.size(); i++) {
-			e.setPointSize(20);
+			
 			
 			ToxicSystem er = ermitters.get(i);
 
 			if(i<4)
-			setPointLight(i, er.x, er.y, er.z, 155, 135, 120, 0.8f, 0.01f,0.0f );
+			setPointLight(i, er.x, er.y, er.z, 255, 235, 220, 0.1f, 0.01f,0.0f );
 			
 			
 			er.update();

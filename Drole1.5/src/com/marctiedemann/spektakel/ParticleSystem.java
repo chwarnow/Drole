@@ -120,9 +120,11 @@ public class ParticleSystem {
 					+ e.p.random(-0.5f, 0.5f);
 
 			colors[4 * i + 0] = 1;
-			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
-			colors[4 * i + 2] = newAlpha - 1;
+			colors[4 * i + 1] = 0.3f + newAlpha * 0.4f;
+			colors[4 * i + 2] = newAlpha - 1+0.3f;
 			colors[4 * i + 3] = newAlpha;
+			
+	//		colors[4 * i + 3] = 1;
 			
 
 		}
