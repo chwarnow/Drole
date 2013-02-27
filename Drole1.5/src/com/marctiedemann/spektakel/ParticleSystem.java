@@ -78,7 +78,9 @@ public class ParticleSystem {
 		// model.setMaxSpriteSize(0.9f * pmax);
 		// Setting the distance attenuation function so that the sprite size
 		// is 20 when the distance to the camera is 400.
-		sprites.setSpriteSize(100, 1000);
+		
+	//	sprites.setColors(255);
+		sprites.setSpriteSize(10,500);
 		sprites.setBlendMode(PApplet.ADD);
 	
 	}
@@ -120,17 +122,17 @@ public class ParticleSystem {
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
-			colors[4 * i + 3] = newAlpha;
-			colors[4 * i + 3] = 1;
+			colors[4 * i + 3] = 255;
 			
 
 		}
+
+		sprites.updateColors(colors);
 
 		
 		/*
 		// THISNOGOOD
 		try {
-			sprites.updateColors(colors);
 		} catch (Exception e) {
 			System.out.println("UUUUUUUPAS  " + e);
 		}
