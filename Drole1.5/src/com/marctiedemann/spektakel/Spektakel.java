@@ -112,6 +112,8 @@ public class Spektakel extends Drawable {
 
 		e.setPointSize(10);
 		
+//		System.out.println("systemcount "+ermitters.size());
+		
 		for (int i = 0; i < ermitters.size(); i++) {
 			
 			
@@ -125,7 +127,7 @@ public class Spektakel extends Drawable {
 			er.draw(e.g);
 
 			if (er.isEmpty()) {
-				er.clean();
+				er.cleanSytstem();
 				ermitters.remove(i);
 				
 				spawnNewToxicSystem();

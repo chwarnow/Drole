@@ -22,12 +22,13 @@ import toxi.physics.behaviors.AttractionBehavior;
 public class ToxicSystem extends ParticleSystem {
 
 	private TriangleMesh toxiMesh = new TriangleMesh();
-	private int trailLength;
+	
 
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
 			float y, float z) {
 
 		super(e, _physics, x, y, z);
+		trailLength=40;
 
 		spawnNew();
 	}
@@ -55,7 +56,7 @@ public class ToxicSystem extends ParticleSystem {
 	public void spawnNew() {
 
 		bigParticle.clear();
-		clean();
+		cleanSytstem();
 		
 		setBoomPower(initalBoomPower);
 		setSpringPower(initalSpringPower);
@@ -64,11 +65,15 @@ public class ToxicSystem extends ParticleSystem {
 		
 		shockwave = true;
 		
+		//global shockwave
 		boomForce = new AttractionBehavior(this, 500, getBoomPower() * 0.3f, 0.1f);
 		physics.addBehavior(boomForce);
 
+		//build mesh for target shape
 		randomizeMesh();
 
+		
+		//size and shooting angle
 		int targetSize = 3;
 		int targetYOffset = 200;
 
@@ -79,12 +84,14 @@ public class ToxicSystem extends ParticleSystem {
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
+			//the actual partzicle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
-					z() + face.a.z - targetAngle.x / 2);
+					z() + face.a.z - targetAngle.x / 2,trailLength);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 
+			//the Target
 			Vec3D toxicTarget = new Vec3D(x() + targetAngle.x + face.a.x
 					* targetSize, y() + targetAngle.x + face.a.y * targetSize,
 					z() + targetAngle.x + face.a.z * targetSize);
@@ -93,7 +100,7 @@ public class ToxicSystem extends ParticleSystem {
 			targetPoint.lock();
 			
 			
-			//maybe replacxe with low force spring to reduce bouncing
+			//targetForce
 			VerletSpring toxicForce = new VerletSpring(newPart,targetPoint,
 					0, getSpringPower());
 //			physics.addParticle(targetPoint);
@@ -114,7 +121,7 @@ public class ToxicSystem extends ParticleSystem {
 		numPoints = bigParticle.size();
 
 		// one size fits all
-		trailLength = bigParticle.get(0).tailSize;
+
 
 		initSprites();
 		initTrails();

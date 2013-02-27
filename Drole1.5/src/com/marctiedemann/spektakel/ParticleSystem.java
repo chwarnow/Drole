@@ -2,7 +2,10 @@ package com.marctiedemann.spektakel;
 
 import toxi.geom.Vec3D;
 import toxi.physics.VerletParticle;
+import toxi.physics.VerletSpring;
 import processing.core.PApplet;
+
+import java.awt.List;
 import java.util.ArrayList;
 
 import com.madsim.engine.Engine;
@@ -48,7 +51,7 @@ public class ParticleSystem extends VerletParticle{
 
 	private int myID;
 
-	private int trailLength = 5;
+	protected int trailLength = 5;
 
 	
 	protected float x, y, z;
@@ -126,17 +129,22 @@ public class ParticleSystem extends VerletParticle{
 
 		for (int i = 0; i < numPoints; i++) {
 
-			float newAlpha = (bigParticle.get(i).getTimeToLife() * 0.003921f)+ e.p.random(-0.5f, 0.5f);
+			float newAlpha = (bigParticle.get(i).getTimeToLife() * 0.003921f)+ e.p.random(-0.1f, 0.1f);
 
 			colors[4 * i + 0] = 1;
 			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
 			colors[4 * i + 2] = newAlpha - 1;
 			colors[4 * i + 3] = newAlpha*bigParticle.get(i).myAlpha;
+			colors[4 * i + 3] = 1;
+
+			
+	//		System.out.println(colors[4 * i + 3]);
 
 			// colors[4 * i + 3] = 1;
 
 		}
 
+	
 		sprites.updateColors(colors);
 
 		/*
@@ -170,8 +178,6 @@ public class ParticleSystem extends VerletParticle{
 	}
 
 	void updateTrailPositions() {
-
-		e.p.println("traillenght "+trailLength);
 		
 		numPoints = bigParticle.size();
 
@@ -228,7 +234,7 @@ public class ParticleSystem extends VerletParticle{
 
 	protected void updateForce() {
 
-		if (shockwave) {
+	
 
 			boomPower *= 1 - boomFalloff;
 			springPower *= 1 - springFallOff;
@@ -254,20 +260,11 @@ public class ParticleSystem extends VerletParticle{
 
 				physics.removeBehavior(boomForce);
 			}
-			if (springPower < 0.0000001) {
-
-				for (int i = 0; i < bigParticle.size(); i++) {
-					// bigParticle.get(i).removeBehavior(boomForce);
-
-					physics.removeSpring(bigParticle.get(i).getSpring());
-				}
-
-				shockwave = false;
-			}
+		
 
 		}
 
-	}
+
 
 	public void update() {
 
@@ -280,8 +277,10 @@ public class ParticleSystem extends VerletParticle{
 				// as it's tricky to delete from VBO just make invisible.
 				// sprites.updateColor(i, 0, 0);
 
+				System.out.println("particle dead");
+				cleanParticleForces(i);
 				bigParticle.remove(i);
-
+				
 			}
 		}
 
@@ -330,12 +329,21 @@ public class ParticleSystem extends VerletParticle{
 
 	}
 
-	public void clean() {
+	public void cleanSytstem() {
 
 		physics.removeBehavior(boomForce);
+		
+		for(int i=0;i<bigParticle.size();i++){
+			cleanParticleForces(i);
+		}
+		
 
 		// model.delete();
-
+	}
+	
+	private void cleanParticleForces(int num){
+		physics.removeSpring(bigParticle.get(num).getSpring());
+		
 	}
 
 	public boolean isEmpty() {

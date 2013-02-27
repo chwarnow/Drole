@@ -14,22 +14,25 @@ public class ShapedParticle extends Particle {
 
 	private VerletSpring shapeForce;
 
-	protected int tailSize = 50;
-	private Vec3D[] tailPoint = new Vec3D[tailSize];
+	private int tailSize ;
+	private Vec3D[] tailPoint;
 
 	public float myAlpha = 1.0f;
 
-	public ShapedParticle(EngineApplet p, float x, float y, float z) {
+	public ShapedParticle(EngineApplet p, float x, float y, float z,int tailSize) {
 		super(p, x, y, z);
 
+		this.tailSize = tailSize;
+		tailPoint = new Vec3D[tailSize];
+		
 		for (int i = 0; i < tailSize; i++) {
 			tailPoint[i] = new Vec3D(x, y, z);
 		}
 
 	}
 	
-	public ShapedParticle(EngineApplet p,  float x, float y, float z,float newDecay, float myAlpha) {
-		this(p,x, y, z);
+	public ShapedParticle(EngineApplet p,  float x, float y, float z,int tailSize,float newDecay, float myAlpha) {
+		this(p,x, y, z,tailSize);
 		this.myAlpha = myAlpha;
 		this.decay=newDecay;
 	}
