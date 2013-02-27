@@ -137,7 +137,7 @@ public class RibbonGlobe extends Drawlist {
 		// change noise seed for menu ribbons
 		if(mode().equals(ON_SCREEN)) {
 			if(e.p.frameCount % 100 == 0) {
-				e.p.noiseSeed((long)e.p.random(1000));
+				// e.p.noiseSeed((long)e.p.random(1000));
 			}
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
@@ -171,18 +171,20 @@ public class RibbonGlobe extends Drawlist {
 			int drawableIndex = 0;
 			float penseeRotation = .0f;
 			for(Drawable r : drawables) {
-				r.update();
+				
 				
 				// draw associations
 				if(drawableIndex++ < associationsAmount) {
+					// r.update();
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
 					g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
-					r.draw();
+					// r.draw();
 					g.popMatrix();
 					
 					penseeRotation += 10f;
 				} else {
+					// r.update();
 					// draw menu swarms
 					r.draw();
 				}
@@ -195,5 +197,6 @@ public class RibbonGlobe extends Drawlist {
 		g.popMatrix();
 		g.popStyle();
 	}
+		e.p.println(e.p.frameRate);
 	}
 }

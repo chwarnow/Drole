@@ -14,6 +14,7 @@ import processing.core.PVector;
 import toxi.geom.AABB;
 import toxi.geom.Sphere;
 import toxi.geom.Vec3D;
+import toxi.math.noise.PerlinNoise;
 import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletSpring;
@@ -60,6 +61,8 @@ public class RibbonGroup extends Drawable {
 	private int					maxNoiseID = 250;
 	private float[]				noiseLUT = new float[maxNoiseID];
 
+	private PerlinNoise			noise;
+	private float				age = 0;
 	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH, float quadHeight, int id) {
 		super(e);
 
@@ -150,10 +153,14 @@ public class RibbonGroup extends Drawable {
 			}
 			if(noiseLUT[i] < .4f) noiseLUT[i] = 0;
 		}
+		
+		noise = new PerlinNoise();
+		noise.noiseSeed(0);
 	}
 
 	public void update() {
 		super.update();
+		if(age++%100 == 0) noise.noiseSeed((long)age/100);
 		/*
 		if(!isPivoting) {
 			seed += seedSpeed;
@@ -199,14 +206,12 @@ public class RibbonGroup extends Drawable {
 			Ribbon3D agent = particles[i];
 			// let agent wander
 
-			
-			
 			if(!agent.isDying) {
 				// get current position
 				PVector currPosition = new PVector(agent.getFirstPoint().x, agent.getFirstPoint().y, agent.getFirstPoint().z);
 				
-				float angleY = e.p.noise(currPosition.x/noiseScale+offsetA, currPosition.y/noiseScale + offsetA, currPosition.z/noiseScale + offsetA) * noiseStrength; 
-				float angleZ = e.p.noise(currPosition.x/noiseScale+offsetB, currPosition.y/noiseScale + 10000, currPosition.z/noiseScale + 10000) * noiseStrength;
+				float angleY = noise.noise(currPosition.x/noiseScale+offsetA, currPosition.y/noiseScale + offsetA, currPosition.z/noiseScale + offsetA) * noiseStrength; 
+				float angleZ = noise.noise(currPosition.x/noiseScale+offsetB, currPosition.y/noiseScale + 10000, currPosition.z/noiseScale + 10000) * noiseStrength;
 				// angleY += 3.1414f;//
 				
 				currPosition.x += e.p.cos(angleZ) * e.p.cos(angleY) * stepSize;// + e.p.sin(id*.1f);
