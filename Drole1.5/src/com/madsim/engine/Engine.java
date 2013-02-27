@@ -278,7 +278,7 @@ public class Engine {
 		PVector basicLightPosition = new PVector(
 				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
 				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
-				-1600 - p.noise(p.frameCount*.005f)*250f);
+				-1600 + p.noise(p.frameCount*.005f)*250f);
 		
 			g.pushMatrix();
 				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);

@@ -41,7 +41,7 @@ public class RibbonGroup extends Drawable {
 	private int					numRibbons;
 
 	private Ribbon3D[] 			particles;
-
+/*
 	private VerletPhysics 		physics;
 	private VerletParticle 		head, tail;
 	private int 				REST_LENGTH;
@@ -52,25 +52,20 @@ public class RibbonGroup extends Drawable {
 
 	private AABB 				worldBox;
 	private ParticleConstraint 	sphereA, sphereB, cubeConst;
-
+*/
 	private boolean 			isPivoting = false;
 
 	private GLModel 			imageQuadModel;
 
-	private int					noiseID = 0;
-	private int					maxNoiseID = 250;
-	private float[]				noiseLUT = new float[maxNoiseID];
-
 	private PerlinNoise			noise;
 	private float				age = 0;
-	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, int REST_LENGTH, float quadHeight, int id) {
+	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, float quadHeight, int id) {
 		super(e);
 
 		this.seed				= e.p.random(1000);
 		this.numRibbons			= numRibbons;
 		this.numQuadsPerRibbon	= numJointsPerRibbon;
 		this.sphereSize			= sphereSize;
-		this.REST_LENGTH		= REST_LENGTH;
 		this.quadHeight			= quadHeight;
 		this.id					= id;
 
@@ -142,17 +137,7 @@ public class RibbonGroup extends Drawable {
 		imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
 		imageQuadModel.initColors();
 		imageQuadModel.initNormals();
-
-		// create a noise lookuptable
-		for(int i=0;i<maxNoiseID;i++) {
-			noiseLUT[i] = 0;//
-			try {
-				noiseLUT[i] = e.p.noise((float)i*.07f);
-			} catch(Exception ex) {
-				// error calling noise function
-			}
-			if(noiseLUT[i] < .4f) noiseLUT[i] = 0;
-		}
+		imageQuadModel.setColors(0);
 		
 		noise = new PerlinNoise();
 		noise.noiseSeed(0);
@@ -198,7 +183,7 @@ public class RibbonGroup extends Drawable {
 
 		float offsetA = 0;//e.p.frameCount*.01f;
 		float offsetB = 10000;// + e.p.frameCount*.01f;
-		float stepSize = 5;
+		float stepSize = 10;
 		float noiseScale = 750;// + e.p.cos(e.p.frameCount*.1f + id) * 120;
 		float noiseStrength = 20;
 		
@@ -339,14 +324,9 @@ public class RibbonGroup extends Drawable {
 
 			for(int j=0;j<agentVertexNum-1;j++) {
 
-				// cosinus from lookup table
-				// float ratio = noiseLUT[(int)(((float)j/agentVertexNum) * maxNoiseID)];
-
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
-				// float ratio = e.p.noise(thisP.x*.01f, thisP.y*.01f, thisP.z*.01f);
-				//PVector thirdP = agentsVertices[j+1];
-
+				
 				// create quad from above vertices and save in glmodel, then add colors
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
 				floatQuadVertices[quadVertexIndex++] = thisP.y;
@@ -354,12 +334,12 @@ public class RibbonGroup extends Drawable {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
-				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight;//*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight;
 				floatQuadVertices[quadVertexIndex++] = thisP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = nextP.x;
-				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight;//*ratio*2.0f;
+				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight;
 				floatQuadVertices[quadVertexIndex++] = nextP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
@@ -367,7 +347,7 @@ public class RibbonGroup extends Drawable {
 				floatQuadVertices[quadVertexIndex++] = nextP.y;
 				floatQuadVertices[quadVertexIndex++] = nextP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
-
+/*
 				// compute face normal
 				// PVector v1 = new PVector(thisP.x - nextP.x, thisP.y - nextP.y, thisP.z - nextP.z);
 				// PVector v2 = new PVector(nextP.x - thisP.x, (nextP.y+quadHeight) - thisP.y, nextP.z - thisP.z);
@@ -397,7 +377,8 @@ public class RibbonGroup extends Drawable {
 				floatQuadNormals[quadNormalIndex++] = nY;
 				floatQuadNormals[quadNormalIndex++] = nZ;
 				floatQuadNormals[quadNormalIndex++] = 1.0f;
-
+				*/
+				/*
 				// add colors
 				float theAlpha = .8f;//agent.a;// * ((!gaps[gapIndex++]) ? 1.0f : 0.0f);
 
@@ -419,14 +400,15 @@ public class RibbonGroup extends Drawable {
 				floatQuadColors[quadColorIndex++] = ribbonR;
 				floatQuadColors[quadColorIndex++] = ribbonG;
 				floatQuadColors[quadColorIndex++] = ribbonB;
-				floatQuadColors[quadColorIndex++] = theAlpha;        
+				floatQuadColors[quadColorIndex++] = theAlpha;
+				*/
 			}
 
 		}
 
 		imageQuadModel.updateVertices(floatQuadVertices);
-		imageQuadModel.updateColors(floatQuadColors);
 		imageQuadModel.updateNormals(floatQuadVertices);
+		// imageQuadModel.updateNormals(floatQuadVertices);
 
 		// A model can be drawn through the GLGraphics renderer:
 		GLGraphics renderer = (GLGraphics)e.g;

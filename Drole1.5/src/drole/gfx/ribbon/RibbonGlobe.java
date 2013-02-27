@@ -30,11 +30,11 @@ public class RibbonGlobe extends Drawlist {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 
-	private int numRibbonHandler 				= 50;
+	private int numRibbonHandler 				= 4;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 	
 	/* assoziationen that are flying around in the menu */
-	private int associationsAmount = 5;
+	private int associationsAmount = 3;
 	private String[] penseeImages = {
 		"data/images/menuAssoziationA.png",
 		"data/images/menuAssoziationB.png",
@@ -73,7 +73,7 @@ public class RibbonGlobe extends Drawlist {
 			);
 			// let animation begin from right point
 			b.setPosition(.4f);
-			b.setLooping(false);
+			b.setLooping(true);
 			b.loadPensee();
 			// add to drawables list
 			drawables.add( b );
@@ -83,12 +83,11 @@ public class RibbonGlobe extends Drawlist {
 		for(int i = 0; i < numRibbonHandler; i++) {
 			drawables.add(new RibbonGroup(
 					e,
-					dimension.x*scale.x,
-					(int)e.p.random(50, 100),
-					4 + (int)e.p.random(100),
-					1 + (int)e.p.random(10),
-					2f,
-					i));
+					dimension.x*scale.x, // sphere size
+					500, // amount
+					10 + (int)e.p.random(100), // joints per ribbon
+					2f, // quadheight
+					i)); // id
 		}
 	}
 	
@@ -134,11 +133,8 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
-		// change noise seed for menu ribbons
 		if(mode().equals(ON_SCREEN)) {
-			if(e.p.frameCount % 100 == 0) {
-				// e.p.noiseSeed((long)e.p.random(1000));
-			}
+		/*
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -155,7 +151,7 @@ public class RibbonGlobe extends Drawlist {
 						new PVector(0, 0, 0));
 			}
 		}
-		
+		*/
 		g.pushStyle();
 		g.pushMatrix();
 		
@@ -179,7 +175,7 @@ public class RibbonGlobe extends Drawlist {
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
 					g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
-					// r.draw();
+					r.draw();
 					g.popMatrix();
 					
 					penseeRotation += 10f;

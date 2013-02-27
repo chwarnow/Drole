@@ -36,13 +36,13 @@ public class BildweltAssoziationPensee extends Drawable {
 	
 	// animation values
 	public float currPosition = 0;
-	private int positionSteps = 350;
+	private int positionSteps = 250;
 	private int oldEasedIndex = 0;
 	private int animationDirection = -1;
 	private int delay = 0; // count up when delaying
 	private int delayTime = 100; // wait for 100 frames until next one begins
 	private int stopFrame = positionSteps;
-	private float delaySteps = .33f;
+	private float delaySteps = 1.0f;//.33f;
 	private int easedPosition = 0;
 	private boolean isLooping = true;
 	private boolean isAnimationDone = false;
