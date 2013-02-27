@@ -65,13 +65,13 @@ void main() {
 	else preLightColor = gl_Color;
 
 	// Calculate Light color
-	vec4 color = preLightColor * ambient;
+	vec4 color = preLightColor;
  
 	if(numLights > 0) {
-		vec4 lightColor = vec4(.0, .0, .0, 1.0);
+		vec4 lightColor = vec4(0.0, 0.0, 0.0, 1.0);
 		for(int i = 0; i < numLights; i++) lightColor += pointLight(i);
-		color *= lightColor*2.0;
+		color *= (lightColor + ambient);
 	}
-	
+
 	gl_FragColor = color;
 }

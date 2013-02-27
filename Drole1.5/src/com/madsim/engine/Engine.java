@@ -46,8 +46,8 @@ public class Engine {
 	
 	private HashMap<String, GLTexture> textures = new HashMap<String, GLTexture>();
 	
-	private ArrayList<float[]> lights = new ArrayList<float[]>();
-	
+	private float[][] 	lights	= 	new float[8][10];
+	private int activeLights = 0;
 	private float[] ambientLight = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
 	
 	private GLTexture environmentMap;
@@ -120,7 +120,6 @@ public class Engine {
 		if(!shaders.containsKey(name)) p.logErr("[Engine]: Can't find shader '"+name+"'!");
 		activeShader = shaders.get(name);
 		activeShader.start();
-		setLights();
 	}
 	
 	public void stopShader() {
@@ -135,7 +134,7 @@ public class Engine {
 	
 	public void setLights() {
 		if(activeShader() != null && activeShader().lightHint() == Shader.USE_LIGHTS) {
-			activeShader().glsl().setIntUniform("numLights", lights.size());
+			activeShader().glsl().setIntUniform("numLights", activeLights);
 			activeShader().glsl().setVecUniform("ambient", ambientLight[0], ambientLight[1], ambientLight[2], ambientLight[3]);
 		}
 	}
@@ -170,11 +169,6 @@ public class Engine {
 				activeShader().glsl().setTexUniform("texture"+i, model.getTexture(i));
 			}
 		}
-	}
-	
-	public void pointLight(float r, float g, float b, float x, float y, float z) {
-		lights.add(new float[]{r, g, b, x, y, z});
-		this.g.pointLight(r, g, b, x, y, z);
 	}
 	
 	public void ambient(float r, float g, float b) {
@@ -214,6 +208,65 @@ public class Engine {
 		useOptik(ao);
 	}
 	
+	private void setupLights(Drawable d) {
+		// TODO: set that globally
+		/*
+		float basicLightValueX = 586.0f - p.noise(p.frameCount*.005f)*250f;
+		float basicLightValueY = 426.0f + p.noise(p.frameCount*.005f + 100)*150f;
+		
+		PVector basicLightPosition = new PVector(
+				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
+				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
+				-1600 + p.noise(p.frameCount*.005f)*550f);
+		
+			g.pushMatrix();
+				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+			g.popMatrix();
+		
+			g.pushMatrix();
+				g.translate(basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				//  g.sphere(10);
+			g.popMatrix();
+			
+		*/
+		/*
+		g.pushMatrix();
+				g.translate(basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				g.pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+		g.popMatrix();
+		*/
+		
+		if(d.usesLights()) lights = d.getLights();
+
+		activeLights = 0;
+		
+		for(int i = 0; i < lights.length; i++) {
+			if(lights[i][9] == 1) {
+				g.pushMatrix();
+					g.lightFalloff(lights[i][6], lights[i][7], lights[i][8]);
+					g.pointLight(lights[i][3], lights[i][4], lights[i][5], lights[i][0], lights[i][1], lights[i][2]);
+				g.popMatrix();
+				
+				activeLights++;
+			}
+		}
+		
+		setLights();
+	}
+	
 	public void drawContent() {
 		drawContent(FilterSets.All());
 	}
@@ -227,6 +280,8 @@ public class Engine {
 			) {
 				resetShader();
 				
+				setupLights(dl);
+				
 				// Draw
 				g.pushStyle();
 				g.pushMatrix();
@@ -239,7 +294,6 @@ public class Engine {
 	
 	public void beginDraw() {
 		if(!drawStarted) {
-			lights.clear();
 			g.beginGL();
 			drawStarted = true;
 		}
@@ -288,52 +342,12 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(0.8f, 0.8f, 0.8f);
+		ambient(0.2f, 0.2f, 0.2f);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();
 		activeOptik().set();
 		
-		startShader("JustColor");
-		
-		// TODO: set that globally
-		float basicLightValueX = 586.0f - p.noise(p.frameCount*.005f)*250f;
-		float basicLightValueY = 426.0f + p.noise(p.frameCount*.005f + 100)*150f;
-		
-		PVector basicLightPosition = new PVector(
-				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
-				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
-				-1600 + p.noise(p.frameCount*.005f)*550f);
-		
-			g.pushMatrix();
-				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);
-				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
-				g.noStroke();
-				g.fill(255, 255, 255);
-				// g.sphere(10);
-			g.popMatrix();
-		
-			g.pushMatrix();
-				g.translate(basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450);
-				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
-				g.noStroke();
-				g.fill(255, 255, 255);
-				//  g.sphere(10);
-			g.popMatrix();
-			
-			g.pushMatrix();
-				g.translate(basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450);
-				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
-				g.noStroke();
-				g.fill(255, 255, 255);
-				// g.sphere(10);
-		g.popMatrix();
-		
-		stopShader();
-
 		/*
 		startShader("PolyLightAndTextureAndEM");
 		
@@ -349,9 +363,9 @@ public class Engine {
 		*/
 		
 		// edit by chris, testing a shader spinoff
-		startShader("PolyLightAndTexture");
+//		startShader("PolyLightAndTexture");
 //		startShader("JustTexture");
-//		startShader("RoomShader");
+		startShader("RoomShader");
 			
 			drawContent();
 			

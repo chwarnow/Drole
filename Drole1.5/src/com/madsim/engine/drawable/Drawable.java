@@ -55,14 +55,53 @@ public abstract class Drawable {
 	private long 		scaleEaseMillis			=	0;
 	private long 		scaleEaseTime			=	0;
 
+	private float[][] 	lights					= 	new float[8][10];
+	
+	private boolean		useLights				= 	false;
 	
 	public Drawable(Engine e) {
 		this.e = e;
 		setG(e.g);
+		
+		resetLights();
 	}
 
 	public void setG(PGraphicsOpenGL g) {
 		this.g = g;
+	}
+	
+	protected void resetLights() {
+		for(int i = 0; i < lights.length; i++) {
+			lights[i] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		}
+	}
+	
+	protected void useLights() {
+		useLights = true;
+	}
+	
+	protected void disableLights() {
+		useLights = false;
+	}
+	
+	protected void disableLight(int i) {
+		lights[i][9] = 0;
+	}
+	
+	protected void enableLight(int i) {
+		lights[i][9] = 1;
+	}
+	
+	protected void setPointLight(int i, float x, float y, float z, float r, float g, float b, float f1, float f2, float f3) {
+		lights[i] = new float[]{x, y, z, r, g, b, f1, f2, f3, 1};
+	}
+	
+	public boolean usesLights() {
+		return useLights;
+	}
+	
+	public float[][] getLights() {
+		return lights;
 	}
 	
 	public String mode() {
