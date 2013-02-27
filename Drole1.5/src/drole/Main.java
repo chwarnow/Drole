@@ -231,7 +231,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private void setupAssoziationWorld() {
 		logLn("Initializing world 'Assoziation' ...");
 		
-		bildweltAssoziation = new BildweltAssoziation(engine);
+		bildweltAssoziation = new BildweltAssoziation(engine, globePosition, globeSize);
 		bildweltAssoziation.hide();
 		
 		engine.addDrawable("AssoziationWorld", bildweltAssoziation);
