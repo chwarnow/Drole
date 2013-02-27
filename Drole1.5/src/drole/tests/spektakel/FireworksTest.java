@@ -89,8 +89,8 @@ public class FireworksTest extends PApplet {
 		float rotationX = map(mouseY, 0, width, -PI / 2, PI / 2);
 		float rotationY = map(mouseX, 0, height, -PI / 2, PI / 2);
 
-		renderer.rotateX(rotationX);
-		renderer.rotateY(rotationY);
+	//	renderer.rotateX(rotationX);
+	//	renderer.rotateY(rotationY);
 
 		update();
 		// startErmitter.drawErmitter();

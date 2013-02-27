@@ -5,6 +5,8 @@ import processing.core.PApplet;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.marctiedemann.spektakel.ShapedParticle;
+
 import codeanticode.glgraphics.*;
 
 import toxi.geom.AABB;
@@ -43,8 +45,8 @@ public class T_ParticleSystem extends T_Particle {
 
 	TriangleMesh mesh = new TriangleMesh();
 
-	GLModel sprites;
-	GLModel trails;
+	protected GLModel sprites;
+	protected GLModel trails;
 
 	GLTexture tex;
 	float[] coords;
@@ -263,6 +265,7 @@ public class T_ParticleSystem extends T_Particle {
 		 * ip.remove(); } }
 		 */
 		
+		updateTrailPositions();
 		updateSpritePositions();
 		updateSpriteColors();
 		updateForce();
@@ -279,6 +282,83 @@ public class T_ParticleSystem extends T_Particle {
 
 		renderer.model(sprites);
 
+		
+		renderer.model(trails);
+	}
+	
+	void initTrails() {
+
+		
+
+		trails = new GLModel(p, numPoints * (trailLength + 1) * 4*2, GLModel.LINES, GLModel.DYNAMIC);
+
+		updateTrailPositions();
+
+		trails.initColors();
+		trails.setColors(250, 30);
+		
+		trails.setLineWidth(2);
+
+		trails.setBlendMode(PApplet.ADD);
+
+	}
+
+	void updateTrailPositions() {
+
+		numPoints = bigParticle.size();
+
+		coords = new float[4 * numPoints * (trailLength + 1)*2];
+
+		// p.println("updatimng" + myID + " num " + numPoints + " size "
+		// + bigParticle.size());
+
+		
+		int numSections=trailLength+1;
+		int pointsToMesh = 2;
+		
+		
+		for (int i = 0; i < numPoints; i++) {
+
+			T_ShapeParticle oneParticle = bigParticle.get(i);
+			
+			
+			for (int j = 0; j < trailLength - 1; j++) {
+				
+				int step = (i*numSections*pointsToMesh*4)+(j*pointsToMesh*4);
+				
+				coords[step + 0] = bigParticle.get(i).x;
+				coords[step + 1] = bigParticle.get(i).y;
+				coords[step + 2] = bigParticle.get(i).z;
+				coords[step + 3] = 1.0f; // The W coordinate of each point
+				
+				Vec3D trailPoint = oneParticle.getTailPoint(0);
+				
+				coords[step + 0] = trailPoint.x;
+				coords[step + 1] = trailPoint.y;
+				coords[step + 2] = trailPoint.z;
+				coords[step + 3] = 1.0f; // The W coordinate of each point
+				
+				
+				for (int k = 0; k < pointsToMesh; k++) {
+
+					step+=(k*4);
+									
+					trailPoint = oneParticle.getTailPoint(j + k);
+
+					coords[step + 0] = trailPoint.x;
+					coords[step + 1] = trailPoint.y;
+					coords[step + 2] = trailPoint.z;
+					coords[step + 3] = 1.0f; // The W coordinate of each point
+												// must
+												// be
+				}
+
+			}
+		}
+
+		// p.println(coords);
+
+		trails.updateVertices(coords);
 	}
 
 	public void drawErmitter(GLGraphics renderer) {

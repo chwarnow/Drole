@@ -119,12 +119,22 @@ public class T_DudeSystem extends T_ParticleSystem {
 		}
 
 		initSprites();
+		
 		sprites.setSpriteSize(50, 200);
 
+
+
+		// one size fits all
+		trailLength = 5;
+		initTrails();
+		
+		trails.setColors(255, 5);
 
 	}
 
 
+	
+	
 
 	@Override
 	public void update() {
