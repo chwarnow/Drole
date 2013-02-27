@@ -40,7 +40,7 @@ public class T_DudeSystem extends T_ParticleSystem {
 
 	void loadImage() {
 
-		dudeImage = p.loadImage("images/flyingDude.png");
+		dudeImage = p.loadImage("images/flyingDude_200px.png");
 		dudeImage.loadPixels();
 
 		greyLevels = new float[dudeImage.width][dudeImage.height];

@@ -159,5 +159,12 @@ public class Spektakel extends Drawable {
 				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
 	}
+	
+	public void spawnNewDude() {
+		ToxicSystem newOne = new ToxicSystem(e, physics, 50,Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2, 
+				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM / 2, 0), 
+				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
+		ermitters.add(newOne);
+	}
 
 }
