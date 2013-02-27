@@ -41,24 +41,27 @@ public class RibbonGroup extends Drawable {
 	private int					numRibbons;
 
 	private Ribbon3D[] 			particles;
-/*
+
 	private VerletPhysics 		physics;
 	private VerletParticle 		head, tail;
-	private int 				REST_LENGTH;
+	//private int 				REST_LENGTH;
 
-	private VerletParticle 		pivot;
-	private VerletSpring[] 		pivotSprings;
-	private ArrayList<Float> 	springLengths = new ArrayList<Float>();
+	// private VerletParticle 		pivot;
+	// private VerletSpring[] 		pivotSprings;
+	// private ArrayList<Float> 	springLengths = new ArrayList<Float>();
 
 	private AABB 				worldBox;
-	private ParticleConstraint 	sphereA, sphereB, cubeConst;
-*/
+	private ParticleConstraint 	sphereA, cubeConst;
+
 	private boolean 			isPivoting = false;
 
 	private GLModel 			imageQuadModel;
 
 	private PerlinNoise			noise;
 	private float				age = 0;
+	
+	private boolean				isFalling = false;
+	
 	public RibbonGroup(Engine e, float sphereSize, int numRibbons, int numJointsPerRibbon, float quadHeight, int id) {
 		super(e);
 
@@ -85,11 +88,11 @@ public class RibbonGroup extends Drawable {
 			vertexCount += particles[i].getVertexCount();
 		}
 
-		/*
+		
 		// create collision sphere at origin, replace OUTSIDE with INSIDE to
 		// keep particles inside the sphere
 		sphereA = new SphereConstraint(new Sphere(new Vec3D(), sphereSize * .8f), SphereConstraint.OUTSIDE);
-		sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
+		// sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
 
 		worldBox = new AABB(new Vec3D(), 1500);
 		cubeConst = new BoxConstraint(worldBox);
@@ -97,7 +100,7 @@ public class RibbonGroup extends Drawable {
 		physics = new VerletPhysics();
 
 		// weak gravity along Y axis
-		physics.addBehavior(new GravityBehavior(new Vec3D(0, 0.00f, 0)));
+		physics.addBehavior(new GravityBehavior(new Vec3D(0, 1.00f, 0)));
 
 		// set bounding box to 100% of out virtual world
 		physics.setWorldBounds(worldBox);
@@ -108,14 +111,14 @@ public class RibbonGroup extends Drawable {
 
 		for (int i = 0; i < numRibbons; i++) {
 			// create particles at random positions outside sphere
-			VerletParticle p = new VerletParticle(Vec3D.randomVector().scaleSelf(sphereSize * 2));
+			VerletParticle p = new VerletParticle(Vec3D.randomVector().scaleSelf(sphereSize * .2f));
 
 			// set sphere as particle constraint
-			p.addConstraint(sphereA);
-			p.addConstraint(sphereB);
-
+			// p.addConstraint(sphereA);
+			// p.addConstraint(cubeConst);
+			//p.lock();
 			physics.addParticle(p);
-
+			/*
 			if(prev != null) {
 				float thisLength = e.p.random(REST_LENGTH);
 				springLengths.add(thisLength);
@@ -125,8 +128,9 @@ public class RibbonGroup extends Drawable {
 			}
 
 			prev = p;
+			*/
 		}
-
+		/*
 		head = physics.particles.get(0);
 		head.lock();
 		 */
@@ -189,6 +193,7 @@ public class RibbonGroup extends Drawable {
 		
 		for (int i = 0; i < numRibbons; i++) {	
 			Ribbon3D agent = particles[i];
+			if(!isFalling) {
 			// let agent wander
 
 			if(!agent.isDying) {
@@ -232,6 +237,19 @@ public class RibbonGroup extends Drawable {
 					agent.age++;
 				}
 			}
+			} else {
+				// let agents fall down
+				
+				// copy particle position to agent position
+				
+				VerletParticle p = physics.particles.get(i);
+				agent.update(p.x, p.y, p.z);
+			}
+		}
+		
+		// update physics simulation
+		if(isFalling) {
+			physics.update();
 		}
 	}
 
@@ -422,4 +440,23 @@ public class RibbonGroup extends Drawable {
 		return new PVector(head.x, head.y, head.z);
 	}
 	 */
+	
+	/**
+	 * let all fall down
+	 */
+	public void dieOut() {
+		// set physics particles to current agent positions
+		for (int i = 0; i < numRibbons; i++) {
+			Ribbon3D agent = particles[i];
+			PVector agentPosition = agent.getFirstPoint();
+			
+			// physics.particles.get(i).clear();
+			// physics.particles.get(i).scaleVelocity(0);
+			// physics.particles.get(i).set(agentPosition.x, agentPosition.y, agentPosition.z);
+			// physics.particles.get(i).scaleVelocity(0);
+			//physics.particles.get(i).unlock();
+			// TODO: add velocity
+		}
+		isFalling = true;
+	}
 }

@@ -92,6 +92,28 @@ public class RibbonGlobe extends Drawlist {
 		}
 	}
 	
+	@Override
+	public void fadeOut(float time) {
+		super.fadeOut(time);
+		hide();
+	}
+	
+	public void hide() {
+		// TODO: set all ribbons to die mode
+		int drawableIndex = 0;
+		for(int i=0;i<drawables.size();i++) {				
+			// draw associations
+			if(drawableIndex++ < associationsAmount) {
+				// r.draw();
+			} else {
+				RibbonGroup rG = (RibbonGroup)drawables.get(i);
+				//  menu swarms
+				rG.dieOut();
+			}
+		}
+		
+	}
+	
 	public void switchToLights() {
 		e.p.logLn("[Globe]: Switching to mode LIGHTS!");
 		/*
@@ -134,7 +156,7 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
-		if(mode().equals(ON_SCREEN)) {
+		//if(mode().equals(ON_SCREEN)) {
 		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
@@ -193,7 +215,7 @@ public class RibbonGlobe extends Drawlist {
 			
 		g.popMatrix();
 		g.popStyle();
-	}
+	//}
 		// e.p.println(e.p.frameRate);
 	}
 }
