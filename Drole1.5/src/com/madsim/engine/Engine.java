@@ -1,16 +1,12 @@
 package com.madsim.engine;
 
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.media.opengl.GL;
 
-import processing.core.PApplet;
 import processing.core.PFont;
-import processing.core.PVector;
 
 import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.drawable.FilterSets;
