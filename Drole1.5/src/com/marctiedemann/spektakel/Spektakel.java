@@ -110,7 +110,7 @@ public class Spektakel extends Drawable {
 		update();
 		// startErmitter.drawErmitter();
 
-		e.setPointSize(30);
+		e.setPointSize(10);
 		
 		for (int i = 0; i < ermitters.size(); i++) {
 			
@@ -118,7 +118,7 @@ public class Spektakel extends Drawable {
 			ToxicSystem er = ermitters.get(i);
 
 			if(i<4)
-			setPointLight(i, er.x, er.y, er.z, 255, 235, 220, 0.1f, 0.01f,0.0f );
+			setPointLight(i, er.x, er.y, er.z, 255, 150, 100, 0.3f, .01f,0.0f );
 			
 			
 			er.update();
