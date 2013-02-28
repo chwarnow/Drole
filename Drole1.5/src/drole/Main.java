@@ -571,12 +571,25 @@ public class Main extends EngineApplet implements MouseWheelListener {
 //				optikWorldDrawlist.fadeAllOut(100);
 //				assoziationWorldDrawlist.fadeAllOut(100);
 			}
+			break;
+		
+		// Spektakel Debug KEYS
+		
+		case 's':
+			bildweltSpektakel.spawnNewToxicSystem();
+			break;
+		case 'a':
+			bildweltSpektakel.spawnNewDude();
+			break;
+			
+			
+			
 		}
 		
 		switch (keyCode) {
 		case LEFT:
 			rotY += 0.1f;
-			bildweltSpektakel.spawnNewToxicSystem();
+			
 			break;
 		case RIGHT:
 			// zoom out

@@ -47,13 +47,13 @@ public class FireworksTest extends PApplet {
 
 		ermitters = new ArrayList<T_ParticleSystem>();
 
-		startErmitter = new T_DudeSystem(this,physics, 0, 0, 0);
+		startErmitter = new T_DudeSystem(this,physics, 1000, 0, 0);
 
 	}
 
 	public void update() {
 
-		println(drag);
+	//	println(drag);
 
 		float pauseEasing = 0.5f;
 		float pauseAt = 2;
@@ -89,8 +89,8 @@ public class FireworksTest extends PApplet {
 		float rotationX = map(mouseY, 0, width, -PI / 2, PI / 2);
 		float rotationY = map(mouseX, 0, height, -PI / 2, PI / 2);
 
-		renderer.rotateX(rotationX);
-		renderer.rotateY(rotationY);
+	//	renderer.rotateX(rotationX);
+	//	renderer.rotateY(rotationY);
 
 		update();
 		// startErmitter.drawErmitter();
@@ -130,6 +130,11 @@ public class FireworksTest extends PApplet {
 					random(-1500, 1500));
 			ermitters.add(newOne);
 		}
+		
+		if (key == 'd') {
+
+			startErmitter.spawnNew();
+		}
 
 		if (key == 'a') {
 
@@ -142,7 +147,7 @@ public class FireworksTest extends PApplet {
 		if (key == 'i') {
 
 			T_DudeSystem newOne = new T_DudeSystem(this,
-					physics2,  random(-1500, 1500), random(-1500, 1500),
+					physics2, 1499, random(-1500, 1500),
 					random(-1500, 1500));
 			ermitters.add(newOne);
 		}
@@ -161,7 +166,7 @@ public class FireworksTest extends PApplet {
 				3000, 0.1f, 0.5f);
 		AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0),
 				500, -2.8f, 0.5f);
-		thePhysics.addBehavior(center);
+//		thePhysics.addBehavior(center);
 //		thePhysics.addBehavior(ring);
 		thePhysics.addBehavior(gravity); 
 		thePhysics.setDrag(drag);
