@@ -194,7 +194,7 @@ public class Spektakel extends Drawable {
 
 	public void spawnNewDude() {
 		FlyingDude newOne = new FlyingDude(e, physics,
-				400, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
+				400, e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2),
 				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
 	}

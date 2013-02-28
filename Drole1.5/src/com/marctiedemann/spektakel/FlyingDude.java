@@ -37,9 +37,9 @@ public class FlyingDude extends ParticleSystem {
 			
 		
 			setSpringPower(0.00002f);
-			setBoomPower(-5.0f);
+			setBoomPower(-8.0f);
 			
-			springFallOff = -0.0001f;
+			springFallOff = -0.005f;
 			boomFalloff = 0.001f;
 			
 			trailLength = 2;
