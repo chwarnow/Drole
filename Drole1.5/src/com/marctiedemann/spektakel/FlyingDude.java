@@ -101,7 +101,7 @@ public class FlyingDude extends ParticleSystem {
 
 						ShapedParticle newPart = new ShapedParticle(e.p, x() + e.p.random(-iSize,iSize), y() + e.p.random(-iSize,iSize)-400, z()+ e.p.random(-iSize,iSize),trailLength,decay,greyLevels[i][j]);
 			
-						newPart.setWeight(0.5f);
+						newPart.setWeight(5.5f);
 						
 						int xPos = targetXCenter + (int) ((i * spread) - (imageWidth * spread) * 0.5f);
 						int yPos = targetYCenter + ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
