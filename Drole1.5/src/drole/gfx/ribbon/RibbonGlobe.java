@@ -198,7 +198,7 @@ public class RibbonGlobe extends Drawlist {
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
 					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
-					r.draw();
+					// r.draw();
 					g.popMatrix();
 					
 					penseeRotation += 10f;

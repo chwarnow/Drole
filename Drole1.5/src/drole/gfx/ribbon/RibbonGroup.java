@@ -94,13 +94,13 @@ public class RibbonGroup extends Drawable {
 		sphereA = new SphereConstraint(new Sphere(new Vec3D(), sphereSize * .8f), SphereConstraint.OUTSIDE);
 		// sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
 
-		worldBox = new AABB(new Vec3D(), 1500);
+		worldBox = new AABB(new Vec3D(), sphereSize);
 		cubeConst = new BoxConstraint(worldBox);
 
 		physics = new VerletPhysics();
 
 		// weak gravity along Y axis
-		physics.addBehavior(new GravityBehavior(new Vec3D(0, 1.00f, 0)));
+		physics.addBehavior(new GravityBehavior(new Vec3D(0, 1.0f, 0)));
 
 		// set bounding box to 100% of out virtual world
 		physics.setWorldBounds(worldBox);
@@ -114,8 +114,8 @@ public class RibbonGroup extends Drawable {
 			VerletParticle p = new VerletParticle(Vec3D.randomVector().scaleSelf(sphereSize * .2f));
 
 			// set sphere as particle constraint
-			// p.addConstraint(sphereA);
-			// p.addConstraint(cubeConst);
+			p.addConstraint(sphereA);
+			p.addConstraint(cubeConst);
 			//p.lock();
 			physics.addParticle(p);
 			/*
@@ -196,54 +196,57 @@ public class RibbonGroup extends Drawable {
 			if(!isFalling) {
 			// let agent wander
 
-			if(!agent.isDying) {
-				// get current position
-				PVector currPosition = new PVector(agent.getFirstPoint().x, agent.getFirstPoint().y, agent.getFirstPoint().z);
-				
-				float angleY = noise.noise(currPosition.x/noiseScale+offsetA, currPosition.y/noiseScale + offsetA, currPosition.z/noiseScale + offsetA) * noiseStrength; 
-				float angleZ = noise.noise(currPosition.x/noiseScale+offsetB, currPosition.y/noiseScale + 10000, currPosition.z/noiseScale + 10000) * noiseStrength;
-				// angleY += 3.1414f;//
-				
-				currPosition.x += e.p.cos(angleZ) * e.p.cos(angleY) * stepSize;// + e.p.sin(id*.1f);
-				currPosition.y += e.p.sin(angleZ) * stepSize;// + e.p.sin(id*.1f);
-				currPosition.z += e.p.cos(angleZ) * e.p.sin(angleY) * stepSize;// + e.p.sin(id*.1f);
-				
-				currPosition.normalize();
-				currPosition.mult(sphereSize + e.p.abs(e.p.cos(e.p.frameCount*.01f + i*.001f)) * sphereSize*.125f);
-				
-				
-				if(agent.age == agent.currAge) {
-					agent.isDying = true;
-				}
-				agent.age++;
-				
-				// set new position
-				agent.update(currPosition.x, currPosition.y, currPosition.z);
-			} else {
-				if(agent.age == agent.currAge + agent.getVertexCount()) {
-					PVector startPosition = new PVector(e.p.random(-sphereSize, sphereSize),
-							e.p.random(-sphereSize, sphereSize),
-							e.p.random(-sphereSize, sphereSize));
-					startPosition.normalize();
-					startPosition.mult(sphereSize + e.p.abs(e.p.cos(e.p.frameCount*.01f + i*.001f)) * sphereSize*.125f);
-					
-					agent.reset(startPosition);
-				} else {
+				if(!agent.isDying) {
 					// get current position
 					PVector currPosition = new PVector(agent.getFirstPoint().x, agent.getFirstPoint().y, agent.getFirstPoint().z);
+					
+					float angleY = noise.noise(currPosition.x/noiseScale+offsetA, currPosition.y/noiseScale + offsetA, currPosition.z/noiseScale + offsetA) * noiseStrength; 
+					float angleZ = noise.noise(currPosition.x/noiseScale+offsetB, currPosition.y/noiseScale + 10000, currPosition.z/noiseScale + 10000) * noiseStrength;
+					// angleY += 3.1414f;//
+					
+					currPosition.x += e.p.cos(angleZ) * e.p.cos(angleY) * stepSize;// + e.p.sin(id*.1f);
+					currPosition.y += e.p.sin(angleZ) * stepSize;// + e.p.sin(id*.1f);
+					currPosition.z += e.p.cos(angleZ) * e.p.sin(angleY) * stepSize;// + e.p.sin(id*.1f);
+					
+					currPosition.normalize();
+					currPosition.mult(sphereSize + e.p.abs(e.p.cos(e.p.frameCount*.01f + i*.001f)) * sphereSize*.125f);
+					
+					
+					if(agent.age == agent.currAge) {
+						agent.isDying = true;
+					}
+					agent.age++;
+					
 					// set new position
 					agent.update(currPosition.x, currPosition.y, currPosition.z);
-					
-					agent.age++;
+				} else {
+					if(agent.age == agent.currAge + agent.getVertexCount()) {
+						PVector startPosition = new PVector(e.p.random(-sphereSize, sphereSize),
+								e.p.random(-sphereSize, sphereSize),
+								e.p.random(-sphereSize, sphereSize));
+						startPosition.normalize();
+						startPosition.mult(sphereSize + e.p.abs(e.p.cos(e.p.frameCount*.01f + i*.001f)) * sphereSize*.125f);
+						
+						agent.reset(startPosition);
+					} else {
+						// get current position
+						PVector currPosition = new PVector(agent.getFirstPoint().x, agent.getFirstPoint().y, agent.getFirstPoint().z);
+						// set new position
+						agent.update(currPosition.x, currPosition.y, currPosition.z);
+						
+						agent.age++;
+					}
 				}
-			}
 			} else {
 				// let agents fall down
 				
 				// copy particle position to agent position
 				
 				VerletParticle p = physics.particles.get(i);
-				agent.update(p.x, p.y, p.z);
+				PVector fP = new PVector(p.x, p.y, p.z);
+				// if(i<1) System.out.println(p.x + " " + p.y + " " + p.z);
+				agent.update(fP.x, fP.y, fP.z);
+				// if(i<1) System.out.println(agent.getFirstPoint());
 			}
 		}
 		
@@ -449,13 +452,10 @@ public class RibbonGroup extends Drawable {
 		for (int i = 0; i < numRibbons; i++) {
 			Ribbon3D agent = particles[i];
 			PVector agentPosition = agent.getFirstPoint();
-			
-			// physics.particles.get(i).clear();
-			// physics.particles.get(i).scaleVelocity(0);
-			// physics.particles.get(i).set(agentPosition.x, agentPosition.y, agentPosition.z);
-			// physics.particles.get(i).scaleVelocity(0);
-			//physics.particles.get(i).unlock();
-			// TODO: add velocity
+			physics.particles.get(i).clear();
+			physics.particles.get(i).set(agentPosition.x, agentPosition.y, agentPosition.z);
+			physics.particles.get(i).scaleVelocity(0);
+			physics.particles.get(i).addForce(new Vec3D(agentPosition.x, agentPosition.y, agentPosition.z).scaleSelf(.01f));
 		}
 		isFalling = true;
 	}
