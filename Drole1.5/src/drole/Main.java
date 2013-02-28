@@ -27,7 +27,6 @@ import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
 import com.marctiedemann.spektakel.Spektakel;
 
-import drole.gfx.ribbon.RibbonGlobe;
 import drole.gfx.room.Room;
 import drole.menu.Menu;
 import drole.settings.Settings;
@@ -167,7 +166,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 //		setupMicroMacroWorld();
 		
-		setupOptikWorld();
+//		setupOptikWorld();
 		
 //		setupAssoziationWorld();
 		
@@ -426,10 +425,12 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				menu.rotation(0, 0, menu.rotation().z+rotationSpeedY);
 				
 				// TRANS INTO WORLD
-				if(isScaling && menu.getActiveWorld() != Menu.NO_ACTIVE_WORLD && scaling > -600f) {
+				/*
+				if(isScaling && menu.getActiveWorld() != Menu.NO_ACTIVE_WORLD && scaling > -600f && !menu.inWorld) {
 					menu.inWorld = true;
 					transitToWorld(menu.getActiveWorld());
 				}
+				*/
 				
 				if(!isInGoBackGesture) ticksInGoBackGesture = 0;
 				if(menu.inWorld && isScaling && isRotating) {
