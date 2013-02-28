@@ -10,6 +10,7 @@ import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 
 import drole.gfx.ribbon.RibbonGlobe;
+import drole.settings.Settings;
 
 public class Menu extends Drawable {
 
@@ -27,29 +28,8 @@ public class Menu extends Drawable {
 	
 	private RibbonGlobe globe;
 	
-	private GLModel mog;
-	
 	public Menu(Engine e, PVector position, float radius) {
 		super(e);
-		
-		mog = new GLModel(e.p, 4, GLModel.QUADS, GLModel.STATIC);
-		
-		mog.initTextures(1);
-		mog.setTexture(0, e.requestTexture("data/images/menu/01_archtektur.png"));
-		
-		mog.beginUpdateVertices();
-			mog.updateVertex(0, -100, -100, -100);
-			mog.updateVertex(1,  100, -100, -100);
-			mog.updateVertex(2,  100,  100, -100);
-			mog.updateVertex(3, -100,  100, -100);
-		mog.endUpdateVertices();
-		
-		mog.beginUpdateTexCoords(0);
-			mog.updateTexCoord(0, 0, 0);
-			mog.updateTexCoord(1, 1, 0);
-			mog.updateTexCoord(2, 1, 1);
-			mog.updateTexCoord(3, 0, 1);
-		mog.endUpdateTexCoords();
 		
 		position(position);
 		
@@ -64,17 +44,15 @@ public class Menu extends Drawable {
 		for(int i = 0; i < NUM_WORLDS; i++) {
 			worlds[i] = new GLModel(e.p, 4, GLModel.QUADS, GLModel.STATIC);
 			
-			/*
 			worlds[i].initTextures(1);
-			worlds[i].setTexture(0, e.requestTexture("data/images/particle.png"));
+			worlds[i].setTexture(0, e.requestTexture(Settings.WORLDS[i]));
 			
 			worlds[i].beginUpdateTexCoords(0);
-				worlds[i].updateTexCoord(0, 0, 1);
-				worlds[i].updateTexCoord(1, 1, 1);
-				worlds[i].updateTexCoord(2, 1, 0);
-				worlds[i].updateTexCoord(3, 0, 0);
+				worlds[i].updateTexCoord(0, 0, 0);
+				worlds[i].updateTexCoord(1, 1, 0);
+				worlds[i].updateTexCoord(2, 1, 1);
+				worlds[i].updateTexCoord(3, 0, 1);
 			worlds[i].endUpdateTexCoords();
-			*/
 			
 			PVector[] normals = new PVector[4];
 			
@@ -114,7 +92,7 @@ public class Menu extends Drawable {
 			worlds[i].endUpdateVertices();
 			
 			worlds[i].initColors();
-			worlds[i].setColors(200, 255);
+			worlds[i].setColors(200, 100);
 			
 			worlds[i].initNormals();
 			
@@ -141,11 +119,11 @@ public class Menu extends Drawable {
 			for(int i = 0; i < NUM_WORLDS; i++) {
 				if(worldAngles[i] >= curY-0.2f &&  worldAngles[i] <= curY+0.2f) {
 					
-//					worlds[i].setColors(200, 0, 0);
+					worlds[i].setColors(200, 255);
 					
 					tmpActiveWorld = i;
 				} else {
-//					worlds[i].setColors(200*(1.0f/i));
+					worlds[i].setColors(200, 100);
 				}
 				e.p.pinLog("World"+i, worldAngles[i]);
 			}
@@ -192,9 +170,6 @@ public class Menu extends Drawable {
 			
 		g.popStyle();
 		g.popMatrix();
-
-		e.setupModel(mog);
-		mog.render();
 	}
 	
 }

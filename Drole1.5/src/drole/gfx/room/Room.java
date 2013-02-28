@@ -162,7 +162,6 @@ public class Room extends Drawable {
 			
 			g.noFill();
 			g.noStroke();
-			g.tint(255, 0);
 			
 			e.setupModel(model);
 			model.render();

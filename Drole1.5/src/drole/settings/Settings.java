@@ -39,23 +39,15 @@ public class Settings {
 	public static float MENU_GLOBE_POSITION_Y				=   0;
 	public static float MENU_GLOBE_POSITION_Z				=   -(VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2f);
 	
-	public static float MENU_GLOBE_RADIUS_MM				= 800;
+	public static float MENU_GLOBE_RADIUS_MM				=  800;
 	
-	// Settings Dennys home
+	// WORLDS 
+	public static String[] WORLDS							= new String[]{
+			"data/images/menu/01_archtektur.png",
+			"data/images/menu/02_assoziationen.png",
+			"data/images/menu/03_Mikro_makro.png",
+			"data/images/menu/04_optik_sehen.png",
+			"data/images/menu/05_Spektakel.png"
+	};
 	
-	// Pixel Dimension of screen
-	/*
-	public static int VIRTUAL_SCREEN_WIDTH					= 	800;
-	public static int VIRTUAL_SCREEN_HEIGHT					= 	800;
-	
-	// Dimension of the real worlds screen in mm
-	public static int REAL_SCREEN_DIMENSIONS_WIDTH_MM 		= 	1570;
-	public static int REAL_SCREEN_DIMENSIONS_HEIGHT_MM 		= 	1570;
-	public static int REAL_SCREEN_DIMENSIONS_DEPTH_MM 		= 	   0;
-	
-	// Position of the real world screens left lower corner in TRACKER SPACE (in relation to the kinect) given in mm!
-	public static int REAL_SCREEN_POSITION_X_MM				=  	 -900;
-	public static int REAL_SCREEN_POSITION_Y_MM				= 	  180;
-	public static int REAL_SCREEN_POSITION_Z_MM				= 	 -550;
-	*/
 }
