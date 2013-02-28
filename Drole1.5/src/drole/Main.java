@@ -166,7 +166,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-		setupMenu();
+//		setupMenu();
 		
 		setupSpektakel();
 		
@@ -205,7 +205,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		logLn("Initializing world 'Spektakel' ...");
 		
 		bildweltSpektakel = new Spektakel(engine);
-		bildweltSpektakel.hide();
+	//	bildweltSpektakel.hide();
 		
 		engine.addDrawable("Spektakel", bildweltSpektakel);
 	}
