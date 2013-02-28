@@ -170,6 +170,7 @@ class BildweltAssoziationAgent {
 	public void update(int pathPosition) {
 		// TODO: error handling / constrain to available positions
 
+		try {
 		// set curr position
 		p.x = positionsX[pathPosition];
 		p.y = positionsY[pathPosition];
@@ -177,6 +178,9 @@ class BildweltAssoziationAgent {
 
 		// create ribbons
 		ribbon.update(p.x, p.y, p.z);//, false);
+		} catch (Exception e) {
+			// error trying to add a new position
+		}
 	}
 
 	public void draw() {

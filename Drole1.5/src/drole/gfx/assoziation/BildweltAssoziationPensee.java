@@ -78,6 +78,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		if(!isAgents) {
 			if(dataItem.isAvailable()) {
 				isAgents = true;
+				isVisible = true;
 				agents = dataItem.getAgentsData();
 				agentsCount = dataItem.getAgentsCount();
 				vertexCount = dataItem.getVertexCount();
@@ -110,12 +111,13 @@ public class BildweltAssoziationPensee extends Drawable {
 						isVisible = false;
 					} else {
 						currPosition += animationDirection*delaySteps;
+						if(currPosition <= 0) currPosition = positionSteps-1;
 					}
 				} else {
 					if (currPosition >= positionSteps-1) {
 						if(isShowing) {
 							isRunning = false;
-						} else if ( delay++ ==delayTime) {
+						} else if ( delay++ == delayTime) {
 							currPosition = 0;
 							delay = 0;
 						}
@@ -153,7 +155,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		oldEasedIndex = easedIndex;
 
 		// cosinus from lookup table
-		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))] * fade;
+		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))];// * fade;
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
 			
@@ -300,9 +302,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		loadPensee();
 	}
 	
-	@Override
-	public void show() {
-		super.show();
+	public void showMe() {
 		isShowing = true;
 		isHiding = false;
 		setPosition(.5f);
@@ -310,13 +310,18 @@ public class BildweltAssoziationPensee extends Drawable {
 		isVisible = true;
 	}
 	
-	@Override
-	public void hide() {
-		super.hide();
+	public void hideMe() {
 		isShowing = false;
 		isHiding = true;
 		// setPosition(.5f);
 		isRunning = true;
+	}
+	
+	public void resume() {
+		isHiding = false;
+		setPosition(.5f);
+		isRunning = true;
+		isVisible = true;
 	}
 	
 	public void stop() {

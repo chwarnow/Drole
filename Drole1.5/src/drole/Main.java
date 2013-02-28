@@ -7,6 +7,7 @@ import java.awt.event.MouseWheelListener;
 
 import codeanticode.glgraphics.GLConstants;
 
+import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
@@ -19,14 +20,13 @@ import com.madsim.engine.shader.PolyLightAndColorShader;
 import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.engine.shader.RoomShader;
-import com.madsim.fakebildwelten.BildweltAssoziation;
 import com.madsim.fakebildwelten.BildweltFabric;
 import com.madsim.fakebildwelten.BildweltMicroMacro;
-import com.madsim.fakebildwelten.BildweltOptik;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
 import com.marctiedemann.spektakel.Spektakel;
 
+import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.room.Room;
 import drole.menu.Menu;
 import drole.settings.Settings;
@@ -78,6 +78,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	/* Menu */
 	private Menu menu;
 
+	private int fakeActiveWorld = 0;
+	
 	private float rotationSpeedY = 0.0f;
 	private float lastHandsZL = 0, lastHandsZR = 0;
 	private PVector lastRightHand = new PVector(0, 0, 0);
@@ -162,15 +164,15 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 		setupMenu();
 		
-//		setupSpektakel();
+		setupSpektakel();
 		
-//		setupMicroMacroWorld();
+		setupMicroMacroWorld();
 		
-//		setupOptikWorld();
+		setupOptikWorld();
 		
-//		setupAssoziationWorld();
+		setupAssoziationWorld();
 		
-//		setupFabricWorld();
+		setupFabricWorld();
 		
 		setupWorlds();
 		
@@ -179,18 +181,11 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 	
 	private void setupWorlds() {
-		/*
-		worlds[0] = bildweltSpektakel;
-		worlds[1] = bildweltMicroMacro;
-		worlds[2] = bildweltFabric;
+		worlds[0] = bildweltFabric;
+		worlds[1] = bildweltAssoziation;
+		worlds[2] = bildweltMicroMacro;
 		worlds[3] = bildweltOptik;
-		worlds[4] = bildweltAssoziation;
-		*/
-		worlds[0] = bildweltOptik;
-		worlds[1] = bildweltOptik;
-		worlds[2] = bildweltOptik;
-		worlds[3] = bildweltOptik;
-		worlds[4] = bildweltOptik;
+		worlds[4] = bildweltSpektakel;
 	}
 	
 	private void switchMode(String MODE) {
@@ -240,7 +235,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		logLn("Initializing world 'Optik' ...");
 		
 		// testwise optik scene
-		bildweltOptik = new BildweltOptik(engine);
+		bildweltOptik = new BildweltOptik(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), new PVector(Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM));
 		bildweltOptik.hide();
 		
 		engine.addDrawable("OptikWorld", bildweltOptik);
@@ -249,7 +244,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private void setupAssoziationWorld() {
 		logLn("Initializing world 'Assoziation' ...");
 		
-		bildweltAssoziation = new BildweltAssoziation(engine);
+		bildweltAssoziation = new BildweltAssoziation(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), new PVector(Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM));
 		bildweltAssoziation.hide();
 		
 		engine.addDrawable("AssoziationWorld", bildweltAssoziation);
@@ -471,8 +466,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 //			switchToDebug();
 			switchMode(FORCED_DEBUG);
 			break;
-		case 'r': 
-
+		case 'r':
 			break;
 		
 		// Spektakel Debug KEYS
@@ -484,22 +478,27 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			bildweltSpektakel.spawnNewDude();
 			break;
 		case '0':
-			transitToMenu(0);
+			transitToMenu(fakeActiveWorld);
 			break;
 		case '1':
 			transitToWorld(0);
+			fakeActiveWorld = 0;
 			break;
 		case '2':
 			transitToWorld(1);
+			fakeActiveWorld = 1;
 			break;
 		case '3':
 			transitToWorld(2);
+			fakeActiveWorld = 2;
 			break;
 		case '4':
 			transitToWorld(3);
+			fakeActiveWorld = 3;
 			break;
 		case '5':
 			transitToWorld(4);
+			fakeActiveWorld = 4;
 			break;			
 		}
 		

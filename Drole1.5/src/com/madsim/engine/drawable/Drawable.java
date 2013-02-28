@@ -59,7 +59,7 @@ public abstract class Drawable {
 
 	private float[][] 	lights					= 	new float[8][10];
 	
-	private float[]		ambient					=	new float[]{0.5f, 0.5f, 0.5f};
+	private float[]		ambient					=	new float[]{0.5f, 0.5f, 0.5f, 1.0f};
 	
 	private boolean		useLights				= 	false;
 	
@@ -98,7 +98,7 @@ public abstract class Drawable {
 	}
 	
 	protected void setAmbient(float r, float g, float b) {
-		ambient = new float[]{r, g, b};
+		ambient = new float[]{r, g, b, 1.0f};
 	}
 	
 	protected void useLights() {

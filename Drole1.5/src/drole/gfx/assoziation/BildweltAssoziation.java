@@ -59,21 +59,21 @@ public class BildweltAssoziation extends Drawable {
 	 * @param activeID
 	 */
 	private void setPensee(int activeID) {
-		pensees[activePensee].hide();
+		pensees[activePensee].hideMe();
 		activePensee = activeID;
-		pensees[activePensee].show();
+		pensees[activePensee].showMe();
 	}
 	
 	@Override
 	public void fadeIn(float time) {
 		super.fadeIn(time);
-		pensees[activePensee].show();
+		pensees[activePensee].showMe();
 	}
 	
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
-		pensees[activePensee].hide();
+		pensees[activePensee].hideMe();
 	}
 
 	@Override

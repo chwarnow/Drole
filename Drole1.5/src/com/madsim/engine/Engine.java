@@ -145,7 +145,7 @@ public class Engine {
 	public void setLights() {
 		if(activeShader() != null && activeShader().lightHint() == Shader.USE_LIGHTS) {
 			activeShader().glsl().setIntUniform("numLights", activeLights);
-			activeShader().glsl().setVecUniform("ambient", ambientLight[0], ambientLight[1], ambientLight[2], 1.0f);
+			activeShader().glsl().setVecUniform("ambient", ambientLight[0], ambientLight[1], ambientLight[2], ambientLight[3]);
 		}
 	}
 	
@@ -304,6 +304,7 @@ public class Engine {
 				ambientLight[0] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[0], 0f);
 				ambientLight[1] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[1], 0f);
 				ambientLight[2] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[2], 0f);
+				ambientLight[3] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, 1.0f, 0f);
 			}
 			
 			if(tweeningIn.mode() == Drawable.FADING_IN) {
@@ -314,6 +315,7 @@ public class Engine {
 				ambientLight[0] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[0]);
 				ambientLight[1] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[1]);
 				ambientLight[2] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[2]);
+				ambientLight[3] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, 1.0f);
 			}
 			
 		} else {
@@ -435,7 +437,7 @@ public class Engine {
 		
 		beginDraw();
 		
-		g.background(180);
+		g.background(0);
 		
 		ambient(ambientLight[0], ambientLight[1], ambientLight[2]);
 		

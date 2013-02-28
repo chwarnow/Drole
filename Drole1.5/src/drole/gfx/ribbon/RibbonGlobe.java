@@ -95,12 +95,6 @@ public class RibbonGlobe extends Drawlist {
 		hide();
 	}
 	
-	@Override
-	public void fadeIn(float time) {
-		super.fadeIn(time);
-		show();
-	}
-	
 	public void hide() {
 		super.hide();
 		
@@ -109,25 +103,31 @@ public class RibbonGlobe extends Drawlist {
 		for(int i=0;i<drawables.size();i++) {				
 			// draw associations
 			if(drawableIndex++ < associationsAmount) {
-				// r.draw();
+				BildweltAssoziationPensee p = (BildweltAssoziationPensee) drawables.get(i);
+				p.hideMe();
 			} else {
 				RibbonGroup rG = (RibbonGroup)drawables.get(i);
 				//  menu swarms
 				rG.dieOut();
 			}
 		}
-		
 	}
 	
 	public void show() {
 		super.show();
+	}
+
+	@Override
+	public void fadeIn(float time) {
+		super.fadeIn(time);
 		
 		// set all ribbons to die mode
 		int drawableIndex = 0;
 		for(int i=0;i<drawables.size();i++) {				
 			// draw associations
 			if(drawableIndex++ < associationsAmount) {
-				// r.draw();
+				BildweltAssoziationPensee p = (BildweltAssoziationPensee) drawables.get(i);
+				p.resume();
 			} else {
 				RibbonGroup rG = (RibbonGroup)drawables.get(i);
 				//  menu swarms
@@ -142,7 +142,7 @@ public class RibbonGlobe extends Drawlist {
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
 			BildweltAssoziationPensee b = (BildweltAssoziationPensee) drawables.get(i);
-			if(b.isReady() && b.isAnimationDone()) {
+			if(b.isReady() && b.isAnimationDone() && b.isVisible()) {
 				float randomRadius = dimension.x*scale.x*.5f;
 				b.setPosition(.4f);
 				b.loadNewImage(
@@ -165,19 +165,20 @@ public class RibbonGlobe extends Drawlist {
 			float penseeRotation = .0f;
 			for(Drawable r : drawables) {
 				
-				
 				// draw associations
 				if(drawableIndex++ < associationsAmount) {
-					// r.update();
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
-					g.translate(0, PApplet.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
-					r.draw();
+					
+					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
+
+					BildweltAssoziationPensee p = (BildweltAssoziationPensee)drawables.get(drawableIndex-1);
+					if(p.isVisible()) p.draw();
+					
 					g.popMatrix();
 					
 					penseeRotation += 10f;
 				} else {
-					// r.update();
 					// draw menu swarms
 					r.draw();
 				}

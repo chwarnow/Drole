@@ -159,7 +159,6 @@ public class Menu extends Drawable {
 			
 				for(int i = 0; i < NUM_WORLDS; i++) {
 					e.setupModel(worlds[i]);
-				    
 					worlds[i].render();
 				}
 			
