@@ -1,6 +1,7 @@
 package com.marctiedemann.spektakel;
 
 import java.util.ArrayList;
+import java.util.Timer;
 
 import javax.media.opengl.GL;
 
@@ -30,7 +31,12 @@ public class Spektakel extends Drawable {
 	private float NORMAL_DRAG = 0.001f;
 
 	private float drag = 0.001f;
-
+	
+	private int timeStamp = 0;
+	boolean timeStampSet =false;
+	
+	
+	
 	public Spektakel(Engine e) {
 		super(e);
 
@@ -109,6 +115,11 @@ public class Spektakel extends Drawable {
 		// g.rotateY(rotationY);
 
 		if(mode()==ON_SCREEN){
+			
+			if(!timeStampSet){
+				timeStamp=e.p.millis();
+				timeStampSet= true;
+			}
 		
 	//	update();
 		// startErmitter.drawErmitter();
@@ -139,14 +150,15 @@ public class Spektakel extends Drawable {
 				er.cleanSytstem();
 				ermitters.remove(i);
 
-				System.out.println(physics.behaviors);
-				System.out.println(physics.springs);
+			//	System.out.println(physics.behaviors);
+			//	System.out.println(physics.springs);
 				
 			//	spawnNewToxicSystem();
 			}
 		}
 		
 		}
+		else timeStampSet=false;
 
 		g.popMatrix();
 
@@ -183,7 +195,7 @@ public class Spektakel extends Drawable {
 
 	public void spawnNewDude() {
 		FlyingDude newOne = new FlyingDude(e, physics,
-				0, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
+				400, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
 				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
 	}

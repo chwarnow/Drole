@@ -36,11 +36,11 @@ public class FlyingDude extends ParticleSystem {
 			spawnNew();
 			
 		
-			setSpringPower(0.00006f);
+			setSpringPower(0.00002f);
 			setBoomPower(-5.0f);
 			
-			springFallOff = -0.00008f;
-			boomFalloff = 0.1f;
+			springFallOff = -0.0001f;
+			boomFalloff = 0.001f;
 			
 			trailLength = 2;
 
@@ -106,7 +106,7 @@ public class FlyingDude extends ParticleSystem {
 						int xPos = targetXCenter + (int) ((i * spread) - (imageWidth * spread) * 0.5f);
 						int yPos = targetYCenter + ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
 
-						VerletParticle targetPoint = new VerletParticle(xPos, yPos, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2);
+						VerletParticle targetPoint = new VerletParticle(x()+xPos,y()+ yPos,z());
 						targetPoint.lock();
 						
 						
