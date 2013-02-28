@@ -68,10 +68,11 @@ void main() {
 	vec4 color = preLightColor;
  
 	if(numLights > 0) {
-		vec4 lightColor = vec4(0.0, 0.0, 0.0, 1.0);
+		vec4 lightColor = vec4(0.0, 0.0, 0.0, 0.0);
 		for(int i = 0; i < numLights; i++) lightColor += pointLight(i);
-		color *= (lightColor);
+		color *= lightColor;
 	}
 
-	gl_FragColor = color * ambient;
+	if(numTextures >= 1) gl_FragColor = vec4(color.rgb * ambient.rgb, texture2D(texture0, gl_TexCoord[0].st).a * gl_Color.a);
+	else gl_FragColor = vec4(color.rgb * ambient.rgb, gl_Color.a);
 }

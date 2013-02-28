@@ -58,6 +58,8 @@ public class Engine {
 	public boolean tweening = false, tweenedIn = false;
 	private Drawable tweeningOut, tweeningIn;
 	
+	private GLModel mog;
+	
 	public Engine(EngineApplet p) {
 		this.p = p;
 		refreshGLG();
@@ -174,7 +176,7 @@ public class Engine {
 		if(activeShader() != null) {
 			// Set texture informations for the shader
 			activeShader().glsl().setIntUniform("numTextures", 0);
-			activeShader().glsl().setFloatUniform("pointSize", 1.0f);
+			activeShader().glsl().setFloatUniform("pointSize", 0.0f);
 			if(usePoints) {
 				gl.glEnable(GL.GL_POINT_SPRITE);
 				gl.glEnable(GL.GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -433,7 +435,7 @@ public class Engine {
 		
 		beginDraw();
 		
-		g.background(0);
+		g.background(180);
 		
 		ambient(ambientLight[0], ambientLight[1], ambientLight[2]);
 		

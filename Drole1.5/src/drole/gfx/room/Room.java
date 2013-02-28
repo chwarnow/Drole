@@ -103,51 +103,12 @@ public class Room extends Drawable {
 	public Room(Engine e, String cubeMapFilename) {
 		super(e);
 		
-		SHADOW_HINT = Drawable.RECEIVE_SHADOW;
-		
 		model = new GLModel(e.p, numSides*(12), PGraphics.QUADS, GLModel.STATIC);
 		
-		model.initColors();
 		model.initNormals();
 		
 		model.initTextures(1);
 		model.setTexture(0, new GLTexture(e.p, cubeMapFilename));
-		
-		model.setColors(100);
-		
-		/*
-		model.beginUpdateColors();
-			// Left
-			model.updateColor( 0, 255, 0, 0);
-			model.updateColor( 1, 255, 0, 0);
-			model.updateColor( 2, 255, 0, 0);
-			model.updateColor( 3, 255, 0, 0);
-			
-			// Right
-			model.updateColor( 4, 0, 255, 0);
-			model.updateColor( 5, 0, 255, 0);
-			model.updateColor( 6, 0, 255, 0);
-			model.updateColor( 7, 0, 255, 0);
-			
-			// Top
-			model.updateColor( 8, 0, 0, 255);
-			model.updateColor( 9, 0, 0, 255);
-			model.updateColor(10, 0, 0, 255);
-			model.updateColor(11, 0, 0, 255);
-			
-			// Bottom
-			model.updateColor(12, 255, 255, 0);
-			model.updateColor(13, 255, 255, 0);
-			model.updateColor(14, 255, 255, 0);
-			model.updateColor(15, 255, 255, 0);
-			
-			// Back
-			model.updateColor(16, 0, 255, 255);
-			model.updateColor(17, 0, 255, 255);
-			model.updateColor(18, 0, 255, 255);
-			model.updateColor(19, 0, 255, 255);
-		model.endUpdateColors();
-		*/
 		
 		int nv = 0;
 		model.beginUpdateVertices();
@@ -196,15 +157,12 @@ public class Room extends Drawable {
 	public void draw() {
 		g.pushStyle();
 		g.pushMatrix();
-		
-			g.noFill();
-			g.noStroke();
 			
 			g.translate(position.x, position.y, position.z);
 			
-			g.fill(200);
+			g.noFill();
 			g.noStroke();
-			g.tint(255, 255);
+			g.tint(255, 0);
 			
 			e.setupModel(model);
 			model.render();
