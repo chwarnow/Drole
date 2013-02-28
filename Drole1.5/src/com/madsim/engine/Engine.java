@@ -42,9 +42,9 @@ public class Engine {
 	
 	private HashMap<String, GLTexture> textures = new HashMap<String, GLTexture>();
 	
-	private float[][] 	lights	= 	new float[8][10];
-	private int activeLights = 0;
-	private float[] ambientLight = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
+	private float[][] lights		= 	new float[8][10];
+	private int activeLights 		= 	0;
+	private float[] ambientLight 	= 	new float[]{1.0f, 1.0f, 1.0f, 1.0f};
 	
 	private float pointSize = 1.0f;
 	private boolean usePoints = false;
@@ -225,6 +225,18 @@ public class Engine {
 		useOptik(ao);
 	}
 	
+	private void resetLights() {
+		lights = new float[8][10];
+		lights[0] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[1] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[2] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[3] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[4] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[5] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[6] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[7] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	}
+	
 	private void setupLights(Drawable d) {
 		// TODO: set that globally
 		/*
@@ -266,6 +278,10 @@ public class Engine {
 		g.popMatrix();
 		*/
 		
+		g.noLights();
+		
+//		resetLights();
+		
 		if(d.usesLights()) lights = d.getLights();
 
 		activeLights = 0;
@@ -280,6 +296,9 @@ public class Engine {
 				activeLights++;
 			}
 		}
+		p.pinLog("Active Lights "+d.hashCode(), activeLights);
+		
+		g.lights();
 		
 		setLights();
 	}
@@ -365,6 +384,48 @@ public class Engine {
 		activeOptik().calculate();
 		activeOptik().set();
 		
+		/*
+		startShader("JustColor");
+		
+		// TODO: set that globally
+		float basicLightValueX = 586.0f - p.noise(p.frameCount*.005f)*250f;
+		float basicLightValueY = 426.0f + p.noise(p.frameCount*.005f + 100)*150f;
+		
+		PVector basicLightPosition = new PVector(
+				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
+				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
+				-1600 + p.noise(p.frameCount*.005f)*250f);
+		
+			g.pushMatrix();
+				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+			g.popMatrix();
+		
+			g.pushMatrix();
+				g.translate(basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				//  g.sphere(10);
+			g.popMatrix();
+			
+			g.pushMatrix();
+				g.translate(basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+		g.popMatrix();
+		
+		stopShader();
+		*/
+
 		/*
 		startShader("PolyLightAndTextureAndEM");
 		

@@ -30,11 +30,10 @@ public class RibbonGlobe extends Drawlist {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 
-	private int numRibbonHandler 				= 50;
+	private int numRibbonHandler 				= 4;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 	
 	/* assoziationen that are flying around in the menu */
-	BildweltAssoziationPensee penseeA, penseeB, penseeC, penseeD, penseeE;
 	private int associationsAmount = 3;
 	private String[] penseeImages = {
 		"data/images/menuAssoziationA.png",
@@ -64,7 +63,7 @@ public class RibbonGlobe extends Drawlist {
 			BildweltAssoziationPensee b = new BildweltAssoziationPensee(
 				e,
 				penseeImages[(int)e.p.random(penseeImages.length-1)],
-				dimension.x*scale.x,
+				dimension.x*scale.x*1.0f,
 				2.0f,
 				new PVector(e.p.random(-randomRadius, randomRadius),
 						e.p.random(-randomRadius, randomRadius),
@@ -72,6 +71,7 @@ public class RibbonGlobe extends Drawlist {
 				),
 				new PVector(0, 0, 0)
 			);
+			b.setDelayTime(0);
 			// let animation begin from right point
 			b.setPosition(.4f);
 			b.setLooping(false);
@@ -82,7 +82,56 @@ public class RibbonGlobe extends Drawlist {
 		
 		// create swarms
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(e, dimension.x*scale.x, (int)e.p.random(15, 30), 1 + ((i%2==0) ? 1 : 80), 1 + (int)e.p.random(10), 2f));
+			drawables.add(new RibbonGroup(
+					e,
+					dimension.x*scale.x, // sphere size
+					500, // amount
+					2 + (int)e.p.random(50), // joints per ribbon
+					2f, // quadheight
+					i)); // id
+		}
+	}
+	
+	@Override
+	public void fadeOut(float time) {
+		super.fadeOut(time);
+		hide();
+	}
+	
+	@Override
+	public void fadeIn(float time) {
+		super.fadeIn(time);
+		show();
+	}
+	
+	public void hide() {
+		// set all ribbons to die mode
+		int drawableIndex = 0;
+		for(int i=0;i<drawables.size();i++) {				
+			// draw associations
+			if(drawableIndex++ < associationsAmount) {
+				// r.draw();
+			} else {
+				RibbonGroup rG = (RibbonGroup)drawables.get(i);
+				//  menu swarms
+				rG.dieOut();
+			}
+		}
+		
+	}
+	
+	public void show() {
+		// set all ribbons to die mode
+		int drawableIndex = 0;
+		for(int i=0;i<drawables.size();i++) {				
+			// draw associations
+			if(drawableIndex++ < associationsAmount) {
+				// r.draw();
+			} else {
+				RibbonGroup rG = (RibbonGroup)drawables.get(i);
+				//  menu swarms
+				rG.makeAlive();
+			}
 		}
 	}
 	
@@ -128,6 +177,7 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
+		//if(mode().equals(ON_SCREEN)) {
 		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
@@ -161,18 +211,20 @@ public class RibbonGlobe extends Drawlist {
 			int drawableIndex = 0;
 			float penseeRotation = .0f;
 			for(Drawable r : drawables) {
-				r.update();
+				
 				
 				// draw associations
 				if(drawableIndex++ < associationsAmount) {
+					// r.update();
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
-					g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
+					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
 					r.draw();
 					g.popMatrix();
 					
 					penseeRotation += 10f;
 				} else {
+					// r.update();
 					// draw menu swarms
 					r.draw();
 				}
@@ -184,6 +236,7 @@ public class RibbonGlobe extends Drawlist {
 			
 		g.popMatrix();
 		g.popStyle();
+	//}
+		// e.p.println(e.p.frameRate);
 	}
-	
 }

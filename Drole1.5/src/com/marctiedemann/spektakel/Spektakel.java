@@ -52,7 +52,7 @@ public class Spektakel extends Drawable {
 		useLights();
 		// i x y z r g b f1 f2 f3
 		
-
+		setPointLight(0, 0, -(Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2f)+20, -(Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM)+20, 255, 100, 100, 0.5f, .001f, 0.0f);
 	}
 
 	@Override
@@ -82,6 +82,8 @@ public class Spektakel extends Drawable {
 	public void draw() {
 		e.usePoints();
 
+		setPointLight(0, 0, 0, -(Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2), 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		
 		e.g.setDepthMask(false);
 		g.pushStyle();
 		g.pushMatrix();
@@ -116,7 +118,7 @@ public class Spektakel extends Drawable {
 			ParticleSystem er = ermitters.get(i);
 
 			if(i<4)
-			setPointLight(i, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 30, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
+			setPointLight(i+1, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 30, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
 			
 			
 			er.update();
