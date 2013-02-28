@@ -178,7 +178,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 //		setupFabricWorld();
 		
-//		setupWorlds();
+		setupWorlds();
 		
 		/* START */
 		switchMode(LIVE);
@@ -201,6 +201,23 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		}
 	}
 	
+	private void setupRoom() {
+		logLn("Initializing Room ...");
+		room = new Room(engine, "data/room/drolebox3/drolebox-cubemap-cw.jpg");
+		room.position(0, 0, 0);
+		
+		engine.addDrawable("Room", room);
+	}
+	
+	private void setupMenu() {
+		logLn("Initializing Menu ...");
+		menu = new Menu(engine);
+		engine.addDrawable("Menu", menu);
+		
+//		globe = new RibbonGlobe(engine, globePosition, globeSize);
+//		engine.addDrawable("Globe", globe);
+	}
+	
 	private void setupSpektakel(){
 		logLn("Initializing world 'Spektakel' ...");
 		
@@ -218,23 +235,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		bildweltMicroMacro.hide();
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
-	}
-
-	private void setupRoom() {
-		logLn("Initializing Room ...");
-		room = new Room(engine, "data/room/drolebox3/drolebox-cubemap-cw.jpg");
-		room.position(0, 0, 0);
-		
-		engine.addDrawable("Room", room);
-	}
-	
-	private void setupMenu() {
-		logLn("Initializing Menu ...");
-//		menu = new Menu(engine);
-//		engine.addDrawable("Menu", menu);
-		
-		globe = new RibbonGlobe(engine, globePosition, globeSize);
-		engine.addDrawable("Globe", globe);
 	}	
 	
 	private void setupOptikWorld() {
@@ -270,6 +270,16 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		head = offCenterOptik.updateHeadPosition(thead);
 	}
 
+	private void transitToWorld(int worldID) {
+		logLn("Transition from Menu to World no. "+worldID);
+		engine.transitionBetweenDrawables(menu, worlds[worldID]);
+	}
+	
+	private void transitToMenu(int worldID) {
+		logLn("Transition from World no. "+worldID+" to menu");
+		engine.transitionBetweenDrawables(worlds[worldID], menu);
+	}
+	
 	public void draw() {
 		// Update the cam
 		kinect.update();
@@ -568,9 +578,12 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		case 'a':
 			bildweltSpektakel.spawnNewDude();
 			break;
-			
-			
-			
+		case '0':
+			transitToMenu(0);
+			break;
+		case '1':
+			transitToWorld(0);
+			break;			
 		}
 		
 		switch (keyCode) {

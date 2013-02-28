@@ -72,6 +72,14 @@ public abstract class Drawable {
 		this.g = g;
 	}
 	
+	public float fade() {
+		return fade;
+	}
+	
+	public float[] ambient() {
+		return ambient;
+	}
+	
 	protected void resetLights() {
 		for(int i = 0; i < lights.length; i++) {
 			lights[i] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -225,7 +233,7 @@ public abstract class Drawable {
 		fadeTime = time;
 		currentFadeTime = 0;
 		fade = 0;
-		show();
+		visible = true;
 		mode(FADING_IN);
 	}
 
@@ -237,6 +245,8 @@ public abstract class Drawable {
 	}
 
 	public void update() {
+		e.p.pinLog("FADING "+this.hashCode(), fade);
+		
 	    if(mode() == FADING_IN && currentFadeTime == fadeTime) mode(ON_SCREEN);
 	    if(mode() == FADING_OUT && currentFadeTime == 0) mode(OFF_SCREEN);
 	    
