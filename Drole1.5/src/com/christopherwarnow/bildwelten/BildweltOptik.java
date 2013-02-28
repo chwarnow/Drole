@@ -10,6 +10,8 @@ import com.christopherwarnow.bildwelten.utils.Ray;
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 
+import drole.gfx.assoziation.BildweltAssoziationPensee;
+
 public class BildweltOptik extends Drawable {
 
 	PVector[] face = new PVector[3];
@@ -24,6 +26,9 @@ public class BildweltOptik extends Drawable {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 	
+	// sehender akteur pensee
+	private BildweltAssoziationPensee sehenderAkteur;
+	
 	public BildweltOptik(Engine e) {
 		super(e);
 
@@ -31,26 +36,55 @@ public class BildweltOptik extends Drawable {
 		e.p.textFont(font);
 
 		optikAkteur = new GLTexture(e.p, "data/images/optikAkteur.png");
+		
+		sehenderAkteur = new BildweltAssoziationPensee(
+			e,
+			"data/images/optikAkteurSmaller.png",
+			1500,
+			1.0f,
+			new PVector(0, 0, 0),
+			new PVector(0, 0, 0)
+		);
+		sehenderAkteur.setLooping(false);
+		sehenderAkteur.setPosition(.5f);
+		// TODO: do on loading
+		sehenderAkteur.loadPensee();
+		
 	}
 
+	@Override
+	public void fadeOut(float time) {
+		super.fadeOut(time);
+		sehenderAkteur.hide();
+	}
+	
+	@Override
+	public void fadeIn(float time) {
+		super.fadeIn(time);
+		sehenderAkteur.show();
+	}
+	
 	@Override
 	public void update() {
 		super.update();
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
+		sehenderAkteur.update();
 	}
+	
+	
 
 	@Override
 	public void draw() {
 		g.pushStyle();
 		g.pushMatrix();
 
-		g.translate(position.x, position.y-(fade*700), position.z);
+		g.translate(position.x, position.y, position.z);
 		g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
 		g.rotateY(smoothedRotation);
 
 		float rectSize = 500;
 		
-		e.startShader("JustColor");
+		e.startShader("PolyLightAndColor");
 		
 		g.tint(255);
 		g.stroke(105, 90, 97);
@@ -166,8 +200,6 @@ public class BildweltOptik extends Drawable {
 		
 		e.stopShader();
 		
-		e.startShader("ColorAndTexture");
-		
 		g.fill(0);
 		
 		// texts
@@ -236,11 +268,15 @@ public class BildweltOptik extends Drawable {
 		g.text("R", 0, 0);
 		g.popMatrix();
 
+		e.startShader("PolyLightAndColor");
+		
 		// sehender akteur
 		g.pushMatrix();
-		g.translate(pointG.x-40, pointG.y-12, pointG.z);
-		g.scale(.455f);
-		g.image(optikAkteur, 0, 0);
+		// g.translate(pointG.x-40, pointG.y-12, pointG.z);
+		// g.scale(.455f);
+		// g.image(optikAkteur, 0, 0);
+		// System.out.println(sehenderAkteur.isVisible());
+		if(sehenderAkteur.isVisible()) sehenderAkteur.draw();
 		g.popMatrix();
 
 		g.popMatrix();
