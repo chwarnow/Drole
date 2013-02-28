@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 
 import javax.media.opengl.GL;
 
+import penner.easing.Quad;
+import processing.core.PApplet;
 import processing.core.PFont;
 
 import com.madsim.engine.drawable.Drawable;
@@ -53,6 +55,9 @@ public class Engine {
 	
 	public boolean drawStarted = false;
 	
+	public boolean tweening = false, tweenedIn = false;
+	private Drawable tweeningOut, tweeningIn;
+	
 	public Engine(EngineApplet p) {
 		this.p = p;
 		refreshGLG();
@@ -92,11 +97,15 @@ public class Engine {
 	}
 	
 	public void addDrawable(String name, Drawable dl) {
+		dl.setName(name);
 		this.drawables.put(name, dl);
 	}
 	
 	public void update(String name) {
 		Drawable dl = drawables.get(name);
+		
+		p.pinLog("Drawbale "+dl.name(), dl.mode());
+		
 		if(
 			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
 			(dl.updateMode() == Drawable.ONLY_ONSCREEN && dl.mode() != Drawable.OFF_SCREEN)
@@ -134,7 +143,7 @@ public class Engine {
 	public void setLights() {
 		if(activeShader() != null && activeShader().lightHint() == Shader.USE_LIGHTS) {
 			activeShader().glsl().setIntUniform("numLights", activeLights);
-			activeShader().glsl().setVecUniform("ambient", ambientLight[0], ambientLight[1], ambientLight[2], ambientLight[3]);
+			activeShader().glsl().setVecUniform("ambient", ambientLight[0], ambientLight[1], ambientLight[2], 1.0f);
 		}
 	}
 	
@@ -278,12 +287,41 @@ public class Engine {
 		g.popMatrix();
 		*/
 		
+		updateTransition();
+		
 		g.noLights();
 		
-//		resetLights();
+		if(tweening) {
+			g.noLights();
+			
+			if(tweeningOut.mode() == Drawable.FADING_OUT) {
+				p.pinLog("FADING OUT", ambientLight[0]);
+					
+				if(tweeningOut.usesLights()) lights = tweeningOut.getLights();
+					
+				ambientLight[0] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[0], 0f);
+				ambientLight[1] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[1], 0f);
+				ambientLight[2] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[2], 0f);
+			}
+			
+			if(tweeningIn.mode() == Drawable.FADING_IN) {
+				p.pinLog("FADING IN", ambientLight[0]);
+					
+				if(tweeningIn.usesLights()) lights = tweeningIn.getLights();
+					
+				ambientLight[0] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[0]);
+				ambientLight[1] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[1]);
+				ambientLight[2] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[2]);
+			}
+			
+		} else {
+			if(d.usesLights()) {
+				lights = d.getLights();
+				ambientLight = d.ambient();
+				p.pinLog("UL:"+d.name()+":"+d.mode(), d.ambient()[0]+":"+d.ambient()[1]+":"+d.ambient()[2]);
+			}
+		}
 		
-		if(d.usesLights()) lights = d.getLights();
-
 		activeLights = 0;
 		
 		for(int i = 0; i < lights.length; i++) {
@@ -296,11 +334,30 @@ public class Engine {
 				activeLights++;
 			}
 		}
-		p.pinLog("Active Lights "+d.hashCode(), activeLights);
+		p.pinLog("Active Lights "+d.name(), activeLights);
 		
 		g.lights();
 		
 		setLights();
+	}
+	
+	private void updateTransition() {
+		if(tweening) {
+			if(tweeningOut.mode() == Drawable.OFF_SCREEN && !tweenedIn) {
+				tweeningIn.fadeIn(30);
+				tweenedIn = true;
+			}
+			if(tweeningOut.mode() == Drawable.OFF_SCREEN && tweeningIn.mode() == Drawable.ON_SCREEN) tweening = false;
+		}
+	}
+	
+	public void transitionBetweenDrawables(Drawable out, Drawable in) {
+		tweening = true;
+		tweenedIn = false;
+		tweeningOut = out;
+		tweeningOut.fadeOut(30);
+		
+		tweeningIn = in;
 	}
 	
 	public void drawContent() {
@@ -378,7 +435,7 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(0.8f, 0.8f, 0.8f);
+		ambient(ambientLight[0], ambientLight[1], ambientLight[2]);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();
