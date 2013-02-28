@@ -82,13 +82,14 @@ public class RibbonGlobe extends Drawlist {
 		
 		// create swarms
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(
+			RibbonGroup b = new RibbonGroup(
 					e,
 					dimension.x*scale.x, // sphere size
 					500, // amount
 					2 + (int)e.p.random(50), // joints per ribbon
 					2f, // quadheight
-					i)); // id
+					i); // id
+			drawables.add( b );
 		}
 	}
 	
@@ -177,7 +178,8 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
-		//if(mode().equals(ON_SCREEN)) {
+		// only for testing
+		// if(mode().equals(ON_SCREEN)) {
 		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
@@ -236,7 +238,7 @@ public class RibbonGlobe extends Drawlist {
 			
 		g.popMatrix();
 		g.popStyle();
-	//}
+		// }
 		// e.p.println(e.p.frameRate);
 	}
 }

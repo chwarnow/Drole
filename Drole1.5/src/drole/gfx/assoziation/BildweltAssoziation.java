@@ -12,7 +12,8 @@ import drole.Main;
 
 public class BildweltAssoziation extends Drawable {
 
-	private BildweltAssoziationPensee penseeA, penseeB, penseeC;
+	private String[] imagePaths = {"data/images/menuAssoziationA.png", "data/images/menuAssoziationB.png", "data/images/menuAssoziationC.png", "data/images/menuAssoziationD.png", "data/images/menuAssoziationE.png"};
+	private BildweltAssoziationPensee[] pensees;
 	
 	public float rotation 						= 0;
 	private float smoothedRotation 				= 0;
@@ -24,19 +25,16 @@ public class BildweltAssoziation extends Drawable {
 		dimension(dimension);
 		
 		// init ribbon sculpture
-		
-		penseeA = new BildweltAssoziationPensee(e, "data/images/menuAssoziationA.png", dimension.x*scale.x, 3.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
-		penseeA.loadPensee();
-		penseeA.setLooping(false);
-		penseeA.stop();
-		// penseeA.setPosition(.5f);
-		/*
-		penseeB = new BildweltAssoziationPensee(e, "data/images/associationB.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
-		penseeC = new BildweltAssoziationPensee(e, "data/images/associationC.png", sphereConstraintRadius, 1.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
-		
-		penseeB.positionSteps = 33;
-		penseeC.positionSteps = 66;
-		*/
+		pensees = new BildweltAssoziationPensee[imagePaths.length];
+		for(int i=0;i<imagePaths.length;i++) {
+			BildweltAssoziationPensee pensee = new BildweltAssoziationPensee(e, imagePaths[i], dimension.x*scale.x, 3.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
+			pensee.loadPensee();
+			pensee.setLooping(false);
+			pensee.stop();
+			pensee.setDelayTime(0);
+			pensee.setPosition(.5f);
+			pensees[i] = pensee;
+		}
 	}
 	
 	@Override
@@ -44,12 +42,38 @@ public class BildweltAssoziation extends Drawable {
 		super.update();
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
-		if(e.p.frameCount == 1000) penseeA.show();
-		if(e.p.frameCount == 1500) penseeA.hide();
-		// update sculpture
-		penseeA.update();
-		// penseeB.update();
-		// penseeC.update();
+		if(e.p.frameCount%200 == 0) {
+			int nextPenseeID = activePensee;
+			if(nextPenseeID == pensees.length-1) nextPenseeID = 0;
+			else nextPenseeID++;
+			setPensee(nextPenseeID);
+		}
+		
+		// update pensees
+		for(BildweltAssoziationPensee pensee:pensees) pensee.update();
+
+	}
+	
+	/**
+	 * hide the current visible pensee and opens the new one, depending on the given id
+	 * @param activeID
+	 */
+	private void setPensee(int activeID) {
+		pensees[activePensee].hide();
+		activePensee = activeID;
+		pensees[activePensee].show();
+	}
+	
+	@Override
+	public void fadeIn(float time) {
+		super.fadeIn(time);
+		pensees[activePensee].show();
+	}
+	
+	@Override
+	public void fadeOut(float time) {
+		super.fadeOut(time);
+		pensees[activePensee].hide();
 	}
 
 	@Override
@@ -63,10 +87,9 @@ public class BildweltAssoziation extends Drawable {
 		g.rotateY(smoothedRotation);
 		
 		// draw sculpture
-		penseeA.draw();
-		// penseeB.draw(g);
-		// penseeC.draw(g);
+		for(BildweltAssoziationPensee pensee:pensees) if(pensee.isVisible()) pensee.draw();
 		
+		/*
 		g.noFill();
 		g.stroke(155, 100);
 		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
@@ -85,7 +108,7 @@ public class BildweltAssoziation extends Drawable {
 		g.rotateY(PApplet.HALF_PI);
 		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
 		g.popMatrix();
-		
+		*/
 		g.popMatrix();
 		g.popStyle();
 		

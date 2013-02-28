@@ -460,7 +460,7 @@ public class RibbonGroup extends Drawable {
 			physics.particles.get(i).clear();
 			physics.particles.get(i).set(agentPosition.x, agentPosition.y, agentPosition.z);
 			physics.particles.get(i).scaleVelocity(0);
-			physics.particles.get(i).addForce(new Vec3D(-agentPosition.x, -agentPosition.y, -agentPosition.z).scaleSelf(.01f));
+			physics.particles.get(i).addForce(new Vec3D(-agentPosition.x, -agentPosition.y-1000, -agentPosition.z).scaleSelf(.01f));
 		}
 		isFalling = true;
 	}

@@ -174,7 +174,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 //		setupOptikWorld();
 		
-//		setupAssoziationWorld();
+		setupAssoziationWorld();
 		
 //		setupFabricWorld();
 		
@@ -547,7 +547,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 // 				bildweltMicroMacro.fadeIn(100);
 				
 //				bildweltOptik.fadeIn(100);
-// 				bildweltAssoziation.fadeIn(100);
+ 				bildweltAssoziation.fadeIn(100);
 //				fabricWorldDrawlist.fadeAllIn(100);
 //				optikWorldDrawlist.fadeAllIn(100);
 //				assoziationWorldDrawlist.fadeAllIn(100);
@@ -562,7 +562,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 // 				bildweltMicroMacro.fadeOut(100);
 				
 //				bildweltOptik.fadeOut(100);
-// 				bildweltAssoziation.fadeOut(100);
+ 				bildweltAssoziation.fadeOut(100);
 //				fabricWorldDrawlist.fadeAllOut(100);
 
 //				optikWorldDrawlist.fadeAllOut(100);
