@@ -96,6 +96,7 @@ public class BildweltOptik extends Drawable {
 
 	@Override
 	public void draw() {
+		System.out.println(fade);
 		g.pushStyle();
 		g.pushMatrix();
 
@@ -108,8 +109,8 @@ public class BildweltOptik extends Drawable {
 		e.startShader("PolyLightAndColor"); // RoomShader
 		
 		g.tint(255);
-		g.stroke(105, 90, 97);
-		g.fill(199, 186, 177);
+		g.stroke(105, 90, 97, fade*255);
+		g.fill(199, 186, 177, fade*255);
 
 		g.pushMatrix();
 
@@ -216,7 +217,7 @@ public class BildweltOptik extends Drawable {
 
 		// draw wall plane
 		g.pushMatrix();
-		g.fill(0, 20);
+		g.fill(0, 20*fade);
 		g.beginShape();
 		g.vertex(pointI.x+1, pointI.y, pointI.z);
 		g.vertex(pointK.x+1, pointK.y, pointK.z);
@@ -228,12 +229,12 @@ public class BildweltOptik extends Drawable {
 		
 		e.stopShader();
 		
-		g.fill(0);
+		g.fill(0, 255*fade);
 		
 		// texts
 		float textOffset = 13;
 		g.noStroke();
-		g.fill(0);
+		g.fill(0, 255*fade);
 		g.textSize(12);
 
 		g.pushMatrix();
