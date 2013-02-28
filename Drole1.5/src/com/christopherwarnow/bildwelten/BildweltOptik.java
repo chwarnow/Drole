@@ -73,15 +73,15 @@ public class BildweltOptik extends Drawable {
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
-		sehenderAkteur.hide();
-		floorPensee.hide();
+		sehenderAkteur.hideMe();
+		floorPensee.hideMe();
 	}
 	
 	@Override
 	public void fadeIn(float time) {
 		super.fadeIn(time);
-		sehenderAkteur.show();
-		floorPensee.show();
+		sehenderAkteur.showMe();
+		floorPensee.showMe();
 	}
 	
 	@Override
@@ -126,8 +126,8 @@ public class BildweltOptik extends Drawable {
 		g.box(rectSize, 10, rectSize*0.6181f); // golden ratio
 		g.popMatrix();
 */
-		e.stopShader();
-		e.startShader("PolyLightAndColor");
+		// e.stopShader();
+		// e.startShader("PolyLightAndColor");
 		
 		// wall
 		g.pushMatrix();
@@ -304,6 +304,8 @@ public class BildweltOptik extends Drawable {
 		if(sehenderAkteur.isVisible()) sehenderAkteur.draw();
 		g.popMatrix();
 
+		// e.stopShader();
+		
 		g.popMatrix();
 
 		g.popStyle();
