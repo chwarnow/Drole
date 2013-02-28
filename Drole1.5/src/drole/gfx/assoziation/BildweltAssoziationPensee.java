@@ -111,6 +111,7 @@ public class BildweltAssoziationPensee extends Drawable {
 						isVisible = false;
 					} else {
 						currPosition += animationDirection*delaySteps;
+						if(currPosition <= 0) currPosition = positionSteps-1;
 					}
 				} else {
 					if (currPosition >= positionSteps-1) {
