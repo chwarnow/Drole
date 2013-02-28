@@ -41,11 +41,14 @@ public class BildweltAssoziationPensee extends Drawable {
 	private int animationDirection = -1;
 	private int delay = 0; // count up when delaying
 	private int delayTime = 100; // wait for 100 frames until next one begins
-	private int stopFrame = 0;
-	private float delaySteps = .33f;
+	private int stopFrame = positionSteps;
+	private float delaySteps = 1.0f;//.33f;
 	private int easedPosition = 0;
 	private boolean isLooping = true;
 	private boolean isAnimationDone = false;
+	private boolean isShowing = false;
+	private boolean isRunning = true;
+	private boolean isHiding = false;
 	
 	// lookup table
 	private int cosDetail = 25;
@@ -97,20 +100,32 @@ public class BildweltAssoziationPensee extends Drawable {
 				isAnimationDone = false;
 			}
 		} else {
-			// update playhead on precomputed noise path
-			if (currPosition >= positionSteps-1) {
-				if ( delay++ ==delayTime) {
-					currPosition = 0;
-					delay = 0;
+			if(isRunning) {
+				// update playhead on precomputed noise path
+				if(isHiding) {
+					if(!isLooping && (int)currPosition == stopFrame) {
+						isAnimationDone = true;
+					} else {
+						currPosition += animationDirection*delaySteps;
+					}
+				} else {
+				
+					if (currPosition >= positionSteps-1) {
+						if(isShowing) {
+							isRunning = false;
+						} else if ( delay++ ==delayTime) {
+							currPosition = 0;
+							delay = 0;
+						}
+					} else if(!isLooping && (int)currPosition == stopFrame) {
+						isAnimationDone = true;
+					} else {
+						currPosition -= animationDirection*delaySteps;
+					}
 				}
-			} else if(!isLooping && (int)currPosition == stopFrame) {
-				isAnimationDone = true;
-			} else {
-				currPosition -= animationDirection*delaySteps;
+				// eased value out of currStep/positionSteps
+				easedPosition = (int)currPosition;
 			}
-	
-			// eased value out of currStep/positionSteps
-			easedPosition = (int)currPosition;
 		}
 	}
 
@@ -282,5 +297,27 @@ public class BildweltAssoziationPensee extends Drawable {
 		dataItem = new BildweltAssoziationDataItem();
 		dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
 		loadPensee();
+	}
+	
+	@Override
+	public void show() {
+		super.show();
+		isShowing = true;
+		isHiding = false;
+		setPosition(.5f);
+		isRunning = true;
+	}
+	
+	@Override
+	public void hide() {
+		super.hide();
+		isShowing = false;
+		isHiding = true;
+		// setPosition(.5f);
+		isRunning = true;
+	}
+	
+	public void stop() {
+		isRunning = false;
 	}
 }

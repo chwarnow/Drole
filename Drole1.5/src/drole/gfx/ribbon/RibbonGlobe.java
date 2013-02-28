@@ -30,11 +30,10 @@ public class RibbonGlobe extends Drawlist {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 
-	private int numRibbonHandler 				= 50;
+	private int numRibbonHandler 				= 4;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
 	
 	/* assoziationen that are flying around in the menu */
-	BildweltAssoziationPensee penseeA, penseeB, penseeC, penseeD, penseeE;
 	private int associationsAmount = 3;
 	private String[] penseeImages = {
 		"data/images/menuAssoziationA.png",
@@ -74,7 +73,7 @@ public class RibbonGlobe extends Drawlist {
 			);
 			// let animation begin from right point
 			b.setPosition(.4f);
-			b.setLooping(false);
+			b.setLooping(true);
 			b.loadPensee();
 			// add to drawables list
 			drawables.add( b );
@@ -82,7 +81,13 @@ public class RibbonGlobe extends Drawlist {
 		
 		// create swarms
 		for(int i = 0; i < numRibbonHandler; i++) {
-			drawables.add(new RibbonGroup(e, dimension.x*scale.x, (int)e.p.random(15, 30), 1 + ((i%2==0) ? 1 : 80), 1 + (int)e.p.random(10), 2f));
+			drawables.add(new RibbonGroup(
+					e,
+					dimension.x*scale.x, // sphere size
+					500, // amount
+					10 + (int)e.p.random(100), // joints per ribbon
+					2f, // quadheight
+					i)); // id
 		}
 	}
 	
@@ -128,7 +133,8 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
-		
+		if(mode().equals(ON_SCREEN)) {
+		/*
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -145,7 +151,7 @@ public class RibbonGlobe extends Drawlist {
 						new PVector(0, 0, 0));
 			}
 		}
-		
+		*/
 		g.pushStyle();
 		g.pushMatrix();
 		
@@ -161,10 +167,11 @@ public class RibbonGlobe extends Drawlist {
 			int drawableIndex = 0;
 			float penseeRotation = .0f;
 			for(Drawable r : drawables) {
-				r.update();
+				
 				
 				// draw associations
 				if(drawableIndex++ < associationsAmount) {
+					// r.update();
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
 					g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
@@ -173,6 +180,7 @@ public class RibbonGlobe extends Drawlist {
 					
 					penseeRotation += 10f;
 				} else {
+					// r.update();
 					// draw menu swarms
 					r.draw();
 				}
@@ -185,5 +193,6 @@ public class RibbonGlobe extends Drawlist {
 		g.popMatrix();
 		g.popStyle();
 	}
-	
+		e.p.println(e.p.frameRate);
+	}
 }
