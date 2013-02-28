@@ -6,6 +6,7 @@ import com.madsim.engine.Engine;
 
 import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLModel;
+import drole.tests.spektakel.T_ShapeParticle;
 
 import processing.core.PApplet;
 import toxi.geom.Vec3D;
@@ -15,176 +16,119 @@ import toxi.geom.mesh.SurfaceMeshBuilder;
 import toxi.geom.mesh.TriangleMesh;
 import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
+import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.AttractionBehavior;
 
-public class ToxicSystem extends ParticleSystem{
-	
-	private TriangleMesh toxiMesh = new TriangleMesh();
-	private int trailLength;
+public class ToxicSystem extends ParticleSystem {
 
+	private TriangleMesh toxiMesh = new TriangleMesh();
 	
-	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x, float y, float z){
+
+	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
+			float y, float z) {
+
+		super(e, _physics, x, y, z);
 		
-		super(e,_physics,x,y,z);
-		
+		trailLength=20;
+
 		spawnNew();
 	}
-	
-	
-public void update(){
+
+	public void update() {
 		super.update();
-		
-		updateTrailPositions();
+
 	}
-	
-public void draw(GLGraphics renderer){
-	
-	super.draw(renderer);
-	
-	e.setupModel(trails);
-	renderer.model(trails);
-	
-}
-	
+
+	public void draw(GLGraphics renderer) {
+
+		super.draw(renderer);
+
+	}
+
 	void randomizeMesh() {
 		float[] m = new float[8];
 		for (int i = 0; i < 8; i++) {
 			m[i] = (int) e.p.random(20);
 		}
 		SurfaceMeshBuilder b = new SurfaceMeshBuilder(new SphericalHarmonics(m));
-		toxiMesh = (TriangleMesh) b.createMesh(null,24, 100);
+		toxiMesh = (TriangleMesh) b.createMesh(null, 24, 100);
 	}
 
 	public void spawnNew() {
 
 		bigParticle.clear();
-		clean();
-
+		cleanSytstem();
+		
+		setBoomPower(initalBoomPower);
+		setSpringPower(initalSpringPower);
+		
+	
+		
 		shockwave = true;
-		boomPower = initalBoomPower;
-		boomForce = new AttractionBehavior(new VerletParticle(new Vec3D(x, y, z)), 500, boomPower * 0.3f, 0.1f);
+		
+		//global shockwave
+		boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.2f, 0.1f);
 		physics.addBehavior(boomForce);
 
+		//build mesh for target shape
 		randomizeMesh();
 
-		int targetSize = 2;
+		
+		//size and shooting angle
+		int targetSize = 3;
 		int targetYOffset = 200;
 
-		Vec3D targetAngle = new Vec3D(e.p.random(-1, 1) * targetYOffset,
-				e.p.random(-1, 1) * targetYOffset, e.p.random(-1, 1)
-						* targetYOffset);
+		Vec3D targetAngle = new Vec3D(e.p.random(-1, 1)*targetYOffset ,
+				e.p.random(-1, 1)*targetYOffset , e.p.random(-1, 1)*targetYOffset
+						);
 
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
-			ShapedParticle newPart = new ShapedParticle(e.p, x + face.a.x
-					- targetAngle.x / 2, y + face.a.y - targetAngle.y / 2,
-					z + face.a.z - targetAngle.x / 2);
+			//the actual partzicle
+			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
+					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
+					z() + face.a.z - targetAngle.x / 2,trailLength);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 
-			Vec3D toxicTarget = new Vec3D(x + targetAngle.x + face.a.x
-					* targetSize, y + targetAngle.x + face.a.y * targetSize,
-					z + targetAngle.x + face.a.z * targetSize);
+			//the Target
+			Vec3D toxicTarget = new Vec3D(x() + targetAngle.x + face.a.x
+					* targetSize, y() + targetAngle.x + face.a.y * targetSize,
+					z() + targetAngle.x + face.a.z * targetSize);
 
+			VerletParticle targetPoint = new VerletParticle(toxicTarget);
+			targetPoint.lock();
 			
-			//maybe replacxe with low force spring to reduce bouncing
-			AttractionBehavior toxicForce = new AttractionBehavior(toxicTarget,
-					1800, -boomPower * 2, 0.005f);
-			newPart.setUniqueTarget(toxicForce);
+			
+			//targetForce
+			VerletSpring toxicForce = new VerletSpring(newPart,targetPoint,
+					0, getSpringPower());
+//			physics.addParticle(targetPoint);
+			physics.addParticle(newPart);
+			physics.addSpring(toxicForce);
+			newPart.giveSpring(toxicForce);
+			// newPart.addBehavior(boomForce);
 
 			bigParticle.add(newPart);
-			physics.addParticle(newPart);
+		
 
 			/*
 			 * newPart = new Particle(p, mySize / 2, f.c.x+x, f.c.y+y, f.c.z+z);
 			 * bigParticle.add(newPart); physics.addParticle(newPart);
 			 */
 		}
+		
+		numPoints = bigParticle.size();
+
+		// one size fits all
+
 
 		initSprites();
 		initTrails();
 
 	}
+
 	
-	void initTrails() {
-
-		numPoints = bigParticle.size();
-
-		// one size fits all
-		trailLength = bigParticle.get(0).tailSize;
-
-		trails = new GLModel(e.p, numPoints * (trailLength + 1) * 4*2, GLModel.LINES, GLModel.DYNAMIC);
-
-		updateTrailPositions();
-
-		trails.initColors();
-		trails.setColors(250, 30);
-		
-		trails.setLineWidth(2);
-
-		trails.setBlendMode(PApplet.ADD);
-
-	}
-
-	void updateTrailPositions() {
-
-		numPoints = bigParticle.size();
-
-		coords = new float[4 * numPoints * (trailLength + 1)*2];
-
-		// p.println("updatimng" + myID + " num " + numPoints + " size "
-		// + bigParticle.size());
-
-		
-		int numSections=trailLength+1;
-		int pointsToMesh = 2;
-		
-		
-		for (int i = 0; i < numPoints; i++) {
-
-			ShapedParticle oneParticle = bigParticle.get(i);
-			
-			
-			for (int j = 0; j < trailLength - 1; j++) {
-				
-				int step = (i*numSections*pointsToMesh*4)+(j*pointsToMesh*4);
-				
-				coords[step + 0] = bigParticle.get(i).x;
-				coords[step + 1] = bigParticle.get(i).y;
-				coords[step + 2] = bigParticle.get(i).z;
-				coords[step + 3] = 1.0f; // The W coordinate of each point
-				
-				Vec3D trailPoint = oneParticle.getTailPoint(0);
-				
-				coords[step + 0] = trailPoint.x;
-				coords[step + 1] = trailPoint.y;
-				coords[step + 2] = trailPoint.z;
-				coords[step + 3] = 1.0f; // The W coordinate of each point
-				
-				
-				for (int k = 0; k < pointsToMesh; k++) {
-
-					step+=(k*4);
-									
-					trailPoint = oneParticle.getTailPoint(j + k);
-
-					coords[step + 0] = trailPoint.x;
-					coords[step + 1] = trailPoint.y;
-					coords[step + 2] = trailPoint.z;
-					coords[step + 3] = 1.0f; // The W coordinate of each point
-												// must
-												// be
-				}
-
-			}
-		}
-
-		// p.println(coords);
-
-		trails.updateVertices(coords);
-	}
-
 
 }
-

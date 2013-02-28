@@ -11,9 +11,11 @@ import processing.core.PApplet;
 
 public class Particle extends VerletParticle {
 	
-	protected float lifeSpan=0;
-	private float DECAY = 0.9f;
 
+	private float lifeSpan=255;
+	
+	protected float decay = 0.9f;
+	
 	public EngineApplet p;
 	
 	public Particle(EngineApplet p,float x, float y , float z){
@@ -21,11 +23,7 @@ public class Particle extends VerletParticle {
 		super(x,y,z);
 		
 		this.p = p;
-		
-	//	lifeSpan=p.random(mySize*2,mySize*4);
-		lifeSpan= 600;
-		
-	//	setWeight(0.1f);
+
 	}
 
 		
@@ -78,12 +76,16 @@ public class Particle extends VerletParticle {
 
 	public void update(){
 		super.update();
-		lifeSpan-=DECAY;
+		lifeSpan-=decay;
 	}
 	
 	public boolean isDead(){
 		if(lifeSpan<0.5f)return true;
 		else return false;
+	}
+	
+	public float getTimeToLife(){
+		return lifeSpan;
 	}
 	
 	

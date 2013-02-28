@@ -50,7 +50,7 @@ public class Spektakel extends Drawable {
 		e.requestTexture("images/particle.png");
 		
 		useLights();
-		/// i x y z r g b f1 f2 f3
+		// i x y z r g b f1 f2 f3
 		
 
 	}
@@ -81,7 +81,8 @@ public class Spektakel extends Drawable {
 	@Override
 	public void draw() {
 		e.usePoints();
-		
+
+		e.g.setDepthMask(false);
 		g.pushStyle();
 		g.pushMatrix();
 
@@ -93,10 +94,6 @@ public class Spektakel extends Drawable {
 
 		g.pushMatrix();
 		
-		g.noFill();
-		g.noStroke();
-		g.texture(e.requestTexture("data/images/particle.png"));
-		g.rect(0, 0, 100, 100);
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -105,24 +102,29 @@ public class Spektakel extends Drawable {
 
 		// g.rotateX(rotationX);
 		// g.rotateY(rotationY);
+		
 
 		update();
 		// startErmitter.drawErmitter();
 
+		e.setPointSize(8);
+		
+//		System.out.println("systemcount "+ermitters.size());
+		
 		for (int i = 0; i < ermitters.size(); i++) {
-			e.setPointSize(20);
+			
 			
 			ToxicSystem er = ermitters.get(i);
 
 			if(i<4)
-			setPointLight(i, er.x, er.y, er.z, 155, 135, 120, 0.8f, 0.01f,0.0f );
+			setPointLight(i, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 30, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
 			
 			
 			er.update();
 			er.draw(e.g);
 
 			if (er.isEmpty()) {
-				er.clean();
+				er.cleanSytstem();
 				ermitters.remove(i);
 				
 				spawnNewToxicSystem();
@@ -132,6 +134,9 @@ public class Spektakel extends Drawable {
 		g.popMatrix();
 
 		g.popMatrix();
+		
+		e.g.setDepthMask(true);
+
 	}
 
 	private void initPhysics(VerletPhysics thePhysics) {
@@ -152,6 +157,13 @@ public class Spektakel extends Drawable {
 		ToxicSystem newOne = new ToxicSystem(e, physics, 50,
 				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2,
 				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2), 
+				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM / 2, 0), 
+				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
+		ermitters.add(newOne);
+	}
+	
+	public void spawnNewDude() {
+		ToxicSystem newOne = new ToxicSystem(e, physics, 50,Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2, 
 				e.p.random( -Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM / 2, 0), 
 				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
