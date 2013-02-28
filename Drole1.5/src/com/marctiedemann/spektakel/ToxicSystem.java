@@ -25,19 +25,33 @@ public class ToxicSystem extends ParticleSystem {
 	
 	
 	//size and shooting angle
+	
+	
+			protected float decay = 0.9f;
+	
 			protected int targetSize = 3;
 			protected int targetYOffset = 200;
 
-			protected Vec3D targetAngle = new Vec3D(0,-1,0);
+			protected int meshSize = 8; 
+			
+			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
 
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
-			float y, float z,boolean randomize) {
+			float y, float z) {
 
 		super(e, _physics, x, y, z);
 		
 		trailLength=20;
+		
+		trailAlpha=0.1f;
 
-		if(randomize)randomizeShootingVector();
+		
+	}
+	
+	public void init(){
+       
+		randomizeShootingVector();
+		
 		spawnNew();
 	}
 
@@ -59,7 +73,7 @@ public class ToxicSystem extends ParticleSystem {
 			m[i] = (int) e.p.random(20);
 		}
 		SurfaceMeshBuilder b = new SurfaceMeshBuilder(new SphericalHarmonics(m));
-		toxiMesh = (TriangleMesh) b.createMesh(null, 24, 100);
+		toxiMesh = (TriangleMesh) b.createMesh(null, meshSize, 100);
 	}
 
 	protected void randomizeShootingVector(){
@@ -75,8 +89,6 @@ public class ToxicSystem extends ParticleSystem {
 		cleanSytstem();
 		
 		resetPowers();
-		
-	
 		
 		shockwave = true;
 		
@@ -95,14 +107,14 @@ public class ToxicSystem extends ParticleSystem {
 			//the actual partzicle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
-					z() + face.a.z - targetAngle.x / 2,trailLength);
+					z() + face.a.z - targetAngle.z / 2,trailLength,decay,1);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 
 			//the Target
 			Vec3D toxicTarget = new Vec3D(x() + targetAngle.x + face.a.x
-					* targetSize, y() + targetAngle.x + face.a.y * targetSize,
-					z() + targetAngle.x + face.a.z * targetSize);
+					* targetSize, y() + targetAngle.y + face.a.y * targetSize,
+					z() + targetAngle.z + face.a.z * targetSize);
 
 			VerletParticle targetPoint = new VerletParticle(toxicTarget);
 			targetPoint.lock();

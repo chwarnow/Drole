@@ -63,7 +63,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	/* Users Head */
 	private PVector stdHeadPosition = new PVector(0, 0, 3000);
 	private PVector head = new PVector(0, 0, 0);
-	private PVector mouseHead = new PVector(0, 0, 3000);
+	private PVector mouseHead = new PVector(0, 0, 1000);
 	
 	/* Engine */
 	private Engine engine;

@@ -37,12 +37,12 @@ public class FlyingDude extends ParticleSystem {
 			
 		
 			setSpringPower(0.00006f);
-			setBoomPower(-2.0f);
+			setBoomPower(-5.0f);
 			
-			springFallOff = -0.008f;
-			boomFalloff = 0.001f;
+			springFallOff = -0.00008f;
+			boomFalloff = 0.1f;
 			
-			trailLength = 5;
+			trailLength = 2;
 
 		}
 
@@ -101,6 +101,8 @@ public class FlyingDude extends ParticleSystem {
 
 						ShapedParticle newPart = new ShapedParticle(e.p, x() + e.p.random(-iSize,iSize), y() + e.p.random(-iSize,iSize)-400, z()+ e.p.random(-iSize,iSize),trailLength,decay,greyLevels[i][j]);
 			
+						newPart.setWeight(0.5f);
+						
 						int xPos = targetXCenter + (int) ((i * spread) - (imageWidth * spread) * 0.5f);
 						int yPos = targetYCenter + ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
 

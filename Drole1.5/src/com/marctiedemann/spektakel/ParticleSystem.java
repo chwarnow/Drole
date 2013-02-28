@@ -28,7 +28,11 @@ public class ParticleSystem extends VerletParticle{
 	protected float boomFalloff = 0.05f;
 
 	protected float springFallOff = 0.01f;
+	
+	
+	protected float trailAlpha = 0.3f;
 
+	
 	private float boomPower = initalBoomPower;
 
 	private float springPower = initalSpringPower;
@@ -245,8 +249,7 @@ void updateTrailColors() {
 		int numSections = trailLength + 1;
 		int pointsToMesh = 2;
 		
-		float startAlpha = 0.3f;
-		float alphaSteps = startAlpha/(trailLength);
+		float alphaSteps = trailAlpha/(trailLength);
 
 		for (int i = 0; i < numPoints; i++) {
 
@@ -261,14 +264,14 @@ void updateTrailColors() {
 				colors[step + 0] = 1.0f;
 				colors[step + 1] = 1.0f;
 				colors[step + 2] = 1.0f;
-				colors[step + 3] = startAlpha; // The W coordinate of each point
+				colors[step + 3] = trailAlpha; // The W coordinate of each point
 
 				Vec3D trailPoint = oneParticle.getTailPoint(0);
 
 				colors[step + 4] = 1.0f;
 				colors[step + 5] = 1.0f;
 				colors[step + 6] = 1.0f;
-				colors[step + 7] = startAlpha; // The W coordinate of each point
+				colors[step + 7] = trailAlpha; // The W coordinate of each point
 
 				for (int k = 0; k < pointsToMesh; k++) {
 
@@ -281,7 +284,7 @@ void updateTrailColors() {
 					colors[step + 2] = 1.0f;
 					
 					
-					colors[step + 3] = startAlpha-(alphaSteps*(j+1))+(alphaSteps*k); 
+					colors[step + 3] = trailAlpha-(alphaSteps*(j+1))+(alphaSteps*k); 
 				//	System.out.println("step "+step+" alpha "+colors[step + 3]);
 				//	colors[step + 3] = 1;
 				}
@@ -394,8 +397,9 @@ void updateTrailColors() {
 
 	
 	public void resetPowers(){
-		initalBoomPower = boomPower;
-		initalSpringPower = boomPower;
+		
+		boomPower = initalBoomPower;
+		springPower = initalSpringPower;
 	}
 	
 	public void setBoomPower(float newPower) {
@@ -405,7 +409,7 @@ void updateTrailColors() {
 
 	public void setSpringPower(float newPower) {
 		springPower = newPower;
-		initalSpringPower = boomPower;
+		 initalSpringPower = springPower;
 	}
 	
 	public float getBoomPower(){
