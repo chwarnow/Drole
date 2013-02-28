@@ -150,8 +150,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		oldEasedIndex = easedIndex;
 
 		// cosinus from lookup table
-		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))];
-		
+		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))] * fade;
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
 			

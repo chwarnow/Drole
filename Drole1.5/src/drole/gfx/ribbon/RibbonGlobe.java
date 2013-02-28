@@ -98,8 +98,14 @@ public class RibbonGlobe extends Drawlist {
 		hide();
 	}
 	
+	@Override
+	public void fadeIn(float time) {
+		super.fadeIn(time);
+		show();
+	}
+	
 	public void hide() {
-		// TODO: set all ribbons to die mode
+		// set all ribbons to die mode
 		int drawableIndex = 0;
 		for(int i=0;i<drawables.size();i++) {				
 			// draw associations
@@ -112,6 +118,21 @@ public class RibbonGlobe extends Drawlist {
 			}
 		}
 		
+	}
+	
+	public void show() {
+		// set all ribbons to die mode
+		int drawableIndex = 0;
+		for(int i=0;i<drawables.size();i++) {				
+			// draw associations
+			if(drawableIndex++ < associationsAmount) {
+				// r.draw();
+			} else {
+				RibbonGroup rG = (RibbonGroup)drawables.get(i);
+				//  menu swarms
+				rG.makeAlive();
+			}
+		}
 	}
 	
 	public void switchToLights() {
@@ -198,7 +219,7 @@ public class RibbonGlobe extends Drawlist {
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
 					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
-					// r.draw();
+					r.draw();
 					g.popMatrix();
 					
 					penseeRotation += 10f;
