@@ -25,7 +25,7 @@ public class ParticleSystem extends VerletParticle{
 
 	protected float initalSpringPower = 0.0001f;
 
-	protected float boomFalloff = 0.05f;
+	protected float boomFalloff = 0.005f;
 
 	protected float springFallOff = 0.01f;
 	

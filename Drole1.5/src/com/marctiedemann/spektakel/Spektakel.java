@@ -114,7 +114,7 @@ public class Spektakel extends Drawable {
 		centerSystem.draw(e.g);
 		if (centerSystem.isEmpty())
 			centerSystem.spawnNew();
-		setPointLight(0, 0, 500, -500, 255, 255, 255, 0.3f, .0008f, 0.0f);
+		setPointLight(0, 0, 500, -500, 150, 205, 255, 0.3f, .0006f, 0.0f);
 
 		// System.out.println("systemcount "+ermitters.size());
 
@@ -122,11 +122,11 @@ public class Spektakel extends Drawable {
 
 			ParticleSystem er = ermitters.get(i);
 
-			if (i < 4)
+			if (i < 5)
 				setPointLight(i + 1, er.bigParticle.get(0).x,
 						er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255,
 						70 + e.p.random(-30, 30), 30, 0.3f,
-						.003f + e.p.random(-0.0005f, 0.0005f), 0.0f);
+						.001f + e.p.random(-0.0005f, 0.0005f), 0.0f);
 
 			er.update();
 			er.draw(e.g);

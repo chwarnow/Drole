@@ -32,7 +32,7 @@ public class ToxicSystem extends ParticleSystem {
 			protected int targetSize = 3;
 			protected int targetYOffset = 200;
 
-			protected int meshSize = 8; 
+			protected int meshSize = 12; 
 			
 			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
 

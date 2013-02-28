@@ -161,13 +161,13 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-		setupMenu();
+//		setupMenu();
 		
-//		setupSpektakel();
+		setupSpektakel();
 		
 //		setupMicroMacroWorld();
 		
-		setupOptikWorld();
+//		setupOptikWorld();
 		
 //		setupAssoziationWorld();
 		
@@ -347,6 +347,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		}
 
 		if (MODE == LIVE) {
+			
+			
 			engine.useOptik("OffCenter");
 
 			//drawOffCenterVectors(head);
@@ -357,7 +359,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// Draw Real World Screen
 			// drawRealWorldScreen();
 			
-			if(!FREEMODE) {
+			if(!FREEMODE) {/*
 				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -455,11 +457,15 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
 				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
+			*/
 			}
-			
-			pinLog("IN WORLD", menu.inWorld);
+		
+		//	pinLog("IN WORLD", menu.inWorld);
+
 		}
+	
 	}
+
 
 	// -----------------------------------------------------------------
 	// Keyboard events
