@@ -102,6 +102,9 @@ public class Engine {
 	
 	public void update(String name) {
 		Drawable dl = drawables.get(name);
+		
+		p.pinLog("Drawbale "+dl.hashCode(), dl.mode());
+		
 		if(
 			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
 			(dl.updateMode() == Drawable.ONLY_ONSCREEN && dl.mode() != Drawable.OFF_SCREEN)

@@ -245,8 +245,6 @@ public abstract class Drawable {
 	}
 
 	public void update() {
-		e.p.pinLog("FADING "+this.hashCode(), fade);
-		
 	    if(mode() == FADING_IN && currentFadeTime == fadeTime) mode(ON_SCREEN);
 	    if(mode() == FADING_OUT && currentFadeTime == 0) mode(OFF_SCREEN);
 	    

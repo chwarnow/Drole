@@ -168,13 +168,13 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 		setupMenu();
 		
-		setupSpektakel();
+//		setupSpektakel();
 		
 //		setupMicroMacroWorld();
 		
 //		setupOptikWorld();
 		
-		setupAssoziationWorld();
+//		setupAssoziationWorld();
 		
 //		setupFabricWorld();
 		
@@ -214,8 +214,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		menu = new Menu(engine);
 		engine.addDrawable("Menu", menu);
 		
-//		globe = new RibbonGlobe(engine, globePosition, globeSize);
-//		engine.addDrawable("Globe", globe);
+		globe = new RibbonGlobe(engine, globePosition, globeSize);
+		engine.addDrawable("Globe", globe);
 	}
 	
 	private void setupSpektakel(){
@@ -233,6 +233,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 //		bildweltMicroMacro = new MMWorld(engine);
 		bildweltMicroMacro = new BildweltMicroMacro(engine);
 		bildweltMicroMacro.hide();
+		
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
 	}	
@@ -583,6 +584,18 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			break;
 		case '1':
 			transitToWorld(0);
+			break;
+		case '2':
+			transitToWorld(1);
+			break;
+		case '3':
+			transitToWorld(2);
+			break;
+		case '4':
+			transitToWorld(3);
+			break;
+		case '5':
+			transitToWorld(4);
 			break;			
 		}
 		
