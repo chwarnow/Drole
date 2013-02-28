@@ -20,7 +20,6 @@ public class BildweltOptik extends Drawable {
 	float ro = 150;//random offset
 
 	PFont font;
-	GLTexture optikAkteur;
 
 	public float rotation 						= 0;
 	private float smoothedRotation 				= 0;
@@ -29,26 +28,45 @@ public class BildweltOptik extends Drawable {
 	// sehender akteur pensee
 	private BildweltAssoziationPensee sehenderAkteur;
 	
-	public BildweltOptik(Engine e) {
+	// floor pensee
+	private BildweltAssoziationPensee floorPensee;
+	
+	public BildweltOptik(Engine e, PVector position, PVector dimension) {
 		super(e);
 
+		position(position);
+		dimension(dimension);
+		
 		font = e.p.loadFont("data/fonts/HoeflerText-Regular-48.vlw");
 		e.p.textFont(font);
-
-		optikAkteur = new GLTexture(e.p, "data/images/optikAkteur.png");
 		
+		// create sehender akteur pensee
 		sehenderAkteur = new BildweltAssoziationPensee(
 			e,
 			"data/images/optikAkteurSmaller.png",
-			1500,
-			1.0f,
+			dimension.x*scale.x*.5f,
+			.85f,
 			new PVector(0, 0, 0),
 			new PVector(0, 0, 0)
 		);
 		sehenderAkteur.setLooping(false);
 		sehenderAkteur.setPosition(.5f);
-		// TODO: do on loading
+		// TODO: do on fadein
 		sehenderAkteur.loadPensee();
+		
+		// create floor pensee
+		floorPensee = new BildweltAssoziationPensee(
+			e,
+			"data/images/optikFloor.png",
+			dimension.x*scale.x*.5f,
+			7.5f,
+			new PVector(0, 0, -96),
+			new PVector(0, 0, 0)
+		);
+		floorPensee.setLooping(false);
+		floorPensee.setPosition(.5f);
+		// TODO: do on fadein
+		floorPensee.loadPensee();
 		
 	}
 
@@ -56,12 +74,14 @@ public class BildweltOptik extends Drawable {
 	public void fadeOut(float time) {
 		super.fadeOut(time);
 		sehenderAkteur.hide();
+		floorPensee.hide();
 	}
 	
 	@Override
 	public void fadeIn(float time) {
 		super.fadeIn(time);
 		sehenderAkteur.show();
+		floorPensee.show();
 	}
 	
 	@Override
@@ -69,6 +89,7 @@ public class BildweltOptik extends Drawable {
 		super.update();
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		sehenderAkteur.update();
+		floorPensee.update();
 	}
 	
 	
@@ -78,31 +99,36 @@ public class BildweltOptik extends Drawable {
 		g.pushStyle();
 		g.pushMatrix();
 
-		g.translate(position.x, position.y, position.z);
+		g.translate(position.x, position.y + e.p.cos(e.p.frameCount*.02f)*10f, position.z);
 		g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
-		g.rotateY(smoothedRotation);
+		g.rotateY(smoothedRotation + e.p.frameCount*.005f);
 
 		float rectSize = 500;
 		
-		e.startShader("PolyLightAndColor");
+		e.startShader("PolyLightAndColor"); // RoomShader
 		
 		g.tint(255);
 		g.stroke(105, 90, 97);
 		g.fill(199, 186, 177);
 
-		g.imageMode(PApplet.CORNERS);
-
 		g.pushMatrix();
-		// g.translate(g.width/2, g.height/2+200 - fade*500);
-		// TODO:use parent rotation
-		// g.rotateY(g.radians(g.mouseX));
-		// g.rotateZ(.1f + g.radians(-g.mouseY)*.05f);
 
 		//floor
 		g.pushMatrix();		
+		// draw floor pensee
+		g.rotateX(3.1414f/2);
+		if(floorPensee.isVisible()) {
+			floorPensee.draw();
+		}
+/*
+		g.popMatrix();
+		g.pushMatrix();
 		g.box(rectSize, 10, rectSize*0.6181f); // golden ratio
 		g.popMatrix();
-
+*/
+		e.stopShader();
+		e.startShader("PolyLightAndColor");
+		
 		// wall
 		g.pushMatrix();
 		// translate(-rectSize*(0.6181f*.33f), -rectSize*(0.6181f*.25f)-5, 0);
@@ -110,12 +136,14 @@ public class BildweltOptik extends Drawable {
 		g.popMatrix();
 
 		// rays
+		
+		float mainY = 100;
 
 		// wall coords
-		PVector pointI = new PVector(-rectSize*(0.6181f*.35f), -rectSize*(0.6181f*.5f)-5, -rectSize*.31f);
+		PVector pointI = new PVector(-rectSize*(0.6181f*.35f), -rectSize*(0.6181f*.5f)-5 + mainY, -rectSize*.31f);
 		PVector pointK = new PVector(pointI.x, pointI.y, rectSize*.31f);
-		PVector pointM = new PVector(pointI.x, -5, -rectSize*.31f);
-		PVector pointL = new PVector(pointK.x, -5, rectSize*.31f);
+		PVector pointM = new PVector(pointI.x, -5 + mainY, -rectSize*.31f);
+		PVector pointL = new PVector(pointK.x, -5 + mainY, rectSize*.31f);
 
 		// define wall plane for intersection test
 		face[0] = pointI;
@@ -123,16 +151,16 @@ public class BildweltOptik extends Drawable {
 		face[2] = pointL;
 
 		// head
-		PVector pointG = new PVector(rectSize*(0.6181f*.7f), -rectSize*(0.6181f*.4f)-5);
+		PVector pointG = new PVector(rectSize*(0.6181f*.7f), -rectSize*(0.6181f*.4f)-5 + mainY, 0);
 		// feet
-		PVector pointH = new PVector(pointG.x, -5, pointG.z);
+		PVector pointH = new PVector(pointG.x, -5 + mainY, pointG.z);
 
 		// generic triangle a
-		PVector pointE = new PVector(-rectSize*(.6181f*.66f) + PApplet.cos(e.p.frameCount*.005f)*30, -5, 0 + PApplet.sin(e.p.frameCount*.0025f)*30);
+		PVector pointE = new PVector(-rectSize*(.6181f*.66f) + PApplet.cos(e.p.frameCount*.005f)*30, -5 + mainY, 0 + PApplet.sin(e.p.frameCount*.0025f)*30);
 		// generic triangle b
-		PVector pointF = new PVector(-rectSize*(.6181f*.75f) + PApplet.cos(e.p.frameCount*.01f)*10, -5, rectSize*.28f + PApplet.sin(e.p.frameCount*.01f)*10);
+		PVector pointF = new PVector(-rectSize*(.6181f*.75f) + PApplet.cos(e.p.frameCount*.01f)*10, -5 + mainY, rectSize*.28f + PApplet.sin(e.p.frameCount*.01f)*10);
 		// generic triangle c
-		PVector pointR = new PVector(-rectSize*(.6181f*.5f) + PApplet.cos(e.p.frameCount*.001f)*30, -5, rectSize*.1f + PApplet.sin(e.p.frameCount*.005f)*30);
+		PVector pointR = new PVector(-rectSize*(.6181f*.5f) + PApplet.cos(e.p.frameCount*.001f)*30, -5 + mainY, rectSize*.1f + PApplet.sin(e.p.frameCount*.005f)*30);
 
 		// intersection g-f
 		PVector pointO = linePlaneIntersection(new Ray(pointG, pointF), face);
@@ -140,7 +168,7 @@ public class BildweltOptik extends Drawable {
 		PVector pointN = linePlaneIntersection(new Ray(pointG, pointE), face);
 		// intersection g-r
 		PVector pointS = linePlaneIntersection(new Ray(pointG, pointR), face);
-
+		
 		// g-e
 		g.beginShape();
 		g.vertex(pointG.x, pointG.y, pointG.z);
@@ -267,15 +295,12 @@ public class BildweltOptik extends Drawable {
 		g.translate(pointR.x, pointR.y, pointR.z);
 		g.text("R", 0, 0);
 		g.popMatrix();
-
-		e.startShader("PolyLightAndColor");
+		
+		e.startShader("PolyLightAndColor"); // RoomShader
 		
 		// sehender akteur
 		g.pushMatrix();
-		// g.translate(pointG.x-40, pointG.y-12, pointG.z);
-		// g.scale(.455f);
-		// g.image(optikAkteur, 0, 0);
-		// System.out.println(sehenderAkteur.isVisible());
+		g.translate(pointG.x-10, pointG.y+57, pointG.z);
 		if(sehenderAkteur.isVisible()) sehenderAkteur.draw();
 		g.popMatrix();
 

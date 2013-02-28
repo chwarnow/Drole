@@ -261,7 +261,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		logLn("Initializing world 'Optik' ...");
 		
 		// testwise optik scene
-		bildweltOptik = new BildweltOptik(engine);
+		bildweltOptik = new BildweltOptik(engine, globePosition, globeSize);
 		bildweltOptik.hide();
 		
 		engine.addDrawable("OptikWorld", bildweltOptik);
