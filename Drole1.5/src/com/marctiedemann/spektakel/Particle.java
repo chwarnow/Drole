@@ -29,8 +29,8 @@ public class Particle extends VerletParticle {
 		
 	protected void bounce() {
 
-		int boundsX = (int)Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM/2;
-		int boundsY = (int)Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM/2;
+		int boundsX = (int)Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2;
+		int boundsY = (int)Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2;
 		int boundsZ = (int)Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM;
 		
 //		p.println("z depth "+boundsZ);

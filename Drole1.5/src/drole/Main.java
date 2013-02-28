@@ -171,15 +171,15 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 		setupSpektakel();
 		
-		setupMicroMacroWorld();
+//		setupMicroMacroWorld();
 		
-		setupOptikWorld();
+//		setupOptikWorld();
 		
-		setupAssoziationWorld();
+//		setupAssoziationWorld();
 		
-		setupFabricWorld();
+//		setupFabricWorld();
 		
-		setupWorlds();
+//		setupWorlds();
 		
 		/* START */
 		switchMode(LIVE);
@@ -204,7 +204,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	private void setupSpektakel(){
 		bildweltSpektakel = new Spektakel(engine);
-		bildweltSpektakel.hide();
+//		bildweltSpektakel.hide();
 		
 		engine.addDrawable("Spektakel", bildweltSpektakel);
 	}
@@ -356,6 +356,9 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// drawRealWorldScreen();
 			
 			if(!FREEMODE) {
+				
+				/*
+				
 				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -460,9 +463,12 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
 				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
+				
+				*/
+				
 			}
 			
-			pinLog("IN WORLD", menu.inWorld);
+	//		pinLog("IN WORLD", menu.inWorld);
 			
 			/*
 			if(!FREEMODE && Settings.USE_GESTURES) {
