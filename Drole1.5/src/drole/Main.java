@@ -166,7 +166,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-//		setupMenu();
+		setupMenu();
 		
 		setupSpektakel();
 		
@@ -205,7 +205,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		logLn("Initializing world 'Spektakel' ...");
 		
 		bildweltSpektakel = new Spektakel(engine);
-//		bildweltSpektakel.hide();
+		bildweltSpektakel.hide();
 		
 		engine.addDrawable("Spektakel", bildweltSpektakel);
 	}
@@ -213,25 +213,12 @@ public class Main extends EngineApplet implements MouseWheelListener {
 
 	private void setupMicroMacroWorld() {
 		logLn("Initializing world 'MicroMacro' ...");
-		
 //		bildweltMicroMacro = new MMWorld(engine);
 		bildweltMicroMacro = new BildweltMicroMacro(engine);
 		bildweltMicroMacro.hide();
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
 	}
-	
-	/*
-	private void setupGestureDetection() {
-		TargetBox3D holdingTargetShapeBox = new TargetBox3D(0, -200, -800, 400, 400, 1000);
-		holdingTarget = new PositionTarget(this, "HOLDING_TARGET", context, holdingTargetShapeBox, SimpleOpenNI.SKEL_RIGHT_HAND, SimpleOpenNI.SKEL_TORSO);
-		targetDetection.targets.add(holdingTarget);
-		
-		TargetSphere rotationTargetShapeSphere = new TargetSphere(0, 200, 0, 700);
-		rotationTarget = new PositionTarget(this, "ROTATION_TARGET", context, rotationTargetShapeSphere, SimpleOpenNI.SKEL_LEFT_HAND, SimpleOpenNI.SKEL_RIGHT_HAND);
-		targetDetection.targets.add(rotationTarget);
-	}
-	*/
 
 	private void setupRoom() {
 		logLn("Initializing Room ...");

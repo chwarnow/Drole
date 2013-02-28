@@ -14,8 +14,8 @@ public class Settings {
 	// Settings LEAP
 	
 	// Pixel Dimension of screen
-	public static int VIRTUAL_SCREEN_WIDTH					= 	720;
-	public static int VIRTUAL_SCREEN_HEIGHT					= 	720;
+	public static int VIRTUAL_SCREEN_WIDTH					= 	1080;
+	public static int VIRTUAL_SCREEN_HEIGHT					= 	1080;
 	
 	// Dimension of the real worlds screen in mm
 	public static int REAL_SCREEN_DIMENSIONS_WIDTH_MM 		= 	1800;

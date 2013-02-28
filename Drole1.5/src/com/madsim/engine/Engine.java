@@ -225,6 +225,18 @@ public class Engine {
 		useOptik(ao);
 	}
 	
+	private void resetLights() {
+		lights = new float[8][10];
+		lights[0] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[1] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[2] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[3] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[4] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[5] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[6] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		lights[7] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	}
+	
 	private void setupLights(Drawable d) {
 		// TODO: set that globally
 		/*
@@ -267,7 +279,8 @@ public class Engine {
 		*/
 		
 		g.noLights();
-		g.lights();
+		
+//		resetLights();
 		
 		if(d.usesLights()) lights = d.getLights();
 
@@ -283,6 +296,9 @@ public class Engine {
 				activeLights++;
 			}
 		}
+		p.pinLog("Active Lights "+d.hashCode(), activeLights);
+		
+		g.lights();
 		
 		setLights();
 	}
