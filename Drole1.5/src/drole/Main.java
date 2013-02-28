@@ -580,7 +580,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-//			"--present",
+			//"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 //			"--display=0",
