@@ -162,7 +162,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-//		setupMenu();
+		setupMenu();
 		
 		setupSpektakel();
 		
@@ -207,6 +207,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
+		
 		menu = new Menu(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM);
 		engine.addDrawable("Menu", menu);
 	}
@@ -215,7 +216,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		logLn("Initializing world 'Spektakel' ...");
 		
 		bildweltSpektakel = new Spektakel(engine);
-	//	bildweltSpektakel.hide();
+		bildweltSpektakel.hide();
 		
 		engine.addDrawable("Spektakel", bildweltSpektakel);
 	}
