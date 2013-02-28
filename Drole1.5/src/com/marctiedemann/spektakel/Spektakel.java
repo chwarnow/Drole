@@ -28,15 +28,14 @@ public class Spektakel extends Drawable {
 
 	private float PAUSE_EASING = 0.5f;
 	private float PAUSE_MOTION_AT = 2;
-	private float NORMAL_DRAG = 0.001f;
+	private float NORMAL_DRAG = 0.1f;
 
 	private float drag = 0.001f;
 	
 	private int timeStamp = 0;
 	boolean timeStampSet =false;
 	
-	
-	
+
 	public Spektakel(Engine e) {
 		super(e);
 
@@ -137,7 +136,7 @@ public class Spektakel extends Drawable {
 
 			ParticleSystem er = ermitters.get(i);
 
-			if (i < 6)
+			if (i < 5)
 				setPointLight(i + 1, er.bigParticle.get(0).x,
 						er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255,
 						70 + e.p.random(-30, 30), 30, 0.3f,
@@ -153,7 +152,7 @@ public class Spektakel extends Drawable {
 			//	System.out.println(physics.behaviors);
 			//	System.out.println(physics.springs);
 				
-			//	spawnNewToxicSystem();
+				spawnNewToxicSystem();
 			}
 		}
 		
