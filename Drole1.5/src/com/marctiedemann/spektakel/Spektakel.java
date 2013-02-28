@@ -19,7 +19,7 @@ public class Spektakel extends Drawable {
 
 	VerletPhysics physics, physics2;
 
-	ArrayList<ToxicSystem> ermitters;
+	ArrayList<ParticleSystem> ermitters;
 
 	int DIM = 3000;
 
@@ -40,7 +40,7 @@ public class Spektakel extends Drawable {
 		initPhysics(physics);
 		initPhysics(physics2);
 
-		ermitters = new ArrayList<ToxicSystem>();
+		ermitters = new ArrayList<ParticleSystem>();
 
 		for (int i = 0; i < 1; i++) {
 			ToxicSystem startErmitter = new ToxicSystem(e, physics, 50, 0, 0, 0);
@@ -107,14 +107,13 @@ public class Spektakel extends Drawable {
 		update();
 		// startErmitter.drawErmitter();
 
-		e.setPointSize(8);
 		
 //		System.out.println("systemcount "+ermitters.size());
 		
 		for (int i = 0; i < ermitters.size(); i++) {
 			
 			
-			ToxicSystem er = ermitters.get(i);
+			ParticleSystem er = ermitters.get(i);
 
 			if(i<4)
 			setPointLight(i, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 30, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
@@ -163,7 +162,7 @@ public class Spektakel extends Drawable {
 	}
 	
 	public void spawnNewDude() {
-		ToxicSystem newOne = new ToxicSystem(e, physics, 50,Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2, 
+		FlyingDude newOne = new FlyingDude(e, physics, Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 3, 
 				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2, 0), 
 				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);

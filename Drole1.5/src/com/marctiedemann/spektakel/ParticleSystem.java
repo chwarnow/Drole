@@ -392,6 +392,12 @@ void updateTrailColors() {
 			return false;
 	}
 
+	
+	public void resetPowers(){
+		initalBoomPower = boomPower;
+		initalSpringPower = boomPower;
+	}
+	
 	public void setBoomPower(float newPower) {
 		boomPower = newPower;
 		initalBoomPower = boomPower;

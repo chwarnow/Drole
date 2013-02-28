@@ -40,6 +40,7 @@ public class ToxicSystem extends ParticleSystem {
 	}
 
 	public void draw(GLGraphics renderer) {
+		e.setPointSize(8);
 
 		super.draw(renderer);
 
@@ -59,8 +60,7 @@ public class ToxicSystem extends ParticleSystem {
 		bigParticle.clear();
 		cleanSytstem();
 		
-		setBoomPower(initalBoomPower);
-		setSpringPower(initalSpringPower);
+		resetPowers();
 		
 	
 		
