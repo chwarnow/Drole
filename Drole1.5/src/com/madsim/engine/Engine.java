@@ -42,9 +42,9 @@ public class Engine {
 	
 	private HashMap<String, GLTexture> textures = new HashMap<String, GLTexture>();
 	
-	private float[][] 	lights	= 	new float[8][10];
-	private int activeLights = 0;
-	private float[] ambientLight = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
+	private float[][] lights		= 	new float[8][10];
+	private int activeLights 		= 	0;
+	private float[] ambientLight 	= 	new float[]{1.0f, 1.0f, 1.0f, 1.0f};
 	
 	private float pointSize = 1.0f;
 	private boolean usePoints = false;
@@ -265,6 +265,9 @@ public class Engine {
 				// g.sphere(10);
 		g.popMatrix();
 		*/
+		
+		g.noLights();
+		g.lights();
 		
 		if(d.usesLights()) lights = d.getLights();
 

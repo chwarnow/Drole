@@ -7,7 +7,6 @@ import java.awt.event.MouseWheelListener;
 
 import codeanticode.glgraphics.GLConstants;
 
-import com.madsim.drole.mmworld.MMWorld;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
@@ -20,14 +19,14 @@ import com.madsim.engine.shader.PolyLightAndColorShader;
 import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.engine.shader.RoomShader;
+import com.madsim.fakebildwelten.BildweltAssoziation;
+import com.madsim.fakebildwelten.BildweltFabric;
 import com.madsim.fakebildwelten.BildweltMicroMacro;
 import com.madsim.fakebildwelten.BildweltOptik;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
 import com.marctiedemann.spektakel.Spektakel;
 
-import drole.gfx.assoziation.BildweltAssoziation;
-import drole.gfx.fabric.BildweltFabric;
 import drole.gfx.ribbon.RibbonGlobe;
 import drole.gfx.room.Room;
 import drole.menu.Menu;
@@ -167,30 +166,30 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-		setupMenu();
+//		setupMenu();
 		
 		setupSpektakel();
 		
-		setupMicroMacroWorld();
+//		setupMicroMacroWorld();
 		
-		setupOptikWorld();
+//		setupOptikWorld();
 		
-		setupAssoziationWorld();
+//		setupAssoziationWorld();
 		
-		setupFabricWorld();
+//		setupFabricWorld();
 		
-		setupWorlds();
+//		setupWorlds();
 		
 		/* START */
 		switchMode(LIVE);
 	}
 	
 	private void setupWorlds() {
-		worlds[0] = bildweltMicroMacro;
+		worlds[0] = bildweltSpektakel;
 		worlds[1] = bildweltMicroMacro;
-		worlds[2] = bildweltMicroMacro;
-		worlds[3] = bildweltMicroMacro;
-		worlds[4] = bildweltMicroMacro;
+		worlds[2] = bildweltFabric;
+		worlds[3] = bildweltOptik;
+		worlds[4] = bildweltAssoziation;
 	}
 	
 	private void switchMode(String MODE) {
@@ -203,14 +202,18 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 	
 	private void setupSpektakel(){
+		logLn("Initializing world 'Spektakel' ...");
+		
 		bildweltSpektakel = new Spektakel(engine);
-		bildweltSpektakel.hide();
+//		bildweltSpektakel.hide();
 		
 		engine.addDrawable("Spektakel", bildweltSpektakel);
 	}
 
 
 	private void setupMicroMacroWorld() {
+		logLn("Initializing world 'MicroMacro' ...");
+		
 //		bildweltMicroMacro = new MMWorld(engine);
 		bildweltMicroMacro = new BildweltMicroMacro(engine);
 		bildweltMicroMacro.hide();
@@ -240,8 +243,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-		menu = new Menu(engine);
-		engine.addDrawable("Menu", menu);
+//		menu = new Menu(engine);
+//		engine.addDrawable("Menu", menu);
 		
 		globe = new RibbonGlobe(engine, globePosition, globeSize);
 		engine.addDrawable("Globe", globe);
@@ -267,6 +270,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 	
 	private void setupFabricWorld() {
+		logLn("Initializing world 'Fabrik' ...");
+		
 		bildweltFabric = new BildweltFabric(engine);
 		bildweltFabric.hide();
 		
@@ -356,6 +361,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// drawRealWorldScreen();
 			
 			if(!FREEMODE) {
+				/*
 				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -460,9 +466,10 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
 				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
+				*/
 			}
 			
-			pinLog("IN WORLD", menu.inWorld);
+//			pinLog("IN WORLD", menu.inWorld);
 			
 			/*
 			if(!FREEMODE && Settings.USE_GESTURES) {
