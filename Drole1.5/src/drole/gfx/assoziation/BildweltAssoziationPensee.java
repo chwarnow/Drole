@@ -109,7 +109,6 @@ public class BildweltAssoziationPensee extends Drawable {
 						currPosition += animationDirection*delaySteps;
 					}
 				} else {
-				
 					if (currPosition >= positionSteps-1) {
 						if(isShowing) {
 							isRunning = false;
@@ -319,5 +318,9 @@ public class BildweltAssoziationPensee extends Drawable {
 	
 	public void stop() {
 		isRunning = false;
+	}
+	
+	public void setDelayTime(int delayTime) {
+		this.delayTime = delayTime;
 	}
 }

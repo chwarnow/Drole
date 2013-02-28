@@ -63,7 +63,7 @@ public class RibbonGlobe extends Drawlist {
 			BildweltAssoziationPensee b = new BildweltAssoziationPensee(
 				e,
 				penseeImages[(int)e.p.random(penseeImages.length-1)],
-				dimension.x*scale.x,
+				dimension.x*scale.x*1.0f,
 				2.0f,
 				new PVector(e.p.random(-randomRadius, randomRadius),
 						e.p.random(-randomRadius, randomRadius),
@@ -71,9 +71,10 @@ public class RibbonGlobe extends Drawlist {
 				),
 				new PVector(0, 0, 0)
 			);
+			b.setDelayTime(0);
 			// let animation begin from right point
 			b.setPosition(.4f);
-			b.setLooping(true);
+			b.setLooping(false);
 			b.loadPensee();
 			// add to drawables list
 			drawables.add( b );
@@ -85,10 +86,32 @@ public class RibbonGlobe extends Drawlist {
 					e,
 					dimension.x*scale.x, // sphere size
 					500, // amount
-					10 + (int)e.p.random(100), // joints per ribbon
+					2 + (int)e.p.random(50), // joints per ribbon
 					2f, // quadheight
 					i)); // id
 		}
+	}
+	
+	@Override
+	public void fadeOut(float time) {
+		super.fadeOut(time);
+		hide();
+	}
+	
+	public void hide() {
+		// TODO: set all ribbons to die mode
+		int drawableIndex = 0;
+		for(int i=0;i<drawables.size();i++) {				
+			// draw associations
+			if(drawableIndex++ < associationsAmount) {
+				// r.draw();
+			} else {
+				RibbonGroup rG = (RibbonGroup)drawables.get(i);
+				//  menu swarms
+				rG.dieOut();
+			}
+		}
+		
 	}
 	
 	public void switchToLights() {
@@ -133,8 +156,8 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
-		if(mode().equals(ON_SCREEN)) {
-		/*
+		//if(mode().equals(ON_SCREEN)) {
+		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -151,7 +174,7 @@ public class RibbonGlobe extends Drawlist {
 						new PVector(0, 0, 0));
 			}
 		}
-		*/
+		
 		g.pushStyle();
 		g.pushMatrix();
 		
@@ -174,8 +197,8 @@ public class RibbonGlobe extends Drawlist {
 					// r.update();
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
-					g.translate(0, e.p.cos(e.p.frameCount*.01f + penseeRotation)*50f, 0);
-					r.draw();
+					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
+					// r.draw();
 					g.popMatrix();
 					
 					penseeRotation += 10f;
@@ -192,7 +215,7 @@ public class RibbonGlobe extends Drawlist {
 			
 		g.popMatrix();
 		g.popStyle();
-	}
-		e.p.println(e.p.frameRate);
+	//}
+		// e.p.println(e.p.frameRate);
 	}
 }
