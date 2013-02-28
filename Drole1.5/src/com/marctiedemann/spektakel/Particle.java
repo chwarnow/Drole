@@ -37,36 +37,46 @@ public class Particle extends VerletParticle {
 
 		Vec3D vel = getVelocity();
 
+		float drag = 0.9f;
+		float friction = 0.98f;
+		
+		
+		
 		if (x() > boundsX) {
 			clearVelocity();
-			x = boundsX;
-			addVelocity(new Vec3D(-vel.x / 2, vel.y / 2, vel.z / 2));
+	//		x = boundsX;
+			addVelocity(new Vec3D(-vel.x * drag, vel.y*friction, vel.z*friction));
 		}
 
 		if (x() < -boundsX) {
 			clearVelocity();
-			x = -boundsX;
-			addVelocity(new Vec3D(-vel.x / 2, vel.y / 2, vel.z / 2));
+//			x = -boundsX;
+			addVelocity(new Vec3D(-vel.x * drag, vel.y*friction, vel.z*friction ));
 		}
 
 		if (y() > boundsY) {
+		
 			clearVelocity();
 
-			y = boundsY;
-			addVelocity(new Vec3D(vel.x / 2, -vel.y / 100, vel.z / 2));
+		//	y = boundsY;
+			
+	//		vel = new Vec3D(vel.x/friction, -vel.y/10000, vel.z/friction);
+			
+			addVelocity(new Vec3D(vel.x*drag, -vel.y*0.5f, vel.z*drag));
 		}
 
 		if (z() > 0) {
 			clearVelocity();
-			z = 0;
-			addVelocity(new Vec3D(vel.x / 2, vel.y / 2, -vel.z / 2));
+	//		z = 0;
+			addVelocity(new Vec3D(vel.x*friction, vel.y*friction  ,-vel.z * drag));
 		}
 
 		if (z() < -boundsZ) {
 			clearVelocity();
-			z = -boundsZ;
-			addVelocity(new Vec3D(vel.x / 2, vel.y / 2, -vel.z / 2));
+		//	z = -boundsZ;
+			addVelocity(new Vec3D(vel.x*friction, vel.y*friction , -vel.z * drag));
 		}
+		
 
 //
 		

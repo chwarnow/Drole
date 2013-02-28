@@ -36,6 +36,8 @@ public class ToxicSystem extends ParticleSystem {
 			
 			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
 
+			
+			
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
 			float y, float z) {
 
@@ -43,7 +45,13 @@ public class ToxicSystem extends ParticleSystem {
 		
 		trailLength=20;
 		
-		trailAlpha=0.1f;
+		trailAlpha=0.5f;
+		
+		
+		 boomFalloff = 0.1f;
+		 springFallOff = 0.05f;
+		 setSpringPower(0.0002f);
+		 setBoomPower(-3.5f);
 
 		
 	}
@@ -61,7 +69,6 @@ public class ToxicSystem extends ParticleSystem {
 	}
 
 	public void draw(GLGraphics renderer) {
-		e.setPointSize(15);
 
 		super.draw(renderer);
 
@@ -107,7 +114,7 @@ public class ToxicSystem extends ParticleSystem {
 			//the actual partzicle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
-					z() + face.a.z - targetAngle.z / 2,trailLength,decay,1);
+					z() + face.a.z - targetAngle.z / 2,trailLength,e.p.random(decay*0.8f,decay),1);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 

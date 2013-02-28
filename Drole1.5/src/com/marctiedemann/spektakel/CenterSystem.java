@@ -37,8 +37,9 @@ public class CenterSystem extends ToxicSystem{
 		 springFallOff = -0.008f;
 		 decay=0.3f;
 		 
-		 trailAlpha=0.3f;
-		
+		 trailAlpha=0.4f;
+
+		 spriteSize=25;
 		
 
 	}

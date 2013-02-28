@@ -36,13 +36,17 @@ public class FlyingDude extends ParticleSystem {
 			spawnNew();
 			
 		
-			setSpringPower(0.00002f);
+			setSpringPower(0.000002f);
 			setBoomPower(-8.0f);
 			
-			springFallOff = -0.005f;
+			springFallOff = -0.022f;
 			boomFalloff = 0.001f;
 			
-			trailLength = 2;
+			trailLength = 5;
+			
+			trailAlpha= 0.5f;
+			
+			spriteSize = 8;
 
 		}
 
@@ -76,7 +80,7 @@ public class FlyingDude extends ParticleSystem {
 			
 			resetPowers();
 			
-			boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.3f, 0.1f);
+			boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.5f, 0.1f);
 			physics.addBehavior(boomForce);
 
 			// spread must be at least 1
@@ -86,12 +90,14 @@ public class FlyingDude extends ParticleSystem {
 			int imageWidth = greyLevels[0].length;
 			
 			//initial spread
-			int iSize = 50;
+			int iSize = 5;
 
-			float decay = 0.001f;
+			float decay = 0.3f;
 			
 			int targetXCenter = 0;
-			int targetYCenter = Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2-imageHeight;
+			int targetYCenter = 0;
+			
+			System.out.println("center y "+targetYCenter);
 			
 			for (int i = 0; i < imageHeight; i++) {
 				for (int j = 0; j < imageWidth; j++) {
@@ -99,13 +105,17 @@ public class FlyingDude extends ParticleSystem {
 					if (greyLevels[i][j] > 0.1f) {
 					
 
-						ShapedParticle newPart = new ShapedParticle(e.p, x() + e.p.random(-iSize,iSize), y() + e.p.random(-iSize,iSize)-400, z()+ e.p.random(-iSize,iSize),trailLength,decay,greyLevels[i][j]);
+						ShapedParticle newPart = new ShapedParticle(e.p, x() + e.p.random(-iSize,iSize), y() + e.p.random(-iSize,iSize)-400, z()+ e.p.random(-iSize*10,iSize*10),trailLength,decay,greyLevels[i][j]);
 			
 						newPart.setWeight(0.5f);
 						
 						int xPos = targetXCenter + (int) ((i * spread) - (imageWidth * spread) * 0.5f);
 						int yPos = targetYCenter + ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
+						
 
+						System.out.println(" y pos "+yPos);
+
+						
 						VerletParticle targetPoint = new VerletParticle(x()+xPos,y()+ yPos,z());
 						targetPoint.lock();
 						
@@ -138,13 +148,9 @@ public class FlyingDude extends ParticleSystem {
 			
 			sprites.setSpriteSize(50, 200);
 
-
-
-			// one size fits all
-			trailLength = 5;
 			initTrails();
 			
-			trails.setColors(255, 5);
+			
 
 		}
 
@@ -154,6 +160,10 @@ public class FlyingDude extends ParticleSystem {
 
 		@Override
 		public void update() {
+			System.out.println("still alive yeah "+bigParticle.get(0).getTimeToLife());
+			
+			
+		//	System.out.println(bigParticle.get(10).y);
 			super.update();
 		}
 

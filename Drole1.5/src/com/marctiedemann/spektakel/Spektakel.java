@@ -103,7 +103,7 @@ public class Spektakel extends Drawable {
 
 		g.pushMatrix();
 		
-		setPointLight(0, 0, 500, -500, 150, 205, 255, 0.3f, .0006f, 0.0f);
+		setPointLight(0, 0, 500, -500, 170, 225, 255, 0.3f, .0006f, 0.0f);
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -149,8 +149,8 @@ public class Spektakel extends Drawable {
 				er.cleanSytstem();
 				ermitters.remove(i);
 
-			//	System.out.println(physics.behaviors);
-			//	System.out.println(physics.springs);
+				System.out.println(physics.behaviors);
+				System.out.println(physics.springs);
 				
 				spawnNewToxicSystem();
 			}
@@ -194,9 +194,15 @@ public class Spektakel extends Drawable {
 
 	public void spawnNewDude() {
 		FlyingDude newOne = new FlyingDude(e, physics,
-				400, e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2),
-				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
+				400, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
+				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM*0.75f,-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM));
 		ermitters.add(newOne);
+		
+		
+		ToxicSystem newOne2 = new ToxicSystem(e, physics, 50, 400, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2-400,
+				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM*0.75f,-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM));
+		newOne2.init();
+		ermitters.add(newOne2);
 	}
 
 }

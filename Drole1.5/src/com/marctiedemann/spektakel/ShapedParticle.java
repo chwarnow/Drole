@@ -38,20 +38,16 @@ public class ShapedParticle extends Particle {
 	}
 
 	public void update() {
-
+		super.update();
 		bounce();
 
 		
 		
-		if(decay>0.5f)updateTrails();
-		else {
-			
-			if(p.frameCount%2==0)updateTrails();
-			
-		}
+		updateTrails();
+		
 		
 
-		super.update();
+	
 
 	}
 	

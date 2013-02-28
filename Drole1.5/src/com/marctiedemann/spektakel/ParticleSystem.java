@@ -31,6 +31,9 @@ public class ParticleSystem extends VerletParticle{
 	
 	
 	protected float trailAlpha = 0.3f;
+	
+	protected int spriteSize = 12;
+
 
 	
 	private float boomPower = initalBoomPower;
@@ -133,7 +136,7 @@ public class ParticleSystem extends VerletParticle{
 
 		for (int i = 0; i < numPoints; i++) {
 
-			float newAlpha = (bigParticle.get(i).getTimeToLife() * 0.003921f)+ e.p.random(-0.1f, 0.1f);
+			float newAlpha = (bigParticle.get(i).getTimeToLife() /255)* e.p.random(0.5f, 1.5f);
 
 	//		colors[4 * i + 0] = 1;
 	//		colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
@@ -145,7 +148,9 @@ public class ParticleSystem extends VerletParticle{
 			colors[4 * i + 2] = 1;
 			
 			
-			colors[4 * i + 3] = newAlpha*bigParticle.get(i).myAlpha;
+			colors[4 * i + 3] = e.p.abs(newAlpha*bigParticle.get(i).myAlpha);
+			
+	//		System.out.println(bigParticle.get(i).getTimeToLife()+" alp "+newAlpha*bigParticle.get(i).myAlpha);
     // 	colors[4 * i + 3] = 1;
 
 			
@@ -250,11 +255,15 @@ void updateTrailColors() {
 		int pointsToMesh = 2;
 		
 		float alphaSteps = trailAlpha/(trailLength);
+		
+		
+
 
 		for (int i = 0; i < numPoints; i++) {
 
 			ShapedParticle oneParticle = bigParticle.get(i);
-
+			float newAlpha = trailAlpha*( oneParticle.getTimeToLife() * 0.003921f)+ e.p.random(-0.1f, 0.1f);
+		
 				
 			for (int j = 0; j < trailLength - 1; j++) {
 
@@ -264,14 +273,14 @@ void updateTrailColors() {
 				colors[step + 0] = 1.0f;
 				colors[step + 1] = 1.0f;
 				colors[step + 2] = 1.0f;
-				colors[step + 3] = trailAlpha; // The W coordinate of each point
+				colors[step + 3] = newAlpha; // The W coordinate of each point
 
 				Vec3D trailPoint = oneParticle.getTailPoint(0);
 
 				colors[step + 4] = 1.0f;
 				colors[step + 5] = 1.0f;
 				colors[step + 6] = 1.0f;
-				colors[step + 7] = trailAlpha; // The W coordinate of each point
+				colors[step + 7] = newAlpha; // The W coordinate of each point
 
 				for (int k = 0; k < pointsToMesh; k++) {
 
@@ -284,7 +293,7 @@ void updateTrailColors() {
 					colors[step + 2] = 1.0f;
 					
 					
-					colors[step + 3] = trailAlpha-(alphaSteps*(j+1))+(alphaSteps*k); 
+					colors[step + 3] = newAlpha-(alphaSteps*(j+1))+(alphaSteps*k); 
 				//	System.out.println("step "+step+" alpha "+colors[step + 3]);
 				//	colors[step + 3] = 1;
 				}
@@ -310,7 +319,7 @@ void updateTrailColors() {
 				bigParticle.get(i).setBehaviorStrenght(springPower);
 			}
 
-			if (boomPower > -0.00001) {
+			if (boomPower > -0.0000001) {
 
 				/*
 				 * boomPower=-5.0f;
@@ -352,6 +361,7 @@ void updateTrailColors() {
 		updateSpriteColors();
 		
 		updateTrailPositions();
+		updateTrailColors();
 
 		
 		updateForce();
@@ -362,6 +372,9 @@ void updateTrailColors() {
 
 		// drawGrid();
 		// drawErmitter(renderer);
+		
+		e.setPointSize(spriteSize);
+
 
 		e.setupModel(sprites);
 		renderer.model(sprites);
