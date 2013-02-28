@@ -27,9 +27,9 @@ public class Spektakel extends Drawable {
 
 	private float PAUSE_EASING = 0.5f;
 	private float PAUSE_MOTION_AT = 2;
-	private float NORMAL_DRAG = 0.01f;
+	private float NORMAL_DRAG = 0.001f;
 
-	private float drag = 0.1f;
+	private float drag = 0.001f;
 
 	public Spektakel(Engine e) {
 		super(e);
@@ -46,7 +46,7 @@ public class Spektakel extends Drawable {
 		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2);
 		centerSystem.init();
 
-		e.requestTexture("images/particle3.png");
+		e.requestTexture("images/particle4.png");
 
 		useLights();
 		// i x y z r g b f1 f2 f3
@@ -139,7 +139,10 @@ public class Spektakel extends Drawable {
 				er.cleanSytstem();
 				ermitters.remove(i);
 
-				spawnNewToxicSystem();
+				System.out.println(physics.behaviors);
+				System.out.println(physics.springs);
+				
+			//	spawnNewToxicSystem();
 			}
 		}
 		
