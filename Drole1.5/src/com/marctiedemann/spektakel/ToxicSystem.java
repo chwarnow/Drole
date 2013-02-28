@@ -23,14 +23,21 @@ public class ToxicSystem extends ParticleSystem {
 
 	private TriangleMesh toxiMesh = new TriangleMesh();
 	
+	
+	//size and shooting angle
+			protected int targetSize = 3;
+			protected int targetYOffset = 200;
+
+			protected Vec3D targetAngle = new Vec3D(0,-1,0);
 
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
-			float y, float z) {
+			float y, float z,boolean randomize) {
 
 		super(e, _physics, x, y, z);
 		
 		trailLength=20;
 
+		if(randomize)randomizeShootingVector();
 		spawnNew();
 	}
 
@@ -55,6 +62,13 @@ public class ToxicSystem extends ParticleSystem {
 		toxiMesh = (TriangleMesh) b.createMesh(null, 24, 100);
 	}
 
+	protected void randomizeShootingVector(){
+
+		targetAngle = new Vec3D(e.p.random(-1, 1)*targetYOffset ,
+				e.p.random(-1, 1)*targetYOffset , e.p.random(-1, 1)*targetYOffset
+						);
+	}
+	
 	public void spawnNew() {
 
 		bigParticle.clear();
@@ -74,13 +88,6 @@ public class ToxicSystem extends ParticleSystem {
 		randomizeMesh();
 
 		
-		//size and shooting angle
-		int targetSize = 3;
-		int targetYOffset = 200;
-
-		Vec3D targetAngle = new Vec3D(e.p.random(-1, 1)*targetYOffset ,
-				e.p.random(-1, 1)*targetYOffset , e.p.random(-1, 1)*targetYOffset
-						);
 
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();

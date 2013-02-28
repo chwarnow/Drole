@@ -20,6 +20,7 @@ public class Spektakel extends Drawable {
 	VerletPhysics physics, physics2;
 
 	ArrayList<ParticleSystem> ermitters;
+	private CenterSystem centerSystem;
 
 	int DIM = 3000;
 
@@ -39,12 +40,13 @@ public class Spektakel extends Drawable {
 
 		initPhysics(physics);
 		initPhysics(physics2);
+		physics2.setDrag(0.8f);
 
 		ermitters = new ArrayList<ParticleSystem>();
 
 		for (int i = 0; i < 1; i++) {
-			ToxicSystem startErmitter = new ToxicSystem(e, physics, 50, 0, 0, 0);
-			ermitters.add(startErmitter);
+			centerSystem = new CenterSystem(e, physics2, 50, 0, 0, 0);
+	//		ermitters.add(startErmitter);
 		}
 
 		e.requestTexture("images/particle.png");
@@ -62,6 +64,8 @@ public class Spektakel extends Drawable {
 		super.update();
 
 		// pause system 1
+		
+		centerSystem.update();
 
 		if (pauseMotion && drag < PAUSE_MOTION_AT)
 			drag *= 1.0f + PAUSE_EASING;
@@ -108,6 +112,9 @@ public class Spektakel extends Drawable {
 
 		update();
 		// startErmitter.drawErmitter();
+
+		centerSystem.draw(e.g);
+		setPointLight(0,0,0,-1500, 255, 70+e.p.random(-30,30), 30, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
 
 		
 //		System.out.println("systemcount "+ermitters.size());
@@ -159,7 +166,7 @@ public class Spektakel extends Drawable {
 				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2,
 				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2), 
 				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2, 0), 
-				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
+				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0),true);
 		ermitters.add(newOne);
 	}
 	
