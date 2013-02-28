@@ -102,7 +102,7 @@ public class BildweltOptik extends Drawable {
 
 		g.translate(position.x, position.y + e.p.cos(e.p.frameCount*.02f)*10f, position.z);
 		g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
-		g.rotateY(smoothedRotation + e.p.frameCount*.005f);
+		g.rotateY(smoothedRotation);
 
 		float rectSize = 500;
 		
