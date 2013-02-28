@@ -6,12 +6,11 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import codeanticode.glgraphics.GLConstants;
-import codeanticode.glgraphics.GLModel;
 
-import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.drole.mmworld.MMWorld;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
+import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.optik.LookAt;
 import com.madsim.engine.optik.OffCenterOptik;
 import com.madsim.engine.optik.OrthoOptik;
@@ -21,10 +20,10 @@ import com.madsim.engine.shader.PolyLightAndColorShader;
 import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.engine.shader.RoomShader;
+import com.madsim.fakebildwelten.BildweltMicroMacro;
+import com.madsim.fakebildwelten.BildweltOptik;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
-import com.madsim.tracking.kinect.targeting.PositionTarget;
-import com.madsim.tracking.kinect.targeting.TargetDetection;
 import com.marctiedemann.spektakel.Spektakel;
 
 import drole.gfx.assoziation.BildweltAssoziation;
@@ -87,15 +86,24 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private RibbonGlobe globe;
 
 	private float rotationSpeedY = 0.0f;
+	private float lastHandsZL = 0, lastHandsZR = 0;
 	private PVector lastRightHand = new PVector(0, 0, 0);
+	private PVector lastLeftHand = new PVector(0, 0, 0);
 	private PVector rightHandSpeedDir = new PVector(0, 0, 0);
 	private boolean isRotating = false;
+	private boolean isScaling = false;
+	private float scaling = 0.0f;
+	private boolean backRotationBlock = false;
+	private boolean isInGoBackGesture = false;
+	private int ticksInGoBackGesture = 0;
 	
 	private PFont mainFont;
 	
 	/* Bildwelten */
-	private MMWorld bildweltMicroMacro;
+	private Drawable[] worlds = new Drawable[5];
 	
+//	private MMWorld bildweltMicroMacro;
+	private BildweltMicroMacro bildweltMicroMacro;
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
 	private BildweltFabric bildweltFabric;
@@ -161,21 +169,29 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 		setupMenu();
 		
-//		setupSpektakel();
+		setupSpektakel();
 		
-//		setupMicroMacroWorld();
+		setupMicroMacroWorld();
 		
-//		setupOptikWorld();
+		setupOptikWorld();
 		
-//		setupAssoziationWorld();
+		setupAssoziationWorld();
 		
-//		setupFabricWorld();
+		setupFabricWorld();
 		
-		/* START */		
+		setupWorlds();
+		
+		/* START */
 		switchMode(LIVE);
 	}
 	
-	
+	private void setupWorlds() {
+		worlds[0] = bildweltMicroMacro;
+		worlds[1] = bildweltMicroMacro;
+		worlds[2] = bildweltMicroMacro;
+		worlds[3] = bildweltMicroMacro;
+		worlds[4] = bildweltMicroMacro;
+	}
 	
 	private void switchMode(String MODE) {
 		if(this.MODE != FORCED_DEBUG) {
@@ -188,14 +204,16 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	private void setupSpektakel(){
 		bildweltSpektakel = new Spektakel(engine);
-		engine.addDrawable("Spektakel", bildweltSpektakel);
+		bildweltSpektakel.hide();
 		
+		engine.addDrawable("Spektakel", bildweltSpektakel);
 	}
 
 
 	private void setupMicroMacroWorld() {
-		bildweltMicroMacro = new MMWorld(engine);
-		
+//		bildweltMicroMacro = new MMWorld(engine);
+		bildweltMicroMacro = new BildweltMicroMacro(engine);
+		bildweltMicroMacro.hide();
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
 	}
@@ -222,12 +240,11 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-//		globe = new RibbonGlobe(engine, globePosition, globeSize);
-		
-//		engine.addDrawable("Globe", globe);
-		
 		menu = new Menu(engine);
 		engine.addDrawable("Menu", menu);
+		
+		globe = new RibbonGlobe(engine, globePosition, globeSize);
+		engine.addDrawable("Globe", globe);
 	}	
 	
 	private void setupOptikWorld() {
@@ -351,9 +368,18 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)) < 0.16f) {
 					pinLog("Scale Gesture", "ON");
 					
-					bildweltMicroMacro.position(0, 0, map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500));
+					scaling = map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500);
+					
+					menu.position(0, 0, scaling);
+					globe.position(0, 0, scaling);
+					
+					pinLog("Scaling", scaling);
+					
+					isScaling = true;
 				} else {
 					pinLog("Scale Gesture", "OFF");
+					
+					isScaling = false;
 				}
 	
 				if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_RIGHT_HAND), kinect.getJoint(Kinect.SKEL_RIGHT_SHOULDER)) < 0.12f) {
@@ -370,22 +396,73 @@ public class Main extends EngineApplet implements MouseWheelListener {
 					
 					pinLog("Right Hand Speed", rightHandSpeed);
 					
-					if(abs(rightHandSpeed) > 60) {
-						rotationSpeedY += map(rightHandSpeed, -500, 500, -1.0f, 1.0f);
+					if(abs(rightHandSpeed) > 40) {
+						if(backRotationBlock && ((rotationSpeedY < 0.0f && rightHandSpeed > 0.0f) || (rotationSpeedY > 0.0f && rightHandSpeed < 0.0f))) {
+							backRotationBlock = false;
+						} else {
+							rotationSpeedY += map(rightHandSpeed, -500, 500, -0.2f, 0.2f);
+							backRotationBlock = true;
+						}
+					} else {
+						if(!backRotationBlock) {
+//							rotationSpeedY += map(rightHandSpeed, -40, 40, -0.01f, 0.01f);
+						}
 					}
 				} else {
 					pinLog("Rotate Gesture", "OFF");
 					isRotating = false;
 				}
 				
-				rotationSpeedY *= 0.92;
+				rotationSpeedY *= 0.90;
 				
-				if(abs(rotationSpeedY) < 0.001f) rotationSpeedY = 0.0f;
+				if(abs(rotationSpeedY) < 0.001f) {
+					rotationSpeedY = 0.0f;
+					backRotationBlock = false;
+				}
 
 				pinLog("rotationSpeedY", rotationSpeedY);
 				
-				menu.rotation(0, bildweltMicroMacro.rotation().y+rotationSpeedY, 0);
+				menu.rotation(0, 0, menu.rotation().z+rotationSpeedY);
+				globe.rotation(0, 0, menu.rotation().z+rotationSpeedY);
+				
+				// TRANS INTO WORLD
+				if(isScaling && menu.getActiveWorld() != Menu.NO_ACTIVE_WORLD && scaling > -600f) {
+					menu.inWorld = true;
+					
+					menu.hide();
+					globe.hide();
+					worlds[menu.getActiveWorld()].show();
+				}
+				
+				if(!isInGoBackGesture) ticksInGoBackGesture = 0;
+				if(menu.inWorld && isScaling && isRotating) {
+					
+					float handsZL  = lastHandsZL-kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
+					float handsZR  = lastHandsZL-kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
+					pinLog("Hand Z L", handsZL);
+					pinLog("Hand Z R", handsZR);
+					if(isInGoBackGesture) {
+						if(ticksInGoBackGesture > 30) {
+							if(lastHandsZL-handsZL > 100.0f && lastHandsZR-handsZR > 100.0f) {
+								menu.show();
+								globe.show();
+								worlds[menu.getActiveWorld()].hide();
+								
+								menu.inWorld = false;
+							}
+						}
+						ticksInGoBackGesture++;
+					} else {
+						ticksInGoBackGesture = 0;
+					}
+					isInGoBackGesture = true;
+				}
+				
+				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
+				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
 			}
+			
+			pinLog("IN WORLD", menu.inWorld);
 			
 			/*
 			if(!FREEMODE && Settings.USE_GESTURES) {

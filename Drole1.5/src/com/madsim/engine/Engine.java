@@ -171,6 +171,8 @@ public class Engine {
 				gl.glEnable(GL.GL_VERTEX_PROGRAM_POINT_SIZE);
 				gl.glDepthMask(false);
 			} else {
+				gl.glDisable(GL.GL_POINT_SPRITE);
+				gl.glDisable(GL.GL_VERTEX_PROGRAM_POINT_SIZE);
 				gl.glDepthMask(true);
 			}
 		}
@@ -357,7 +359,7 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(0.2f, 0.2f, 0.2f);
+		ambient(0.8f, 0.8f, 0.8f);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();

@@ -9,11 +9,13 @@ import codeanticode.glgraphics.GLTexture;
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 
+import drole.settings.Settings;
+
 public class Room extends Drawable {
 	
 	private GLModel model;
 	
-	private float p = 1800;
+	private float p = Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM;
 	private float m = p/2f;
 	
 	private float[] vertices = new float[]{
