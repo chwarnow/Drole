@@ -30,6 +30,7 @@ import com.madsim.tracking.kinect.TargetBox3D;
 import com.madsim.tracking.kinect.TargetDetection;
 import com.madsim.tracking.kinect.TargetSphere;
 
+import drole.gfx.architecture.BildweltArchitecture;
 import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.fabric.BildweltFabric;
 import drole.gfx.ribbon.RibbonGlobe;
@@ -118,6 +119,7 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
 	private BildweltFabric bildweltFabric;
+	private BildweltArchitecture bildweltArchitecture;
 	
 	public void setup() {
 		size(Settings.VIRTUAL_SCREEN_WIDTH, Settings.VIRTUAL_SCREEN_HEIGHT, GLConstants.GLGRAPHICS);
@@ -195,11 +197,13 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 // 		setupMicroMacroWorld();
 		
-		setupOptikWorld();
+//		setupOptikWorld();
 		
 // 		setupAssoziationWorld();
 		
 //		setupFabricWorld();
+		
+		setupArchitectureWorld();
 		
 		/* START */
 		if(FREEMODE) {
@@ -224,6 +228,12 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 		
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
+	}
+	
+	private void setupArchitectureWorld() {
+		bildweltArchitecture = new BildweltArchitecture(engine, globePosition, globeSize);
+		
+		engine.addDrawable("ArchitectureWorld", bildweltArchitecture);
 	}
 	
 	private void setupGestureDetection() {
@@ -700,8 +710,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeOut(100);
 				
 // 				bildweltMicroMacro.fadeIn(100);
-				
-				bildweltOptik.fadeIn(100);
+				bildweltArchitecture.fadeIn(100);
+//				bildweltOptik.fadeIn(100);
 // 				bildweltAssoziation.fadeIn(100);
 //				fabricWorldDrawlist.fadeAllIn(100);
 //				optikWorldDrawlist.fadeAllIn(100);
@@ -715,8 +725,8 @@ public class Main extends EngineApplet implements PositionTargetListener, MouseW
 				globe.fadeIn(100);
 
 // 				bildweltMicroMacro.fadeOut(100);
-				
-				bildweltOptik.fadeOut(100);
+				bildweltArchitecture.fadeOut(100);
+//				bildweltOptik.fadeOut(100);
 // 				bildweltAssoziation.fadeOut(100);
 //				fabricWorldDrawlist.fadeAllOut(100);
 

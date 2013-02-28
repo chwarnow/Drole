@@ -96,7 +96,6 @@ public class BildweltOptik extends Drawable {
 
 	@Override
 	public void draw() {
-		System.out.println(fade);
 		g.pushStyle();
 		g.pushMatrix();
 
