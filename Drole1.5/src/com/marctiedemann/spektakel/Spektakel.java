@@ -1,6 +1,5 @@
 package com.marctiedemann.spektakel;
 
-
 import java.util.ArrayList;
 
 import javax.media.opengl.GL;
@@ -19,7 +18,8 @@ public class Spektakel extends Drawable {
 
 	VerletPhysics physics, physics2;
 
-	ArrayList<ToxicSystem> ermitters;
+	ArrayList<ParticleSystem> ermitters;
+	private CenterSystem centerSystem;
 
 	int DIM = 3000;
 
@@ -27,9 +27,9 @@ public class Spektakel extends Drawable {
 
 	private float PAUSE_EASING = 0.5f;
 	private float PAUSE_MOTION_AT = 2;
-	private float NORMAL_DRAG = 0.01f;
+	private float NORMAL_DRAG = 0.001f;
 
-	private float drag = 0.01f;
+	private float drag = 0.001f;
 
 	public Spektakel(Engine e) {
 		super(e);
@@ -39,29 +39,32 @@ public class Spektakel extends Drawable {
 
 		initPhysics(physics);
 		initPhysics(physics2);
+		physics2.setDrag(0.5f);
 
-		ermitters = new ArrayList<ToxicSystem>();
+		ermitters = new ArrayList<ParticleSystem>();
 
-		for (int i = 0; i < 1; i++) {
-			ToxicSystem startErmitter = new ToxicSystem(e, physics, 50, 0, 0, 0);
-			ermitters.add(startErmitter);
-		}
+		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2);
+		centerSystem.init();
 
-		e.requestTexture("images/particle.png");
-		
+		e.requestTexture("images/particle4.png");
+
 		useLights();
 		// i x y z r g b f1 f2 f3
-		
-		setPointLight(0, 0, -(Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2f)+20, -(Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM)+20, 255, 100, 100, 0.5f, .001f, 0.0f);
+
+		setPointLight(0, 0,
+				-(Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2f) + 20,
+				-(Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM) + 20, 255, 100,
+				100, 0.5f, .001f, 0.0f);
 	}
 
 	@Override
 	public void update() {
 
-		
 		super.update();
 
 		// pause system 1
+
+		centerSystem.update();
 
 		if (pauseMotion && drag < PAUSE_MOTION_AT)
 			drag *= 1.0f + PAUSE_EASING;
@@ -70,11 +73,10 @@ public class Spektakel extends Drawable {
 
 		physics.setDrag(drag);
 		if (drag < PAUSE_MOTION_AT) {
-		
+
 			physics.update();
-			}
-			physics2.update();
-		
+		}
+		physics2.update();
 
 	}
 
@@ -82,8 +84,8 @@ public class Spektakel extends Drawable {
 	public void draw() {
 		e.usePoints();
 
-		setPointLight(0, 0, 0, -(Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2), 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		
+		setAmbient(0.2f, 0.2f, 0.2f);
+	
 		e.g.setDepthMask(false);
 		g.pushStyle();
 		g.pushMatrix();
@@ -96,6 +98,7 @@ public class Spektakel extends Drawable {
 
 		g.pushMatrix();
 		
+		setPointLight(0, 0, 500, -500, 150, 205, 255, 0.3f, .0006f, 0.0f);
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -104,39 +107,51 @@ public class Spektakel extends Drawable {
 
 		// g.rotateX(rotationX);
 		// g.rotateY(rotationY);
-		
 
-		update();
+		if(mode()==ON_SCREEN){
+		
+	//	update();
 		// startErmitter.drawErmitter();
 
-		e.setPointSize(8);
+		centerSystem.draw(e.g);
 		
-//		System.out.println("systemcount "+ermitters.size());
 		
-		for (int i = 0; i < ermitters.size(); i++) {
-			
-			
-			ToxicSystem er = ermitters.get(i);
+		if (centerSystem.isEmpty())
+			centerSystem.spawnNew();
+	
 
-			if(i<4)
-			setPointLight(i+1, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 30, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
-			
-			
+		// System.out.println("systemcount "+ermitters.size());
+
+		for (int i = 0; i < ermitters.size(); i++) {
+
+			ParticleSystem er = ermitters.get(i);
+
+			if (i < 6)
+				setPointLight(i + 1, er.bigParticle.get(0).x,
+						er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255,
+						70 + e.p.random(-30, 30), 30, 0.3f,
+						.001f + e.p.random(-0.0005f, 0.0005f), 0.0f);
+
 			er.update();
 			er.draw(e.g);
 
 			if (er.isEmpty()) {
 				er.cleanSytstem();
 				ermitters.remove(i);
+
+				System.out.println(physics.behaviors);
+				System.out.println(physics.springs);
 				
-				spawnNewToxicSystem();
+			//	spawnNewToxicSystem();
 			}
+		}
+		
 		}
 
 		g.popMatrix();
 
 		g.popMatrix();
-		
+
 		e.g.setDepthMask(true);
 
 	}
@@ -148,26 +163,28 @@ public class Spektakel extends Drawable {
 				3000, 0.1f, 0.5f);
 		AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0),
 				500, -2.8f, 0.5f);
-//		thePhysics.addBehavior(center);
-//		thePhysics.addBehavior(ring);
+		// thePhysics.addBehavior(center);
+		// thePhysics.addBehavior(ring);
 		thePhysics.addBehavior(gravity);
 		thePhysics.setDrag(drag);
 
 	}
 
 	public void spawnNewToxicSystem() {
-		ToxicSystem newOne = new ToxicSystem(e, physics, 50,
-				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2,
-				Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM / 2), 
-				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2, 0), 
-				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
+		ToxicSystem newOne = new ToxicSystem(e, physics, 50, e.p.random(
+				-Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2,
+				Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2), e.p.random(
+				-Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2, 0),
+				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
+		newOne.init();
+
 		ermitters.add(newOne);
 	}
-	
+
 	public void spawnNewDude() {
-		ToxicSystem newOne = new ToxicSystem(e, physics, 50,Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2, 
-				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2, 0), 
-				e.p.random( -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
+		FlyingDude newOne = new FlyingDude(e, physics,
+				0, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
+				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
 	}
 

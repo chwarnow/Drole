@@ -62,7 +62,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	/* Users Head */
 	private PVector stdHeadPosition = new PVector(0, 0, 3000);
 	private PVector head = new PVector(0, 0, 0);
-	private PVector mouseHead = new PVector(0, 0, 3000);
+	private PVector mouseHead = new PVector(0, 0, 1500);
 	
 	/* Engine */
 	private Engine engine;
@@ -162,7 +162,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-		setupMenu();
+//		setupMenu();
 		
 		setupSpektakel();
 		
@@ -215,7 +215,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		logLn("Initializing world 'Spektakel' ...");
 		
 		bildweltSpektakel = new Spektakel(engine);
-		bildweltSpektakel.hide();
+	//	bildweltSpektakel.hide();
 		
 		engine.addDrawable("Spektakel", bildweltSpektakel);
 	}
@@ -341,6 +341,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		}
 
 		if (MODE == LIVE) {
+			
+			
 			engine.useOptik("OffCenter");
 
 			//drawOffCenterVectors(head);
@@ -351,7 +353,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// Draw Real World Screen
 			// drawRealWorldScreen();
 			
-			if(!FREEMODE) {
+			if(!FREEMODE) {/*
 				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -426,6 +428,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 					transitToWorld(menu.getActiveWorld());
 				}
 				*/
+				/*
 				
 				if(!isInGoBackGesture) ticksInGoBackGesture = 0;
 				if(menu.inWorld && isScaling && isRotating) {
@@ -451,11 +454,15 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
 				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
+			*/
 			}
-			
-			pinLog("IN WORLD", menu.inWorld);
+		
+		//	pinLog("IN WORLD", menu.inWorld);
+
 		}
+	
 	}
+
 
 	// -----------------------------------------------------------------
 	// Keyboard events

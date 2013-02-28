@@ -23,6 +23,18 @@ public class ToxicSystem extends ParticleSystem {
 
 	private TriangleMesh toxiMesh = new TriangleMesh();
 	
+	
+	//size and shooting angle
+	
+	
+			protected float decay = 0.9f;
+	
+			protected int targetSize = 3;
+			protected int targetYOffset = 200;
+
+			protected int meshSize = 12; 
+			
+			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
 
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
 			float y, float z) {
@@ -30,7 +42,16 @@ public class ToxicSystem extends ParticleSystem {
 		super(e, _physics, x, y, z);
 		
 		trailLength=20;
+		
+		trailAlpha=0.1f;
 
+		
+	}
+	
+	public void init(){
+       
+		randomizeShootingVector();
+		
 		spawnNew();
 	}
 
@@ -40,6 +61,7 @@ public class ToxicSystem extends ParticleSystem {
 	}
 
 	public void draw(GLGraphics renderer) {
+		e.setPointSize(15);
 
 		super.draw(renderer);
 
@@ -51,18 +73,22 @@ public class ToxicSystem extends ParticleSystem {
 			m[i] = (int) e.p.random(20);
 		}
 		SurfaceMeshBuilder b = new SurfaceMeshBuilder(new SphericalHarmonics(m));
-		toxiMesh = (TriangleMesh) b.createMesh(null, 24, 100);
+		toxiMesh = (TriangleMesh) b.createMesh(null, meshSize, 100);
 	}
 
+	protected void randomizeShootingVector(){
+
+		targetAngle = new Vec3D(e.p.random(-1, 1)*targetYOffset ,
+				e.p.random(-1, 1)*targetYOffset , e.p.random(-1, 1)*targetYOffset
+						);
+	}
+	
 	public void spawnNew() {
 
 		bigParticle.clear();
 		cleanSytstem();
 		
-		setBoomPower(initalBoomPower);
-		setSpringPower(initalSpringPower);
-		
-	
+		resetPowers();
 		
 		shockwave = true;
 		
@@ -74,13 +100,6 @@ public class ToxicSystem extends ParticleSystem {
 		randomizeMesh();
 
 		
-		//size and shooting angle
-		int targetSize = 3;
-		int targetYOffset = 200;
-
-		Vec3D targetAngle = new Vec3D(e.p.random(-1, 1)*targetYOffset ,
-				e.p.random(-1, 1)*targetYOffset , e.p.random(-1, 1)*targetYOffset
-						);
 
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
@@ -88,14 +107,14 @@ public class ToxicSystem extends ParticleSystem {
 			//the actual partzicle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
-					z() + face.a.z - targetAngle.x / 2,trailLength);
+					z() + face.a.z - targetAngle.z / 2,trailLength,decay,1);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 
 			//the Target
 			Vec3D toxicTarget = new Vec3D(x() + targetAngle.x + face.a.x
-					* targetSize, y() + targetAngle.x + face.a.y * targetSize,
-					z() + targetAngle.x + face.a.z * targetSize);
+					* targetSize, y() + targetAngle.y + face.a.y * targetSize,
+					z() + targetAngle.z + face.a.z * targetSize);
 
 			VerletParticle targetPoint = new VerletParticle(toxicTarget);
 			targetPoint.lock();
