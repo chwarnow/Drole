@@ -37,7 +37,7 @@ public class CenterSystem extends ToxicSystem{
 		 springFallOff = -0.008f;
 		 decay=0.3f;
 		 
-		 trailAlpha=0.1f;
+		 trailAlpha=0.3f;
 		
 		
 
@@ -64,6 +64,7 @@ public class CenterSystem extends ToxicSystem{
 	
 	@Override
 	public void draw(GLGraphics renderer){
+		e.setPointSize(5);
 		super.draw(renderer);
 	}
 	

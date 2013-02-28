@@ -86,7 +86,7 @@ public class ParticleSystem extends VerletParticle{
 		sprites = new GLModel(e.p, numPoints * 4, GLModel.POINT_SPRITES,
 				GLModel.DYNAMIC);
 
-		tex = e.requestTexture("images/particle.png");
+		tex = e.requestTexture("images/particle4.png");
 
 		updateSpritePositions();
 		sprites.initColors();
@@ -146,7 +146,7 @@ public class ParticleSystem extends VerletParticle{
 			
 			
 			colors[4 * i + 3] = newAlpha*bigParticle.get(i).myAlpha;
-			colors[4 * i + 3] = 0;
+    // 	colors[4 * i + 3] = 1;
 
 			
 	//		System.out.println(colors[4 * i + 3]);

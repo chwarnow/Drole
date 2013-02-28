@@ -61,7 +61,7 @@ public class ToxicSystem extends ParticleSystem {
 	}
 
 	public void draw(GLGraphics renderer) {
-		e.setPointSize(8);
+		e.setPointSize(15);
 
 		super.draw(renderer);
 

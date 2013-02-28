@@ -29,7 +29,7 @@ public class Spektakel extends Drawable {
 	private float PAUSE_MOTION_AT = 2;
 	private float NORMAL_DRAG = 0.01f;
 
-	private float drag = 0.01f;
+	private float drag = 0.1f;
 
 	public Spektakel(Engine e) {
 		super(e);
@@ -46,7 +46,7 @@ public class Spektakel extends Drawable {
 		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2);
 		centerSystem.init();
 
-		e.requestTexture("images/particle.png");
+		e.requestTexture("images/particle3.png");
 
 		useLights();
 		// i x y z r g b f1 f2 f3
@@ -84,10 +84,8 @@ public class Spektakel extends Drawable {
 	public void draw() {
 		e.usePoints();
 
-		setPointLight(0, 0, 0,
-				-(Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM / 2), 255, 255,
-				255, 1.0f, 0.0001f, 0.0f);
-
+		setAmbient(0.2f, 0.2f, 0.2f);
+	
 		e.g.setDepthMask(false);
 		g.pushStyle();
 		g.pushMatrix();
@@ -99,6 +97,8 @@ public class Spektakel extends Drawable {
 		g.rotateZ(rotation.z);
 
 		g.pushMatrix();
+		
+		setPointLight(0, 0, 500, -500, 150, 205, 255, 0.3f, .0006f, 0.0f);
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -108,13 +108,17 @@ public class Spektakel extends Drawable {
 		// g.rotateX(rotationX);
 		// g.rotateY(rotationY);
 
-		update();
+		if(mode()==ON_SCREEN){
+		
+	//	update();
 		// startErmitter.drawErmitter();
 
 		centerSystem.draw(e.g);
+		
+		
 		if (centerSystem.isEmpty())
 			centerSystem.spawnNew();
-		setPointLight(0, 0, 500, -500, 150, 205, 255, 0.3f, .0006f, 0.0f);
+	
 
 		// System.out.println("systemcount "+ermitters.size());
 
@@ -122,7 +126,7 @@ public class Spektakel extends Drawable {
 
 			ParticleSystem er = ermitters.get(i);
 
-			if (i < 5)
+			if (i < 6)
 				setPointLight(i + 1, er.bigParticle.get(0).x,
 						er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255,
 						70 + e.p.random(-30, 30), 30, 0.3f,
@@ -137,6 +141,8 @@ public class Spektakel extends Drawable {
 
 				spawnNewToxicSystem();
 			}
+		}
+		
 		}
 
 		g.popMatrix();
