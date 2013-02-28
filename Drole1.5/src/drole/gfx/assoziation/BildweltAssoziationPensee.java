@@ -18,6 +18,7 @@ import penner.easing.*;
  * @Author Christopher Warnow, hello@christopherwarnow.com
  *
  */
+//TODO: implement a fine and stable state pattern and get rid of all those booleans
 public class BildweltAssoziationPensee extends Drawable {
 	Engine e;
 
@@ -49,6 +50,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	private boolean isShowing = false;
 	private boolean isRunning = true;
 	private boolean isHiding = false;
+	private boolean isVisible = false;
 	
 	// lookup table
 	private int cosDetail = 25;
@@ -105,6 +107,7 @@ public class BildweltAssoziationPensee extends Drawable {
 				if(isHiding) {
 					if(!isLooping && (int)currPosition == stopFrame) {
 						isAnimationDone = true;
+						isVisible = false;
 					} else {
 						currPosition += animationDirection*delaySteps;
 					}
@@ -304,6 +307,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		isHiding = false;
 		setPosition(.5f);
 		isRunning = true;
+		isVisible = true;
 	}
 	
 	@Override
@@ -321,5 +325,9 @@ public class BildweltAssoziationPensee extends Drawable {
 	
 	public void setDelayTime(int delayTime) {
 		this.delayTime = delayTime;
+	}
+	
+	public boolean isVisible() {
+		return this.isVisible;
 	}
 }

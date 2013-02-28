@@ -1,16 +1,17 @@
 package drole.menu;
 
 import processing.core.PApplet;
+import processing.core.PVector;
 import codeanticode.glgraphics.GLModel;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 
+import drole.gfx.ribbon.RibbonGlobe;
+
 public class Menu extends Drawable {
 
 	private short NUM_WORLDS = 5;
-	
-	private float r = 500;
 	
 	public static int NO_ACTIVE_WORLD = -1;
 	
@@ -22,12 +23,20 @@ public class Menu extends Drawable {
 	
 	public boolean inWorld = false;
 	
-	public Menu(Engine e) {
+	private RibbonGlobe globe;
+	
+	public Menu(Engine e, PVector position, float radius) {
 		super(e);
 		
-		useLights();
-		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		setPointLight(1,  700, 0,   -800, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		position(position);
+		
+		dimension = new PVector(radius, radius, radius);
+		
+		globe = new RibbonGlobe(e, position, dimension);
+		
+		dimension.x += 20;
+		dimension.y += 20;
+		dimension.z += 20;
 		
 		for(int i = 0; i < NUM_WORLDS; i++) {
 			worlds[i] = new GLModel(e.p, 4, GLModel.QUADS, GLModel.STATIC);
@@ -39,31 +48,31 @@ public class Menu extends Drawable {
 
 //					worlds[i].beginUpdateTexCoords(0);
 					
-						float l = ((r * PApplet.cos((PApplet.TWO_PI/NUM_WORLDS)+0.2f)) - (r * PApplet.cos((PApplet.TWO_PI/NUM_WORLDS)-0.2f)))/2f;
+						float l = ((dimension.x * PApplet.cos((PApplet.TWO_PI/NUM_WORLDS)+0.2f)) - (dimension.x * PApplet.cos((PApplet.TWO_PI/NUM_WORLDS)-0.2f)))/2f;
 						
 						worldAngles[i] = ((PApplet.TWO_PI/NUM_WORLDS)*i);
 						
 						float a = ((PApplet.TWO_PI/NUM_WORLDS)*i)-0.2f;
-						float x = r * PApplet.cos(a);
-						float y = r * PApplet.sin(a);				
+						float x = dimension.x * PApplet.cos(a);
+						float y = dimension.x * PApplet.sin(a);				
 						worlds[i].updateVertex(0, x, y, l);
 //						worlds[i].updateTexCoord(0, 0, 1);
 						
 						a = ((PApplet.TWO_PI/NUM_WORLDS)*i)+0.2f;
-						x = r * PApplet.cos(a);
-						y = r * PApplet.sin(a);
+						x = dimension.x * PApplet.cos(a);
+						y = dimension.x * PApplet.sin(a);
 						worlds[i].updateVertex(1, x, y, l);
 //						worlds[i].updateTexCoord(1, 1, 1);
 						
 						a = ((PApplet.TWO_PI/NUM_WORLDS)*i)+0.2f;
-						x = r * PApplet.cos(a);
-						y = r * PApplet.sin(a);
+						x = dimension.x * PApplet.cos(a);
+						y = dimension.x * PApplet.sin(a);
 						worlds[i].updateVertex(2, x, y, -l);
 //						worlds[i].updateTexCoord(2, 1, 0);
 						
 						a = ((PApplet.TWO_PI/NUM_WORLDS)*i)-0.2f;
-						x = r * PApplet.cos(a);
-						y = r * PApplet.sin(a);				
+						x = dimension.x * PApplet.cos(a);
+						y = dimension.x * PApplet.sin(a);				
 						worlds[i].updateVertex(3, x, y, -l);
 //						worlds[i].updateTexCoord(3, 0, 0);
 					
@@ -105,10 +114,20 @@ public class Menu extends Drawable {
 			
 			activeWorld = tmpActiveWorld;
 		}
+		
+		
+		// GLOBE
+		globe.update();
 	}
 	
 	@Override
 	public void draw() {
+		useLights();
+		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		setPointLight(1,  700, 0,   -800, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		
+		setAmbient(1.0f, 1.0f, 1.0f);
+		
 		g.pushMatrix();
 		g.pushStyle();
 			
@@ -125,6 +144,9 @@ public class Menu extends Drawable {
 					worlds[i].render();
 				}
 			
+				// GLOBE
+				globe.draw();
+				
 			g.popMatrix();
 			
 		g.popStyle();

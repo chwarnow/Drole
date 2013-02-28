@@ -3,7 +3,7 @@ package drole.settings;
 public class Settings {
 
 	// Some standard settings
-	public static boolean USE_KINECT						= 	false;
+	public static boolean USE_KINECT						= 	true;
 	
 	public static boolean USE_GESTURES						= 	false;
 	
@@ -33,6 +33,13 @@ public class Settings {
 	public static int REAL_SCREEN_POSITION_Y_MM				= 	-1855;
 	public static int REAL_SCREEN_POSITION_Z_MM				= 	    0;
 	
+	
+	// MENU
+	public static float MENU_GLOBE_POSITION_X				=   0;
+	public static float MENU_GLOBE_POSITION_Y				=   0;
+	public static float MENU_GLOBE_POSITION_Z				=   -(VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2f);
+	
+	public static float MENU_GLOBE_RADIUS_MM				= 800;
 	
 	// Settings Dennys home
 	
