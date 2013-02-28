@@ -73,6 +73,5 @@ void main() {
 		color *= lightColor;
 	}
 
-	if(numTextures >= 1) gl_FragColor = vec4(color.rgb * ambient.rgb, texture2D(texture0, gl_TexCoord[0].st).a);
-	else gl_FragColor = vec4(color.rgb * ambient.rgb, gl_Color.a);
+	gl_FragColor = vec4(color.rgb * ambient.rgb, gl_Color.a);
 }
