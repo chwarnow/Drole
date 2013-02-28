@@ -21,11 +21,11 @@ public class ParticleSystem extends VerletParticle{
 
 	protected boolean shockwave = false;
 
-	protected float initalBoomPower = -2.5f;
+	protected float initalBoomPower = -2.0f;
 
 	protected float initalSpringPower = 0.0001f;
 
-	protected float boomFalloff = 0.01f;
+	protected float boomFalloff = 0.05f;
 
 	protected float springFallOff = 0.01f;
 
@@ -131,9 +131,9 @@ public class ParticleSystem extends VerletParticle{
 
 			float newAlpha = (bigParticle.get(i).getTimeToLife() * 0.003921f)+ e.p.random(-0.1f, 0.1f);
 
-			colors[4 * i + 0] = 1;
-			colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
-			colors[4 * i + 2] = newAlpha - 1;
+	//		colors[4 * i + 0] = 1;
+	//		colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
+	//		colors[4 * i + 2] = newAlpha - 1;
 			
 			
 			colors[4 * i + 0] = 1;
@@ -142,6 +142,7 @@ public class ParticleSystem extends VerletParticle{
 			
 			
 			colors[4 * i + 3] = newAlpha*bigParticle.get(i).myAlpha;
+			colors[4 * i + 3] = 0;
 
 			
 	//		System.out.println(colors[4 * i + 3]);
@@ -165,7 +166,8 @@ public class ParticleSystem extends VerletParticle{
 		updateTrailPositions();
 
 		trails.initColors();
-		trails.setColors(250, 20);
+	//	trails.setColors(250, 20);
+		updateTrailColors();
 
 		trails.setLineWidth(2);
 
@@ -203,10 +205,10 @@ public class ParticleSystem extends VerletParticle{
 
 				Vec3D trailPoint = oneParticle.getTailPoint(0);
 
-				coords[step + 0] = trailPoint.x;
-				coords[step + 1] = trailPoint.y;
-				coords[step + 2] = trailPoint.z;
-				coords[step + 3] = 1.0f; // The W coordinate of each point
+				coords[step + 4] = trailPoint.x;
+				coords[step + 5] = trailPoint.y;
+				coords[step + 6] = trailPoint.z;
+				coords[step + 7] = 1.0f; // The W coordinate of each point
 
 				for (int k = 0; k < pointsToMesh; k++) {
 
@@ -228,6 +230,67 @@ public class ParticleSystem extends VerletParticle{
 		// p.println(coords);
 
 		trails.updateVertices(coords);
+	}
+	
+	
+void updateTrailColors() {
+		
+		numPoints = bigParticle.size();
+
+		colors = new float[4 * numPoints * (trailLength + 1) * 2];
+
+		// p.println("updatimng" + myID + " num " + numPoints + " size "
+		// + bigParticle.size());
+
+		int numSections = trailLength + 1;
+		int pointsToMesh = 2;
+		
+		float startAlpha = 0.3f;
+		float alphaSteps = startAlpha/(trailLength);
+
+		for (int i = 0; i < numPoints; i++) {
+
+			ShapedParticle oneParticle = bigParticle.get(i);
+
+				
+			for (int j = 0; j < trailLength - 1; j++) {
+
+				int step = (i * numSections * pointsToMesh * 4)
+						+ (j * pointsToMesh * 4);
+
+				colors[step + 0] = 1.0f;
+				colors[step + 1] = 1.0f;
+				colors[step + 2] = 1.0f;
+				colors[step + 3] = startAlpha; // The W coordinate of each point
+
+				Vec3D trailPoint = oneParticle.getTailPoint(0);
+
+				colors[step + 4] = 1.0f;
+				colors[step + 5] = 1.0f;
+				colors[step + 6] = 1.0f;
+				colors[step + 7] = startAlpha; // The W coordinate of each point
+
+				for (int k = 0; k < pointsToMesh; k++) {
+
+					step += (k * 4);
+
+					trailPoint = oneParticle.getTailPoint(j + k);
+
+					colors[step + 0] = 1.0f;
+					colors[step + 1] = 1.0f;
+					colors[step + 2] = 1.0f;
+					
+					
+					colors[step + 3] = startAlpha-(alphaSteps*(j+1))+(alphaSteps*k); 
+				//	System.out.println("step "+step+" alpha "+colors[step + 3]);
+				//	colors[step + 3] = 1;
+				}
+
+			}
+		}
+
+
+		trails.updateColors(colors);
 	}
 
 	protected void updateForce() {

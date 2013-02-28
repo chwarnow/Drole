@@ -117,7 +117,7 @@ public class Spektakel extends Drawable {
 			ToxicSystem er = ermitters.get(i);
 
 			if(i<4)
-			setPointLight(i, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 0, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
+			setPointLight(i, er.bigParticle.get(0).x, er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255, 70+e.p.random(-30,30), 30, 0.3f, .003f+e.p.random(-0.0005f,0.0005f),0.0f );
 			
 			
 			er.update();

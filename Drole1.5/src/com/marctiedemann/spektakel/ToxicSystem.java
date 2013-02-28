@@ -29,7 +29,7 @@ public class ToxicSystem extends ParticleSystem {
 
 		super(e, _physics, x, y, z);
 		
-		trailLength=30;
+		trailLength=20;
 
 		spawnNew();
 	}
@@ -67,7 +67,7 @@ public class ToxicSystem extends ParticleSystem {
 		shockwave = true;
 		
 		//global shockwave
-		boomForce = new AttractionBehavior(this, 500, getBoomPower() * 0.3f, 0.1f);
+		boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.2f, 0.1f);
 		physics.addBehavior(boomForce);
 
 		//build mesh for target shape
