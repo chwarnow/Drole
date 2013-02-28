@@ -51,10 +51,16 @@ public class BildweltAssoziation extends Drawable {
 		// penseeB.update();
 		// penseeC.update();
 	}
+	
+	@Override
+	public void fadeIn(float time) {
+		super.fadeIn(time);
+		penseeA.show();
+	}
 
 	@Override
 	public void draw() {
-		
+		System.out.println("draw assoziation " + fade);
 		g.pushStyle();
 		g.pushMatrix();
 
