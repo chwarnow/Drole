@@ -97,13 +97,14 @@ public class Engine {
 	}
 	
 	public void addDrawable(String name, Drawable dl) {
+		dl.setName(name);
 		this.drawables.put(name, dl);
 	}
 	
 	public void update(String name) {
 		Drawable dl = drawables.get(name);
 		
-		p.pinLog("Drawbale "+dl.hashCode(), dl.mode());
+		p.pinLog("Drawbale "+dl.name(), dl.mode());
 		
 		if(
 			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
@@ -317,8 +318,7 @@ public class Engine {
 			if(d.usesLights()) {
 				lights = d.getLights();
 				ambientLight = d.ambient();
-			} else {
-				ambientLight = new float[]{0.5f, 0.5f, 0.5f};
+				p.pinLog("UL:"+d.name()+":"+d.mode(), d.ambient()[0]+":"+d.ambient()[1]+":"+d.ambient()[2]);
 			}
 		}
 		
@@ -334,7 +334,7 @@ public class Engine {
 				activeLights++;
 			}
 		}
-		p.pinLog("Active Lights "+d.hashCode(), activeLights);
+		p.pinLog("Active Lights "+d.name(), activeLights);
 		
 		g.lights();
 		

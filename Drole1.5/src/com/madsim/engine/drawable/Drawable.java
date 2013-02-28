@@ -13,6 +13,8 @@ public abstract class Drawable {
 	protected Engine e;
 	protected PGraphicsOpenGL g;
 	
+	private String name;
+	
 	public static String OFF_SCREEN 			= 	"OFF_SCREEN";
 	public static String ON_SCREEN 				= 	"ON_SCREEN";
 	public static String FADING_IN 				= 	"FADING_IN";
@@ -68,6 +70,15 @@ public abstract class Drawable {
 		resetLights();
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String name() {
+		if(name != null) return name;
+		return String.valueOf(hashCode());
+	}
+	
 	public void setG(PGraphicsOpenGL g) {
 		this.g = g;
 	}

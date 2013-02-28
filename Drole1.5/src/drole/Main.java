@@ -78,11 +78,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	/* Menu */
 	private Menu menu;
-	
-	/* Globe */
-	private PVector globePosition = new PVector(0, 0, -1000);
-	private PVector globeSize = new PVector(600, 0, 0);
-	private RibbonGlobe globe;
 
 	private float rotationSpeedY = 0.0f;
 	private float lastHandsZL = 0, lastHandsZR = 0;
@@ -172,7 +167,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 //		setupMicroMacroWorld();
 		
-//		setupOptikWorld();
+		setupOptikWorld();
 		
 //		setupAssoziationWorld();
 		
@@ -185,11 +180,18 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 	
 	private void setupWorlds() {
+		/*
 		worlds[0] = bildweltSpektakel;
 		worlds[1] = bildweltMicroMacro;
 		worlds[2] = bildweltFabric;
 		worlds[3] = bildweltOptik;
 		worlds[4] = bildweltAssoziation;
+		*/
+		worlds[0] = bildweltOptik;
+		worlds[1] = bildweltOptik;
+		worlds[2] = bildweltOptik;
+		worlds[3] = bildweltOptik;
+		worlds[4] = bildweltOptik;
 	}
 	
 	private void switchMode(String MODE) {
@@ -211,11 +213,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
-		menu = new Menu(engine);
+		menu = new Menu(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM);
 		engine.addDrawable("Menu", menu);
-		
-		globe = new RibbonGlobe(engine, globePosition, globeSize);
-		engine.addDrawable("Globe", globe);
 	}
 	
 	private void setupSpektakel(){
@@ -359,7 +358,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// drawRealWorldScreen();
 			
 			if(!FREEMODE) {
-				/*
 				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -375,7 +373,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 					scaling = map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500);
 					
 					menu.position(0, 0, scaling);
-					globe.position(0, 0, scaling);
 					
 					pinLog("Scaling", scaling);
 					
@@ -427,15 +424,11 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				pinLog("rotationSpeedY", rotationSpeedY);
 				
 				menu.rotation(0, 0, menu.rotation().z+rotationSpeedY);
-				globe.rotation(0, 0, menu.rotation().z+rotationSpeedY);
 				
 				// TRANS INTO WORLD
 				if(isScaling && menu.getActiveWorld() != Menu.NO_ACTIVE_WORLD && scaling > -600f) {
 					menu.inWorld = true;
-					
-					menu.hide();
-					globe.hide();
-					worlds[menu.getActiveWorld()].show();
+					transitToWorld(menu.getActiveWorld());
 				}
 				
 				if(!isInGoBackGesture) ticksInGoBackGesture = 0;
@@ -448,9 +441,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 					if(isInGoBackGesture) {
 						if(ticksInGoBackGesture > 30) {
 							if(lastHandsZL-handsZL > 100.0f && lastHandsZR-handsZR > 100.0f) {
-								menu.show();
-								globe.show();
-								worlds[menu.getActiveWorld()].hide();
+								transitToMenu(0);
 								
 								menu.inWorld = false;
 							}
@@ -464,67 +455,9 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
 				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
-				*/
 			}
 			
-//			pinLog("IN WORLD", menu.inWorld);
-			
-			/*
-			if(!FREEMODE && Settings.USE_GESTURES) {
-				targetDetection.check();
-				
-				if(holdingTarget.inTarget()) {
-					// If the arm wasn't measured yet!
-					// Lets measure the users arm length to map it to the scaling of our globe
-					PVector leftHand 		= new PVector(0, 0, 0);
-					PVector rightHand 		= new PVector(0, 0, 0);
-					PVector leftElbow 		= new PVector(0, 0, 0);
-					PVector leftShoulder 	= new PVector(0, 0, 0);
-					PVector torso		 	= new PVector(0, 0, 0);
-					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, leftHand);
-					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_LEFT_HAND, rightHand);
-					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_ELBOW, leftElbow);
-					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_SHOULDER, leftShoulder);
-					context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_TORSO, torso);
-					
-					if(usersArmLength == 0) {
-						usersArmLength = leftHand.dist(leftElbow)+leftElbow.dist(leftShoulder);
-						System.out.println("Users arm length is: "+usersArmLength+" mm.");
-						
-						for(int i = 0; i < leftHandSampling.length; i++) leftHandSampling[i] = 0;
-					}
-					
-					leftHandSampling[leftHandSamplingIndex++] = abs(leftHand.z-leftShoulder.z);
-					if(leftHandSamplingIndex == leftHandSampling.length) leftHandSamplingIndex = 0;				
-					float dHandZ = 0;
-					for(int i = 0; i < leftHandSampling.length; i++) dHandZ += leftHandSampling[i];
-					dHandZ /= leftHandSampling.length;
-					
-	//				println(dHandZ+" : "+usersArmLength);
-					
-					float newScale = map(dHandZ, 0, usersArmLength, 3f, 0.1f);
-					globe.easeToScale(new PVector(newScale, newScale, newScale), 300);
-					
-					if(rotationTarget.inTarget()) {
-						rightHandSampling[rightHandSamplingIndex++] = rightHand.x;
-						if(rightHandSamplingIndex == rightHandSampling.length) rightHandSamplingIndex = 0;				
-						float dHandA = 0;
-						for(int i = 0; i < rightHandSampling.length; i++) dHandA += rightHandSampling[i];
-						dHandA /= rightHandSampling.length;
-							
-	//					println(dHandA);
-						float rot = map(dHandA, rotationMapStart, rotationMapEnd, -PI, PI);
-						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) globe.rotation = rot;  
-						
-						// add rotation to assoziation bildwelt
-						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) bildweltAssoziation.rotation = rot;
-						
-						// add rotation to fabric bildwelt
-						if(!Float.isInfinite(rot) && !Float.isNaN(rot)) bildweltFabric.rotation = rot;
-					}
-				}
-			}
-			*/
+			pinLog("IN WORLD", menu.inWorld);
 		}
 	}
 
@@ -538,37 +471,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			switchMode(FORCED_DEBUG);
 			break;
 		case 'r': 
-			if(globe.menuMode() == RibbonGlobe.MENU) {
-//				globe.switchToLights();
-				globe.menuMode(RibbonGlobe.LIGHTS);
-				
-				globe.fadeAllOut(100);
-				globe.fadeOut(100);
-				
-// 				bildweltMicroMacro.fadeIn(100);
-				
-//				bildweltOptik.fadeIn(100);
- 				bildweltAssoziation.fadeIn(100);
-//				fabricWorldDrawlist.fadeAllIn(100);
-//				optikWorldDrawlist.fadeAllIn(100);
-//				assoziationWorldDrawlist.fadeAllIn(100);
-			} else {
-//				globe.switchToMenu();
-				
-				globe.menuMode(RibbonGlobe.MENU);
-				
-				globe.fadeAllIn(100);
-				globe.fadeIn(100);
 
-// 				bildweltMicroMacro.fadeOut(100);
-				
-//				bildweltOptik.fadeOut(100);
- 				bildweltAssoziation.fadeOut(100);
-//				fabricWorldDrawlist.fadeAllOut(100);
-
-//				optikWorldDrawlist.fadeAllOut(100);
-//				assoziationWorldDrawlist.fadeAllOut(100);
-			}
 			break;
 		
 		// Spektakel Debug KEYS
