@@ -94,7 +94,7 @@ public class RibbonGroup extends Drawable {
 		sphereA = new SphereConstraint(new Sphere(new Vec3D(), sphereSize * .8f), SphereConstraint.OUTSIDE);
 		// sphereB = new SphereConstraint(new Sphere(new Vec3D(), sphereSize), SphereConstraint.INSIDE);
 
-		worldBox = new AABB(new Vec3D(), sphereSize);
+		worldBox = new AABB(new Vec3D(), 1500);
 		cubeConst = new BoxConstraint(worldBox);
 
 		physics = new VerletPhysics();
@@ -115,7 +115,7 @@ public class RibbonGroup extends Drawable {
 
 			// set sphere as particle constraint
 			p.addConstraint(sphereA);
-			p.addConstraint(cubeConst);
+			// p.addConstraint(cubeConst);
 			//p.lock();
 			physics.addParticle(p);
 			/*
@@ -243,6 +243,11 @@ public class RibbonGroup extends Drawable {
 				// copy particle position to agent position
 				
 				VerletParticle p = physics.particles.get(i);
+				// bounce from floor 
+				if(p.y >= 600) {
+					p.addForce(new Vec3D(0, -1*fade, 0));
+				}
+				p.addForce(new Vec3D(-p.x, -p.y, -p.z).scaleSelf(.01f*fade));
 				PVector fP = new PVector(p.x, p.y, p.z);
 				// if(i<1) System.out.println(p.x + " " + p.y + " " + p.z);
 				agent.update(fP.x, fP.y, fP.z);
@@ -355,12 +360,12 @@ public class RibbonGroup extends Drawable {
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
-				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight;
+				floatQuadVertices[quadVertexIndex++] = thisP.y + quadHeight*fade;
 				floatQuadVertices[quadVertexIndex++] = thisP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
 				floatQuadVertices[quadVertexIndex++] = nextP.x;
-				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight;
+				floatQuadVertices[quadVertexIndex++] = nextP.y + quadHeight*fade;
 				floatQuadVertices[quadVertexIndex++] = nextP.z;
 				floatQuadVertices[quadVertexIndex++] = 1.0f;
 
@@ -455,8 +460,12 @@ public class RibbonGroup extends Drawable {
 			physics.particles.get(i).clear();
 			physics.particles.get(i).set(agentPosition.x, agentPosition.y, agentPosition.z);
 			physics.particles.get(i).scaleVelocity(0);
-			physics.particles.get(i).addForce(new Vec3D(agentPosition.x, agentPosition.y, agentPosition.z).scaleSelf(.01f));
+			physics.particles.get(i).addForce(new Vec3D(-agentPosition.x, -agentPosition.y, -agentPosition.z).scaleSelf(.01f));
 		}
 		isFalling = true;
+	}
+	
+	public void makeAlive() {
+		isFalling = false;
 	}
 }
