@@ -49,6 +49,8 @@ public class Spektakel extends Drawable {
 	private int centerCounter = 0;
 
 	private PVector mouseHead;
+	
+	boolean pauseSystem = false;
 
 	public Spektakel(Engine e) {
 		super(e);
@@ -83,7 +85,7 @@ public class Spektakel extends Drawable {
 
 		// pause system 1
 
-		updateTimers();
+		if(!pauseSystem)updateTimers();
 
 		if(centerSpawned)
 		centerSystem.update();
@@ -103,9 +105,7 @@ public class Spektakel extends Drawable {
 	}
 
 	private void updateTimers() {
-		System.out.println("toxic c " + toxicCounter + " dudecount "
-				+ dudeCounter);
-
+	
 		int randomness = 40;
 
 		if (toxicNum < totalNumberOfToxics)
@@ -161,8 +161,11 @@ public class Spektakel extends Drawable {
 			centerSystem.draw(e.g);
 			g.popMatrix();
 
-			if (centerSystem.isEmpty())
-				centerSystem.spawnNew(false);
+			if (centerSystem.isEmpty()){
+				physics2.clear();
+				centerSystem.cleanSytstem();
+				if(!pauseSystem)	centerSystem.spawnNew(false);
+				}
 
 			for (int i = 0; i < ermitters.size(); i++) {
 
@@ -184,7 +187,7 @@ public class Spektakel extends Drawable {
 					System.out.println(physics.behaviors);
 					System.out.println(physics.springs);
 
-					spawnNewToxicSystem();
+					if(!pauseSystem) spawnNewToxicSystem();
 				}
 			}
 
@@ -195,6 +198,9 @@ public class Spektakel extends Drawable {
 		g.popMatrix();
 
 		e.g.setDepthMask(true);
+		
+		
+		
 
 	}
 
@@ -242,6 +248,18 @@ public class Spektakel extends Drawable {
 	public void updateRotaion(int mousePos) {
 
 		// centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
+	}
+	
+	public void pauseSystem(){
+		pauseSystem=!pauseSystem;
+		
+	}
+	
+	public void printForces(){
+		System.out.println("1 "+physics.behaviors);
+		System.out.println("1 "+physics.springs);
+		System.out.println("2 "+physics2.behaviors);
+		System.out.println("2 "+physics2.springs);
 	}
 
 }
