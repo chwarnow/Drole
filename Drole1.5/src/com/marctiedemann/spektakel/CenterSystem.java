@@ -13,7 +13,7 @@ import drole.settings.Settings;
 
 public class CenterSystem extends ToxicSystem{
 
-	public float rotationY =0;
+	private float rotationY =0;
 	
 	
 	public CenterSystem(Engine e, VerletPhysics physics, float mySize, float x,
@@ -77,10 +77,10 @@ public class CenterSystem extends ToxicSystem{
 		
 		
 		renderer.pushMatrix();
+		renderer.translate(0, 0,-900);
 
-
+		renderer.rotateY(rotationY);
 		
-
 		super.draw(renderer);
 		renderer.popMatrix();
 	}
@@ -89,7 +89,7 @@ public class CenterSystem extends ToxicSystem{
 		
 		
 		//should be between -1 & 1
-		rotationY = rotation*EngineApplet.PI*2;
+		rotationY = rotation*EngineApplet.PI;
 		
 	}
 	

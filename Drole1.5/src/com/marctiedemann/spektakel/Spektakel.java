@@ -109,7 +109,7 @@ public class Spektakel extends Drawable {
 		g.pushMatrix();
 		
 		setPointLight(0,  800, 500, - 0, 120, 225, 255, 0.3f, .0004f, 0.0f);
-		setPointLight(0,    800,   0,  -  400, 120, 225, 255, 0.3f, .0004f, 0.0f);
+		setPointLight(0,    800,   0,  -  0, 120, 225, 255, 0.3f, .0004f, 0.0f);
 
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
@@ -131,9 +131,6 @@ public class Spektakel extends Drawable {
 		// startErmitter.drawErmitter();
 
 		g.pushMatrix();	
-		g.translate(0, 0,-900);
-		g.rotateY(centerSystem.rotationY);
-		setPointLight(0,    800,   0,  -  400, 120, 225, 255, 0.3f, .0004f, 0.0f);
 		centerSystem.draw(e.g);
 		g.popMatrix();
 		
