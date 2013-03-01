@@ -48,7 +48,7 @@ public class Spektakel extends Drawable {
 
 		ermitters = new ArrayList<ParticleSystem>();
 
-		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2);
+		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/4);
 		centerSystem.init();
 
 		e.requestTexture("images/particle4.png");
@@ -89,7 +89,7 @@ public class Spektakel extends Drawable {
 	public void draw() {
 		e.usePoints();
 
-		setAmbient(0.2f, 0.2f, 0.2f);
+		setAmbient(0.4f, 0.3f, 0.3f);
 	
 		e.g.setDepthMask(false);
 		g.pushStyle();
@@ -103,7 +103,7 @@ public class Spektakel extends Drawable {
 
 		g.pushMatrix();
 		
-		setPointLight(0, 0, 500, -500, 170, 225, 255, 0.3f, .0006f, 0.0f);
+		setPointLight(0, 0, 500, -500, 120, 225, 255, 0.3f, .0004f, 0.0f);
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -139,8 +139,8 @@ public class Spektakel extends Drawable {
 			if (i < 5)
 				setPointLight(i + 1, er.bigParticle.get(0).x,
 						er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255,
-						70 + e.p.random(-30, 30), 30, 0.3f,
-						.001f + e.p.random(-0.0005f, 0.0005f), 0.0f);
+						70 + e.p.random(-30, 30), 30, 0.1f,
+						.002f + e.p.random(-0.0005f, 0.0005f), 0.0f);
 
 			er.update();
 			er.draw(e.g);
