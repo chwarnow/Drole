@@ -21,7 +21,6 @@ import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.engine.shader.RoomShader;
 import com.madsim.fakebildwelten.BildweltMicroMacro;
-import com.madsim.fakebildwelten.BildweltOptik;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
 import com.marctiedemann.spektakel.Spektakel;
@@ -31,6 +30,7 @@ import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.fabric.BildweltFabric;
 import drole.gfx.ribbon.RibbonGlobe;
 import drole.gfx.room.Room;
+import drole.gfx.sehstrahlen.BildweltOptik;
 import drole.menu.Menu;
 import drole.settings.Settings;
 
@@ -108,11 +108,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
 	private BildweltFabric bildweltFabric;
-<<<<<<< HEAD
 	private BildweltArchitecture bildweltArchitecture;
-=======
 	private Spektakel bildweltSpektakel;
->>>>>>> denny
 	
 	public void setup() {
 		size(Settings.VIRTUAL_SCREEN_WIDTH, Settings.VIRTUAL_SCREEN_HEIGHT, GLConstants.GLGRAPHICS);
@@ -172,21 +169,14 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		/* CONTENT */
 		setupRoom();
 		
-//		setupMenu();
+		setupMenu();
 		
 		setupSpektakel();
 		
 		setupMicroMacroWorld();
 		
-<<<<<<< HEAD
-// 		setupAssoziationWorld();
-=======
 		setupOptikWorld();
->>>>>>> denny
-		
 		setupAssoziationWorld();
-		
-<<<<<<< HEAD
 		setupArchitectureWorld();
 		
 		/* START */
@@ -194,9 +184,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 //			globe.fadeIn(500);
 			switchMode(LIVE);
 		}
-=======
-		setupFabricWorld();
->>>>>>> denny
 		
 		setupWorlds();
 		
@@ -237,14 +224,14 @@ public class Main extends EngineApplet implements MouseWheelListener {
 //		engine.addDrawable("MicroMacro", new Drop(engine));
 	}
 	
-<<<<<<< HEAD
+
 	private void setupArchitectureWorld() {
 		bildweltArchitecture = new BildweltArchitecture(engine, globePosition, globeSize);
 		
 		engine.addDrawable("ArchitectureWorld", bildweltArchitecture);
 	}
 	
-=======
+
 	/*
 >>>>>>> denny
 	private void setupGestureDetection() {

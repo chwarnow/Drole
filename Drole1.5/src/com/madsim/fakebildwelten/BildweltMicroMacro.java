@@ -13,8 +13,8 @@ public class BildweltMicroMacro extends Drawable {
 		
 		useLights();
 		
-		setPointLight(-(Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)+10, -300, position.z, 0, 253, 255, 240, 1.0f, 0.001f, 0.0f);
-		setPointLight((Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)-10, 300, position.z, 0, 244, 244, 244, 1.0f, 0.001f, 0.0f);
+		// setPointLight(-(Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)+10, -300, position.z, 0, 253, 255, 240, 1.0f, 0.001f, 0.0f);
+		// setPointLight((Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)-10, 300, position.z, 0, 244, 244, 244, 1.0f, 0.001f, 0.0f);
 	}
 
 	@Override

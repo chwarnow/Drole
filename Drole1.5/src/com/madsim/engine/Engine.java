@@ -6,7 +6,9 @@ import java.util.Map.Entry;
 
 import javax.media.opengl.GL;
 
+import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PVector;
 
 import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.drawable.FilterSets;
@@ -365,7 +367,6 @@ public class Engine {
 		activeOptik().calculate();
 		activeOptik().set();
 		
-<<<<<<< HEAD
 		startShader("JustColor");
 		
 		// TODO: set that globally
@@ -380,7 +381,8 @@ public class Engine {
 			g.pushMatrix();
 				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);
 				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
+				// Edit by chris: it says pointlight is no function?
+				// pointLight(255, 255, 255, 0, 0, 0);
 				g.noStroke();
 				g.fill(255, 255, 255);
 				// g.sphere(10);
@@ -389,7 +391,8 @@ public class Engine {
 			g.pushMatrix();
 				g.translate(basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450);
 				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
+				// Edit by chris: it says pointlight is no function?
+				// pointLight(255, 255, 255, 0, 0, 0);
 				g.noStroke();
 				g.fill(255, 255, 255);
 				//  g.sphere(10);
@@ -398,16 +401,14 @@ public class Engine {
 			g.pushMatrix();
 				g.translate(basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450);
 				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
+				// Edit by chris: it says pointlight is no function?
+				// pointLight(255, 255, 255, 0, 0, 0);
 				g.noStroke();
 				g.fill(255, 255, 255);
 				// g.sphere(10);
 		g.popMatrix();
 		
 		stopShader();
-
-=======
->>>>>>> denny
 		/*
 		startShader("PolyLightAndTextureAndEM");
 		

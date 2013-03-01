@@ -5,7 +5,6 @@ import java.awt.event.MouseWheelListener;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
-import com.madsim.tracking.kinect.PositionTargetListener;
 
 import codeanticode.glgraphics.GLConstants;
 import codeanticode.glgraphics.GLGraphics;
@@ -22,7 +21,7 @@ import processing.core.PVector;
  *
  */
 
-public class ArchitekturTest extends EngineApplet implements PositionTargetListener, MouseWheelListener {
+public class ArchitekturTest extends EngineApplet implements MouseWheelListener {
 	
 	Engine engine;
 	
@@ -54,18 +53,6 @@ public class ArchitekturTest extends EngineApplet implements PositionTargetListe
 			"--bgcolor=#000000",
 			"drole.tests.menu.ArchitekturTest"
 		});
-	}
-
-	@Override
-	public void jointEnteredTarget(String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void jointLeftTarget(String name) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
