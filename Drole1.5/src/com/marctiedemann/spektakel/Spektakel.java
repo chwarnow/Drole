@@ -31,9 +31,9 @@ public class Spektakel extends Drawable {
 
 	private float PAUSE_EASING = 0.5f;
 	private float PAUSE_MOTION_AT = 2;
-	private float NORMAL_DRAG = 0.1f;
+	private float NORMAL_DRAG = 0.05f;
 
-	private float drag = 0.001f;
+	private float drag = 0.05f;
 	
 	private int toxiTime = 1000;
 	private int toxicCounter = 800;
@@ -189,7 +189,7 @@ public class Spektakel extends Drawable {
 
 	private void initPhysics(VerletPhysics thePhysics) {
 
-		GravityBehavior gravity = new GravityBehavior(new Vec3D(0, 0.8f, 0));
+		GravityBehavior gravity = new GravityBehavior(new Vec3D(0, 0.6f, 0));
 		AttractionBehavior center = new AttractionBehavior(new Vec3D(0, 0, 0),
 				3000, 0.1f, 0.5f);
 		AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0),
