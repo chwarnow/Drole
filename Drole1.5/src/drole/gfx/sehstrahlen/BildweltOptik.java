@@ -36,7 +36,6 @@ public class BildweltOptik extends Drawable {
 		dimension(dimension);
 		
 		font = e.p.loadFont("data/fonts/HoeflerText-Regular-48.vlw");
-		e.p.textFont(font);
 		
 		// create sehender akteur pensee
 		sehenderAkteur = new BildweltAssoziationPensee(
@@ -49,22 +48,18 @@ public class BildweltOptik extends Drawable {
 		);
 		sehenderAkteur.setLooping(false);
 		sehenderAkteur.setPosition(.5f);
-		// TODO: do on fadein
-		sehenderAkteur.loadPensee();
 		
 		// create floor pensee
 		floorPensee = new BildweltAssoziationPensee(
 			e,
 			"data/images/optikFloor.png",
-			dimension.x*scale.x*.5f,
+			dimension.x*scale.x,
 			7.5f,
 			new PVector(0, 0, -96),
 			new PVector(0, 0, 0)
 		);
 		floorPensee.setLooping(false);
 		floorPensee.setPosition(.5f);
-		// TODO: do on fadein
-		floorPensee.loadPensee();
 		
 	}
 
@@ -73,13 +68,30 @@ public class BildweltOptik extends Drawable {
 		super.fadeOut(time);
 		sehenderAkteur.hideMe();
 		floorPensee.hideMe();
+		sehenderAkteur.fadeOut(time);
+		floorPensee.fadeOut(time);
 	}
 	
 	@Override
 	public void fadeIn(float time) {
 		super.fadeIn(time);
+		if(!sehenderAkteur.isReady()) {
+			sehenderAkteur.loadNewImage("data/images/optikAkteurSmaller.png",
+					dimension.x*scale.x*.5f,
+					new PVector(0, 0, 0),
+					new PVector(0, 0, 0));
+		}
+		if(!floorPensee.isReady()) {
+			floorPensee.loadNewImage("data/images/optikFloor.png",
+					dimension.x*scale.x,
+					new PVector(0, 0, -96),
+					new PVector(0, 0, 0));
+		}
 		sehenderAkteur.showMe();
 		floorPensee.showMe();
+		sehenderAkteur.fadeIn(time);
+		floorPensee.fadeIn(time);
+		
 	}
 	
 	@Override
@@ -88,6 +100,12 @@ public class BildweltOptik extends Drawable {
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		sehenderAkteur.update();
 		floorPensee.update();
+		
+		// unload pensee data when faded out
+		if(fade == 0) {
+			if(!sehenderAkteur.isCleared()) sehenderAkteur.clear();
+			if(!floorPensee.isCleared()) floorPensee.clear();
+		}
 	}
 	
 	
@@ -102,37 +120,22 @@ public class BildweltOptik extends Drawable {
 		g.rotateY(smoothedRotation);
 
 		float rectSize = 500;
-		
+
 		e.startShader("PolyLightAndColor"); // RoomShader
 		
 		g.tint(255);
 		g.stroke(105, 90, 97, fade*255);
 		g.fill(199, 186, 177, fade*255);
 
-		g.pushMatrix();
 
 		//floor
 		g.pushMatrix();		
-		// draw floor pensee
 		g.rotateX(3.1414f/2);
 		if(floorPensee.isVisible()) {
 			floorPensee.draw();
 		}
-/*
 		g.popMatrix();
-		g.pushMatrix();
-		g.box(rectSize, 10, rectSize*0.6181f); // golden ratio
-		g.popMatrix();
-*/
-		// e.stopShader();
-		// e.startShader("PolyLightAndColor");
 		
-		// wall
-		g.pushMatrix();
-		// translate(-rectSize*(0.6181f*.33f), -rectSize*(0.6181f*.25f)-5, 0);
-		// box(10, rectSize*(0.6181f*.5f), rectSize*0.6181f); // golden ratio
-		g.popMatrix();
-
 		// rays
 		
 		float mainY = 100;
@@ -203,17 +206,15 @@ public class BildweltOptik extends Drawable {
 
 		// intersection example
 
-		g.pushStyle();
-
 		g.strokeWeight(5);
 		g.point(pointO.x,pointO.y,pointO.z);//point of ray-plane intersection
 		g.point(pointN.x,pointN.y,pointN.z);//point of ray-plane intersection
 		g.point(pointS.x,pointS.y,pointS.z);//point of ray-plane intersection
 
-		g.popStyle();
 
 		// draw wall plane
 		g.pushMatrix();
+		g.noStroke();
 		g.fill(0, 20*fade);
 		g.beginShape();
 		g.vertex(pointI.x+1, pointI.y, pointI.z);
@@ -223,7 +224,7 @@ public class BildweltOptik extends Drawable {
 		g.vertex(pointI.x+1, pointI.y, pointI.z);
 		g.endShape();
 		g.popMatrix();
-		
+
 		e.stopShader();
 		
 		g.fill(0, 255*fade);
@@ -232,6 +233,7 @@ public class BildweltOptik extends Drawable {
 		float textOffset = 13;
 		g.noStroke();
 		g.fill(0, 255*fade);
+		g.textFont(font);
 		g.textSize(12);
 
 		g.pushMatrix();
@@ -307,7 +309,6 @@ public class BildweltOptik extends Drawable {
 		g.popMatrix();
 
 		g.popStyle();
-		g.popMatrix();
 
 	}
 
