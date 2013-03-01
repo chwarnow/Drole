@@ -41,12 +41,32 @@ public class CenterSystem extends ToxicSystem{
 		 
 		 trailAlpha=0.8f;
 		 
-		 spriteAlpha = 2.0f;
+		 spriteAlpha = 1.0f;
 		 
 		 spriteSize=20;
 
 		 
 		 
+	}
+	
+	@Override
+	protected void setSpriteColors() {
+
+		colors = new float[4 * numPoints];
+
+		for (int i = 0; i < numPoints; i++) {
+
+		float a = 1+(bigParticle.get(i).getTimeToLife() / 255)
+					* e.p.random(0.5f, 1.5f);		
+			
+		if(!bigParticle.get(i).hidden)
+			setSpriteColor(i, 1, 1, 1, a);
+		else setSpriteColor(i, 0, 0, 0, 0);
+		
+		}
+
+		sprites.updateColors(colors);
+
 	}
 	
 	@Override

@@ -135,7 +135,7 @@ public class ParticleSystem extends VerletParticle {
 
 		for (int i = 0; i < numPoints; i++) {
 
-		float a = (bigParticle.get(i).getTimeToLife() / 255)
+		float a = spriteAlpha*(bigParticle.get(i).getTimeToLife() / 255)
 					* e.p.random(0.5f, 1.5f);		
 			
 		if(!bigParticle.get(i).hidden)
@@ -312,7 +312,7 @@ public class ParticleSystem extends VerletParticle {
 			// boomForce.setStrength(boomPower);
 		
 			float newSpringPower = bigParticle.get(i).getBehaviorStrenght() *  (1 - springFallOff);
-		if(newSpringPower<2){	
+		if(newSpringPower<1.5f && newSpringPower>-1.5f ){	
 			
 			
 			bigParticle.get(i).setBehaviorStrenght(newSpringPower);

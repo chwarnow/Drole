@@ -72,10 +72,7 @@ public class Spektakel extends Drawable {
 		useLights();
 		// i x y z r g b f1 f2 f3
 
-		setPointLight(0, 0,
-				-(Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2f) + 20,
-				-(Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM) + 20, 255, 100,
-				100, 0.5f, .001f, 0.0f);
+		
 	}
 
 	@Override
@@ -150,9 +147,17 @@ public class Spektakel extends Drawable {
 		g.rotateZ(rotation.z);
 
 		g.pushMatrix();
+		
+		float falloff = 0.004f;
+			
+		try{
+		if(centerSpawned) {
+			falloff= EngineApplet.map(centerSystem.bigParticle.get(0).getTimeToLife(), 255, 0, 0.001f, 0.002f);
+			
+		}
+		}catch(Exception e){System.out.println(e);}
 
-		setPointLight(0, 800, 500, -0, 120, 225, 255, 0.3f, .0004f, 0.0f);
-		setPointLight(0, 800, 0, -0, 120, 225, 255, 0.3f, .0004f, 0.0f);
+		setPointLight(0, 0, 0, -0, 120, 225, 255, 0.3f,falloff + e.p.random(-0.0001f, 0.0001f), 0.0f);
 
 		if (mode() == ON_SCREEN) {
 
@@ -171,11 +176,21 @@ public class Spektakel extends Drawable {
 
 				ParticleSystem er = ermitters.get(i);
 
-				if (i < 5)
+				falloff= 0.002f;
+				
+				if (i < 5){
+					
+				
+					
+					
+					falloff = EngineApplet.map(er.bigParticle.get(0).getTimeToLife(), 255, 0, 0.0005f, 0.01f);
+					
+					
 					setPointLight(i + 1, er.bigParticle.get(0).x,
 							er.bigParticle.get(0).y, er.bigParticle.get(0).z,
 							255, 70 + e.p.random(-30, 30), 30, 0.1f,
-							.002f + e.p.random(-0.0005f, 0.0005f), 0.0f);
+							falloff + e.p.random(-0.0005f, 0.0005f), 0.0f);
+				}
 
 				er.update();
 				er.draw(e.g);
@@ -184,8 +199,6 @@ public class Spektakel extends Drawable {
 					er.cleanSytstem();
 					ermitters.remove(i);
 
-					System.out.println(physics.behaviors);
-					System.out.println(physics.springs);
 
 					if(!pauseSystem) spawnNewToxicSystem();
 				}
