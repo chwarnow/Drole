@@ -550,7 +550,10 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			mouseHead.y = map(e.getY(), 0, height, offCenterOptik.realScreenPos.y+Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM, offCenterOptik.realScreenPos.y+offCenterOptik.realScreenDim.y);
 			
 			offCenterOptik.updateHeadPosition(mouseHead);
-//			println(mouseHead);
+			
+			//needs to be hooked to hand gesture
+			bildweltSpektakel.updateRotaion(e.getY());
+			println(e.getY());
 		}
 	}
 	

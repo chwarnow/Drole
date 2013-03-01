@@ -5,12 +5,15 @@ import java.util.Timer;
 
 import javax.media.opengl.GL;
 
+import processing.core.PVector;
+
 import toxi.geom.Vec3D;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 import toxi.physics.behaviors.GravityBehavior;
 
 import com.madsim.engine.Engine;
+import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
 
 import drole.settings.Settings;
@@ -36,6 +39,8 @@ public class Spektakel extends Drawable {
 	boolean timeStampSet =false;
 	
 
+	private PVector mouseHead;
+	
 	public Spektakel(Engine e) {
 		super(e);
 
@@ -48,7 +53,7 @@ public class Spektakel extends Drawable {
 
 		ermitters = new ArrayList<ParticleSystem>();
 
-		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/4);
+		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, 0);
 		centerSystem.init();
 
 		e.requestTexture("images/particle4.png");
@@ -103,7 +108,9 @@ public class Spektakel extends Drawable {
 
 		g.pushMatrix();
 		
-		setPointLight(0, 0, 500, -500, 120, 225, 255, 0.3f, .0004f, 0.0f);
+		setPointLight(0,  800, 500, - 0, 120, 225, 255, 0.3f, .0004f, 0.0f);
+		setPointLight(0,    800,   0,  -  400, 120, 225, 255, 0.3f, .0004f, 0.0f);
+
 
 		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
 		// 2, PApplet.PI / 2);
@@ -123,8 +130,12 @@ public class Spektakel extends Drawable {
 	//	update();
 		// startErmitter.drawErmitter();
 
+		g.pushMatrix();	
+		g.translate(0, 0,-900);
+		g.rotateY(centerSystem.rotationY);
+		setPointLight(0,    800,   0,  -  400, 120, 225, 255, 0.3f, .0004f, 0.0f);
 		centerSystem.draw(e.g);
-		
+		g.popMatrix();
 		
 		if (centerSystem.isEmpty())
 			centerSystem.spawnNew();
@@ -203,6 +214,12 @@ public class Spektakel extends Drawable {
 				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM*0.75f,-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM));
 		newOne2.init();
 		ermitters.add(newOne2);
+	}
+	
+	public void updateRotaion(int mousePos){
+		
+		
+		centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
 	}
 
 }
