@@ -51,6 +51,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	private boolean isRunning = true;
 	private boolean isHiding = false;
 	private boolean isVisible = false;
+	private boolean isCleared = false;
 	
 	// lookup table
 	private int cosDetail = 25;
@@ -73,12 +74,14 @@ public class BildweltAssoziationPensee extends Drawable {
 		}
 
 	}
-
+	@Override
 	public void update() {
+		super.update();
 		if(!isAgents) {
 			if(dataItem.isAvailable()) {
 				isAgents = true;
 				isVisible = true;
+				isCleared = false;
 				agents = dataItem.getAgentsData();
 				agentsCount = dataItem.getAgentsCount();
 				vertexCount = dataItem.getVertexCount();
@@ -141,7 +144,6 @@ public class BildweltAssoziationPensee extends Drawable {
 	}
 	
 	public void draw() {
-
 		// update glmodel
 
 		// extract agents vertices
@@ -158,7 +160,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		oldEasedIndex = easedIndex;
 
 		// cosinus from lookup table
-		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))];// * fade;
+		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))] * fade;
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
 			
@@ -327,6 +329,17 @@ public class BildweltAssoziationPensee extends Drawable {
 		isVisible = true;
 	}
 	
+	/**
+	 * clear glModel data / free up memory
+	 */
+	public void clear() {
+		isCleared = true;
+		isAgents = false;
+		imageQuadModel.delete();
+		agents = null;
+		vertexCount = 0;
+	}
+	
 	public void stop() {
 		isRunning = false;
 	}
@@ -337,5 +350,9 @@ public class BildweltAssoziationPensee extends Drawable {
 	
 	public boolean isVisible() {
 		return this.isVisible;
+	}
+	
+	public boolean isCleared() {
+		return isCleared;
 	}
 }
