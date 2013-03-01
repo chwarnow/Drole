@@ -553,7 +553,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			
 			//needs to be hooked to hand gesture
 			bildweltSpektakel.updateRotaion(e.getY());
-			println(e.getY());
+	//		println(e.getY());
 		}
 	}
 	

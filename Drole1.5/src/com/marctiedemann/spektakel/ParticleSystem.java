@@ -307,11 +307,13 @@ public class ParticleSystem extends VerletParticle {
 
 		boomForce.setStrength(boomPower * 0.5f);
 
-		if(springPower<2){
+		
 		for (int i = 0; i < bigParticle.size(); i++) {
 			// boomForce.setStrength(boomPower);
-			
+		
 			float newSpringPower = bigParticle.get(i).getBehaviorStrenght() *  (1 - springFallOff);
+		if(newSpringPower<2){	
+			
 			
 			bigParticle.get(i).setBehaviorStrenght(newSpringPower);
 		}

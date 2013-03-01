@@ -50,7 +50,7 @@ public class FlyingDude extends ParticleSystem {
 			
 			trailAlpha= 0.1f;
 			
-			spriteSize = 5;
+			spriteSize = 8;
 
 		}
 
@@ -97,7 +97,7 @@ public class FlyingDude extends ParticleSystem {
 			//initial spread
 			int iSize = 5;
 
-			float decay = 0.3f;
+			float decay = 0.9f;
 			
 			int targetXCenter = 0;
 			int targetYCenter = -900;
@@ -150,7 +150,7 @@ public class FlyingDude extends ParticleSystem {
 			}
 
 			initSprites();		
-			sprites.setSpriteSize(50, 200);
+	//		sprites.setSpriteSize(50, 200);
 			initTrails();
 
 		}
