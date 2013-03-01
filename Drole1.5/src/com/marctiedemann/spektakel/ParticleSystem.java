@@ -32,6 +32,9 @@ public class ParticleSystem extends VerletParticle{
 	
 	protected float trailAlpha = 0.3f;
 	
+	protected float spriteAlpha = 1.0f;
+	
+	
 	protected int spriteSize = 12;
 
 

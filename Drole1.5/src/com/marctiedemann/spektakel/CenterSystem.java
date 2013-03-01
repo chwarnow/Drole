@@ -40,8 +40,10 @@ public class CenterSystem extends ToxicSystem{
 		 decay=0.5f;
 		 
 		 trailAlpha=0.4f;
-
-		 spriteSize=25;
+		 
+		 spriteSize=20;
+		 
+		 
 		
 
 		 

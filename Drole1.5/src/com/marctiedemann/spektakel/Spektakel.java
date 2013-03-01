@@ -219,7 +219,7 @@ public class Spektakel extends Drawable {
 	public void updateRotaion(int mousePos){
 		
 		
-		centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
+	//centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
 	}
 
 }

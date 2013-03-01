@@ -44,9 +44,9 @@ public class FlyingDude extends ParticleSystem {
 			
 			trailLength = 5;
 			
-			trailAlpha= 0.5f;
+			trailAlpha= 0.1f;
 			
-			spriteSize = 8;
+			spriteSize = 5;
 
 		}
 
