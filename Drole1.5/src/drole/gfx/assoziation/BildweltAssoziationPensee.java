@@ -79,6 +79,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		super.update();
 		if(!isAgents) {
 			if(dataItem.isAvailable()) {
+				
 				isAgents = true;
 				isVisible = true;
 				isCleared = false;
@@ -107,6 +108,7 @@ public class BildweltAssoziationPensee extends Drawable {
 					}
 				}
 				isAnimationDone = false;
+				
 			}
 		} else {
 			if(isRunning) {
@@ -301,10 +303,20 @@ public class BildweltAssoziationPensee extends Drawable {
 		// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 		isAnimationDone = false;
 		isAgents = false;
-		dataItem = null;
-		dataItem = new BildweltAssoziationDataItem();
-		dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
-		loadPensee();
+		// remove exiting thread
+		if(dataItem != null) {
+			if(!dataItem.isAlive()) {
+				dataItem = new BildweltAssoziationDataItem();
+				dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+				loadPensee();
+			} else {
+				dataItem.quit();
+			}
+		} else {
+			dataItem = new BildweltAssoziationDataItem();
+			dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+			loadPensee();
+		}
 	}
 	
 	public void showMe() {

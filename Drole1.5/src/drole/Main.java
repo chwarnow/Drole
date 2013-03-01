@@ -82,7 +82,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	/* Globe */
 	private PVector globePosition = new PVector(0, 0, 0);
-	private PVector globeSize = new PVector(600, 0, 0);
+	private PVector globeSize = new PVector(500, 0, 0);
 	private RibbonGlobe globe;
 
 	private float rotationSpeedY = 0.0f;
@@ -293,7 +293,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 
 	public void draw() {
-		println(frameRate);
+		// println(frameRate);
 		// Update the cam
 		kinect.update();
 
