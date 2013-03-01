@@ -1,8 +1,5 @@
 package com.marctiedemann.spektakel;
 
-
-
-
 import java.util.Iterator;
 
 import com.madsim.engine.Engine;
@@ -21,175 +18,167 @@ import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.AttractionBehavior;
 
 public class FlyingDude extends ParticleSystem {
-	
 
-		PImage dudeImage;
+	PImage dudeImage;
 
-		float[][] greyLevels;
-		
+	float[][] greyLevels;
 
-		int counter =0;
-		
+	int counter = 0;
 
-		public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
-				float z) {
+	public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
+			float z) {
 
-			super(e, _physics, x, y, z);
-			loadImage();
+		super(e, _physics, x, y, z);
+		loadImage();
 
-			spawnNew();
-			
-		
-			setSpringPower(0.000002f);
-			setBoomPower(-30.0f);
-			
-			springFallOff = -0.2f;
-			boomFalloff = 0.008f;
-			
-			trailLength = 2;
-			
-			trailAlpha= 0.1f;
-			
-			spriteSize = 11;
+		spawnNew();
 
+		setSpringPower(0.000002f);
+		setBoomPower(-30.0f);
+
+		springFallOff = -0.08f;
+		boomFalloff = 0.2f;
+
+		trailLength = 2;
+
+		trailAlpha = 0.1f;
+
+		spriteSize = 11;
+
+	}
+
+	void loadImage() {
+
+		dudeImage = e.p.loadImage("images/flyingDude_200px.png");
+		dudeImage.loadPixels();
+
+		greyLevels = new float[dudeImage.width][dudeImage.height];
+
+		for (int i = 0; i < dudeImage.height; i++) {
+			for (int j = 0; j < dudeImage.width; j++) {
+
+				int getPixel = (i * dudeImage.width) + j;
+
+				float greyLevel = e.p.red(dudeImage.pixels[getPixel]) / 255;
+
+				greyLevels[j][i] = greyLevel;
+
+			}
 		}
+	}
 
-		void loadImage() {
+	public void spawnNew() {
 
-			dudeImage = e.p.loadImage("images/flyingDude_200px.png");
-			dudeImage.loadPixels();
+		counter = 0;
+		bigParticle.clear();
+		cleanSytstem();
 
-			greyLevels = new float[dudeImage.width][dudeImage.height];
+		shockwave = true;
 
-			for (int i = 0; i < dudeImage.height; i++) {
-				for (int j = 0; j < dudeImage.width; j++) {
+		resetPowers();
 
-					int getPixel = (i * dudeImage.width) + j;
+		boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.5f,
+				0.1f);
+		physics.addBehavior(boomForce);
 
-					float greyLevel = e.p.red(dudeImage.pixels[getPixel]) / 255;
+		// spread must be at least 1
+		int spread = 5;
 
-					greyLevels[j][i] = greyLevel;
+		int imageHeight = greyLevels.length;
+		int imageWidth = greyLevels[0].length;
+
+		// initial spread
+		int iSize = 5;
+
+		float decay = 0.9f;
+
+		int targetXCenter = 0;
+		int targetYCenter = 0;
+
+		// System.out.println("center y "+targetYCenter);
+
+		for (int i = 0; i < imageHeight; i++) {
+			for (int j = 0; j < imageWidth; j++) {
+
+				if (greyLevels[i][j] > 0.1f) {
+
+					ShapedParticle newPart = new ShapedParticle(e.p, x()
+							+ e.p.random(-iSize, iSize), y()
+							+ e.p.random(-iSize, iSize)-100, z()
+							+ e.p.random(-iSize, iSize), trailLength,
+							decay, greyLevels[i][j]);
+
+					newPart.setWeight(e.p.random(0.3f));
+
+					int xPos = targetXCenter
+							+ (int) ((i * spread) - (imageWidth * spread) * 0.5f);
+					int yPos = targetYCenter
+							+ ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
+
+					// System.out.println(" y pos "+yPos);
+
+					VerletParticle targetPoint = new VerletParticle(x() + xPos,
+							y() + yPos, z());
+					targetPoint.lock();
+
+					// maybe replacxe with low force spring to reduce bouncing
+					VerletSpring toxicForce = new VerletSpring(newPart,
+							targetPoint, 0, e.p.random(getSpringPower()));
+					// physics.addParticle(targetPoint);
+					physics.addParticle(newPart);
+					physics.addSpring(toxicForce);
+					newPart.giveSpring(toxicForce);
+					// newPart.addBehavior(boomForce);
+
+					newPart.hideAndLock();
+
+					bigParticle.add(newPart);
 
 				}
+				// physics.addParticle(newPart);
+
+				/*
+				 * newPart = new Particle(p, mySize / 2, f.c.x+x, f.c.y+y,
+				 * f.c.z+z); bigParticle.add(newPart);
+				 * physics.addParticle(newPart);
+				 */
 			}
 		}
 
-	
-		public void spawnNew() {
+		initSprites();
+		// sprites.setSpriteSize(50, 200);
+		initTrails();
 
-			counter=0;
-			bigParticle.clear();
-			cleanSytstem();
+	}
 
-			shockwave = true;
-			
-			resetPowers();
-			
-			boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.5f, 0.1f);
-			physics.addBehavior(boomForce);
+	@Override
+	public void update() {
+		// System.out.println("still alive yeah "+bigParticle.get(0).getTimeToLife());
 
-			// spread must be at least 1
-			int spread = 5;
+		// System.out.println("sp "+getSpringPower());
 
-			int imageHeight = greyLevels.length;
-			int imageWidth = greyLevels[0].length;
-			
-			//initial spread
-			int iSize = 5;
+		int steps = 500;
 
-			float decay = 0.9f;
-			
-			int targetXCenter = 0;
-			int targetYCenter = -900;
-			
-	//		System.out.println("center y "+targetYCenter);
-			
-			for (int i = 0; i < imageHeight; i++) {
-				for (int j = 0; j < imageWidth; j++) {
-
-					if (greyLevels[i][j] > 0.1f) {
-					
-
-						ShapedParticle newPart = new ShapedParticle(e.p, x() + e.p.random(-iSize,iSize), y() + e.p.random(-iSize,iSize)-400, z()+ e.p.random(-iSize*10,iSize*10),trailLength,decay,greyLevels[i][j]);
-			
-						newPart.setWeight(e.p.random(0.3f));
-						
-						int xPos = targetXCenter + (int) ((i * spread) - (imageWidth * spread) * 0.5f);
-						int yPos = targetYCenter + ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
-						
-
-	//					System.out.println(" y pos "+yPos);
-
-						
-						VerletParticle targetPoint = new VerletParticle(x()+xPos,y()+ yPos,z());
-						targetPoint.lock();
-						
-						
-						//maybe replacxe with low force spring to reduce bouncing
-						VerletSpring toxicForce = new VerletSpring(newPart,targetPoint,
-								0, e.p.random(getSpringPower()));
-//						physics.addParticle(targetPoint);
-						physics.addParticle(newPart);
-						physics.addSpring(toxicForce);
-						newPart.giveSpring(toxicForce);
-						// newPart.addBehavior(boomForce);
-
-						newPart.hideAndLock();
-						
-						bigParticle.add(newPart);
-						
-					}
-					// physics.addParticle(newPart);
-
-					/*
-					 * newPart = new Particle(p, mySize / 2, f.c.x+x, f.c.y+y,
-					 * f.c.z+z); bigParticle.add(newPart);
-					 * physics.addParticle(newPart);
-					 */
-				}
+		if (counter < bigParticle.size() - steps) {
+			for (int i = 0; i < steps; i++) {
+				// System.out.println("unlocking "+counter);
+				bigParticle.get(counter + i).unHideAndLock();
 			}
-
-			initSprites();		
-	//		sprites.setSpriteSize(50, 200);
-			initTrails();
-
 		}
-		
-		
-		
+		counter += steps;
 
-		@Override
-		public void update() {
-		//	System.out.println("still alive yeah "+bigParticle.get(0).getTimeToLife());
-			
-	//		System.out.println("sp "+getSpringPower());
-			
-			
-			int steps=500;
-			
-			if(counter<bigParticle.size()-steps){
-				for(int i =0;i<steps;i++){
-	//			System.out.println("unlocking "+counter);
-				bigParticle.get(counter+i).unHideAndLock();
-				}
-			}
-			counter+=steps;
-			
-			setSpriteColors();
-			
-			
-		//	System.out.println(bigParticle.get(10).y);
-			super.update();
-		}
+		setSpriteColors();
 
-		@Override
-		public void draw(GLGraphics g) {
-			
-			e.setPointSize(2);
+		// System.out.println(bigParticle.get(10).y);
+		super.update();
+	}
 
-			super.draw(g);
-		}
+	@Override
+	public void draw(GLGraphics g) {
 
+		e.setPointSize(2);
 
+		super.draw(g);
+	}
 
 }
