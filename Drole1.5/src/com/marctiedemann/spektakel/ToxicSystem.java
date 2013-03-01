@@ -114,7 +114,7 @@ public class ToxicSystem extends ParticleSystem {
 			Face face = (Face) i.next();
 
 		
-			if(randomDecay)  theDecay =e.p.random(1,2);
+			if(randomDecay)  theDecay =e.p.random(0.5f,2);
 			
 			//the actual partzicle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
