@@ -18,6 +18,8 @@ public class Particle extends VerletParticle {
 	
 	public EngineApplet p;
 	
+	protected boolean hidden = false;
+	
 	public Particle(EngineApplet p,float x, float y , float z){
 		
 		super(x,y,z);
@@ -84,6 +86,17 @@ public class Particle extends VerletParticle {
 //		p.println(" x "+x +" y "+y+" z "+z);
 		
 	}
+	
+	public void hideAndLock(){
+		lock();
+		hidden = true;
+	}
+	
+	public void unHideAndLock(){
+		unlock();
+		hidden=false;
+	}
+	
 
 	public void update(){
 		super.update();

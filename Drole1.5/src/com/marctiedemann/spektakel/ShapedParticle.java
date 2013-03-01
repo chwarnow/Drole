@@ -19,6 +19,7 @@ public class ShapedParticle extends Particle {
 
 	public float myAlpha = 1.0f;
 
+
 	public ShapedParticle(EngineApplet p, float x, float y, float z,int tailSize) {
 		super(p, x, y, z);
 
@@ -80,6 +81,10 @@ public class ShapedParticle extends Particle {
 
 	public void setBehaviorStrenght(float newStrenght) {
 		shapeForce.setStrength(newStrenght);
+	}
+	
+	public float getBehaviorStrenght() {
+		return shapeForce.getStrength();
 	}
 	
 	public VerletSpring getSpring(){

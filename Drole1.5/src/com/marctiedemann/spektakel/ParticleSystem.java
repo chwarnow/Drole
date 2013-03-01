@@ -9,6 +9,7 @@ import java.awt.List;
 import java.util.ArrayList;
 
 import com.madsim.engine.Engine;
+import com.madsim.engine.EngineApplet;
 import com.madsim.engine.shader.JustColorShader;
 
 import codeanticode.glgraphics.*;
@@ -17,7 +18,7 @@ import drole.tests.spektakel.T_ShapeParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 
-public class ParticleSystem extends VerletParticle{
+public class ParticleSystem extends VerletParticle {
 
 	protected boolean shockwave = false;
 
@@ -28,17 +29,13 @@ public class ParticleSystem extends VerletParticle{
 	protected float boomFalloff = 0.005f;
 
 	protected float springFallOff = 0.01f;
-	
-	
+
 	protected float trailAlpha = 0.3f;
-	
+
 	protected float spriteAlpha = 1.0f;
-	
-	
+
 	protected int spriteSize = 12;
 
-
-	
 	private float boomPower = initalBoomPower;
 
 	private float springPower = initalSpringPower;
@@ -63,16 +60,15 @@ public class ParticleSystem extends VerletParticle{
 
 	protected int trailLength = 5;
 
-	
 	protected float x, y, z;
 
 	protected Engine e;
 
 	public ParticleSystem(Engine e, VerletPhysics physics, float x, float y,
 			float z) {
-		
-		super(x,y,z);
-		
+
+		super(x, y, z);
+
 		this.e = e;
 		this.physics = physics;
 
@@ -96,7 +92,7 @@ public class ParticleSystem extends VerletParticle{
 
 		updateSpritePositions();
 		sprites.initColors();
-		updateSpriteColors();
+		setSpriteColors();
 
 		sprites.initTextures(1);
 		sprites.setTexture(0, tex);
@@ -127,48 +123,49 @@ public class ParticleSystem extends VerletParticle{
 			coords[4 * i + 0] = oneParticle.x;
 			coords[4 * i + 1] = oneParticle.y;
 			coords[4 * i + 2] = oneParticle.z;
-			coords[4 * i + 3] = 1.0f; 
+			coords[4 * i + 3] = 1.0f;
 		}
-		
+
 		sprites.updateVertices(coords);
 	}
 
-	private void updateSpriteColors() {
+	protected void setSpriteColors() {
 
 		colors = new float[4 * numPoints];
 
 		for (int i = 0; i < numPoints; i++) {
 
-			float newAlpha = (bigParticle.get(i).getTimeToLife() /255)* e.p.random(0.5f, 1.5f);
-
-	//		colors[4 * i + 0] = 1;
-	//		colors[4 * i + 1] = 0.1f + newAlpha * 0.4f;
-	//		colors[4 * i + 2] = newAlpha - 1;
+		float a = (bigParticle.get(i).getTimeToLife() / 255)
+					* e.p.random(0.5f, 1.5f);		
 			
-			
-			colors[4 * i + 0] = 1;
-			colors[4 * i + 1] = 1;
-			colors[4 * i + 2] = 1;
-			
-			
-			colors[4 * i + 3] = e.p.abs(newAlpha*bigParticle.get(i).myAlpha);
-			
-	//		System.out.println(bigParticle.get(i).getTimeToLife()+" alp "+newAlpha*bigParticle.get(i).myAlpha);
-    // 	colors[4 * i + 3] = 1;
-
-			
-	//		System.out.println(colors[4 * i + 3]);
-
-			// colors[4 * i + 3] = 1;
-
+		if(!bigParticle.get(i).hidden)
+			setSpriteColor(i, 1, 1, 1, a);
+		else setSpriteColor(i, 0, 0, 0, 0);
+		
 		}
 
-	
 		sprites.updateColors(colors);
 
 	}
 
+	protected void setSpriteColor(int num, float r, float g, float b, float a) {
+		
+	
 
+		colors[4 * num + 0] = 1;
+		colors[4 * num + 1] = 1;
+		colors[4 * num + 2] = 1;
+
+		colors[4 * num + 3] = EngineApplet.abs(a * bigParticle.get(num).myAlpha);
+
+		// System.out.println(bigParticle.get(i).getTimeToLife()+" alp "+newAlpha*bigParticle.get(i).myAlpha);
+		// colors[4 * i + 3] = 1;
+
+		// System.out.println(colors[4 * i + 3]);
+
+	}
+	
+	
 
 	void initTrails() {
 
@@ -178,19 +175,17 @@ public class ParticleSystem extends VerletParticle{
 		updateTrailPositions();
 
 		trails.initColors();
-	//	trails.setColors(250, 20);
+		// trails.setColors(250, 20);
 		updateTrailColors();
 
 		trails.setLineWidth(2);
 
 		trails.setBlendMode(PApplet.ADD);
-		
-		
 
 	}
 
 	void updateTrailPositions() {
-		
+
 		numPoints = bigParticle.size();
 
 		coords = new float[4 * numPoints * (trailLength + 1) * 2];
@@ -243,10 +238,9 @@ public class ParticleSystem extends VerletParticle{
 
 		trails.updateVertices(coords);
 	}
-	
-	
-void updateTrailColors() {
-		
+
+	void updateTrailColors() {
+
 		numPoints = bigParticle.size();
 
 		colors = new float[4 * numPoints * (trailLength + 1) * 2];
@@ -256,18 +250,16 @@ void updateTrailColors() {
 
 		int numSections = trailLength + 1;
 		int pointsToMesh = 2;
-		
-		float alphaSteps = trailAlpha/(trailLength);
-		
-		
 
+		float alphaSteps = trailAlpha / (trailLength);
 
 		for (int i = 0; i < numPoints; i++) {
 
 			ShapedParticle oneParticle = bigParticle.get(i);
-			float newAlpha = trailAlpha*( oneParticle.getTimeToLife() * 0.003921f)+ e.p.random(-0.1f, 0.1f);
-		
-				
+			float newAlpha = trailAlpha
+					* (oneParticle.getTimeToLife() * 0.003921f)
+					+ e.p.random(-0.1f, 0.1f);
+
 			for (int j = 0; j < trailLength - 1; j++) {
 
 				int step = (i * numSections * pointsToMesh * 4)
@@ -294,53 +286,53 @@ void updateTrailColors() {
 					colors[step + 0] = 1.0f;
 					colors[step + 1] = 1.0f;
 					colors[step + 2] = 1.0f;
-					
-					
-					colors[step + 3] = newAlpha-(alphaSteps*(j+1))+(alphaSteps*k); 
-				//	System.out.println("step "+step+" alpha "+colors[step + 3]);
-				//	colors[step + 3] = 1;
+
+					colors[step + 3] = newAlpha - (alphaSteps * (j + 1))
+							+ (alphaSteps * k);
+					// System.out.println("step "+step+" alpha "+colors[step +
+					// 3]);
+					// colors[step + 3] = 1;
 				}
 
 			}
 		}
-
 
 		trails.updateColors(colors);
 	}
 
 	protected void updateForce() {
 
-	
+		boomPower *= 1 - boomFalloff;
+	//	springPower *= 1 - springFallOff;
 
-			boomPower *= 1 - boomFalloff;
-			springPower *= 1 - springFallOff;
+		boomForce.setStrength(boomPower * 0.5f);
 
-			boomForce.setStrength(boomPower * 0.5f);
-
-			for (int i = 0; i < bigParticle.size(); i++) {
-				// boomForce.setStrength(boomPower);
-				bigParticle.get(i).setBehaviorStrenght(springPower);
-			}
-
-			if (boomPower > -0.0000001) {
-
-				/*
-				 * boomPower=-5.0f;
-				 * 
-				 * boomForce.setStrength(boomPower*0.1f);
-				 * 
-				 * for(int i=0;i<bigParticle.size();i++){
-				 * boomForce.setStrength(boomPower);
-				 * bigParticle.get(i).setBehaviorStrenght(boomPower); }
-				 */
-
-				physics.removeBehavior(boomForce);
-			}
-		
-
+		if(springPower<2){
+		for (int i = 0; i < bigParticle.size(); i++) {
+			// boomForce.setStrength(boomPower);
+			
+			float newSpringPower = bigParticle.get(i).getBehaviorStrenght() *  (1 - springFallOff);
+			
+			bigParticle.get(i).setBehaviorStrenght(newSpringPower);
+		}
 		}
 
+		if (boomPower > -0.0000001) {
 
+			/*
+			 * boomPower=-5.0f;
+			 * 
+			 * boomForce.setStrength(boomPower*0.1f);
+			 * 
+			 * for(int i=0;i<bigParticle.size();i++){
+			 * boomForce.setStrength(boomPower);
+			 * bigParticle.get(i).setBehaviorStrenght(boomPower); }
+			 */
+
+			physics.removeBehavior(boomForce);
+		}
+
+	}
 
 	public void update() {
 
@@ -353,20 +345,19 @@ void updateTrailColors() {
 				// as it's tricky to delete from VBO just make invisible.
 				// sprites.updateColor(i, 0, 0);
 
-			//	System.out.println("particle dead");
+				// System.out.println("particle dead");
 				cleanParticleForces(i);
 				bigParticle.remove(i);
-				
+
 			}
 		}
 
 		updateSpritePositions();
-		updateSpriteColors();
-		
+		setSpriteColors();
+
 		updateTrailPositions();
 		updateTrailColors();
 
-		
 		updateForce();
 
 	}
@@ -375,9 +366,8 @@ void updateTrailColors() {
 
 		// drawGrid();
 		// drawErmitter(renderer);
-		
-		e.setPointSize(spriteSize);
 
+		e.setPointSize(spriteSize);
 
 		e.setupModel(sprites);
 		renderer.model(sprites);
@@ -390,18 +380,17 @@ void updateTrailColors() {
 	public void cleanSytstem() {
 
 		physics.removeBehavior(boomForce);
-		
-		for(int i=0;i<bigParticle.size();i++){
+
+		for (int i = 0; i < bigParticle.size(); i++) {
 			cleanParticleForces(i);
 		}
-		
 
 		// model.delete();
 	}
-	
-	private void cleanParticleForces(int num){
+
+	private void cleanParticleForces(int num) {
 		physics.removeSpring(bigParticle.get(num).getSpring());
-		
+
 	}
 
 	public boolean isEmpty() {
@@ -411,13 +400,12 @@ void updateTrailColors() {
 			return false;
 	}
 
-	
-	public void resetPowers(){
-		
+	public void resetPowers() {
+
 		boomPower = initalBoomPower;
 		springPower = initalSpringPower;
 	}
-	
+
 	public void setBoomPower(float newPower) {
 		boomPower = newPower;
 		initalBoomPower = boomPower;
@@ -425,16 +413,15 @@ void updateTrailColors() {
 
 	public void setSpringPower(float newPower) {
 		springPower = newPower;
-		 initalSpringPower = springPower;
+		initalSpringPower = springPower;
 	}
-	
-	public float getBoomPower(){
-		return boomPower;	
+
+	public float getBoomPower() {
+		return boomPower;
 	}
-	
-	public float getSpringPower(){
+
+	public float getSpringPower() {
 		return springPower;
 	}
-	
 
 }

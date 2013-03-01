@@ -26,6 +26,10 @@ public class FlyingDude extends ParticleSystem {
 		PImage dudeImage;
 
 		float[][] greyLevels;
+		
+
+		int counter =0;
+		
 
 		public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
 				float z) {
@@ -37,12 +41,12 @@ public class FlyingDude extends ParticleSystem {
 			
 		
 			setSpringPower(0.000002f);
-			setBoomPower(-8.0f);
+			setBoomPower(-30.0f);
 			
-			springFallOff = -0.022f;
-			boomFalloff = 0.001f;
+			springFallOff = -0.2f;
+			boomFalloff = 0.008f;
 			
-			trailLength = 5;
+			trailLength = 2;
 			
 			trailAlpha= 0.1f;
 			
@@ -73,6 +77,7 @@ public class FlyingDude extends ParticleSystem {
 	
 		public void spawnNew() {
 
+			counter=0;
 			bigParticle.clear();
 			cleanSytstem();
 
@@ -95,9 +100,9 @@ public class FlyingDude extends ParticleSystem {
 			float decay = 0.3f;
 			
 			int targetXCenter = 0;
-			int targetYCenter = 0;
+			int targetYCenter = -900;
 			
-			System.out.println("center y "+targetYCenter);
+	//		System.out.println("center y "+targetYCenter);
 			
 			for (int i = 0; i < imageHeight; i++) {
 				for (int j = 0; j < imageWidth; j++) {
@@ -107,13 +112,13 @@ public class FlyingDude extends ParticleSystem {
 
 						ShapedParticle newPart = new ShapedParticle(e.p, x() + e.p.random(-iSize,iSize), y() + e.p.random(-iSize,iSize)-400, z()+ e.p.random(-iSize*10,iSize*10),trailLength,decay,greyLevels[i][j]);
 			
-						newPart.setWeight(0.5f);
+						newPart.setWeight(e.p.random(0.3f));
 						
 						int xPos = targetXCenter + (int) ((i * spread) - (imageWidth * spread) * 0.5f);
 						int yPos = targetYCenter + ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
 						
 
-						System.out.println(" y pos "+yPos);
+	//					System.out.println(" y pos "+yPos);
 
 						
 						VerletParticle targetPoint = new VerletParticle(x()+xPos,y()+ yPos,z());
@@ -122,17 +127,17 @@ public class FlyingDude extends ParticleSystem {
 						
 						//maybe replacxe with low force spring to reduce bouncing
 						VerletSpring toxicForce = new VerletSpring(newPart,targetPoint,
-								0, getSpringPower());
+								0, e.p.random(getSpringPower()));
 //						physics.addParticle(targetPoint);
 						physics.addParticle(newPart);
 						physics.addSpring(toxicForce);
 						newPart.giveSpring(toxicForce);
 						// newPart.addBehavior(boomForce);
 
+						newPart.hideAndLock();
+						
 						bigParticle.add(newPart);
 						
-						
-						bigParticle.add(newPart);
 					}
 					// physics.addParticle(newPart);
 
@@ -144,23 +149,33 @@ public class FlyingDude extends ParticleSystem {
 				}
 			}
 
-			initSprites();
-			
+			initSprites();		
 			sprites.setSpriteSize(50, 200);
-
 			initTrails();
-			
-			
 
 		}
-
-
+		
 		
 		
 
 		@Override
 		public void update() {
-			System.out.println("still alive yeah "+bigParticle.get(0).getTimeToLife());
+		//	System.out.println("still alive yeah "+bigParticle.get(0).getTimeToLife());
+			
+	//		System.out.println("sp "+getSpringPower());
+			
+			
+			int steps=500;
+			
+			if(counter<bigParticle.size()-steps){
+				for(int i =0;i<steps;i++){
+	//			System.out.println("unlocking "+counter);
+				bigParticle.get(counter+i).unHideAndLock();
+				}
+			}
+			counter+=steps;
+			
+			setSpriteColors();
 			
 			
 		//	System.out.println(bigParticle.get(10).y);
