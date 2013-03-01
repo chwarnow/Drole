@@ -78,6 +78,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	public void update() {
 		super.update();
 		if(!isAgents) {
+			if(dataItem != null) {
 			if(dataItem.isAvailable()) {
 				
 				isAgents = true;
@@ -108,7 +109,7 @@ public class BildweltAssoziationPensee extends Drawable {
 					}
 				}
 				isAnimationDone = false;
-				
+			}
 			}
 		} else {
 			if(isRunning) {
@@ -262,11 +263,14 @@ public class BildweltAssoziationPensee extends Drawable {
 
 		}
 
-		imageQuadModel.updateVertices(floatQuadVertices);
-		imageQuadModel.updateColors(floatQuadColors);
-		imageQuadModel.updateNormals(floatQuadVertices);
-
-		imageQuadModel.render();
+		try {
+			imageQuadModel.updateVertices(floatQuadVertices);
+			imageQuadModel.updateColors(floatQuadColors);
+			imageQuadModel.updateNormals(floatQuadVertices);
+			imageQuadModel.render();
+		} catch(Exception e) {
+			System.out.println("error drawing a glmodel: " + e.getMessage());
+		}
 		}
 
 	}
