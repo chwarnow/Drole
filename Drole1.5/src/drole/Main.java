@@ -354,7 +354,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// Draw Real World Screen
 			// drawRealWorldScreen();
 			
-			if(!FREEMODE) {/*
+			if(!FREEMODE) {
 				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -423,13 +423,11 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				menu.rotation(0, 0, menu.rotation().z+rotationSpeedY);
 				
 				// TRANS INTO WORLD
-				/*
+				
 				if(isScaling && menu.getActiveWorld() != Menu.NO_ACTIVE_WORLD && scaling > -600f && !menu.inWorld) {
 					menu.inWorld = true;
 					transitToWorld(menu.getActiveWorld());
 				}
-				*/
-				/*
 				
 				if(!isInGoBackGesture) ticksInGoBackGesture = 0;
 				if(menu.inWorld && isScaling && isRotating) {
@@ -455,7 +453,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
 				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
-			*/
+			
 			}
 		
 		//	pinLog("IN WORLD", menu.inWorld);
@@ -580,7 +578,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-//			"--present",
+			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 //			"--display=0",
