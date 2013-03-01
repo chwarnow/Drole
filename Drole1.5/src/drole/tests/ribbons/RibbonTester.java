@@ -5,7 +5,7 @@ import java.awt.event.MouseWheelListener;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
-import com.madsim.tracking.kinect.PositionTargetListener;
+import com.madsim.tracking.kinect.targeting.PositionTargetListener;
 
 import processing.core.PApplet;
 import processing.core.PVector;

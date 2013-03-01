@@ -1,6 +1,8 @@
 varying vec3 normal, vertex;
 
 varying vec4 ecPos;
+
+uniform float pointSize;
  
 void main() {
     /* first transform the normal into eye space and normalize the result */
@@ -27,4 +29,6 @@ void main() {
 	gl_TexCoord[7] = gl_MultiTexCoord7;
 
 	vertex = gl_Position.xyz;
+
+	gl_PointSize = pointSize;
 }

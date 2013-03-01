@@ -9,16 +9,24 @@ public class Settings {
 	
 	public static short MAX_LOG_ENTRYS						=	  30;
 	
+	public static boolean DRAW_LOGS							=	true;
+	
 	// Settings LEAP
 	
 	// Pixel Dimension of screen
-	public static int VIRTUAL_SCREEN_WIDTH					= 	1080;
-	public static int VIRTUAL_SCREEN_HEIGHT					= 	1080;
+	public static int VIRTUAL_SCREEN_WIDTH					= 	720;
+	public static int VIRTUAL_SCREEN_HEIGHT					= 	720;
 	
 	// Dimension of the real worlds screen in mm
 	public static int REAL_SCREEN_DIMENSIONS_WIDTH_MM 		= 	1800;
 	public static int REAL_SCREEN_DIMENSIONS_HEIGHT_MM 		= 	1800;
 	public static int REAL_SCREEN_DIMENSIONS_DEPTH_MM 		= 	   0;
+	
+	// Dimension of the virtual room in mm
+	public static int VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM 		=   3000;
+	public static int VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM 	=   3000;
+	public static int VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM 		=   3000;
+
 	
 	// Position of the real world screens left lower corner in TRACKER SPACE (in relation to the kinect) given in mm!
 	public static int REAL_SCREEN_POSITION_X_MM				=  	 -900;

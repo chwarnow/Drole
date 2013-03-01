@@ -1,5 +1,6 @@
 package com.madsim.drole.mmworld;
 
+
 import java.util.ArrayList;
 
 import processing.core.PApplet;
@@ -18,12 +19,21 @@ public class MMWorld extends Drawable {
 	
 	private GLModel pointDLA, lineDLA;
 	
+	private float knockOut = 1.0f;
+	
 	public MMWorld(Engine e) {
 		super(e);
 		
 		position(0, 0, -1000);
 		scale(35, 35, 35);
 		rotation(PApplet.radians(-90), 0, 0);
+		
+		useLights();
+		setPointLight(0, -800, 0, -1000, 0, 0, 255, 1.0f, 0.0001f, 0.0f);
+		setPointLight(1, 700, 0, -800, 255, 0, 0, 1.0f, 0.0001f, 0.0f);
+		
+		setPointLight(1, 0, 0, -800, 255,255, 255, 1.0f, 0.0001f, 0.0f);
+		setPointLight(1, -100, 100, -800, 255,255, 255, 1.0f, 0.0001f, 0.0f);
 		
 		points = DLAUtils.getDLAFromFile("data/dla/spiral.dla");
 		
@@ -42,7 +52,7 @@ public class MMWorld extends Drawable {
 		pointDLA.initTextures(1);
 		pointDLA.setTexture(0, e.requestTexture("data/images/1d-white.jpg"));
 		pointDLA.beginUpdateTexCoords(0);
-			for(int i = 0; i < points.size(); i++) pointDLA.updateTexCoord(i, (1.0f/points.size())*i, 0.0f);
+			for(int i = 0; i < points.size(); i++) pointDLA.updateTexCoord(i, (1.0f/points.size())*i, (1.0f/points.size())*i);
 		pointDLA.endUpdateTexCoords();
 	}
 
@@ -64,13 +74,14 @@ public class MMWorld extends Drawable {
 			g.rotateY(rotation.y);
 			g.rotateZ(rotation.z);
 			
-			e.setPixelKnockOut(0.5f);
+			e.setPixelKnockOut(knockOut);
+			knockOut -= 0.001f;
 			
 			e.setupModel(pointDLA);
 				pointDLA.render();
 			
-			e.setupModel(lineDLA);
-				lineDLA.render();
+//			e.setupModel(lineDLA);
+//				lineDLA.render();
 			
 		g.popMatrix();
 		g.popStyle();

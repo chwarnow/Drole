@@ -14,6 +14,8 @@ uniform int numLights;
 
 uniform vec4 ambient;
 
+uniform float usePixelKnockOut;
+
 varying vec4 ecPos;
 
 vec4 pointLight(int lightIndex) {
@@ -27,7 +29,7 @@ vec4 pointLight(int lightIndex) {
     a new variable to store the normalized interpolated normal */
     n = normalize(normal);
      
-    // Compute the light direction
+    // Compute the ligt direction
     lightDir = vec3(gl_LightSource[lightIndex].position - ecPos);
      
     /* compute the distance to the light source to a varying variable*/
@@ -65,13 +67,13 @@ void main() {
 	else preLightColor = gl_Color;
 
 	// Calculate Light color
-	vec4 color = preLightColor;
+	vec4 color = preLightColor * ambient;
  
 	if(numLights > 0) {
-		vec4 lightColor = vec4(0.0, 0.0, 0.0, 1.0);
-		for(int i = 0; i < numLights; i++) lightColor += pointLight(i);
-		color *= (lightColor + ambient);
+		for(int i = 0; i < numLights; i++) color += pointLight(i);
 	}
-
-	gl_FragColor = color;
+	
+    gl_FragColor = color;
+    
+    if(gl_TexCoord[0].s < usePixelKnockOut) gl_FragColor *= 0.0;
 }
