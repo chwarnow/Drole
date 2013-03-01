@@ -1,6 +1,5 @@
 package drole.menu;
 
-import javax.media.opengl.GL;
 
 import processing.core.PApplet;
 import processing.core.PVector;

@@ -11,6 +11,8 @@ public class Settings {
 	
 	public static boolean DRAW_LOGS							=	true;
 	
+	public static boolean MOUSE_IS_HAND						= 	true;
+	
 	// Settings LEAP
 	
 	// Pixel Dimension of screen
