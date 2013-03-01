@@ -35,8 +35,13 @@ public class Spektakel extends Drawable {
 
 	private float drag = 0.001f;
 	
-	private int timeStamp = 0;
-	boolean timeStampSet =false;
+	private int toxiTime = 1000;
+	private int toxicCounter = 800;
+	private int totalNumberOfToxics = 5;
+	private int toxicNum = 0;
+	
+	private int dudeTime = 20000;
+	private int dudeCounter = 10000;
 	
 
 	private PVector mouseHead;
@@ -74,6 +79,8 @@ public class Spektakel extends Drawable {
 
 		// pause system 1
 
+		updateTimers();
+		
 		centerSystem.update();
 
 		if (pauseMotion && drag < PAUSE_MOTION_AT)
@@ -88,6 +95,28 @@ public class Spektakel extends Drawable {
 		}
 		physics2.update();
 
+	}
+	
+	private void updateTimers(){
+		System.out.println("toxic c "+ toxicCounter+" dudecount "+dudeCounter);
+		
+		int randomness = 40;
+		
+	if(toxicNum < totalNumberOfToxics)	
+		toxicCounter += e.p.random(0,randomness);
+		 if(toxicCounter>toxiTime) {
+			 spawnNewToxicSystem();
+			 toxicCounter=0;
+			 toxicNum++;
+		 }
+		 
+		 dudeCounter+= e.p.random(0,randomness);
+	
+	if(dudeCounter>dudeTime){
+		spawnNewDude();
+		dudeCounter=0;
+	}
+		 
 	}
 
 	@Override
@@ -112,33 +141,17 @@ public class Spektakel extends Drawable {
 		setPointLight(0,    800,   0,  -  0, 120, 225, 255, 0.3f, .0004f, 0.0f);
 
 
-		// float rotationX = PApplet.map(e.p.mouseY, 0, e.p.width, -PApplet.PI /
-		// 2, PApplet.PI / 2);
-		// float rotationY = PApplet.map(e.p.mouseX, 0, e.p.height, -PApplet.PI
-		// / 2, -PApplet.PI / 2);
-
-		// g.rotateX(rotationX);
-		// g.rotateY(rotationY);
 
 		if(mode()==ON_SCREEN){
 			
-			if(!timeStampSet){
-				timeStamp=e.p.millis();
-				timeStampSet= true;
-			}
-		
-	//	update();
-		// startErmitter.drawErmitter();
 
 		g.pushMatrix();	
 		centerSystem.draw(e.g);
 		g.popMatrix();
 		
 		if (centerSystem.isEmpty())
-			centerSystem.spawnNew();
+			centerSystem.spawnNew(false);
 	
-
-		// System.out.println("systemcount "+ermitters.size());
 
 		for (int i = 0; i < ermitters.size(); i++) {
 
@@ -165,7 +178,6 @@ public class Spektakel extends Drawable {
 		}
 		
 		}
-		else timeStampSet=false;
 
 		g.popMatrix();
 
@@ -202,7 +214,7 @@ public class Spektakel extends Drawable {
 
 	public void spawnNewDude() {
 		FlyingDude newOne = new FlyingDude(e, physics,
-				400, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
+				1000, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
 				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM*0.75f,-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM));
 		ermitters.add(newOne);
 		

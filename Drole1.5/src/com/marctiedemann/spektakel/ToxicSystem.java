@@ -27,7 +27,7 @@ public class ToxicSystem extends ParticleSystem {
 	//size and shooting angle
 	
 	
-			protected float decay = 0.9f;
+			protected float decay = 0.95f;
 	
 			protected int targetSize = 3;
 			protected int targetYOffset = 200;
@@ -43,9 +43,9 @@ public class ToxicSystem extends ParticleSystem {
 
 		super(e, _physics, x, y, z);
 		
-		trailLength=20;
+		trailLength=15;
 		
-		trailAlpha=0.5f;
+		trailAlpha=0.4f;
 		
 		
 		 boomFalloff = 0.1f;
@@ -60,7 +60,7 @@ public class ToxicSystem extends ParticleSystem {
        
 		randomizeShootingVector();
 		
-		spawnNew();
+		spawnNew(true);
 	}
 
 	public void update() {
@@ -90,7 +90,8 @@ public class ToxicSystem extends ParticleSystem {
 						);
 	}
 	
-	public void spawnNew() {
+
+	public void spawnNew(boolean randomDecay) {
 
 		bigParticle.clear();
 		cleanSytstem();
@@ -107,14 +108,18 @@ public class ToxicSystem extends ParticleSystem {
 		randomizeMesh();
 
 		
-
+		float theDecay = decay;
+		
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
+		
+			if(randomDecay)  theDecay =e.p.random(1,2);
+			
 			//the actual partzicle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
-					z() + face.a.z - targetAngle.z / 2,trailLength,e.p.random(decay*0.8f,decay),1);
+					z() + face.a.z - targetAngle.z / 2,trailLength,theDecay,1);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 

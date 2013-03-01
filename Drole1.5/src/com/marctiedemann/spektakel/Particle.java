@@ -100,11 +100,14 @@ public class Particle extends VerletParticle {
 
 	public void update(){
 		super.update();
+		if(lifeSpan>1)
 		lifeSpan-=decay;
+		if(lifeSpan<1)lifeSpan=0;
+		
 	}
 	
 	public boolean isDead(){
-		if(lifeSpan<0.5f)return true;
+		if(lifeSpan<1)return true;
 		else return false;
 	}
 	

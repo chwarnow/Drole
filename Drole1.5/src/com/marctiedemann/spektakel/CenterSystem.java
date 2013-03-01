@@ -29,22 +29,21 @@ public class CenterSystem extends ToxicSystem{
 		trailLength = 100;
 		meshSize = 24;
 
-		setBoomPower(-10);
-		setSpringPower(0.00005f);
+		setBoomPower(-5);
+		setSpringPower(0.00009f);
 
 		
 		
 	     boomFalloff = 0.005f;
 
 		 springFallOff = -0.008f;
-		 decay=0.5f;
+		 decay=0.8f;
 		 
-		 trailAlpha=0.4f;
+		 trailAlpha=0.8f;
+		 
+		 spriteAlpha = 2.0f;
 		 
 		 spriteSize=20;
-		 
-		 
-		
 
 		 
 		 
@@ -53,19 +52,23 @@ public class CenterSystem extends ToxicSystem{
 	@Override
 	public void init(){
 		
-		spawnNew();
+		spawnNew(false);
 		
 		
 	}
 	
 	
 	@Override
-	public void spawnNew(){
-		super.spawnNew();
+	public void spawnNew(boolean randomDecay){
+		super.spawnNew(false);
 	}
 	
 	@Override
 	public void update(){
+		
+		
+		float newDrag = -0.8f/getBoomPower();
+		physics.setDrag(newDrag);
 		super.update();
 	}
 	
