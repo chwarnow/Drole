@@ -303,8 +303,6 @@ public class BildweltOptik extends Drawable {
 		g.translate(pointG.x-10, pointG.y+57, pointG.z);
 		if(sehenderAkteur.isVisible()) sehenderAkteur.draw();
 		g.popMatrix();
-
-		// e.stopShader();
 		
 		g.popMatrix();
 

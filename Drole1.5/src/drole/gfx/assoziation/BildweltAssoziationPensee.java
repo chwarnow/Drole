@@ -91,7 +91,6 @@ public class BildweltAssoziationPensee extends Drawable {
 				dataItem.clear();
 				dataItem = null;
 				
-				System.out.println("build pensee gl model");
 				// clear existing glmodel
 				if(imageQuadModel != null) imageQuadModel.delete();
 				
@@ -99,6 +98,8 @@ public class BildweltAssoziationPensee extends Drawable {
 				imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
 				imageQuadModel.initColors();
 				imageQuadModel.initNormals();
+				
+				// System.out.println(imageQuadModel + " " + agents + " " + agentsCount + " " + vertexCount);
 				
 				// when beginning in the middle, update the first agent position
 				if(currPosition != 0) {
@@ -310,7 +311,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		// remove exiting thread
 		if(dataItem != null) {
 			if(!dataItem.isAlive()) {
-				e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+				// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 				dataItem = new BildweltAssoziationDataItem();
 				dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
 				loadPensee();
@@ -318,7 +319,7 @@ public class BildweltAssoziationPensee extends Drawable {
 				dataItem.quit();
 			}
 		} else {
-			e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+			// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 			dataItem = new BildweltAssoziationDataItem();
 			dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
 			loadPensee();
