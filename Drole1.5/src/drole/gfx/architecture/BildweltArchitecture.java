@@ -65,13 +65,13 @@ public class BildweltArchitecture extends Drawable {
 				new PVector(0, 0, dimension.x*scale.x*1.25f),
 				new PVector(0, 0, 0)
 			);
-		
+		/*
 		back.loadPensee();
 		bottom.loadPensee();
 		top.loadPensee();
 		left.loadPensee();
 		right.loadPensee();
-		
+		*/
 		back.setLooping(false);
 		bottom.setLooping(false);
 		top.setLooping(false);
@@ -90,31 +90,36 @@ public class BildweltArchitecture extends Drawable {
 		super.fadeIn(time);
 		wallID = 0;
 		CURRENT_MODE = MODE_SHOWING;
-		/*
+		
+		if(!back.isReady()) back.loadPensee();
+		if(!back.isReady()) bottom.loadPensee();
+		if(!back.isReady()) top.loadPensee();
+		if(!back.isReady()) left.loadPensee();
+		if(!back.isReady()) right.loadPensee();
+		
 		back.showMe();
 		bottom.showMe();
 		top.showMe();
 		left.showMe();
 		right.showMe();
-		*/
 	}
 	
 	public void fadeOut(float time) {
 		super.fadeOut(time);
 		wallID = 0;
 		CURRENT_MODE = MODE_HIDING;
-		/*
+		
 		back.hideMe();
 		bottom.hideMe();
 		top.hideMe();
 		left.hideMe();
 		right.hideMe();
-		*/
 	}
 	
 	@Override
 	public void update() {
 		super.update();
+		
 		back.update();
 		bottom.update();
 		top.update();
@@ -126,6 +131,7 @@ public class BildweltArchitecture extends Drawable {
 				if(back.isAnimationDone()) back.showMe();
 			}
 		}
+		
 	}
 
 	@Override
@@ -137,24 +143,22 @@ public class BildweltArchitecture extends Drawable {
 		g.translate(position.x, position.y + e.p.cos(e.p.frameCount*.02f)*0, position.z);
 		g.scale(scale.x*.5f, scale.y*.5f, scale.z*.5f);
 
-		back.draw();
+		if(back.isVisible()) back.draw();
 		
 		g.pushMatrix();
 		g.rotateX(3.1414f/2);
-		bottom.draw();
-		top.draw();
+		if(bottom.isVisible()) bottom.draw();
+		if(top.isVisible()) top.draw();
 		g.popMatrix();
 		
 		g.pushMatrix();
 		g.rotateY(3.1414f/2);
-		left.draw();
-		right.draw();
+		if(left.isVisible()) left.draw();
+		if(right.isVisible()) right.draw();
 		g.popMatrix();
 		
 		g.popStyle();
 		g.popMatrix();
-		
-		
 		// }
 	}
 }

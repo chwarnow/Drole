@@ -60,7 +60,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		super(e);
 		this.e = e;
 		this.quadHeight = quadHeight;
-		e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+		// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 		e.p.noiseSeed((long)e.p.random(1000));
 
 		// create data
@@ -82,6 +82,9 @@ public class BildweltAssoziationPensee extends Drawable {
 				agents = dataItem.getAgentsData();
 				agentsCount = dataItem.getAgentsCount();
 				vertexCount = dataItem.getVertexCount();
+				// clear data item and free it for garbage collector
+				dataItem.clear();
+				dataItem = null;
 				
 				// clear existing glmodel
 				if(imageQuadModel != null) imageQuadModel.delete();
@@ -293,7 +296,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	}
 	
 	public void loadNewImage(String imagePath, float sphereConstraintRadius, PVector penseeCenter, PVector constraintCenter) {
-		e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+		// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 		isAnimationDone = false;
 		isAgents = false;
 		dataItem = null;

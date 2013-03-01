@@ -7,7 +7,6 @@ import java.awt.event.MouseWheelListener;
 
 import codeanticode.glgraphics.GLConstants;
 
-import com.madsim.drole.mmworld.MMWorld;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
@@ -82,7 +81,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private Menu menu;
 	
 	/* Globe */
-	private PVector globePosition = new PVector(0, 0, -1000);
+	private PVector globePosition = new PVector(0, 0, 0);
 	private PVector globeSize = new PVector(600, 0, 0);
 	private RibbonGlobe globe;
 
@@ -171,13 +170,13 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 		setupMenu();
 		
-		setupSpektakel();
+//		setupSpektakel();
 		
-		setupMicroMacroWorld();
+//		setupMicroMacroWorld();
 		
-		setupOptikWorld();
-		setupAssoziationWorld();
-		setupArchitectureWorld();
+//		setupOptikWorld();
+//		setupAssoziationWorld();
+// 		setupArchitectureWorld();
 		
 		/* START */
 		if(FREEMODE) {
@@ -259,7 +258,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		engine.addDrawable("Menu", menu);
 		
 		globe = new RibbonGlobe(engine, globePosition, globeSize);
-		engine.addDrawable("Globe", globe);
+		engine.addDrawable("MenuRibbons", globe);
 	}	
 	
 	private void setupOptikWorld() {
@@ -294,6 +293,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 
 	public void draw() {
+		println(frameRate);
 		// Update the cam
 		kinect.update();
 
@@ -552,7 +552,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 //				globe.switchToLights();
 				globe.menuMode(RibbonGlobe.LIGHTS);
 				
-				globe.fadeAllOut(100);
 				globe.fadeOut(100);
 				
 // 				bildweltMicroMacro.fadeIn(100);
@@ -567,7 +566,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				globe.menuMode(RibbonGlobe.MENU);
 				
-				globe.fadeAllIn(100);
 				globe.fadeIn(100);
 
 // 				bildweltMicroMacro.fadeOut(100);
