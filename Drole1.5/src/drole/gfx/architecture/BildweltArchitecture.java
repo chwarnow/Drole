@@ -7,8 +7,12 @@ import drole.gfx.assoziation.BildweltAssoziationPensee;
 
 public class BildweltArchitecture extends Drawable {
 
-	// TODO: load and show highres images to be shown when pensees are ready
 	private BildweltAssoziationPensee back, bottom, top, left, right;
+	private int MODE_VOID = 0;
+	private int MODE_SHOWING = 1;
+	private int MODE_HIDING = 2;
+	private int CURRENT_MODE = MODE_VOID;
+	private int wallID = 0;
 	
 	public BildweltArchitecture(Engine e, PVector position, PVector dimension) {
 		super(e);
@@ -78,26 +82,34 @@ public class BildweltArchitecture extends Drawable {
 		bottom.stop();
 		top.stop();
 		left.stop();
-		right.setLooping(false);
+		right.stop();
 	}
 	
 	@Override
 	public void fadeIn(float time) {
 		super.fadeIn(time);
+		wallID = 0;
+		CURRENT_MODE = MODE_SHOWING;
+		/*
 		back.showMe();
 		bottom.showMe();
 		top.showMe();
 		left.showMe();
 		right.showMe();
+		*/
 	}
 	
 	public void fadeOut(float time) {
 		super.fadeOut(time);
+		wallID = 0;
+		CURRENT_MODE = MODE_HIDING;
+		/*
 		back.hideMe();
 		bottom.hideMe();
 		top.hideMe();
 		left.hideMe();
 		right.hideMe();
+		*/
 	}
 	
 	@Override
@@ -108,11 +120,17 @@ public class BildweltArchitecture extends Drawable {
 		top.update();
 		left.update();
 		right.update();
+		
+		if(CURRENT_MODE == MODE_SHOWING) {
+			if(wallID == 0) {
+				if(back.isAnimationDone()) back.showMe();
+			}
+		}
 	}
 
 	@Override
 	public void draw() {
-		if(mode().equals(ON_SCREEN)) {
+		// if(mode().equals(ON_SCREEN)) {
 		g.pushStyle();
 		g.pushMatrix();
 
@@ -137,6 +155,6 @@ public class BildweltArchitecture extends Drawable {
 		g.popMatrix();
 		
 		
-		}
+		// }
 	}
 }
