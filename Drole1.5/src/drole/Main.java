@@ -293,7 +293,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 
 	public void draw() {
-		// println(frameRate);
+		println(frameRate);
 		// Update the cam
 		kinect.update();
 
@@ -553,7 +553,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				globe.menuMode(RibbonGlobe.LIGHTS);
 				
 				globe.fadeOut(100);
-				
 // 				bildweltMicroMacro.fadeIn(100);
 				bildweltArchitecture.fadeIn(100);
 //				bildweltOptik.fadeIn(100);
@@ -567,7 +566,6 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				globe.menuMode(RibbonGlobe.MENU);
 				
 				globe.fadeIn(100);
-
 // 				bildweltMicroMacro.fadeOut(100);
 				bildweltArchitecture.fadeOut(100);
 //				bildweltOptik.fadeOut(100);

@@ -121,7 +121,7 @@ public class BildweltOptik extends Drawable {
 
 		float rectSize = 500;
 
-		e.startShader("PolyLightAndColor"); // RoomShader
+		e.startShader("PolyLightAndColor");
 		
 		g.tint(255);
 		g.stroke(105, 90, 97, fade*255);
@@ -296,7 +296,7 @@ public class BildweltOptik extends Drawable {
 		g.text("R", 0, 0);
 		g.popMatrix();
 		
-		e.startShader("PolyLightAndColor"); // RoomShader
+		e.startShader("PolyLightAndColor");
 		
 		// sehender akteur
 		g.pushMatrix();
