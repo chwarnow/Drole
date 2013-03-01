@@ -555,7 +555,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				globe.fadeOut(100);
 				
 // 				bildweltMicroMacro.fadeIn(100);
-				bildweltArchitecture.fadeIn(100);
+//				bildweltArchitecture.fadeIn(100);
 //				bildweltOptik.fadeIn(100);
 // 				bildweltAssoziation.fadeIn(100);
 //				fabricWorldDrawlist.fadeAllIn(100);
@@ -569,7 +569,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				globe.fadeIn(100);
 
 // 				bildweltMicroMacro.fadeOut(100);
-				bildweltArchitecture.fadeOut(100);
+//				bildweltArchitecture.fadeOut(100);
 //				bildweltOptik.fadeOut(100);
 // 				bildweltAssoziation.fadeOut(100);
 //				fabricWorldDrawlist.fadeAllOut(100);

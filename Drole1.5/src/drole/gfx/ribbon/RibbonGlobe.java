@@ -196,7 +196,7 @@ public class RibbonGlobe extends Drawlist {
 		g.pushStyle();
 		g.pushMatrix();
 		
-			g.translate(position.x, position.y, position.z + 300.0f);
+			g.translate(position.x, position.y, position.z);
 			g.scale(scale.x, scale.y, scale.z);
 			g.rotateY(smoothedRotation);
 			
@@ -204,6 +204,7 @@ public class RibbonGlobe extends Drawlist {
 			g.noStroke();
 			
 			e.startShader("PolyLightAndColor");
+			e.setLights();
 			
 			int drawableIndex = 0;
 			float penseeRotation = .0f;
