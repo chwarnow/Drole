@@ -490,6 +490,16 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		case 'a':
 			bildweltSpektakel.spawnNewDude();
 			break;
+		case 'p':
+			bildweltSpektakel.pauseSystem();
+			break;
+		case 'f':
+			bildweltSpektakel.printForces();
+			break;	
+			
+			
+			
+			
 		case '0':
 			transitToMenu(0);
 			break;
