@@ -34,18 +34,22 @@ public class Spektakel extends Drawable {
 	private float NORMAL_DRAG = 0.05f;
 
 	private float drag = 0.05f;
-	
+
 	private int toxiTime = 1000;
-	private int toxicCounter = 800;
+	private int toxicCounter = 0;
 	private int totalNumberOfToxics = 5;
 	private int toxicNum = 0;
-	
+
 	private int dudeTime = 20000;
 	private int dudeCounter = 10000;
+
 	
+	private boolean centerSpawned = false;
+	private int centerTime = 500;
+	private int centerCounter = 0;
 
 	private PVector mouseHead;
-	
+
 	public Spektakel(Engine e) {
 		super(e);
 
@@ -59,7 +63,7 @@ public class Spektakel extends Drawable {
 		ermitters = new ArrayList<ParticleSystem>();
 
 		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, 0);
-		centerSystem.init();
+	
 
 		e.requestTexture("images/particle4.png");
 
@@ -80,7 +84,8 @@ public class Spektakel extends Drawable {
 		// pause system 1
 
 		updateTimers();
-		
+
+		if(centerSpawned)
 		centerSystem.update();
 
 		if (pauseMotion && drag < PAUSE_MOTION_AT)
@@ -96,27 +101,36 @@ public class Spektakel extends Drawable {
 		physics2.update();
 
 	}
-	
-	private void updateTimers(){
-		System.out.println("toxic c "+ toxicCounter+" dudecount "+dudeCounter);
-		
+
+	private void updateTimers() {
+		System.out.println("toxic c " + toxicCounter + " dudecount "
+				+ dudeCounter);
+
 		int randomness = 40;
+
+		if (toxicNum < totalNumberOfToxics)
+			toxicCounter += e.p.random(0, randomness);
+		if (toxicCounter > toxiTime) {
+			spawnNewToxicSystem();
+			toxicCounter = 0;
+			toxicNum++;
+		}
+
+		dudeCounter += e.p.random(0, randomness);
+
+		if (dudeCounter > dudeTime) {
+			spawnNewDude();
+			dudeCounter = 0;
+		}
 		
-	if(toxicNum < totalNumberOfToxics)	
-		toxicCounter += e.p.random(0,randomness);
-		 if(toxicCounter>toxiTime) {
-			 spawnNewToxicSystem();
-			 toxicCounter=0;
-			 toxicNum++;
-		 }
-		 
-		 dudeCounter+= e.p.random(0,randomness);
-	
-	if(dudeCounter>dudeTime){
-		spawnNewDude();
-		dudeCounter=0;
-	}
-		 
+		if(!centerSpawned){
+		centerCounter += e.p.random(0, randomness);
+		
+		if(centerCounter>centerTime){
+			centerSystem.init();
+			centerSpawned=true;
+		}
+		}
 	}
 
 	@Override
@@ -124,7 +138,7 @@ public class Spektakel extends Drawable {
 		e.usePoints();
 
 		setAmbient(0.4f, 0.3f, 0.3f);
-	
+
 		e.g.setDepthMask(false);
 		g.pushStyle();
 		g.pushMatrix();
@@ -136,47 +150,44 @@ public class Spektakel extends Drawable {
 		g.rotateZ(rotation.z);
 
 		g.pushMatrix();
-		
-		setPointLight(0,  800, 500, - 0, 120, 225, 255, 0.3f, .0004f, 0.0f);
-		setPointLight(0,    800,   0,  -  0, 120, 225, 255, 0.3f, .0004f, 0.0f);
 
+		setPointLight(0, 800, 500, -0, 120, 225, 255, 0.3f, .0004f, 0.0f);
+		setPointLight(0, 800, 0, -0, 120, 225, 255, 0.3f, .0004f, 0.0f);
 
+		if (mode() == ON_SCREEN) {
 
-		if(mode()==ON_SCREEN){
-			
+			g.pushMatrix();
+			if(centerSpawned)
+			centerSystem.draw(e.g);
+			g.popMatrix();
 
-		g.pushMatrix();	
-		centerSystem.draw(e.g);
-		g.popMatrix();
-		
-		if (centerSystem.isEmpty())
-			centerSystem.spawnNew(false);
-	
+			if (centerSystem.isEmpty())
+				centerSystem.spawnNew(false);
 
-		for (int i = 0; i < ermitters.size(); i++) {
+			for (int i = 0; i < ermitters.size(); i++) {
 
-			ParticleSystem er = ermitters.get(i);
+				ParticleSystem er = ermitters.get(i);
 
-			if (i < 5)
-				setPointLight(i + 1, er.bigParticle.get(0).x,
-						er.bigParticle.get(0).y, er.bigParticle.get(0).z, 255,
-						70 + e.p.random(-30, 30), 30, 0.1f,
-						.002f + e.p.random(-0.0005f, 0.0005f), 0.0f);
+				if (i < 5)
+					setPointLight(i + 1, er.bigParticle.get(0).x,
+							er.bigParticle.get(0).y, er.bigParticle.get(0).z,
+							255, 70 + e.p.random(-30, 30), 30, 0.1f,
+							.002f + e.p.random(-0.0005f, 0.0005f), 0.0f);
 
-			er.update();
-			er.draw(e.g);
+				er.update();
+				er.draw(e.g);
 
-			if (er.isEmpty()) {
-				er.cleanSytstem();
-				ermitters.remove(i);
+				if (er.isEmpty()) {
+					er.cleanSytstem();
+					ermitters.remove(i);
 
-				System.out.println(physics.behaviors);
-				System.out.println(physics.springs);
-				
-				spawnNewToxicSystem();
+					System.out.println(physics.behaviors);
+					System.out.println(physics.springs);
+
+					spawnNewToxicSystem();
+				}
 			}
-		}
-		
+
 		}
 
 		g.popMatrix();
@@ -213,22 +224,24 @@ public class Spektakel extends Drawable {
 	}
 
 	public void spawnNewDude() {
-		FlyingDude newOne = new FlyingDude(e, physics,
-				1000, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2,
-				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM*0.75f,-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM));
+		FlyingDude newOne = new FlyingDude(e, physics, e.p.random(
+				-Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2,
+				Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM / 2), e.p.random(
+				-Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 3, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 3),
+				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM, 0));
 		ermitters.add(newOne);
-		
-		
-		ToxicSystem newOne2 = new ToxicSystem(e, physics, 50, 400, Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2-400,
-				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM*0.75f,-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM));
+
+		ToxicSystem newOne2 = new ToxicSystem(e, physics, 50, 400,
+				Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM / 2 - 400,
+				e.p.random(-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM * 0.75f,
+						-Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM));
 		newOne2.init();
 		ermitters.add(newOne2);
 	}
-	
-	public void updateRotaion(int mousePos){
-		
-		
-	//centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
+
+	public void updateRotaion(int mousePos) {
+
+		// centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
 	}
 
 }
