@@ -91,17 +91,38 @@ public class BildweltArchitecture extends Drawable {
 		wallID = 0;
 		CURRENT_MODE = MODE_SHOWING;
 		
-		if(!back.isReady()) back.loadPensee();
-		if(!back.isReady()) bottom.loadPensee();
-		if(!back.isReady()) top.loadPensee();
-		if(!back.isReady()) left.loadPensee();
-		if(!back.isReady()) right.loadPensee();
-		
-		back.showMe();
+		if(!back.isReady()) back.loadNewImage("data/room/architecture/back.png",
+				dimension.x*scale.x*10.0f,
+				new PVector(0, 0, -dimension.x*scale.x*2.5f),
+				new PVector(0, 0, 0));
+		if(!bottom.isReady()) bottom.loadNewImage("data/room/architecture/floor.png",
+				dimension.x*scale.x*10.0f,
+				new PVector(0, 0, -dimension.x*scale.x*1.25f),
+				new PVector(0, 0, 0));
+		if(!top.isReady()) top.loadNewImage("data/room/architecture/ceiling.png",
+				dimension.x*scale.x*10.0f,
+				new PVector(0, dimension.x*scale.x*.0f, dimension.x*scale.x*1.25f),
+				new PVector(0, 0, 0));
+		if(!left.isReady()) left.loadNewImage("data/room/architecture/left.png",
+				dimension.x*scale.x*10.0f,
+				new PVector(0, 0, -dimension.x*scale.x*1.25f),
+				new PVector(0, 0, 0));
+		if(!right.isReady()) right.loadNewImage("data/room/architecture/right.png",
+				dimension.x*scale.x*10.0f,
+				new PVector(0, 0, dimension.x*scale.x*1.25f),
+				new PVector(0, 0, 0));
+		back.stop();
+		bottom.stop();
+		top.stop();
+		left.stop();
+		right.stop();
+		// back.showMe();
+		/*
 		bottom.showMe();
 		top.showMe();
 		left.showMe();
 		right.showMe();
+		*/
 	}
 	
 	public void fadeOut(float time) {
@@ -125,13 +146,21 @@ public class BildweltArchitecture extends Drawable {
 		top.update();
 		left.update();
 		right.update();
-		
+		/*
 		if(CURRENT_MODE == MODE_SHOWING) {
 			if(wallID == 0) {
 				if(back.isAnimationDone()) back.showMe();
 			}
 		}
-		
+		*/
+		// unload wall pensees when faded out
+		if(fade == 0) {
+			if(!back.isCleared()) back.clear();
+			if(!bottom.isCleared()) bottom.clear();
+			if(!top.isCleared()) bottom.clear();
+			if(!left.isCleared()) left.clear();
+			if(!right.isCleared()) right.clear();
+		}
 	}
 
 	@Override
@@ -142,7 +171,7 @@ public class BildweltArchitecture extends Drawable {
 
 		g.translate(position.x, position.y + e.p.cos(e.p.frameCount*.02f)*0, position.z);
 		g.scale(scale.x*.5f, scale.y*.5f, scale.z*.5f);
-
+		/*
 		if(back.isVisible()) back.draw();
 		
 		g.pushMatrix();
@@ -156,7 +185,7 @@ public class BildweltArchitecture extends Drawable {
 		if(left.isVisible()) left.draw();
 		if(right.isVisible()) right.draw();
 		g.popMatrix();
-		
+		*/
 		g.popStyle();
 		g.popMatrix();
 		// }

@@ -354,9 +354,10 @@ public class BildweltAssoziationPensee extends Drawable {
 	public void clear() {
 		isCleared = true;
 		isAgents = false;
-		imageQuadModel.delete();
+		if(imageQuadModel != null) imageQuadModel.delete();
 		agents = null;
 		vertexCount = 0;
+		System.out.println("CLEAR ME");
 	}
 	
 	public void stop() {

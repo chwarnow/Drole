@@ -188,8 +188,6 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
-		// only for testing
-		// if(mode().equals(ON_SCREEN)) {
 		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
@@ -207,7 +205,7 @@ public class RibbonGlobe extends Drawlist {
 						new PVector(0, 0, 0));
 			}
 			if(p.mode() == p.OFF_SCREEN) {
-				if(p.isCleared()) p.clear();
+				if(!p.isCleared()) p.clear();
 			}
 		}
 		
@@ -251,7 +249,5 @@ public class RibbonGlobe extends Drawlist {
 			
 		g.popMatrix();
 		g.popStyle();
-		// }
-		// e.p.println(e.p.frameRate);
 	}
 }
