@@ -26,10 +26,10 @@ public class CenterSystem extends ToxicSystem{
 		
 		targetAngle = new Vec3D(0,-targetYOffset*2,0);
 		
-		trailLength = 100;
+		trailLength = 200;
 		meshSize = 20;
 
-		setBoomPower(-5);
+		setBoomPower(-4);
 		setSpringPower(0.00009f);
 
 		
@@ -37,9 +37,9 @@ public class CenterSystem extends ToxicSystem{
 	     boomFalloff = 0.005f;
 
 		 springFallOff = -0.008f;
-		 decay=0.8f;
+		 decay=0.7f;
 		 
-		 trailAlpha=0.8f;
+		 trailAlpha=0.7f;
 		 
 		 spriteAlpha = 1.0f;
 		 
@@ -88,9 +88,10 @@ public class CenterSystem extends ToxicSystem{
 		
 	
 		
-		float newDrag = -0.8f/getBoomPower();
+		float newDrag = -1.0f/getBoomPower();
+//		newDrag = 2.0f;
 			
-		if(newDrag<2.0f)physics.setDrag(newDrag);
+		physics.setDrag(newDrag);
 		super.update();
 	}
 	
@@ -106,7 +107,7 @@ public class CenterSystem extends ToxicSystem{
 		
 		
 		renderer.pushMatrix();
-		renderer.translate(0, 0,-900);
+		renderer.translate(0, 0,-200);
 
 		renderer.rotateY(rotationY);
 		

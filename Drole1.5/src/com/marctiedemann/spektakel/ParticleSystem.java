@@ -30,7 +30,7 @@ public class ParticleSystem extends Particle {
 
 	protected float springFallOff = 0.01f;
 
-	protected float trailAlpha = 0.3f;
+	protected float trailAlpha = 0.5f;
 
 	protected float spriteAlpha = 1.0f;
 
@@ -58,7 +58,7 @@ public class ParticleSystem extends Particle {
 
 	private int myID;
 
-	protected int trailLength = 5;
+	protected int trailLength = 10;
 
 	protected float x, y, z;
 
@@ -135,8 +135,8 @@ public class ParticleSystem extends Particle {
 
 		for (int i = 0; i < numPoints; i++) {
 
-		float a = spriteAlpha*(bigParticle.get(i).getTimeToLife() / 255)
-					* e.p.random(0.5f, 1.5f);		
+		float a = spriteAlpha*EngineApplet.map(bigParticle.get(i).getTimeToLife(),0, 255,0,1)
+					+ e.p.random(-0.2f, 0.2f);		
 			
 		if(!bigParticle.get(i).hidden)
 			setSpriteColor(i, 1, 1, 1, a);
@@ -156,7 +156,7 @@ public class ParticleSystem extends Particle {
 		colors[4 * num + 1] = 1;
 		colors[4 * num + 2] = 1;
 
-		colors[4 * num + 3] = EngineApplet.abs(a * bigParticle.get(num).myAlpha);
+		colors[4 * num + 3] =(a);
 
 		// System.out.println(bigParticle.get(i).getTimeToLife()+" alp "+newAlpha*bigParticle.get(i).myAlpha);
 		// colors[4 * i + 3] = 1;

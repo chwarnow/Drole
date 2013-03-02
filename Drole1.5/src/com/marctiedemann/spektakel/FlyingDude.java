@@ -45,7 +45,7 @@ public class FlyingDude extends ParticleSystem {
 
 	void loadImage() {
 
-		dudeImage = e.requestTexture("images/flyingDude_130px.png");
+		dudeImage = e.requestTexture("images/flyingDude_150px.png");
 		dudeImage.loadPixels();
 
 		greyLevels = new float[dudeImage.width][dudeImage.height];

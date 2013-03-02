@@ -32,7 +32,7 @@ public class ToxicSystem extends ParticleSystem {
 			protected int targetSize = 3;
 			protected int targetYOffset = 200;
 
-			protected int meshSize = 10; 
+			protected int meshSize = 15; 
 			
 			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
 
@@ -47,7 +47,7 @@ public class ToxicSystem extends ParticleSystem {
 		
 		trailAlpha=0.4f;
 		
-		decay = 0.95f;
+		decay = 0.90f;
 		
 		 boomFalloff = 0.1f;
 		 springFallOff = 0.05f;

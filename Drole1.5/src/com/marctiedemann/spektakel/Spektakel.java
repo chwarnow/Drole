@@ -35,14 +35,14 @@ public class Spektakel extends Drawable {
 	private float PAUSE_MOTION_AT = 2;
 	private float NORMAL_DRAG = 0.05f;
 
-	private float drag = 0.05f;
+	private float drag = 0.01f;
 
-	private int toxiTime = 1000;
+	private int toxiTime = 5000;
 	private int toxicCounter = 0;
 	private int totalNumberOfToxics = 5;
 	private int toxicNum = 0;
 
-	private int dudeTime = 30000;
+	private int dudeTime = 40000;
 	private int dudeCounter = 20000;
 
 
@@ -70,7 +70,7 @@ public class Spektakel extends Drawable {
 
 
 		e.requestTexture("images/particle4.png");
-		e.requestTexture("images/flyingDude_130px.png");
+		e.requestTexture("images/flyingDude_150px.png");
 		
 		useLights();
 		// i x y z r g b f1 f2 f3
@@ -107,7 +107,7 @@ public class Spektakel extends Drawable {
 
 	private void updateTimers() {
 
-		int randomness = 40;
+		int randomness = 200;
 
 	
 			toxicCounter += e.p.random(0, randomness);
@@ -159,7 +159,7 @@ public class Spektakel extends Drawable {
 		float falloff = 0.004f;
 
 		if (centerSpawned) {
-			falloff = EngineApplet.map(centerSystem.getTimeToLife(), 255, 0, 0.0006f, 0.001f);
+			falloff = EngineApplet.map(centerSystem.getTimeToLife(), 255, 0, 0.0006f, 0.0006f);
 
 			setPointLight(0, 0, 0, -0, 120, 225, 255, 0.3f,
 					falloff + e.p.random(-0.00015f, 0.00015f), 0.0f);
@@ -182,6 +182,12 @@ public class Spektakel extends Drawable {
 				if (!pauseSystem){
 					centerSystem.spawnNew(false);
 					centerSpawned=true;
+					
+					
+					ToxicSystem newOne = new ToxicSystem(e, physics, 50,  0, 0, -900);
+					newOne.init();
+
+					ermitters.add(newOne);
 				}
 
 			}
@@ -197,15 +203,15 @@ public class Spektakel extends Drawable {
 
 				falloff = 0.002f;
 
-				if (er.getTimeToLife() > 50 && lightCount<6) {
+				if (er.getTimeToLife() > 150 && lightCount<6) {
 
 					falloff = EngineApplet.map(er.bigParticle.get(0)
-							.getTimeToLife(), 255, 0, 0.0005f, 0.01f);
+							.getTimeToLife(), 255, 150, 0.001f, 0.01f);
 
 					setPointLight(lightCount, er.bigParticle.get(0).x,
 							er.bigParticle.get(0).y, er.bigParticle.get(0).z,
 							255, 70 + e.p.random(-30, 30), 30, 0.1f, falloff
-									+ e.p.random(-0.0005f, 0.0005f), 0.0f);
+									+ e.p.random(-0.0015f, 0.0015f), 0.0f);
 						
 			//		System.out.println("lights" +lightCount);
 					lightCount++;
@@ -244,7 +250,7 @@ public class Spektakel extends Drawable {
 
 	private void initPhysics(VerletPhysics thePhysics) {
 
-		GravityBehavior gravity = new GravityBehavior(new Vec3D(0, 0.6f, 0));
+		GravityBehavior gravity = new GravityBehavior(new Vec3D(0, 0.2f, 0));
 		AttractionBehavior center = new AttractionBehavior(new Vec3D(0, 0, 0),
 				3000, 0.1f, 0.5f);
 		AttractionBehavior ring = new AttractionBehavior(new Vec3D(0, 0, 0),
