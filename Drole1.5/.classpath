@@ -16,7 +16,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/opengl/jogl.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib/opengl/windows64"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Drole1.5/lib/opengl/macosx"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/opengl/opengl.jar"/>

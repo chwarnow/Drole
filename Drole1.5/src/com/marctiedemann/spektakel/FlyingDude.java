@@ -1,17 +1,12 @@
 package com.marctiedemann.spektakel;
 
-import java.util.Iterator;
 
 import com.madsim.engine.Engine;
-import com.madsim.engine.EngineApplet;
 
 import codeanticode.glgraphics.GLGraphics;
-import drole.settings.Settings;
 
-import processing.core.PApplet;
 import processing.core.PImage;
-import toxi.geom.Vec3D;
-import toxi.geom.mesh.Face;
+
 import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletSpring;

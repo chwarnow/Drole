@@ -86,11 +86,17 @@ public class CenterSystem extends ToxicSystem{
 	@Override
 	public void update(){
 		
+		System.out.println(getTimeToLife());
 		
 		float newDrag = -0.8f/getBoomPower();
-		physics.setDrag(newDrag);
+			
+		if(newDrag<2.0f)physics.setDrag(newDrag);
 		super.update();
 	}
+	
+	
+	
+	
 	
 	@Override
 	public void draw(GLGraphics renderer){
