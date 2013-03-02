@@ -68,7 +68,8 @@ public class Spektakel extends Drawable {
 
 
 		e.requestTexture("images/particle4.png");
-
+		e.requestTexture("images/flyingDude_150px.png");
+		
 		useLights();
 		// i x y z r g b f1 f2 f3
 

@@ -4,6 +4,7 @@ package com.marctiedemann.spektakel;
 import com.madsim.engine.Engine;
 
 import codeanticode.glgraphics.GLGraphics;
+import codeanticode.glgraphics.GLTexture;
 
 import processing.core.PImage;
 
@@ -14,7 +15,7 @@ import toxi.physics.behaviors.AttractionBehavior;
 
 public class FlyingDude extends ParticleSystem {
 
-	PImage dudeImage;
+	GLTexture dudeImage;
 
 	float[][] greyLevels;
 
@@ -44,7 +45,7 @@ public class FlyingDude extends ParticleSystem {
 
 	void loadImage() {
 
-		dudeImage = e.p.loadImage("images/flyingDude_200px.png");
+		dudeImage = e.requestTexture("images/flyingDude_150px.png");
 		dudeImage.loadPixels();
 
 		greyLevels = new float[dudeImage.width][dudeImage.height];
