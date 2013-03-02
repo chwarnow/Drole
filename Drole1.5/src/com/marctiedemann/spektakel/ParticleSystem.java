@@ -340,7 +340,6 @@ public class ParticleSystem extends Particle {
 	}
 
 	public void update() {
-		
 		super.update();
 
 		/*
@@ -388,17 +387,22 @@ public class ParticleSystem extends Particle {
 
 	public void cleanSytstem() {
 
-		physics.removeBehavior(boomForce);
+	
 
 		for (int i = 0; i < bigParticle.size(); i++) {
 			cleanParticleForces(i);
 		}
+		
+		physics.removeBehavior(boomForce);
+	//	physics.remo
 
-		// model.delete();
+	//	 sprites.
+	//	 trails.delete();
 	}
 
 	private void cleanParticleForces(int num) {
 		physics.removeSpring(bigParticle.get(num).getSpring());
+		physics.removeParticle(bigParticle.get(num));
 
 	}
 

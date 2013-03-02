@@ -45,7 +45,7 @@ public class FlyingDude extends ParticleSystem {
 
 	void loadImage() {
 
-		dudeImage = e.requestTexture("images/flyingDude_150px.png");
+		dudeImage = e.requestTexture("images/flyingDude_130px.png");
 		dudeImage.loadPixels();
 
 		greyLevels = new float[dudeImage.width][dudeImage.height];
@@ -151,12 +151,13 @@ public class FlyingDude extends ParticleSystem {
 	public void update() {
 		// System.out.println("still alive yeah "+bigParticle.get(0).getTimeToLife());
 
-		// System.out.println("sp "+getSpringPower());
+	//	System.out.println("flying ");
 
 		int steps = 500;
 		
-		System.out.println(getTimeToLife());
+	//	System.out.println(getTimeToLife());
 
+		
 		if (counter < bigParticle.size() - steps) {
 			for (int i = 0; i < steps; i++) {
 				// System.out.println("unlocking "+counter);
@@ -165,8 +166,11 @@ public class FlyingDude extends ParticleSystem {
 		}
 		counter += steps;
 
-		setSpriteColors();
 
+		//setSpriteColors();
+
+		
+		
 		// System.out.println(bigParticle.get(10).y);
 		super.update();
 	}

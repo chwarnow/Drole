@@ -1,6 +1,7 @@
 package com.marctiedemann.spektakel;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Timer;
 
 import javax.media.opengl.GL;
@@ -8,6 +9,7 @@ import javax.media.opengl.GL;
 import processing.core.PVector;
 
 import toxi.geom.Vec3D;
+import toxi.geom.mesh.Face;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 import toxi.physics.behaviors.GravityBehavior;
@@ -68,7 +70,7 @@ public class Spektakel extends Drawable {
 
 
 		e.requestTexture("images/particle4.png");
-		e.requestTexture("images/flyingDude_150px.png");
+		e.requestTexture("images/flyingDude_130px.png");
 		
 		useLights();
 		// i x y z r g b f1 f2 f3
@@ -99,7 +101,7 @@ public class Spektakel extends Drawable {
 
 			physics.update();
 		}
-		physics2.update();
+	   physics2.update();
 
 	}
 
@@ -107,7 +109,7 @@ public class Spektakel extends Drawable {
 
 		int randomness = 40;
 
-		if (toxicNum < totalNumberOfToxics)
+	
 			toxicCounter += e.p.random(0, randomness);
 		if (toxicCounter > toxiTime) {
 			spawnNewToxicSystem();
@@ -118,7 +120,7 @@ public class Spektakel extends Drawable {
 		dudeCounter += e.p.random(0, randomness);
 
 		if (dudeCounter > dudeTime) {
-			spawnNewDude();
+	 	spawnNewDude();
 			dudeCounter = 0;
 		}
 
@@ -127,14 +129,16 @@ public class Spektakel extends Drawable {
 			centerCounter += e.p.random(0, randomness);
 
 			if (centerCounter > centerTime) {
-				centerSystem.init();
-				centerSpawned = true;
+	 		centerSystem.init();
+	   		centerSpawned = true;
 			}
 		}
 	}
 
 	@Override
 	public void draw() {
+		
+    System.out.println(e.p.frameRate);
 		e.usePoints();
 
 		setAmbient(0.4f, 0.3f, 0.3f);
@@ -173,7 +177,7 @@ public class Spektakel extends Drawable {
 				//just to be save nothing gets piled up
 				physics2 = new VerletPhysics();
 				initPhysics(physics2);
-				centerSpawned=false;
+				centerSpawned =false;
 				centerSystem = new CenterSystem(e, physics2, 50, 0, 0, 0);
 				if (!pauseSystem){
 					centerSystem.spawnNew(false);
@@ -184,10 +188,12 @@ public class Spektakel extends Drawable {
 
 			
 			int lightCount = 1;
+			int ecount = 0;
 			
-			for (int i = 0; i < ermitters.size(); i++) {
-
-				ParticleSystem er = ermitters.get(i);
+			
+			Iterator it = ermitters.iterator();
+				while(it.hasNext()){
+				ParticleSystem er = (ParticleSystem)it.next();
 
 				falloff = 0.002f;
 
@@ -200,22 +206,28 @@ public class Spektakel extends Drawable {
 							er.bigParticle.get(0).y, er.bigParticle.get(0).z,
 							255, 70 + e.p.random(-30, 30), 30, 0.1f, falloff
 									+ e.p.random(-0.0005f, 0.0005f), 0.0f);
+						
 			//		System.out.println("lights" +lightCount);
 					lightCount++;
 				}
 
 				er.update();
 				er.draw(e.g);
+				
+				ecount++;
+				System.out.println(ecount);
 
 				if (er.isDead()) {
-					er.cleanSytstem();
-					ermitters.remove(i);
+					System.out.println("DEAD");
 
-					if (!pauseSystem)
-						spawnNewToxicSystem();
+					er.cleanSytstem();
+					it.remove();
+				//	if (!pauseSystem)
+					//	spawnNewToxicSystem();
 
 				}
-			}
+				}
+			
 
 		}
 
@@ -290,8 +302,13 @@ public class Spektakel extends Drawable {
 	public void printForces() {
 		System.out.println("1 " + physics.behaviors);
 		System.out.println("1 " + physics.springs);
+		
+		System.out.println("1 "+physics.particles);
+		
 		System.out.println("2 " + physics2.behaviors);
 		System.out.println("2 " + physics2.springs);
+		
+		System.out.println(ermitters);
 	}
 
 }
