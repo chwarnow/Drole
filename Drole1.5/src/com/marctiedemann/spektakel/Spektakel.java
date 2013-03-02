@@ -40,8 +40,8 @@ public class Spektakel extends Drawable {
 	private int totalNumberOfToxics = 5;
 	private int toxicNum = 0;
 
-	private int dudeTime = 20000;
-	private int dudeCounter = 10000;
+	private int dudeTime = 30000;
+	private int dudeCounter = 20000;
 
 
 	private boolean centerSpawned = false;
@@ -85,7 +85,7 @@ public class Spektakel extends Drawable {
 
 		if(!pauseSystem)updateTimers();
 
-		if (centerSpawned)
+		if (centerSpawned )
 			centerSystem.update();
 
 		if (pauseMotion && drag < PAUSE_MOTION_AT)
@@ -122,7 +122,7 @@ public class Spektakel extends Drawable {
 		}
 
 
-		if (!centerSpawned) {
+		if (!centerSpawned && !pauseSystem) {
 			centerCounter += e.p.random(0, randomness);
 
 			if (centerCounter > centerTime) {
@@ -169,10 +169,15 @@ public class Spektakel extends Drawable {
 			g.popMatrix();
 
 			if (centerSystem.isDead()) {
-				physics2.clear();
+				//just to be save nothing gets piled up
+				physics2 = new VerletPhysics();
+				initPhysics(physics2);
+				centerSpawned=false;
 				centerSystem = new CenterSystem(e, physics2, 50, 0, 0, 0);
-				if (!pauseSystem)
+				if (!pauseSystem){
 					centerSystem.spawnNew(false);
+					centerSpawned=true;
+				}
 
 			}
 
@@ -274,6 +279,10 @@ public class Spektakel extends Drawable {
 
 	public void pauseSystem() {
 		pauseSystem = !pauseSystem;
+		//centerSpawned = !pauseSystem;
+		
+		
+		
 
 	}
 

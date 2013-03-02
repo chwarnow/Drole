@@ -153,6 +153,8 @@ public class FlyingDude extends ParticleSystem {
 		// System.out.println("sp "+getSpringPower());
 
 		int steps = 500;
+		
+		System.out.println(getTimeToLife());
 
 		if (counter < bigParticle.size() - steps) {
 			for (int i = 0; i < steps; i++) {
