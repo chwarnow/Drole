@@ -18,7 +18,7 @@ import drole.tests.spektakel.T_ShapeParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.behaviors.AttractionBehavior;
 
-public class ParticleSystem extends VerletParticle {
+public class ParticleSystem extends Particle {
 
 	protected boolean shockwave = false;
 
@@ -67,7 +67,7 @@ public class ParticleSystem extends VerletParticle {
 	public ParticleSystem(Engine e, VerletPhysics physics, float x, float y,
 			float z) {
 
-		super(x, y, z);
+		super(e.p,x, y, z);
 
 		this.e = e;
 		this.physics = physics;
@@ -312,9 +312,12 @@ public class ParticleSystem extends VerletParticle {
 			// boomForce.setStrength(boomPower);
 		
 			float newSpringPower = bigParticle.get(i).getBehaviorStrenght() *  (1 - springFallOff);
+			
+
+	
 		if(newSpringPower<1.5f && newSpringPower>-1.5f ){	
 			
-			
+
 			bigParticle.get(i).setBehaviorStrenght(newSpringPower);
 		}
 		}
@@ -337,7 +340,10 @@ public class ParticleSystem extends VerletParticle {
 	}
 
 	public void update() {
+		
+		super.update();
 
+		/*
 		for (int i = 0; i < bigParticle.size(); i++) {
 
 			Particle pa = bigParticle.get(i);
@@ -353,6 +359,7 @@ public class ParticleSystem extends VerletParticle {
 
 			}
 		}
+		*/
 
 		updateSpritePositions();
 		setSpriteColors();
