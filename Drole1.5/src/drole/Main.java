@@ -208,7 +208,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
 		
-		menu = new Menu(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM);
+		menu = new Menu(engine, kinect, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM);
 		engine.addDrawable("Menu", menu);
 	}
 	
