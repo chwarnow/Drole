@@ -9,6 +9,7 @@ import codeanticode.glgraphics.GLTexture;
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 import com.madsim.tracking.kinect.Kinect;
+import com.madsim.tracking.kinect.KinectUserEventListener;
 import com.madsim.ui.kinetics.KinectInput;
 import com.madsim.ui.kinetics.MouseXYInput;
 import com.madsim.ui.kinetics.gestures.AngleDetection;
@@ -16,10 +17,12 @@ import com.madsim.ui.kinetics.gestures.AngleDetectionListener;
 import com.madsim.ui.kinetics.gestures.RipInterpreter;
 import com.madsim.ui.kinetics.gestures.RipMotionListener;
 import com.madsim.ui.kinetics.gestures.RotationInterpreter;
+import com.madsim.ui.kinetics.gestures.TwoHandPushInterpreter;
+import com.madsim.ui.kinetics.gestures.TwoHandPushListener;
 
 import drole.gfx.ribbon.RibbonGlobe;
 
-public class Menu extends Drawable implements RipMotionListener, AngleDetectionListener {
+public class Menu extends Drawable implements RipMotionListener, AngleDetectionListener, TwoHandPushListener, KinectUserEventListener {
 
 	private Kinect kinect;
 	
@@ -48,12 +51,21 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 
 	private RipInterpreter ripi;
 	
-	private AngleDetection angleDetection;
+	private TwoHandPushInterpreter pushi;
+	
+	private AngleDetection angleDetectionLeft, angleDetectionRight;
+	
+	private PVector bodyMovement = new PVector(0, 0, 0);
+	private PVector lastBodyPosition = new PVector(0, 0, 0);
+	private PVector bodyMovementThreshold = new PVector(30.0f, 30.0f, 30.0f);
+	
+	private boolean bodyLockdown = false;
 	
 	public Menu(Engine e, Kinect kinect, PVector position, float radius) {
 		super(e);
 		
 		this.kinect = kinect;
+		kinect.addUserEventListener(this);
 		
 		this.radius = radius;
 		
@@ -70,11 +82,19 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		kiLeftHand = new KinectInput(kinect, Kinect.SKEL_LEFT_HAND);
 		
 		ri = new RotationInterpreter(kiRightHand, 0);
+		ri.lock();
 		
 		ripi = new RipInterpreter(this, kiLeftHand, -1, 2);
+		ripi.lock();
 		
-		angleDetection = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, 0.16f, -1);
-		angleDetection.addListener(this);
+		pushi = new TwoHandPushInterpreter(this, kiLeftHand, kiRightHand, 1, 2);
+		pushi.lock();
+		
+		angleDetectionLeft = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, 0.14f, -1);
+		angleDetectionLeft.addListener(this);
+		
+		angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, 0.14f, -1);
+		angleDetectionRight.addListener(this);		
 		
 //		globe = new RibbonGlobe(e, position, dimension);
 		
@@ -114,12 +134,40 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		return getWorldA(activeWorld);
 	}
 	
+	private void updateBodyMovement() {
+		bodyMovement = PVector.sub(lastBodyPosition, kinect.getJoint(Kinect.SKEL_TORSO));
+		lastBodyPosition = kinect.getJoint(Kinect.SKEL_TORSO);
+		e.p.pinLog("Body Movement", bodyMovement);
+	}
+	
+	private void checkBodyMovement() {
+		if(
+			Math.abs(bodyMovement.x) > bodyMovementThreshold.x || 
+			Math.abs(bodyMovement.y) > bodyMovementThreshold.y ||
+			Math.abs(bodyMovement.z) > bodyMovementThreshold.z
+		) {
+			e.p.pinLog("BODY LOCK DOWN", "ON");
+			bodyLockdown = true;
+//			ri.lock();
+//			ripi.lock();
+		} else {
+			e.p.pinLog("BODY LOCK DOWN", "OFF");
+			bodyLockdown = false;
+		}
+	}
+	
 	@Override
 	public void update() {
 		super.update();
-		ripi.update();
-		angleDetection.update();
 		
+		updateBodyMovement();
+		checkBodyMovement();
+		
+		ripi.update();
+		pushi.update();
+		angleDetectionLeft.update();
+		angleDetectionRight.update();
+
 		
 //		a = (e.p.frameCount / 100.0f) % PApplet.TWO_PI;
 		
@@ -217,11 +265,53 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 	@Override
 	public void inAngle(String id) {
 		e.p.pinLog("Angle "+id, "IN");
+		
+		if(id == "LEFT_HAND" && !bodyLockdown) {
+			ripi.unlock();
+			pushi.unlock();
+		}
+		
+		if(id == "RIGHT_HAND" && !bodyLockdown) {
+			ri.unlock();
+			pushi.unlock();
+		}
 	}
 
 	@Override
 	public void lostAngle(String id) {
 		e.p.pinLog("Angle "+id, "OUT");
+		
+		if(id == "LEFT_HAND") {
+			ripi.lock();
+			pushi.lock();
+		}
+		
+		if(id == "RIGHT_HAND") {
+			ri.lock();
+			pushi.lock();
+		}
+	}
+
+	@Override
+	public void pushGestureFound() {
+		e.p.logLn("Two hand push occured!");
+		ripi.forceCooldown();
+	}
+
+	@Override
+	public void trackingUser() {
+		ripi.lock();
+		pushi.lock();
+		angleDetectionLeft.unlock();
+		angleDetectionRight.unlock();
+	}
+
+	@Override
+	public void lostUser() {
+		ripi.lock();
+		pushi.lock();
+		angleDetectionLeft.lock();
+		angleDetectionRight.lock();
 	}
 	
 }

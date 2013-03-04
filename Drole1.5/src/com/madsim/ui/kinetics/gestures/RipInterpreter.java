@@ -13,11 +13,13 @@ public class RipInterpreter {
 	private int ripDirection;
 	
 	private float lastPosition;
-	private float ripThreshold = 30.0f;
+	private float ripThreshold = 70.0f;
 	
 	private boolean inGestureCooldown = false;
 	private long gestureCooldownStart = 0;
 	private long gestureCooldownTime = 1200;
+	
+	private boolean locked = false;
 	
 	public RipInterpreter(RipMotionListener listener, PositionalMovementInput input, int ripDirection, int axisToObserve) {
 		this.listener		=	listener;
@@ -28,10 +30,25 @@ public class RipInterpreter {
 		lastPosition = input.getPosition()[axisToObserve];
 	}
 
+	public void lock() {
+		locked = true;
+	}
+	
+	public void unlock() {
+		locked = false;
+	}
+	
 	public void gestureOccured() {
-		listener.ripGestureFound();
+		if(!locked) {
+			listener.ripGestureFound();
+			inGestureCooldown = true;
+			gestureCooldownStart = System.currentTimeMillis();
+		}
+	}
+	
+	public void forceCooldown() {
 		inGestureCooldown = true;
-		gestureCooldownStart = System.currentTimeMillis();
+		gestureCooldownStart = System.currentTimeMillis();		
 	}
 	
 	public void update() {

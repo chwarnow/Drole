@@ -24,10 +24,20 @@ public class RotationInterpreter extends PositionalGestureInterpreter {
 	private long dragCooldownTime = 400;
 	private long dragCooldownStart = 0;
 
+	private boolean locked = false;
+	
 	public RotationInterpreter(PositionalMovementInput input, int axisToObserve) {
 		super(input);
 		this.axisToObserve = axisToObserve;
 		lastPos = input.getPosition()[axisToObserve];
+	}
+	
+	public void lock() {
+		locked = true;
+	}
+	
+	public void unlock() {
+		locked = false;
 	}
 
 	@Override
@@ -45,7 +55,7 @@ public class RotationInterpreter extends PositionalGestureInterpreter {
 		if (Math.abs(spin) < 0.001)
 			spin = 0;
 
-		rotation += spin;
+		rotation -= spin;
 
 		// println("Spin: "+spin);
 		// println("Rotation: "+rotation);
@@ -116,6 +126,8 @@ public class RotationInterpreter extends PositionalGestureInterpreter {
 			if (!inDragCooldown)
 				startDragCooldown();
 		}
+		
+		if(locked) drag = 0.0f;
 
 		checkDragCooldown();
 	}

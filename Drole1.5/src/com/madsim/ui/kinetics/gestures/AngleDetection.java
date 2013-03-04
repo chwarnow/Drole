@@ -12,6 +12,8 @@ public class AngleDetection {
 	
 	private Kinect kinect;
 	
+	public static short IN_ANGLE, OUT_ANGLE;
+	
 	private int joint1, joint2;
 	
 	private float targetAngle;
@@ -20,13 +22,17 @@ public class AngleDetection {
 	
 	private ArrayList<AngleDetectionListener> listeners = new ArrayList<AngleDetectionListener>();
 	
-	private int sampleSize = 10;
+	private int sampleSize = 30;
 	
 	private int[] inOutSampling = new int[sampleSize];
 	
 	private int sampleIndex = 0;
 	
 	private int lastSampleResult = -1;
+	
+	private short status = OUT_ANGLE;
+	
+	private boolean locked = false;
 	
 	public AngleDetection(String name, Kinect kinect, int joint1, int joint2, float targetAngle, int inDir) {
 		this.name			= name;
@@ -36,8 +42,20 @@ public class AngleDetection {
 		this.targetAngle 	= targetAngle;
 		this.inDir			= inDir;
 		
-
 		for(int i = 0; i < sampleSize; i++) inOutSampling[i] = 0;
+	}
+	
+	public void lock() {
+		locked = true;
+		lostAngle();
+	}
+
+	public void unlock() {
+		locked = false;
+	}	
+	
+	public short status() {
+		return status;
 	}
 	
 	public void addListener(AngleDetectionListener l) {
@@ -51,6 +69,8 @@ public class AngleDetection {
 		if(v1 == Kinect.IGNORED_POSITION) return;
 		
 		float ca = PVector.angleBetween(v1, v2);
+		
+//		System.out.println(ca);
 		
 		if(inDir > 0 && ca >= targetAngle) {
 			addSample(1);
@@ -76,14 +96,12 @@ public class AngleDetection {
 		
 		sampleD /= sampleSize;
 		
-		System.out.println(sampleD);
-		
 		if(sampleD >= 0.5f) inAngle();
 		else lostAngle();
 	}
 	
 	private void inAngle() {
-		if(lastSampleResult != 1 || lastSampleResult == -1) {
+		if((lastSampleResult != 1 || lastSampleResult == -1) && !locked) {
 			lastSampleResult = 1;
 			System.out.println("In angle "+name);
 			for(AngleDetectionListener l : listeners) l.inAngle(name);
@@ -91,7 +109,7 @@ public class AngleDetection {
 	}
 
 	private void lostAngle() {
-		if(lastSampleResult != 0 || lastSampleResult == -1) {	
+		if((lastSampleResult != 0 || lastSampleResult == -1) && !locked) {	
 			lastSampleResult = 0;
 			System.out.println("Out angle "+name);
 			for(AngleDetectionListener l : listeners) l.lostAngle(name);

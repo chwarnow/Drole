@@ -112,7 +112,7 @@ public class Kinect implements SimpleOpenNIConstants {
 		if(c != null) {
 			 if(currentUser != NO_USER) {
 				 c.getJointPositionSkeleton(currentUser, joint, std);
-				 lastPositions.put(joint, std);
+				 lastPositions.put(joint, std.get());
 			 } else {
 				 std = IGNORED_POSITION.get();
 			 }

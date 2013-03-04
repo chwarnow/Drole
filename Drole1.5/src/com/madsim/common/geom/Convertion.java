@@ -15,7 +15,7 @@ public class Convertion {
 	}
 
 	public static float[] getFloat3Array(PVector p) {
-		return new float[]{p.x, p.y, 0.0f};
+		return new float[]{p.x, p.y, p.z};
 	}
 	
 }
