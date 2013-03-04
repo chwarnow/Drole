@@ -158,7 +158,7 @@ public class RibbonGlobe extends Drawlist {
 		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
 		
 		setAmbient(1.0f, 1.0f, 1.0f);
-		
+
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -189,8 +189,8 @@ public class RibbonGlobe extends Drawlist {
 			g.fill(255, fade*255);
 			g.noStroke();
 			
-			e.startShader("PolyLightAndColor");
-			e.setLights();
+//			e.startShader("PolyLightAndColor");
+//			e.setLights();
 			
 			int drawableIndex = 0;
 			float penseeRotation = .0f;
