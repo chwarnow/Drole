@@ -1,6 +1,8 @@
 package com.marctiedemann.spektakel;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
@@ -10,6 +12,7 @@ import drole.settings.Settings;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import toxi.geom.Spline3D;
 import toxi.geom.Vec3D;
 import toxi.geom.mesh.Face;
 import toxi.physics.VerletParticle;
@@ -29,6 +32,9 @@ public class FlyingDude extends ParticleSystem {
 	private int imageWidth;
 
 	private boolean imageLoadedAndParticlesSpawned = false;
+
+	private List<Vec3D> path;
+	int pathID = 0;
 
 	public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
 			float z) {
@@ -154,20 +160,44 @@ public class FlyingDude extends ParticleSystem {
 
 	}
 
+	void setRandomPath() {
+
+		ArrayList<Vec3D> points = new ArrayList<Vec3D>();
+
+		for (int i = 0; i < 5; i++) {
+			Vec3D p = new Vec3D(e.p.random(0, -100), e.p.random(0, -100),
+					e.p.random(-100, 100));
+			points.add(p);
+		}
+
+		Spline3D s = new Spline3D(points);
+		s.computeVertices(10);
+		path = s.getDecimatedVertices(4);
+	}
+
 	void updateTargets() {
 
-		if (imageLoadedAndParticlesSpawned) {
+		// if (pathID<path.size()-1) {
+
+		
+		float xOff = - e.p.random(5);
+		float yOff = - e.p.random(5);
+		float zOff =   e.p.random(-10,10);
+		
+		for (int i = 0; i < bigParticle.size(); i++) {
+
+			bigParticle.get(i).getTargetPoint().x += xOff;
+			bigParticle.get(i).getTargetPoint().y += yOff;
+			bigParticle.get(i).getTargetPoint().z += zOff;
 
 
-			for (int i = 0; i < bigParticle.size(); i++) {
 
-				
-				bigParticle.get(i).getTargetPoint().x-=5;
-				
-	//			System.out.println(bigParticle.get(i).getTargetPoint());
+			// System.out.println(bigParticle.get(i).getTargetPoint());
 
-			}
 		}
+		// }
+
+		// pathID++;
 
 	}
 

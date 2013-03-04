@@ -106,7 +106,7 @@ public class Spektakel extends Drawable {
 		if (toxicNum < totalNumberOfToxics)
 			toxicCounter += e.p.random(0, randomness);
 		if (toxicCounter > toxiTime) {
-	//		spawnNewToxicSystem();
+			spawnNewToxicSystem();
 			toxicCounter = 0;
 			toxicNum++;
 		}
