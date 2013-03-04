@@ -1,12 +1,11 @@
-package com.madsim.tracking.fake;
+package com.madsim.ui.kinetics;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 import com.madsim.common.geom.Convertion;
-import com.madsim.ui.kinetics.PositionalMovementInput;
 
-public class MouseXY implements PositionalMovementInput, MouseMotionListener {
+public class MouseXYInput implements PositionalMovementInput, MouseMotionListener {
 
 	private float[] position = new float[]{0, 0, 0};
 	

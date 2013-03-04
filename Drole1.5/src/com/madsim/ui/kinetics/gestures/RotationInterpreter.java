@@ -17,7 +17,7 @@ public class RotationInterpreter extends PositionalGestureInterpreter {
 	private float spinDamping = 0.90f;
 
 	private boolean isDragging = false;
-	private float dragThreshold = 1.0f;
+	private float dragThreshold = 50.0f;
 	private int dragDirection = 0;
 
 	private boolean inDragCooldown = false;
@@ -79,10 +79,15 @@ public class RotationInterpreter extends PositionalGestureInterpreter {
 
 	private void updateRotationForce() {
 		float currentPos = input.getPosition()[axisToObserve];
+		
+		if(currentPos == PositionalMovementInput.IGNORED_VALUE) {
+			drag = 0.0f;
+			return;
+		}
 
 		float dist = lastPos - currentPos;
 		lastPos = currentPos;
-
+		
 		if(Math.abs(dist) > dragThreshold) {
 			int newDragDirection = dist > 0 ? 1 : -1;
 

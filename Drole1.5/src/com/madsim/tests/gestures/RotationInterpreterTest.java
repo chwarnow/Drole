@@ -1,6 +1,6 @@
 package com.madsim.tests.gestures;
 
-import com.madsim.tracking.fake.MouseXY;
+import com.madsim.ui.kinetics.MouseXYInput;
 import com.madsim.ui.kinetics.gestures.RotationInterpreter;
 
 import processing.core.PApplet;
@@ -10,12 +10,12 @@ public class RotationInterpreterTest extends PApplet {
 	private static final long serialVersionUID = 1L;
 
 	private RotationInterpreter riY, riX;
-	private MouseXY mouseInput;
+	private MouseXYInput mouseInput;
 	
 	public void setup() {
 		size(1000, 800, OPENGL);
 		
-		mouseInput = new MouseXY();
+		mouseInput = new MouseXYInput();
 		addMouseMotionListener(mouseInput);
 		
 		riY = new RotationInterpreter(mouseInput, 0);

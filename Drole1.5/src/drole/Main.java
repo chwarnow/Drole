@@ -24,6 +24,8 @@ import com.madsim.fakebildwelten.BildweltFabric;
 import com.madsim.fakebildwelten.BildweltMicroMacro;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
+import com.madsim.tracking.kinect.KinectUserEventListener;
+import com.madsim.ui.kinetics.PositionalMovementInput;
 import com.marctiedemann.spektakel.Spektakel;
 
 import drole.gfx.assoziation.BildweltAssoziation;
@@ -31,11 +33,12 @@ import drole.gfx.room.Room;
 import drole.menu.Menu;
 import drole.settings.Settings;
 
+import penner.easing.Quad;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
 
-public class Main extends EngineApplet implements MouseWheelListener {
+public class Main extends EngineApplet implements MouseWheelListener, KinectUserEventListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -62,6 +65,10 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	/* Users Head */
 	private PVector stdHeadPosition = new PVector(0, 0, 3000);
 	private PVector head = new PVector(0, 0, 0);
+	private long headTransitionTime = 1400;
+	private long headTransiotionStart = 0;
+	private boolean inHeadTransitionIn = false;
+	private boolean inHeadTransitionOut = false;
 	private PVector mouseHead = new PVector(0, 0, 1500);
 	
 	/* Engine */
@@ -159,6 +166,8 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 		kinect = new Kinect(this, Kinect.VERBOSE, FREEMODE);
 
+		kinect.addUserEventListener(this);
+		
 		/* CONTENT */
 		setupRoom();
 		
@@ -261,8 +270,56 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 
 	private void updateHead() {
-		PVector thead = kinect.getJoint(Kinect.SKEL_HEAD, stdHeadPosition);
-		head = offCenterOptik.updateHeadPosition(thead);
+		
+		if(!inHeadTransitionIn && !inHeadTransitionOut) {
+			PVector thead;
+			
+			if(kinect.getCurrentUserID() != Kinect.NO_USER) {
+				thead = kinect.getJoint(Kinect.SKEL_HEAD, stdHeadPosition.get());
+			} else {
+				thead = stdHeadPosition.get();
+			}
+			
+			head = offCenterOptik.updateHeadPosition(thead);
+		}
+		
+		if(inHeadTransitionIn) {
+			long time = System.currentTimeMillis() - headTransiotionStart;
+			
+			if(time >= headTransitionTime) {
+				inHeadTransitionIn = false;
+			} else {
+				PVector thead = kinect.getJoint(Kinect.SKEL_HEAD, stdHeadPosition.get());
+//				pinLog("Current HEAD", thead);
+				PVector transHead = new PVector(
+						Quad.easeInOut(time, stdHeadPosition.x, thead.x - stdHeadPosition.x, headTransitionTime),
+						Quad.easeInOut(time, stdHeadPosition.y, thead.y - stdHeadPosition.y, headTransitionTime),
+						Quad.easeInOut(time, stdHeadPosition.z, thead.z - stdHeadPosition.z, headTransitionTime)
+					);				
+				head = offCenterOptik.updateHeadPosition(transHead);
+//				logLn("Head Transition In" + transHead);
+			}
+		}
+		
+		if(inHeadTransitionOut) {
+			long time = System.currentTimeMillis() - headTransiotionStart;
+			
+			if(time >= headTransitionTime) {
+				inHeadTransitionOut = false;
+			} else {
+				PVector thead = kinect.getLastPosition(Kinect.SKEL_HEAD, stdHeadPosition.get());
+//				pinLog("Current HEAD", thead);
+//				pinLog("STD HEAD", stdHeadPosition);
+				PVector transHead = new PVector(
+						Quad.easeInOut(time, thead.x, stdHeadPosition.x - thead.x, headTransitionTime),
+						Quad.easeInOut(time, thead.y, stdHeadPosition.y - thead.y, headTransitionTime),
+						Quad.easeInOut(time, thead.z, stdHeadPosition.z - thead.z, headTransitionTime)
+				);
+				head = offCenterOptik.updateHeadPosition(transHead);
+//				logLn("Head Transition Out" + transHead);
+			}
+		}
+		
 	}
 
 	private void transitToWorld(int worldID) {
@@ -273,6 +330,20 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	private void transitToMenu(int worldID) {
 		logLn("Transition from World no. "+worldID+" to menu");
 		engine.transitionBetweenDrawables(worlds[worldID], menu);
+	}
+	
+	@Override
+	public void trackingUser() {
+		headTransiotionStart = System.currentTimeMillis();
+		inHeadTransitionIn = true;
+		inHeadTransitionOut = false;
+	}
+
+	@Override
+	public void lostUser() {
+		headTransiotionStart = System.currentTimeMillis();
+		inHeadTransitionIn = false;
+		inHeadTransitionOut = true;
 	}
 	
 	public void draw() {
@@ -355,6 +426,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			// drawRealWorldScreen();
 			
 			if(!FREEMODE) {
+				/*
 				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
 				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
 				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
@@ -453,7 +525,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 				
 				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
 				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
-			
+				*/
 			}
 		
 		//	pinLog("IN WORLD", menu.inWorld);
@@ -578,7 +650,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-			"--present",
+//			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 //			"--display=0",

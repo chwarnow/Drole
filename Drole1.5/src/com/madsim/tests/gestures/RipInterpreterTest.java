@@ -1,6 +1,6 @@
 package com.madsim.tests.gestures;
 
-import com.madsim.tracking.fake.MouseXY;
+import com.madsim.ui.kinetics.MouseXYInput;
 import com.madsim.ui.kinetics.gestures.RipInterpreter;
 import com.madsim.ui.kinetics.gestures.RipMotionListener;
 
@@ -11,12 +11,12 @@ public class RipInterpreterTest extends PApplet implements RipMotionListener {
 	private static final long serialVersionUID = 1L;
 
 	private RipInterpreter rip;
-	private MouseXY mouseInput;
+	private MouseXYInput mouseInput;
 	
 	public void setup() {
 		size(1000, 800, OPENGL);
 		
-		mouseInput = new MouseXY();
+		mouseInput = new MouseXYInput();
 		addMouseMotionListener(mouseInput);
 		
 		rip = new RipInterpreter(this, mouseInput, 1, 0);

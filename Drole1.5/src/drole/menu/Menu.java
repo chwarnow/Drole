@@ -8,15 +8,18 @@ import codeanticode.glgraphics.GLTexture;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
-import com.madsim.tracking.fake.MouseXY;
 import com.madsim.tracking.kinect.Kinect;
+import com.madsim.ui.kinetics.KinectInput;
+import com.madsim.ui.kinetics.MouseXYInput;
+import com.madsim.ui.kinetics.gestures.AngleDetection;
+import com.madsim.ui.kinetics.gestures.AngleDetectionListener;
 import com.madsim.ui.kinetics.gestures.RipInterpreter;
 import com.madsim.ui.kinetics.gestures.RipMotionListener;
 import com.madsim.ui.kinetics.gestures.RotationInterpreter;
 
 import drole.gfx.ribbon.RibbonGlobe;
 
-public class Menu extends Drawable implements RipMotionListener {
+public class Menu extends Drawable implements RipMotionListener, AngleDetectionListener {
 
 	private Kinect kinect;
 	
@@ -37,11 +40,15 @@ public class Menu extends Drawable implements RipMotionListener {
 	
 	private float worldGravity = 0.1f;
 
-	private MouseXY mouseXY;	
+	private MouseXYInput mouseXY;
+	
+	private KinectInput kiLeftHand, kiRightHand;
 	
 	private RotationInterpreter ri;
 
 	private RipInterpreter ripi;
+	
+	private AngleDetection angleDetection;
 	
 	public Menu(Engine e, Kinect kinect, PVector position, float radius) {
 		super(e);
@@ -56,12 +63,18 @@ public class Menu extends Drawable implements RipMotionListener {
 		
 		a = e.p.random(0, PApplet.TWO_PI);
 		
-		mouseXY = new MouseXY();
-		e.p.addMouseMotionListener(mouseXY);
+//		mouseXY = new MouseXYInput();
+//		e.p.addMouseMotionListener(mouseXY);
 		
-		ri = new RotationInterpreter(mouseXY, 0);
+		kiRightHand = new KinectInput(kinect, Kinect.SKEL_RIGHT_HAND);
+		kiLeftHand = new KinectInput(kinect, Kinect.SKEL_LEFT_HAND);
 		
-		ripi = new RipInterpreter(this, mouseXY, 1, 1);
+		ri = new RotationInterpreter(kiRightHand, 0);
+		
+		ripi = new RipInterpreter(this, kiLeftHand, -1, 2);
+		
+		angleDetection = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, 0.16f, -1);
+		angleDetection.addListener(this);
 		
 //		globe = new RibbonGlobe(e, position, dimension);
 		
@@ -105,6 +118,7 @@ public class Menu extends Drawable implements RipMotionListener {
 	public void update() {
 		super.update();
 		ripi.update();
+		angleDetection.update();
 		
 		
 //		a = (e.p.frameCount / 100.0f) % PApplet.TWO_PI;
@@ -132,9 +146,6 @@ public class Menu extends Drawable implements RipMotionListener {
 			for(int i = 0; i < NUM_WORLDS; i++) {
 				if(i == activeWorld) g.fill(200, 0, 0);
 				else g.fill(255);
-				
-				if(i == 0) g.fill(0, 0, 200);
-				if(i == 3) g.fill(200, 200, 0);
 				
 				PVector p1 = getPointOnCircleXZ(radius, a, i, 0, 1, 0);
 				g.pushMatrix();
@@ -182,6 +193,9 @@ public class Menu extends Drawable implements RipMotionListener {
 		g.popStyle();
 		g.popMatrix();
 		*/
+		
+		e.p.pinLog("Left Hand", kiLeftHand.getPosition()[0]+":"+kiLeftHand.getPosition()[1]+":"+kiLeftHand.getPosition()[2]);
+		e.p.pinLog("Right Hand", kiRightHand.getPosition()[0]+":"+kiRightHand.getPosition()[1]+":"+kiRightHand.getPosition()[2]);
 	}
 	
 	public PVector getPointOnCircleXZ(float r, float a, float world, float d, float xOff, float yOff) {
@@ -197,7 +211,17 @@ public class Menu extends Drawable implements RipMotionListener {
 
 	@Override
 	public void ripGestureFound() {
-		e.p.logLn("M…GM…G");
+		e.p.logLn("Pull Gesture found");
+	}
+
+	@Override
+	public void inAngle(String id) {
+		e.p.pinLog("Angle "+id, "IN");
+	}
+
+	@Override
+	public void lostAngle(String id) {
+		e.p.pinLog("Angle "+id, "OUT");
 	}
 	
 }
