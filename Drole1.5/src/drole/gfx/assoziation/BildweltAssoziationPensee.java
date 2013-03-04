@@ -316,6 +316,10 @@ public class BildweltAssoziationPensee extends Drawable {
 		return this.positionSteps;
 	}
 	
+	public void positionSteps(int steps) {
+		this.positionSteps = steps;
+	}
+	
 	/**
 	 * position between 0 and 1
 	 * @return

@@ -135,12 +135,14 @@ public class BildweltOptik extends Drawable {
 			if(floorPenseeSwarm.isReady() && floorPenseeSwarm.currPosition == floorPenseeSwarm.positionSteps()-1) {
 				floorPenseeSwarm.stop();
 				
-				System.out.println("reload floor swarm");
+				e.p.noiseSeed((long)(e.p.random(1000)));
+				floorPenseeSwarm.positionSteps(200 + (int)e.p.random(300));
 				floorPenseeSwarm.loadNewImage("data/images/optikFloor.png",
 						dimension.x*scale.x,
 						new PVector(0, 0, -96),
 						new PVector(0, 0, 0));
 				// floorPenseeSwarm.showMe();
+				floorPenseeSwarm.setPosition(0);
 				floorPenseeSwarm.play();
 			}
 		}
