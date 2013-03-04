@@ -4,6 +4,7 @@ import com.madsim.engine.EngineApplet;
 
 import toxi.geom.Vec3D;
 
+import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.AttractionBehavior;
@@ -13,11 +14,14 @@ public class ShapedParticle extends Particle {
 
 
 	private VerletSpring shapeForce;
+	private VerletParticle targetPoint;
+
 
 	private int tailSize =0;
 	private Vec3D[] tailPoint;
 
 	public float myAlpha = 1.0f;
+
 
 	public ShapedParticle(EngineApplet p, float x, float y, float z,int tailSize) {
 		super(p, x, y, z);
@@ -38,20 +42,16 @@ public class ShapedParticle extends Particle {
 	}
 
 	public void update() {
-
+		super.update();
 		bounce();
 
 		
 		
-		if(decay>0.5f)updateTrails();
-		else {
-			
-			if(p.frameCount%2==0)updateTrails();
-			
-		}
+		updateTrails();
+		
 		
 
-		super.update();
+	
 
 	}
 	
@@ -86,8 +86,21 @@ public class ShapedParticle extends Particle {
 		shapeForce.setStrength(newStrenght);
 	}
 	
+	public float getBehaviorStrenght() {
+		return shapeForce.getStrength();
+	}
+	
 	public VerletSpring getSpring(){
 		return shapeForce;
+	}
+	
+	public void storeTargetPoint(VerletParticle newTarget){
+		this.targetPoint = newTarget;
+		
+	}
+	
+	public VerletParticle getTargetPoint(){
+		return targetPoint;
 	}
 	
 }

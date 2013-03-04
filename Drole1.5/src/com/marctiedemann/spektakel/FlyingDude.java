@@ -1,9 +1,8 @@
 package com.marctiedemann.spektakel;
 
-
-
-
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
@@ -13,6 +12,7 @@ import drole.settings.Settings;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import toxi.geom.Spline3D;
 import toxi.geom.Vec3D;
 import toxi.geom.mesh.Face;
 import toxi.physics.VerletParticle;
@@ -21,150 +21,216 @@ import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.AttractionBehavior;
 
 public class FlyingDude extends ParticleSystem {
-	
 
-		PImage dudeImage;
+	private PImage dudeImage;
 
-		float[][] greyLevels;
+	private float[][] greyLevels;
 
-		public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
-				float z) {
+	private int counter = 0;
 
-			super(e, _physics, x, y, z);
-			loadImage();
+	private int imageHeight;
+	private int imageWidth;
 
-			spawnNew();
-			
-		
-			setSpringPower(0.00006f);
-			setBoomPower(-5.0f);
-			
-			springFallOff = -0.00008f;
-			boomFalloff = 0.1f;
-			
-			trailLength = 2;
+	private boolean imageLoadedAndParticlesSpawned = false;
 
+	private List<Vec3D> path;
+	int pathID = 0;
+
+	public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
+			float z) {
+
+		super(e, _physics, x, y, z);
+		loadImage();
+
+		spawnNew();
+
+		setSpringPower(0.000002f);
+		setBoomPower(-30.0f);
+
+		springFallOff = -0.08f;
+		boomFalloff = 0.2f;
+
+		trailLength = 2;
+
+		trailAlpha = 0.1f;
+
+		spriteSize = 13;
+
+	}
+
+	void loadImage() {
+
+		dudeImage = e.p.loadImage("images/flyingDude_200px.png");
+		dudeImage.loadPixels();
+
+		greyLevels = new float[dudeImage.width][dudeImage.height];
+
+		for (int i = 0; i < dudeImage.height; i++) {
+			for (int j = 0; j < dudeImage.width; j++) {
+
+				int getPixel = (i * dudeImage.width) + j;
+
+				float greyLevel = e.p.red(dudeImage.pixels[getPixel]) / 255;
+
+				greyLevels[j][i] = greyLevel;
+
+			}
 		}
 
-		void loadImage() {
+		imageHeight = greyLevels.length;
+		imageWidth = greyLevels[0].length;
+	}
 
-			dudeImage = e.p.loadImage("images/flyingDude_200px.png");
-			dudeImage.loadPixels();
+	public void spawnNew() {
 
-			greyLevels = new float[dudeImage.width][dudeImage.height];
+		System.out.println("spawn Dude");
 
-			for (int i = 0; i < dudeImage.height; i++) {
-				for (int j = 0; j < dudeImage.width; j++) {
+		counter = 0;
+		bigParticle.clear();
+		// cleanSytstem();
 
-					int getPixel = (i * dudeImage.width) + j;
+		shockwave = true;
 
-					float greyLevel = e.p.red(dudeImage.pixels[getPixel]) / 255;
+		resetPowers();
 
-					greyLevels[j][i] = greyLevel;
+		boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.5f,
+				0.1f);
+		physics.addBehavior(boomForce);
+
+		// spread must be at least 1
+		int spread = 5;
+
+		// initial spread
+		int iSize = 5;
+
+		float decay = 0.9f;
+
+		int targetXCenter = 0;
+		int targetYCenter = 0;
+
+		// System.out.println("center y "+targetYCenter);
+
+		for (int i = 0; i < imageHeight; i++) {
+			for (int j = 0; j < imageWidth; j++) {
+
+				if (greyLevels[i][j] > 0.1f) {
+
+					ShapedParticle newPart = new ShapedParticle(e.p, x()
+							+ e.p.random(-iSize, iSize), y()
+							+ e.p.random(-iSize, iSize) - 100, z()
+							+ e.p.random(-iSize, iSize), trailLength, decay,
+							greyLevels[i][j]);
+
+					newPart.setWeight(e.p.random(0.3f));
+
+					int xPos = targetXCenter
+							+ (int) ((i * spread) - (imageWidth * spread) * 0.5f);
+					int yPos = targetYCenter
+							+ ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
+
+					// System.out.println(" y pos "+yPos);
+
+					newPart.storeTargetPoint(new VerletParticle(x() + xPos, y()
+							+ yPos, z()));
+					newPart.getTargetPoint().lock();
+
+					// maybe replacxe with low force spring to reduce bouncing
+					VerletSpring toxicForce = new VerletSpring(newPart,
+							newPart.getTargetPoint(), 0,
+							e.p.random(getSpringPower()));
+					// physics.addParticle(targetPoint);
+					physics.addParticle(newPart);
+					physics.addSpring(toxicForce);
+					newPart.giveSpring(toxicForce);
+					// newPart.addBehavior(boomForce);
+
+					newPart.hideAndLock();
+
+					bigParticle.add(newPart);
 
 				}
 			}
 		}
 
-	
-		public void spawnNew() {
+		initSprites();
+		// sprites.setSpriteSize(50, 200);
+		initTrails();
 
-			bigParticle.clear();
-			cleanSytstem();
+		imageLoadedAndParticlesSpawned = true;
 
-			shockwave = true;
-			
-			resetPowers();
-			
-			boomForce = new AttractionBehavior(this, 2000, getBoomPower() * 0.3f, 0.1f);
-			physics.addBehavior(boomForce);
+	}
 
-			// spread must be at least 1
-			int spread = 5;
+	void setRandomPath() {
 
-			int imageHeight = greyLevels.length;
-			int imageWidth = greyLevels[0].length;
-			
-			//initial spread
-			int iSize = 50;
+		ArrayList<Vec3D> points = new ArrayList<Vec3D>();
 
-			float decay = 0.001f;
-			
-			int targetXCenter = 0;
-			int targetYCenter = Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2-imageHeight;
-			
-			for (int i = 0; i < imageHeight; i++) {
-				for (int j = 0; j < imageWidth; j++) {
+		for (int i = 0; i < 5; i++) {
+			Vec3D p = new Vec3D(e.p.random(0, -100), e.p.random(0, -100),
+					e.p.random(-100, 100));
+			points.add(p);
+		}
 
-					if (greyLevels[i][j] > 0.1f) {
-					
+		Spline3D s = new Spline3D(points);
+		s.computeVertices(10);
+		path = s.getDecimatedVertices(4);
+	}
 
-						ShapedParticle newPart = new ShapedParticle(e.p, x() + e.p.random(-iSize,iSize), y() + e.p.random(-iSize,iSize)-400, z()+ e.p.random(-iSize,iSize),trailLength,decay,greyLevels[i][j]);
-			
-						newPart.setWeight(0.5f);
-						
-						int xPos = targetXCenter + (int) ((i * spread) - (imageWidth * spread) * 0.5f);
-						int yPos = targetYCenter + ((int) ((j * spread) - (imageHeight * spread) * 0.5f));
+	void updateTargets() {
 
-						VerletParticle targetPoint = new VerletParticle(xPos, yPos, -Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM/2);
-						targetPoint.lock();
-						
-						
-						//maybe replacxe with low force spring to reduce bouncing
-						VerletSpring toxicForce = new VerletSpring(newPart,targetPoint,
-								0, getSpringPower());
-//						physics.addParticle(targetPoint);
-						physics.addParticle(newPart);
-						physics.addSpring(toxicForce);
-						newPart.giveSpring(toxicForce);
-						// newPart.addBehavior(boomForce);
+		// if (pathID<path.size()-1) {
 
-						bigParticle.add(newPart);
-						
-						
-						bigParticle.add(newPart);
-					}
-					// physics.addParticle(newPart);
+		
+		float xOff = - e.p.random(5);
+		float yOff = - e.p.random(5);
+		float zOff =   e.p.random(-10,10);
+		
+		for (int i = 0; i < bigParticle.size(); i++) {
 
-					/*
-					 * newPart = new Particle(p, mySize / 2, f.c.x+x, f.c.y+y,
-					 * f.c.z+z); bigParticle.add(newPart);
-					 * physics.addParticle(newPart);
-					 */
-				}
+			bigParticle.get(i).getTargetPoint().x += xOff;
+			bigParticle.get(i).getTargetPoint().y += yOff;
+			bigParticle.get(i).getTargetPoint().z += zOff;
+
+
+
+			// System.out.println(bigParticle.get(i).getTargetPoint());
+
+		}
+		// }
+
+		// pathID++;
+
+	}
+
+	@Override
+	public void update() {
+		// System.out.println("still alive yeah "+bigParticle.get(0).getTimeToLife());
+
+		// System.out.println("sp "+getSpringPower());
+
+		int steps = 500;
+
+		if (counter < bigParticle.size() - steps) {
+			for (int i = 0; i < steps; i++) {
+				// System.out.println("unlocking "+counter);
+				bigParticle.get(counter + i).unHideAndLock();
 			}
-
-			initSprites();
-			
-			sprites.setSpriteSize(50, 200);
-
-
-
-			// one size fits all
-			trailLength = 5;
-			initTrails();
-			
-			trails.setColors(255, 5);
-
 		}
+		counter += steps;
 
+		setSpriteColors();
 
-		
-		
+		// System.out.println(bigParticle.get(10).y);
+		super.update();
 
-		@Override
-		public void update() {
-			super.update();
-		}
+	}
 
-		@Override
-		public void draw(GLGraphics g) {
-			
-			e.setPointSize(2);
+	@Override
+	public void draw(GLGraphics g) {
 
-			super.draw(g);
-		}
+		updateTargets();
+		e.setPointSize(2);
 
-
+		super.draw(g);
+	}
 
 }

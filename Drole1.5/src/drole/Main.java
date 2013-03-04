@@ -430,6 +430,16 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		case 'a':
 			bildweltSpektakel.spawnNewDude();
 			break;
+		case 'p':
+			bildweltSpektakel.pauseSystem();
+			break;
+		case 'f':
+			bildweltSpektakel.printForces();
+			break;	
+			
+			
+			
+			
 		case '0':
 			transitToMenu(fakeActiveWorld);
 			break;
@@ -502,7 +512,10 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 			mouseHead.y = map(e.getY(), 0, height, offCenterOptik.realScreenPos.y+Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM, offCenterOptik.realScreenPos.y+offCenterOptik.realScreenDim.y);
 			
 			offCenterOptik.updateHeadPosition(mouseHead);
-//			println(mouseHead);
+			
+			//needs to be hooked to hand gesture
+			bildweltSpektakel.updateRotaion(e.getY());
+	//		println(e.getY());
 		}
 	}
 	

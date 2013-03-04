@@ -18,6 +18,8 @@ public class Particle extends VerletParticle {
 	
 	public EngineApplet p;
 	
+	protected boolean hidden = false;
+	
 	public Particle(EngineApplet p,float x, float y , float z){
 		
 		super(x,y,z);
@@ -37,50 +39,75 @@ public class Particle extends VerletParticle {
 
 		Vec3D vel = getVelocity();
 
+		float drag = 0.9f;
+		float friction = 0.98f;
+		
+		
+		
 		if (x() > boundsX) {
 			clearVelocity();
-			x = boundsX;
-			addVelocity(new Vec3D(-vel.x / 2, vel.y / 2, vel.z / 2));
+	//		x = boundsX;
+			addVelocity(new Vec3D(-vel.x * drag, vel.y*friction, vel.z*friction));
 		}
 
 		if (x() < -boundsX) {
 			clearVelocity();
-			x = -boundsX;
-			addVelocity(new Vec3D(-vel.x / 2, vel.y / 2, vel.z / 2));
+//			x = -boundsX;
+			addVelocity(new Vec3D(-vel.x * drag, vel.y*friction, vel.z*friction ));
 		}
 
 		if (y() > boundsY) {
+		
 			clearVelocity();
 
-			y = boundsY;
-			addVelocity(new Vec3D(vel.x / 2, -vel.y / 100, vel.z / 2));
+		//	y = boundsY;
+			
+	//		vel = new Vec3D(vel.x/friction, -vel.y/10000, vel.z/friction);
+			
+			addVelocity(new Vec3D(vel.x*drag, -vel.y*0.5f, vel.z*drag));
 		}
 
+		/*
 		if (z() > 0) {
 			clearVelocity();
 			z = 0;
-			addVelocity(new Vec3D(vel.x / 2, vel.y / 2, -vel.z / 2));
+			addVelocity(new Vec3D(vel.x*friction, vel.y*friction  ,-vel.z * drag));
 		}
 
 		if (z() < -boundsZ) {
 			clearVelocity();
-			z = -boundsZ;
-			addVelocity(new Vec3D(vel.x / 2, vel.y / 2, -vel.z / 2));
+		//	z = -boundsZ;
+			addVelocity(new Vec3D(vel.x*friction, vel.y*friction , -vel.z * drag));
 		}
+		*/
 
 //
 		
 //		p.println(" x "+x +" y "+y+" z "+z);
 		
 	}
+	
+	public void hideAndLock(){
+		lock();
+		hidden = true;
+	}
+	
+	public void unHideAndLock(){
+		unlock();
+		hidden=false;
+	}
+	
 
 	public void update(){
 		super.update();
+		if(lifeSpan>1)
 		lifeSpan-=decay;
+		if(lifeSpan<1)lifeSpan=0;
+		
 	}
 	
 	public boolean isDead(){
-		if(lifeSpan<0.5f)return true;
+		if(lifeSpan<1)return true;
 		else return false;
 	}
 	
