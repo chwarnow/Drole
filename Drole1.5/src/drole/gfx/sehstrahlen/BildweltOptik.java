@@ -27,7 +27,7 @@ public class BildweltOptik extends Drawable {
 	private BildweltAssoziationPensee sehenderAkteur;
 	
 	// floor pensee
-	private BildweltAssoziationPensee floorPensee;
+	private BildweltAssoziationPensee floorPensee, floorPenseeSwarm;
 	
 	public BildweltOptik(Engine e, PVector position, PVector dimension) {
 		super(e);
@@ -61,6 +61,16 @@ public class BildweltOptik extends Drawable {
 		floorPensee.setLooping(false);
 		floorPensee.setPosition(.5f);
 		
+		floorPenseeSwarm = new BildweltAssoziationPensee(
+				e,
+				"data/images/optikFloor.png",
+				dimension.x*scale.x,
+				7.5f,
+				new PVector(0, 0, -96),
+				new PVector(0, 0, 0)
+			);
+		floorPenseeSwarm.setDelayTime(0);
+		
 	}
 
 	@Override
@@ -68,8 +78,11 @@ public class BildweltOptik extends Drawable {
 		super.fadeOut(time);
 		sehenderAkteur.hideMe();
 		floorPensee.hideMe();
+		floorPenseeSwarm.hideMe();
+		
 		sehenderAkteur.fadeOut(time);
 		floorPensee.fadeOut(time);
+		floorPenseeSwarm.fadeOut(time);
 	}
 	
 	@Override
@@ -87,11 +100,18 @@ public class BildweltOptik extends Drawable {
 					new PVector(0, 0, -96),
 					new PVector(0, 0, 0));
 		}
+		if(!floorPenseeSwarm.isReady()) {
+			floorPenseeSwarm.loadNewImage("data/images/optikFloor.png",
+					dimension.x*scale.x,
+					new PVector(0, 0, -96),
+					new PVector(0, 0, 0));
+		}
 		sehenderAkteur.showMe();
 		floorPensee.showMe();
+		floorPenseeSwarm.showMe();
 		sehenderAkteur.fadeIn(time);
 		floorPensee.fadeIn(time);
-		
+		floorPenseeSwarm.fadeIn(time);
 	}
 	
 	@Override
@@ -100,11 +120,28 @@ public class BildweltOptik extends Drawable {
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		sehenderAkteur.update();
 		floorPensee.update();
+		floorPenseeSwarm.update();
 		
 		// unload pensee data when faded out
 		if(fade == 0) {
 			if(!sehenderAkteur.isCleared()) sehenderAkteur.clear();
 			if(!floorPensee.isCleared()) floorPensee.clear();
+			if(!floorPenseeSwarm.isCleared()) floorPenseeSwarm.clear();
+		}
+		
+		// reload floor swarm
+		if(mode() == this.ON_SCREEN) {
+			if(floorPenseeSwarm.isReady() && floorPenseeSwarm.currPosition == 0) {
+				// System.out.println(floorPenseeSwarm.is);
+				floorPenseeSwarm.stop();
+				
+				System.out.println("reload floor swarm");
+				floorPenseeSwarm.loadNewImage("data/images/optikFloor.png",
+						dimension.x*scale.x,
+						new PVector(0, 0, -96),
+						new PVector(0, 0, 0));
+				floorPenseeSwarm.showMe();
+			}
 		}
 	}
 	
@@ -133,6 +170,9 @@ public class BildweltOptik extends Drawable {
 		g.rotateX(3.1414f/2);
 		if(floorPensee.isVisible()) {
 			floorPensee.draw();
+		}
+		if(floorPenseeSwarm.isVisible()) {
+			floorPenseeSwarm.draw();
 		}
 		g.popMatrix();
 		

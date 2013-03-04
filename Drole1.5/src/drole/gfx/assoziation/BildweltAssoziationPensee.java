@@ -135,10 +135,7 @@ public class BildweltAssoziationPensee extends Drawable {
 				imageQuadModel.initColors();
 				imageQuadModel.initNormals();
 				
-				// System.out.println(imageQuadModel + " " + agents + " " + agentsCount + " " + vertexCount);
-				
 				// when beginning in the middle, update the first agent position
-				e.p.println("not here: " + imagePath + " " + currPosition);
 				if(currPosition != 0) {
 					for(int i=0;i<agentsCount;i++) {
 						BildweltAssoziationAgent agent = agents[i];
@@ -154,6 +151,7 @@ public class BildweltAssoziationPensee extends Drawable {
 			if(isRunning) {
 				// update playhead on precomputed noise path
 				if(isHiding) {
+					
 					if(!isLooping && (int)currPosition == stopFrame) {
 						isAnimationDone = true;
 						isVisible = false;
@@ -164,8 +162,10 @@ public class BildweltAssoziationPensee extends Drawable {
 				} else {
 					if (currPosition >= positionSteps-1) {
 						if(isShowing) {
-							isRunning = false;
+							isShowing = false;
+							if(!isLooping) isRunning = false;
 						} else if ( delay++ == delayTime) {
+							System.out.println("this is good: " + this.imagePath);
 							currPosition = 0;
 							delay = 0;
 						}
