@@ -1,4 +1,4 @@
-package drole.gfx.ribbon;
+package drole.menu;
 
 /**
  * 
@@ -10,21 +10,21 @@ package drole.gfx.ribbon;
  * 
  */
 
+import java.util.ArrayList;
+
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.drawable.Drawlist;
 
 import drole.gfx.assoziation.BildweltAssoziationPensee;
+import drole.gfx.ribbon.RibbonGroup;
 
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class RibbonGlobe extends Drawlist {
+public class MenuGlobe extends Drawable {
 	
-	public float rotation 						= 0;
-	public float rotationSpeed 					= 0.04f;
-	private float smoothedRotation 				= 0;
-	private float smoothedRotationSpeed 		= .1f;
+	private ArrayList<Drawable> drawables 		= new ArrayList<Drawable>();
 
 	private int numRibbonHandler 				= 4;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
@@ -47,7 +47,7 @@ public class RibbonGlobe extends Drawlist {
 		"data/images/menuAssoziationM.png"
 	};
 	
-	public RibbonGlobe(Engine e, PVector position, PVector dimension) {
+	public MenuGlobe(Engine e, PVector position, PVector dimension) {
 		super(e);
 
 		position(position);
@@ -87,8 +87,15 @@ public class RibbonGlobe extends Drawlist {
 					i); // id
 			drawables.add( b );
 		}
+		
+		useLights();
+		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		
+		setAmbient(1.0f, 1.0f, 1.0f);
 	}
 	
+	/*
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
@@ -150,15 +157,21 @@ public class RibbonGlobe extends Drawlist {
 			}
 		}
 	}
+	*/
 	
-	@Override
-	public void draw() {
+	public void update() {
+		super.update();
+		for(Drawable d : drawables) d.update();
+		
 		useLights();
 		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
 		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
 		
 		setAmbient(1.0f, 1.0f, 1.0f);
-
+	}
+	
+	@Override
+	public void draw() {
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -174,7 +187,7 @@ public class RibbonGlobe extends Drawlist {
 								e.p.random(-randomRadius, randomRadius)),
 						new PVector(0, 0, 0));
 			}
-			if(p.mode() == p.OFF_SCREEN) {
+			if(p.mode() == Drawable.OFF_SCREEN) {
 				if(!p.isCleared()) p.clear();
 			}
 		}
@@ -184,7 +197,7 @@ public class RibbonGlobe extends Drawlist {
 		
 			g.translate(position.x, position.y, position.z);
 			g.scale(scale.x, scale.y, scale.z);
-			g.rotateY(smoothedRotation);
+			g.rotateY(gestureRotation);
 			
 			g.fill(255, fade*255);
 			g.noStroke();
@@ -201,18 +214,18 @@ public class RibbonGlobe extends Drawlist {
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
 					
-					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
+					g.translate(0, PApplet.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
 
 					BildweltAssoziationPensee p = (BildweltAssoziationPensee)drawables.get(drawableIndex-1);
 					
-					if(p.isVisible() && r.mode() != p.OFF_SCREEN) p.draw();
+					p.draw();
 					
 					g.popMatrix();
 					
 					penseeRotation += 10f;
 				} else {
 					// draw menu swarms
-					if(r.mode() != r.OFF_SCREEN) r.draw();
+					r.draw();
 				}
 			}
 

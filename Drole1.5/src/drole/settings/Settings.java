@@ -9,7 +9,7 @@ public class Settings {
 	
 	public static short MAX_LOG_ENTRYS						=	  30;
 	
-	public static boolean DRAW_LOGS							=	true;
+	public static boolean DRAW_LOGS							=	false;
 	
 	public static boolean MOUSE_IS_HAND						= 	true;
 	

@@ -57,6 +57,9 @@ public abstract class Drawable {
 	private long 		scaleEaseMillis			=	0;
 	private long 		scaleEaseTime			=	0;
 
+	protected float 	gestureRotation 		= 	0.0f;
+	protected float 	gestureScaling 			= 	0.0f;
+	
 	private float[][] 	lights					= 	new float[8][10];
 	
 	private float[]		ambient					=	new float[]{0.5f, 0.5f, 0.5f, 1.0f};
@@ -70,6 +73,14 @@ public abstract class Drawable {
 		resetLights();
 	}
 
+	public void setGestureRotation(float gestureRotation) {
+		this.gestureRotation = gestureRotation;
+	}
+	
+	public void setGestureScaling(float gestureScaling) {
+		this.gestureScaling = gestureScaling;
+	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -201,7 +212,7 @@ public abstract class Drawable {
 	}
 	
 	public PVector rotation(float x, float y, float z) {
-		rotation 		= new PVector(x, y, z);
+		rotation 				= new PVector(x, y, z);
 
 		return rotation();
 	}
@@ -241,15 +252,9 @@ public abstract class Drawable {
 	}
 
 	public void fadeIn(float time) {
-		if(mode() == Drawable.FADING_IN) {
-			fadeTime = time;	
-		}
-		
-		if(mode() == Drawable.OFF_SCREEN) {
-			fadeTime = time;
-			currentFadeTime = 0;
-			fade = 0;			
-		}
+		fadeTime = time;
+		currentFadeTime = 0;
+		fade = 0;
 
 		visible = true;
 		mode(FADING_IN);
@@ -259,12 +264,16 @@ public abstract class Drawable {
 		fadeTime = time;
 		currentFadeTime = time;
 		fade = 1;
+		
 		mode(FADING_OUT);
 	}
 
 	public void update() {
 	    if(mode() == FADING_IN && currentFadeTime == fadeTime) mode(ON_SCREEN);
-	    if(mode() == FADING_OUT && currentFadeTime == 0) mode(OFF_SCREEN);
+	    if(mode() == FADING_OUT && currentFadeTime == 0) {
+	    	e.p.logLn("FADING OUT DONE");
+	    	mode(OFF_SCREEN);
+	    }
 	    
 	    if(mode() == FADING_IN) currentFadeTime++;
 	    if(mode() == FADING_OUT) currentFadeTime--;
@@ -317,7 +326,7 @@ public abstract class Drawable {
 	    	} else {
 	    		scale = targetScale.get();
 	    	}
-	    }	    
+	    }
 	}
 
 	public abstract void draw();

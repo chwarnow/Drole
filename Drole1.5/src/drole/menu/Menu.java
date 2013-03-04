@@ -3,7 +3,6 @@ package drole.menu;
 
 import processing.core.PApplet;
 import processing.core.PVector;
-import codeanticode.glgraphics.GLModel;
 import codeanticode.glgraphics.GLTexture;
 
 import com.madsim.engine.Engine;
@@ -20,21 +19,22 @@ import com.madsim.ui.kinetics.gestures.RotationInterpreter;
 import com.madsim.ui.kinetics.gestures.TwoHandPushInterpreter;
 import com.madsim.ui.kinetics.gestures.TwoHandPushListener;
 
-import drole.gfx.ribbon.RibbonGlobe;
 
-public class Menu extends Drawable implements RipMotionListener, AngleDetectionListener, TwoHandPushListener, KinectUserEventListener {
+public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandPushListener, KinectUserEventListener {
 
+	private Engine e;
+	
 	private Kinect kinect;
 	
 	private Drawable[] worlds;
+	
+	private MenuGlobe menuGlobe;
 	
 	private float NUM_WORLDS = 5;
 	
 	private int activeWorld;
 	
 	public boolean inWorld = false;
-	
-	private RibbonGlobe globe;
 	
 	private float a = 0.0f;
 	private float radius;
@@ -63,8 +63,8 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 	
 	private boolean bodyLockdown = false;
 	
-	public Menu(Engine e, Kinect kinect, PVector position, float radius, Drawable[] worlds) {
-		super(e);
+	public Menu(Engine e, Kinect kinect, MenuGlobe menuGlobe, PVector position, float radius, Drawable[] worlds) {
+		this.e = e;
 		
 		this.worlds = worlds;
 		NUM_WORLDS = worlds.length;
@@ -72,11 +72,9 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		this.kinect = kinect;
 		kinect.addUserEventListener(this);
 		
+		this.menuGlobe = menuGlobe;
+		
 		this.radius = radius;
-		
-		position(position);
-		
-		dimension = new PVector(radius, radius, radius);
 		
 		a = e.p.random(0, PApplet.TWO_PI);
 		
@@ -99,9 +97,7 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		angleDetectionLeft.addListener(this);
 		
 		angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, -1400f, 1);
-		angleDetectionRight.addListener(this);		
-		
-		globe = new RibbonGlobe(e, position, dimension);
+		angleDetectionRight.addListener(this);
 		
 		calculateActiveWorld();
 	}
@@ -161,12 +157,7 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		}
 	}
 	
-	@Override
 	public void update() {
-		super.update();
-		
-		globe.update();
-		
 		updateBodyMovement();
 		checkBodyMovement();
 		
@@ -190,45 +181,37 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		if(PApplet.abs(a - aa) > 0.001f) a = PApplet.lerp(a, aa, worldGravity);		
 		a = getActiveWorldA();
 		*/
+		
+		menuGlobe.setGestureRotation(a);
 	}
 	
-	@Override
 	public void draw() {
-		if(globe.mode() == Drawable.ON_SCREEN) {
-			g.pushMatrix();
+		if(menuGlobe.mode() == Drawable.ON_SCREEN) {
+			e.g.pushMatrix();
 		
-				g.noStroke();
+				e.g.translate(0, 0, -1500);
+			
+				e.g.noStroke();
 			
 				for(int i = 0; i < NUM_WORLDS; i++) {
-					if(i == activeWorld) g.fill(200, 0, 0);
-					else g.fill(255);
+					if(i == activeWorld) e.g.fill(200, 0, 0);
+					else e.g.fill(255);
 					
 					PVector p1 = getPointOnCircleXZ(radius, a, i, 0, 1, 0);
-					g.pushMatrix();
-						g.translate(p1.x, p1.y, p1.z);
-						g.sphere(20);
-					g.popMatrix();
+					e.g.pushMatrix();
+						e.g.translate(p1.x, p1.y, p1.z);
+						e.g.sphere(20);
+					e.g.popMatrix();
 				}
 			
-				g.fill(200);
-				g.pushMatrix();
-					g.translate(0, 0, 0);
-					g.ellipse(0, 0, 10, 10);
-				g.popMatrix();
+				e.g.fill(200);
+				e.g.pushMatrix();
+					e.g.translate(0, 0, 0);
+					e.g.ellipse(0, 0, 10, 10);
+				e.g.popMatrix();
 		
-			g.popMatrix();
+			e.g.popMatrix();
 		}
-		
-		g.pushMatrix();
-		g.pushStyle();
-			
-			g.translate(0, 0, -1500);
-			g.rotateY(ri.get()[0]);
-			
-			globe.draw();
-			
-		g.popStyle();
-		g.popMatrix();
 	}
 	
 	public PVector getPointOnCircleXZ(float r, float a, float world, float d, float xOff, float yOff) {
@@ -246,7 +229,7 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 	public void ripGestureFound() {
 		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && !inWorld) {
 			e.p.logLn("Pull Gesture found");
-			e.transitionBetweenDrawables(globe, worlds[activeWorld]);
+			e.transitionBetweenDrawables(menuGlobe, worlds[activeWorld]);
 			inWorld = true;
 		}
 	}
@@ -286,7 +269,8 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && angleDetectionRight.status() == AngleDetection.IN_ANGLE && inWorld) {
 			e.p.logLn("Two hand push occured!");
 			ripi.forceCooldown();
-			e.transitionBetweenDrawables(worlds[activeWorld], globe);
+			e.transitionBetweenDrawables(worlds[activeWorld], menuGlobe);
+			inWorld = false;
 		}
 	}
 

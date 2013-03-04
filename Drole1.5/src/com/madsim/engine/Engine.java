@@ -108,7 +108,7 @@ public class Engine {
 	public void update(String name) {
 		Drawable dl = drawables.get(name);
 		
-		p.pinLog("Drawbale "+dl.name(), dl.mode());
+//		p.pinLog("Drawbale "+dl.name(), dl.mode());
 		
 		if(
 			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
@@ -299,7 +299,7 @@ public class Engine {
 			g.noLights();
 			
 			if(tweeningOut.mode() == Drawable.FADING_OUT) {
-				p.pinLog("FADING OUT", ambientLight[0]);
+				p.pinLog("FADING OUT", tweeningOut.fade());
 					
 				if(tweeningOut.usesLights()) lights = tweeningOut.getLights();
 					
@@ -310,7 +310,7 @@ public class Engine {
 			}
 			
 			if(tweeningIn.mode() == Drawable.FADING_IN) {
-				p.pinLog("FADING IN", ambientLight[0]);
+				p.pinLog("FADING IN", tweeningIn.fade());
 					
 				if(tweeningIn.usesLights()) lights = tweeningIn.getLights();
 					
@@ -353,7 +353,11 @@ public class Engine {
 				tweeningIn.fadeIn(30);
 				tweenedIn = true;
 			}
-			if(tweeningOut.mode() == Drawable.OFF_SCREEN && tweeningIn.mode() == Drawable.ON_SCREEN) tweening = false;
+			if(tweeningOut.mode() == Drawable.OFF_SCREEN && tweeningIn.mode() == Drawable.ON_SCREEN) {
+				p.logLn(tweeningOut.name()+" : "+tweeningOut.mode());
+				p.logLn(tweeningIn.name()+" : "+tweeningIn.mode());
+				tweening = false;
+			}
 		}
 	}
 	
@@ -380,6 +384,8 @@ public class Engine {
 				resetShader();
 				
 				setupLights(dl);
+				
+				p.pinLog("D: "+dl.name(), dl.mode());
 				
 				// Draw
 				g.pushStyle();

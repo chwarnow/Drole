@@ -158,7 +158,7 @@ public class Room extends Drawable {
 		g.pushStyle();
 		g.pushMatrix();
 			
-			g.translate(position.x, position.y, position.z);
+			g.translate(position.x, position.y+55, position.z);
 			
 			g.noFill();
 			g.noStroke();

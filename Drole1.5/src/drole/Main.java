@@ -19,7 +19,6 @@ import com.madsim.engine.shader.PolyLightAndColorShader;
 import com.madsim.engine.shader.PolyLightAndTextureAndEMShader;
 import com.madsim.engine.shader.PolyLightAndTextureShader;
 import com.madsim.engine.shader.RoomShader;
-import com.madsim.fakebildwelten.BildweltFabric;
 import com.madsim.fakebildwelten.BildweltMicroMacro;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
@@ -31,6 +30,7 @@ import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.room.Room;
 import drole.gfx.sehstrahlen.BildweltOptik;
 import drole.menu.Menu;
+import drole.menu.MenuGlobe;
 import drole.settings.Settings;
 
 import penner.easing.Quad;
@@ -82,7 +82,8 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	
 	/* Menu */
 	private Menu menu;
-
+	private MenuGlobe menuGlobe;
+	
 	private int fakeActiveWorld = 0;
 	
 	private PFont mainFont;
@@ -94,7 +95,6 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	private BildweltMicroMacro bildweltMicroMacro;
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
-	private BildweltFabric bildweltFabric;
 	private BildweltArchitecture bildweltArchitecture;
 	private Spektakel bildweltSpektakel;
 	
@@ -180,8 +180,8 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	}
 	
 	private void setupWorlds() {
-		worlds[0] = bildweltArchitecture;
-		worlds[1] = bildweltAssoziation;
+		worlds[1] = bildweltArchitecture;
+		worlds[0] = bildweltAssoziation;
 		worlds[2] = bildweltMicroMacro;
 		worlds[3] = bildweltOptik;
 		worlds[4] = bildweltSpektakel;
@@ -207,8 +207,10 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
 		
-		menu = new Menu(engine, kinect, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM, worlds);
-		engine.addDrawable("Menu", menu);
+		menuGlobe = new MenuGlobe(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), new PVector(Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM));
+		engine.addDrawable("MenuGlobe", menuGlobe);		
+		
+		menu = new Menu(engine, kinect, menuGlobe, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM, worlds);
 	}
 	
 	private void setupSpektakel(){
@@ -234,6 +236,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 
 	private void setupArchitectureWorld() {
 		bildweltArchitecture = new BildweltArchitecture(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), new PVector(Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM));
+		bildweltArchitecture.hide();
 		
 		engine.addDrawable("ArchitectureWorld", bildweltArchitecture);
 	}
@@ -255,15 +258,6 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		bildweltAssoziation.hide();
 		
 		engine.addDrawable("AssoziationWorld", bildweltAssoziation);
-	}
-	
-	private void setupFabricWorld() {
-		logLn("Initializing world 'Fabrik' ...");
-		
-		bildweltFabric = new BildweltFabric(engine);
-		bildweltFabric.hide();
-		
-		engine.addDrawable("FabricWorld", bildweltFabric);
 	}
 
 	private void updateHead() {
@@ -321,12 +315,12 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 
 	private void transitToWorld(int worldID) {
 		logLn("Transition from Menu to World no. "+worldID);
-		engine.transitionBetweenDrawables(menu, worlds[worldID]);
+		engine.transitionBetweenDrawables(menuGlobe, worlds[worldID]);
 	}
 	
 	private void transitToMenu(int worldID) {
 		logLn("Transition from World no. "+worldID+" to menu");
-		engine.transitionBetweenDrawables(worlds[worldID], menu);
+		engine.transitionBetweenDrawables(worlds[worldID], menuGlobe);
 	}
 	
 	@Override
@@ -406,6 +400,9 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 
 			// Draw Real World Screen
 			// drawRealWorldScreen();
+			
+			menu.update();
+			menu.draw();
 		}
 	}
 
@@ -436,10 +433,6 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		case 'f':
 			bildweltSpektakel.printForces();
 			break;	
-			
-			
-			
-			
 		case '0':
 			transitToMenu(fakeActiveWorld);
 			break;
