@@ -65,7 +65,7 @@ void main() {
 	else preLightColor = gl_Color;
 
 	// Calculate Light color
-	vec4 color = preLightColor;// * ambient;
+	vec4 color = preLightColor * ambient;
  
 	if(numLights > 0) {
 		for(int i = 0; i < numLights; i++) color += pointLight(i);

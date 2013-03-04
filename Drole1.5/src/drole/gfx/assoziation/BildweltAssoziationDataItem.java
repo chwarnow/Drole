@@ -90,7 +90,7 @@ public class BildweltAssoziationDataItem extends Thread {
 		if(agents != null) agents = null;//for(int i=0;i<agents.length;i++) if(agents[i] != null) agents[i] = null;
 		
 		agents = new BildweltAssoziationAgent[agentsCount];
-
+		
 		int i=0;
 		for (int x=0;x<content.width;x++) {
 			for (int y=0;y<content.height;y++) {

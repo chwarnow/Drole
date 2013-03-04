@@ -19,6 +19,7 @@ public class BildweltAssoziation extends Drawable {
 	private float smoothedRotation 				= 0;
 	private float smoothedRotationSpeed 		= .1f;
 	private int activePensee					= 0;
+	
 	public BildweltAssoziation(Engine e, PVector position, PVector dimension) {
 		super(e);
 		position(position);
@@ -35,6 +36,8 @@ public class BildweltAssoziation extends Drawable {
 			pensee.setPosition(.5f);
 			pensees[i] = pensee;
 		}
+		
+		setPensee(activePensee);
 	}
 	
 	@Override
@@ -42,13 +45,10 @@ public class BildweltAssoziation extends Drawable {
 		super.update();
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
-		if(e.p.frameCount%200 == 0) {
-			int nextPenseeID = activePensee;
-			if(nextPenseeID == pensees.length-1) nextPenseeID = 0;
-			else nextPenseeID++;
-			setPensee(nextPenseeID);
-		}
-		
+		// set active slide
+		int newSliceID = (int) (gestureScaling * (pensees.length-1));
+		if(newSliceID != activePensee) setPensee(newSliceID);
+
 		// update pensees
 		for(BildweltAssoziationPensee pensee:pensees) {
 			// update pensee when being on screen
