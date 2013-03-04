@@ -130,6 +130,7 @@ public class Spektakel extends Drawable {
 
 	@Override
 	public void draw() {
+		//sprites
 		e.usePoints();
 
 		setAmbient(0.4f, 0.3f, 0.3f);

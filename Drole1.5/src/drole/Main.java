@@ -25,6 +25,7 @@ import com.madsim.fakebildwelten.BildweltMicroMacro;
 import com.madsim.fakebildwelten.BildweltOptik;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
+import com.marctiedemann.micromacro.BildweltNewMicroMacro;
 import com.marctiedemann.spektakel.Spektakel;
 
 import drole.gfx.room.Room;
@@ -97,10 +98,13 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	
 //	private MMWorld bildweltMicroMacro;
 	private BildweltMicroMacro bildweltMicroMacro;
+	private BildweltNewMicroMacro bildweltNewMicroMacro;
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
 	private BildweltFabric bildweltFabric;
 	private Spektakel bildweltSpektakel;
+	
+	
 	
 	public void setup() {
 		size(Settings.VIRTUAL_SCREEN_WIDTH, Settings.VIRTUAL_SCREEN_HEIGHT, GLConstants.GLGRAPHICS);
@@ -162,7 +166,9 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		
 //		setupMenu();
 		
-		setupSpektakel();
+//		setupSpektakel();
+		
+		setupNewMicroMacroWorld();
 		
 //		setupMicroMacroWorld();
 		
@@ -235,6 +241,17 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
 	}	
+	
+	
+	private void setupNewMicroMacroWorld(){
+		logLn("Initializing world 'New MicroMacro' ...");
+//		bildweltMicroMacro = new MMWorld(engine);
+		bildweltNewMicroMacro = new BildweltNewMicroMacro(engine);
+		bildweltNewMicroMacro.hide();
+		
+		engine.addDrawable("New MicroMacro", bildweltNewMicroMacro);
+//		engine.addDrawable("MicroMacro", new Drop(engine));
+	}
 	
 	private void setupOptikWorld() {
 		logLn("Initializing world 'Optik' ...");
