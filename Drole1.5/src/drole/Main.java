@@ -293,7 +293,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 	}
 
 	public void draw() {
-		println(frameRate);
+		// println(frameRate);
 		// Update the cam
 		kinect.update();
 

@@ -28,7 +28,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	BildweltAssoziationDataItem dataItem;
 
 	// model vars
-	private float noiseScale = 250, noiseStrength = 20; 
+	public float noiseScale = 250, noiseStrength = 20; 
 	private int vertexCount = 0;
 	private GLTexture content;
 	private GLModel imageQuadModel;
@@ -73,6 +73,38 @@ public class BildweltAssoziationPensee extends Drawable {
 			cosLUT[i] = PApplet.cos(((float)i/cosDetail)*PApplet.PI);
 		}
 
+	}
+	
+	/**
+	 * alternative constructor with position steps amount
+	 * @param e
+	 * @param imagePath
+	 * @param sphereConstraintRadius
+	 * @param quadHeight
+	 * @param penseeCenter
+	 * @param constraintCenter
+	 * @param positionSteps
+	 */
+	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter, int positionSteps) {
+		super(e);
+		this.positionSteps = positionSteps;
+		stopFrame = positionSteps;
+		
+		this.e = e;
+		this.quadHeight = quadHeight;
+		// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+		e.p.noiseSeed((long)e.p.random(1000));
+
+		// create data
+		if(imagePath.length() > 0) {
+			dataItem = new BildweltAssoziationDataItem();
+			dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+		}
+		
+		// create cos lookup table
+		for(int i=0;i<cosDetail;i++) {
+			cosLUT[i] = PApplet.cos(((float)i/cosDetail)*PApplet.PI);
+		}
 	}
 	@Override
 	public void update() {
