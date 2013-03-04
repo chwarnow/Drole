@@ -252,7 +252,7 @@ public class BildweltArchitecture extends Drawable {
 		g.scale(scale.x*.5f, scale.y*.5f, scale.z*.5f);
 
 		// set shader for pensees
-		e.startShader("JustColor");
+		// e.startShader("JustColor");
 
 		if(wallID == 0) if(back.isShowing())  {
 			g.pushMatrix();
@@ -296,13 +296,10 @@ public class BildweltArchitecture extends Drawable {
 		}
 
 		// draw highres images
-
-		// todo: light settings
-		disableLights();
-
+		
 		// set shader for highres images
-		e.startShader("PolyLightAndTexture");
-
+		// e.startShader("PolyLightAndTexture");
+		
 		float introThreshold = .75f;
 		
 		// back

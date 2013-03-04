@@ -218,8 +218,6 @@ public class BildweltAssoziationPensee extends Drawable {
 
 			for(int j=0;j<agentVertexNum-1;j++) {
 				
-				
-				
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
 				//PVector thirdP = agentsVertices[j+1];
