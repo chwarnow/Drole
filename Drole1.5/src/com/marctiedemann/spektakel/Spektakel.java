@@ -67,7 +67,7 @@ public class Spektakel extends Drawable {
 
 		e.requestTexture("images/particle4.png");
 
-		useLights();
+	 	useLights();
 		// i x y z r g b f1 f2 f3
 
 	}
@@ -149,9 +149,9 @@ public class Spektakel extends Drawable {
 		float falloff = 0.004f;
 
 		if (centerSpawned) {
-			falloff = EngineApplet.map(centerSystem.getTimeToLife(), 255, 0, 0.0006f, 0.001f);
+			falloff = EngineApplet.map(centerSystem.getTimeToLife(), 255, 0, 0.0005f, 0.0006f);
 
-			setPointLight(0, 0, 0, -0, 120, 225, 255, 0.3f,
+			setPointLight(0, 0, 0, -900, 120, 225, 255, 0.3f,
 					falloff + e.p.random(-0.00015f, 0.00015f), 0.0f);
 
 		}
@@ -259,7 +259,7 @@ public class Spektakel extends Drawable {
 
 	public void updateRotaion(int mousePos) {
 
-		// centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
+		 centerSystem.setRotation(EngineApplet.map(mousePos,0,e.p.width,-1,1));
 	}
 
 	public void pauseSystem() {

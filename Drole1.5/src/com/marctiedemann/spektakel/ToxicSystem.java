@@ -21,7 +21,7 @@ import toxi.physics.behaviors.AttractionBehavior;
 
 public class ToxicSystem extends ParticleSystem {
 
-	private TriangleMesh toxiMesh = new TriangleMesh();
+	protected TriangleMesh toxiMesh = new TriangleMesh();
 	
 	
 	//size and shooting angle
@@ -166,6 +166,8 @@ public class ToxicSystem extends ParticleSystem {
 		initSprites();
 		initTrails();
 
+		
+		
 	}
 
 	
