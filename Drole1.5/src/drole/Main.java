@@ -247,7 +247,7 @@ public class Main extends EngineApplet implements MouseWheelListener {
 		logLn("Initializing world 'New MicroMacro' ...");
 //		bildweltMicroMacro = new MMWorld(engine);
 		bildweltNewMicroMacro = new BildweltNewMicroMacro(engine);
-		bildweltNewMicroMacro.hide();
+//		bildweltNewMicroMacro.hide();
 		
 		engine.addDrawable("New MicroMacro", bildweltNewMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
@@ -579,7 +579,9 @@ public class Main extends EngineApplet implements MouseWheelListener {
 			offCenterOptik.updateHeadPosition(mouseHead);
 			
 			//needs to be hooked to hand gesture
-			bildweltSpektakel.updateRotaion(e.getY());
+	//		bildweltSpektakel.updateRotaion(e.getY());
+			
+			bildweltNewMicroMacro.setMouseY(e.getY());
 	//		println(e.getY());
 		}
 	}
