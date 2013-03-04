@@ -161,14 +161,22 @@ public class BildweltArchitecture extends Drawable {
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
-
-		back.hideMe();
-		bottom.hideMe();
-		top.hideMe();
-		left.hideMe();
-		right.hideMe();
+		/*
+		back.currPosition = 0;
+		bottom.currPosition = 0;
+		top.currPosition = 0;
+		left.currPosition = 0;
+		right.currPosition = 0;
+		*/
+		
+		if(back.isShowing()) back.hideMe();
+		if(bottom.isShowing()) bottom.hideMe();
+		if(top.isShowing()) top.hideMe();
+		if(left.isShowing()) left.hideMe();
+		if(right.isShowing()) right.hideMe();
 
 		// TODO: fade out highres quads via alpha
+		// CURRENT_MODE = MODE_VOID;
 	}
 
 	@Override
@@ -183,7 +191,7 @@ public class BildweltArchitecture extends Drawable {
 
 		if(CURRENT_MODE == MODE_SHOWING) {
 			// go through planes and show them one after another
-
+			
 			// back
 			if(wallID == 0) {
 				if(!back.isShowing()) {
@@ -239,6 +247,7 @@ public class BildweltArchitecture extends Drawable {
 
 	@Override
 	public void draw() {
+		
 		g.pushStyle();
 		g.pushMatrix();
 
@@ -264,7 +273,7 @@ public class BildweltArchitecture extends Drawable {
 			g.popMatrix();
 		}
 		// bottom
-		if(wallID == 2) {
+		if(wallID == 2) if(bottom.isShowing())  {
 			g.pushMatrix();
 			g.rotateX(3.1414f/2);
 			g.translate(bottomPosition.x, bottomPosition.y, bottomPosition.z);
@@ -273,7 +282,7 @@ public class BildweltArchitecture extends Drawable {
 		}
 
 		// right
-		if(wallID == 3) {
+		if(wallID == 3) if(right.isShowing())  {
 			g.pushMatrix();
 			g.rotateY(3.1414f/2);
 			g.translate(rightPosition.x, rightPosition.y, rightPosition.z);
@@ -282,7 +291,7 @@ public class BildweltArchitecture extends Drawable {
 		}
 
 		// top
-		if(wallID == 4) {
+		if(wallID == 4) if(top.isShowing())  {
 			g.pushMatrix();
 			g.rotateX(3.1414f/2);
 			g.translate(topPosition.x, topPosition.y, topPosition.z);
@@ -307,7 +316,7 @@ public class BildweltArchitecture extends Drawable {
 			g.pushMatrix();
 			g.translate(backPosition.x, backPosition.y, backPosition.z);
 			e.setupModel(backModel);
-			backModel.setColors(255, alpha*255);
+			backModel.setColors(255, alpha*255*fade);
 			backModel.render();
 			g.popMatrix();
 		}
@@ -317,7 +326,7 @@ public class BildweltArchitecture extends Drawable {
 			g.pushMatrix();
 			g.rotateY(3.1414f/2);
 			g.translate(leftPosition.x, leftPosition.y, leftPosition.z);
-			leftModel.setColors(255, alpha*255);
+			leftModel.setColors(255, alpha*255*fade);
 			leftModel.render();
 			g.popMatrix();
 		}
@@ -328,7 +337,7 @@ public class BildweltArchitecture extends Drawable {
 			g.pushMatrix();
 			g.rotateX(3.1414f/2);
 			g.translate(bottomPosition.x, bottomPosition.y, bottomPosition.z);
-			bottomModel.setColors(255, alpha*255);
+			bottomModel.setColors(255, alpha*255*fade);
 			bottomModel.render();
 			g.popMatrix();
 		}
@@ -339,7 +348,7 @@ public class BildweltArchitecture extends Drawable {
 			g.pushMatrix();
 			g.rotateY(3.1414f/2);
 			g.translate(rightPosition.x, rightPosition.y, rightPosition.z);
-			rightModel.setColors(255, alpha*255);
+			rightModel.setColors(255, alpha*255*fade);
 			rightModel.render();
 			g.popMatrix();
 		}
@@ -350,7 +359,7 @@ public class BildweltArchitecture extends Drawable {
 			g.pushMatrix();
 			g.rotateX(3.1414f/2);
 			g.translate(topPosition.x, topPosition.y, topPosition.z);
-			topModel.setColors(255, alpha*255);
+			topModel.setColors(255, alpha*255*fade);
 			topModel.render();
 			g.popMatrix();
 		}
