@@ -138,6 +138,12 @@ public class RibbonGlobe extends Drawlist {
 	
 	@Override
 	public void draw() {
+		useLights();
+		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
+		
+		setAmbient(1.0f, 1.0f, 1.0f);
+		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations

@@ -171,19 +171,20 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		/* CONTENT */
 		setupRoom();
 		
+		setupSpektakel();
+		
+		setupMicroMacroWorld();
+		
+		setupOptikWorld();
+		
+		setupAssoziationWorld();
+		
+		setupFabricWorld();
+		
+		setupWorlds();
+		
+		// !ALWAYS SETUP WORLDS FIRST!
 		setupMenu();
-		
-//		setupSpektakel();
-		
-//		setupMicroMacroWorld();
-		
-//		setupOptikWorld();
-		
-//		setupAssoziationWorld();
-		
-//		setupFabricWorld();
-		
-//		setupWorlds();
 		
 		/* START */
 		switchMode(LIVE);
@@ -217,7 +218,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	private void setupMenu() {
 		logLn("Initializing Menu ...");
 		
-		menu = new Menu(engine, kinect, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM);
+		menu = new Menu(engine, kinect, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), Settings.MENU_GLOBE_RADIUS_MM, worlds);
 		engine.addDrawable("Menu", menu);
 	}
 	
@@ -393,22 +394,6 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 				KinectGFXUtils.drawSkeleton(kinect.getCurrentUserID());
 			}
 			
-			/*
-			if(rotationTarget.inTarget()) {
-				noFill();
-				stroke(200, 200, 0);
-				strokeWeight(3);
-				
-				PVector leftHand = new PVector(0, 0, 0);
-				PVector rightHand = new PVector(0, 0, 0);
-				context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_LEFT_HAND, leftHand);
-				context.getJointPositionSkeleton(1, SimpleOpenNI.SKEL_RIGHT_HAND, rightHand);				
-
-				println(PVector.angleBetween(leftHand, rightHand));
-				globe.rotation = PVector.angleBetween(leftHand, rightHand);
-			}
-			*/
-			
 			engine.endDraw();
 		}
 
@@ -424,115 +409,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 
 			// Draw Real World Screen
 			// drawRealWorldScreen();
-			
-			if(!FREEMODE) {
-				/*
-				pinLog("Head", kinect.getJoint(Kinect.SKEL_HEAD));
-				pinLog("Left Hand", kinect.getJoint(Kinect.SKEL_LEFT_HAND));
-				pinLog("Left Shoulder", kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
-				pinLog("Angle (Hand & Shoulder)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)));
-				pinLog("Angle (Hand & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
-				pinLog("Angle (Hand & Elbow)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_ELBOW)));
-				pinLog("Angle (Elbow & Hip)", PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_ELBOW), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
-				pinLog("Dist (Hand & Hip)", PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)));
-				
-				if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER)) < 0.16f) {
-					pinLog("Scale Gesture", "ON");
-					
-					scaling = map(PVector.dist(kinect.getJoint(Kinect.SKEL_LEFT_HAND), kinect.getJoint(Kinect.SKEL_LEFT_HIP)), 0f, 1000f, -200, -1500);
-					
-					menu.position(0, 0, scaling);
-					
-					pinLog("Scaling", scaling);
-					
-					isScaling = true;
-				} else {
-					pinLog("Scale Gesture", "OFF");
-					
-					isScaling = false;
-				}
-	
-				if(PVector.angleBetween(kinect.getJoint(Kinect.SKEL_RIGHT_HAND), kinect.getJoint(Kinect.SKEL_RIGHT_SHOULDER)) < 0.12f) {
-					pinLog("Rotate Gesture", "ON");
-					
-					if(!isRotating) {
-						lastRightHand = kinect.getJoint(Kinect.SKEL_RIGHT_HAND);
-						isRotating = true;
-					}
-					
-					float rightHandSpeed = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).x - lastRightHand.x;
-					
-					lastRightHand = kinect.getJoint(Kinect.SKEL_RIGHT_HAND);
-					
-					pinLog("Right Hand Speed", rightHandSpeed);
-					
-					if(abs(rightHandSpeed) > 40) {
-						if(backRotationBlock && ((rotationSpeedY < 0.0f && rightHandSpeed > 0.0f) || (rotationSpeedY > 0.0f && rightHandSpeed < 0.0f))) {
-							backRotationBlock = false;
-						} else {
-							rotationSpeedY += map(rightHandSpeed, -500, 500, -0.2f, 0.2f);
-							backRotationBlock = true;
-						}
-					} else {
-						if(!backRotationBlock) {
-//							rotationSpeedY += map(rightHandSpeed, -40, 40, -0.01f, 0.01f);
-						}
-					}
-				} else {
-					pinLog("Rotate Gesture", "OFF");
-					isRotating = false;
-				}
-				
-				rotationSpeedY *= 0.90;
-				
-				if(abs(rotationSpeedY) < 0.001f) {
-					rotationSpeedY = 0.0f;
-					backRotationBlock = false;
-				}
-
-				pinLog("rotationSpeedY", rotationSpeedY);
-				
-				menu.rotation(0, 0, menu.rotation().z+rotationSpeedY);
-				
-				// TRANS INTO WORLD
-				
-				if(isScaling && menu.getActiveWorld() != Menu.NO_ACTIVE_WORLD && scaling > -600f && !menu.inWorld) {
-					menu.inWorld = true;
-					transitToWorld(menu.getActiveWorld());
-				}
-				
-				if(!isInGoBackGesture) ticksInGoBackGesture = 0;
-				if(menu.inWorld && isScaling && isRotating) {
-					
-					float handsZL  = lastHandsZL-kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
-					float handsZR  = lastHandsZL-kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
-					pinLog("Hand Z L", handsZL);
-					pinLog("Hand Z R", handsZR);
-					if(isInGoBackGesture) {
-						if(ticksInGoBackGesture > 30) {
-							if(lastHandsZL-handsZL > 100.0f && lastHandsZR-handsZR > 100.0f) {
-								transitToMenu(0);
-								
-								menu.inWorld = false;
-							}
-						}
-						ticksInGoBackGesture++;
-					} else {
-						ticksInGoBackGesture = 0;
-					}
-					isInGoBackGesture = true;
-				}
-				
-				lastHandsZL = kinect.getJoint(Kinect.SKEL_LEFT_HAND).z;
-				lastHandsZR = kinect.getJoint(Kinect.SKEL_RIGHT_HAND).z;
-				*/
-			}
-		
-		//	pinLog("IN WORLD", menu.inWorld);
-
 		}
-	
-		pinLog("HEAD Y", kinect.getJoint(Kinect.SKEL_HEAD));
 	}
 
 

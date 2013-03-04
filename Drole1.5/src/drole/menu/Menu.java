@@ -26,6 +26,8 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 
 	private Kinect kinect;
 	
+	private Drawable[] worlds;
+	
 	private float NUM_WORLDS = 5;
 	
 	private int activeWorld;
@@ -61,8 +63,11 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 	
 	private boolean bodyLockdown = false;
 	
-	public Menu(Engine e, Kinect kinect, PVector position, float radius) {
+	public Menu(Engine e, Kinect kinect, PVector position, float radius, Drawable[] worlds) {
 		super(e);
+		
+		this.worlds = worlds;
+		NUM_WORLDS = worlds.length;
 		
 		this.kinect = kinect;
 		kinect.addUserEventListener(this);
@@ -96,7 +101,7 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, -1400f, 1);
 		angleDetectionRight.addListener(this);		
 		
-//		globe = new RibbonGlobe(e, position, dimension);
+		globe = new RibbonGlobe(e, position, dimension);
 		
 		calculateActiveWorld();
 	}
@@ -160,6 +165,8 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 	public void update() {
 		super.update();
 		
+		globe.update();
+		
 		updateBodyMovement();
 		checkBodyMovement();
 		
@@ -186,64 +193,42 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 	}
 	
 	@Override
-	public void draw() {	
-		g.pushMatrix();
-	
-			g.noStroke();
-		
-			for(int i = 0; i < NUM_WORLDS; i++) {
-				if(i == activeWorld) g.fill(200, 0, 0);
-				else g.fill(255);
-				
-				PVector p1 = getPointOnCircleXZ(radius, a, i, 0, 1, 0);
-				g.pushMatrix();
-					g.translate(p1.x, p1.y, p1.z);
-					g.sphere(20);
-				g.popMatrix();
-			}
-		
-			g.fill(200);
+	public void draw() {
+		if(globe.mode() == Drawable.ON_SCREEN) {
 			g.pushMatrix();
-				g.translate(0, 0, 0);
-				g.ellipse(0, 0, 10, 10);
+		
+				g.noStroke();
+			
+				for(int i = 0; i < NUM_WORLDS; i++) {
+					if(i == activeWorld) g.fill(200, 0, 0);
+					else g.fill(255);
+					
+					PVector p1 = getPointOnCircleXZ(radius, a, i, 0, 1, 0);
+					g.pushMatrix();
+						g.translate(p1.x, p1.y, p1.z);
+						g.sphere(20);
+					g.popMatrix();
+				}
+			
+				g.fill(200);
+				g.pushMatrix();
+					g.translate(0, 0, 0);
+					g.ellipse(0, 0, 10, 10);
+				g.popMatrix();
+		
 			g.popMatrix();
-	
-		g.popMatrix();
-		
-		/*
-		useLights();
-		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		
-		setAmbient(1.0f, 1.0f, 1.0f);
+		}
 		
 		g.pushMatrix();
 		g.pushStyle();
 			
-			g.translate(position.x, position.y, position.z);
-			g.rotateX(PApplet.radians(-90));
-		
-			g.pushMatrix();
-			g.rotateX(rotation.x);
-			g.rotateY(rotation.y);
-			g.rotateZ(rotation.z);
+			g.translate(0, 0, -1500);
+			g.rotateY(ri.get()[0]);
 			
-				for(int i = 0; i < NUM_WORLDS; i++) {
-					e.setupModel(worlds[i]);
-					worlds[i].render();
-				}
-			
-				// GLOBE
-				globe.draw();
-				
-			g.popMatrix();
+			globe.draw();
 			
 		g.popStyle();
 		g.popMatrix();
-		*/
-		
-		e.p.pinLog("Left Hand", kiLeftHand.getPosition()[0]+":"+kiLeftHand.getPosition()[1]+":"+kiLeftHand.getPosition()[2]);
-		e.p.pinLog("Right Hand", kiRightHand.getPosition()[0]+":"+kiRightHand.getPosition()[1]+":"+kiRightHand.getPosition()[2]);
 	}
 	
 	public PVector getPointOnCircleXZ(float r, float a, float world, float d, float xOff, float yOff) {
@@ -259,8 +244,10 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 
 	@Override
 	public void ripGestureFound() {
-		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE) {
+		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && !inWorld) {
 			e.p.logLn("Pull Gesture found");
+			e.transitionBetweenDrawables(globe, worlds[activeWorld]);
+			inWorld = true;
 		}
 	}
 
@@ -296,9 +283,10 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 
 	@Override
 	public void pushGestureFound() {
-		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && angleDetectionRight.status() == angleDetectionLeft.IN_ANGLE) {
+		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && angleDetectionRight.status() == AngleDetection.IN_ANGLE && inWorld) {
 			e.p.logLn("Two hand push occured!");
 			ripi.forceCooldown();
+			e.transitionBetweenDrawables(worlds[activeWorld], globe);
 		}
 	}
 
