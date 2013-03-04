@@ -14,7 +14,7 @@ public class Settings {
 	public static boolean MOUSE_IS_HAND						= 	true;
 	
 	// Kinect
-	public static float KINECT_Y_FUNCTION					= 	0.44f;
+	public static float KINECT_Y_FUNCTION					= 	0.44547f;
 	
 	// Settings LEAP
 	

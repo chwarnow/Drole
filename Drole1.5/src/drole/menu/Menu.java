@@ -90,10 +90,10 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 		pushi = new TwoHandPushInterpreter(this, kiLeftHand, kiRightHand, 1, 2);
 		pushi.lock();
 		
-		angleDetectionLeft = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, 0.14f, -1);
+		angleDetectionLeft = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, -1400f, 1);
 		angleDetectionLeft.addListener(this);
 		
-		angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, 0.14f, -1);
+		angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, -1400f, 1);
 		angleDetectionRight.addListener(this);		
 		
 //		globe = new RibbonGlobe(e, position, dimension);
@@ -259,7 +259,9 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 
 	@Override
 	public void ripGestureFound() {
-		e.p.logLn("Pull Gesture found");
+		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE) {
+			e.p.logLn("Pull Gesture found");
+		}
 	}
 
 	@Override
@@ -294,8 +296,10 @@ public class Menu extends Drawable implements RipMotionListener, AngleDetectionL
 
 	@Override
 	public void pushGestureFound() {
-		e.p.logLn("Two hand push occured!");
-		ripi.forceCooldown();
+		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && angleDetectionRight.status() == angleDetectionLeft.IN_ANGLE) {
+			e.p.logLn("Two hand push occured!");
+			ripi.forceCooldown();
+		}
 	}
 
 	@Override

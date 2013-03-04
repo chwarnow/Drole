@@ -224,7 +224,7 @@ public class Engine {
 		g.popMatrix();
 			
 		g.pushMatrix();
-		g.translate(100, -(g.height/2)+35, -1);
+		g.translate(50, -(g.height/2)+35, -1);
 			int i = 0;
 			for(Entry<String, String> es : p.pinLog.entrySet()) {
 				g.text(es.getKey(), 0, 17*i);

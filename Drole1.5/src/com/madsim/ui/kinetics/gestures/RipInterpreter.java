@@ -17,7 +17,7 @@ public class RipInterpreter {
 	
 	private boolean inGestureCooldown = false;
 	private long gestureCooldownStart = 0;
-	private long gestureCooldownTime = 1200;
+	private long gestureCooldownTime = 2000;
 	
 	private boolean locked = false;
 	

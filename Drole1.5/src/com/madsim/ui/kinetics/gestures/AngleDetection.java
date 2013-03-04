@@ -12,7 +12,7 @@ public class AngleDetection {
 	
 	private Kinect kinect;
 	
-	public static short IN_ANGLE, OUT_ANGLE;
+	public static short IN_ANGLE = 10, OUT_ANGLE = 20;
 	
 	private int joint1, joint2;
 	
@@ -68,9 +68,13 @@ public class AngleDetection {
 		
 		if(v1 == Kinect.IGNORED_POSITION) return;
 		
-		float ca = PVector.angleBetween(v1, v2);
+//		float ca = PVector.angleBetween(v1, v2);
+		float ca = v1.y;
 		
-//		System.out.println(ca);
+//		System.out.println(name+" : "+(ca + (v1.z * 0.002909))+" : "+v1.z);
+//		System.out.println(name+" : "+(ca)+" : "+(v1.z - v2.z));
+//		System.out.println(name+" :  hand > "+v1.y);
+//		System.out.println(name+" :  shoulder > "+v2.y);
 		
 		if(inDir > 0 && ca >= targetAngle) {
 			addSample(1);
@@ -104,6 +108,7 @@ public class AngleDetection {
 		if((lastSampleResult != 1 || lastSampleResult == -1) && !locked) {
 			lastSampleResult = 1;
 			System.out.println("In angle "+name);
+			status = IN_ANGLE;
 			for(AngleDetectionListener l : listeners) l.inAngle(name);
 		}
 	}
@@ -112,6 +117,7 @@ public class AngleDetection {
 		if((lastSampleResult != 0 || lastSampleResult == -1) && !locked) {	
 			lastSampleResult = 0;
 			System.out.println("Out angle "+name);
+			status = OUT_ANGLE;
 			for(AngleDetectionListener l : listeners) l.lostAngle(name);
 		}
 	}
