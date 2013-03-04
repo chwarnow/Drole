@@ -19,11 +19,16 @@ import toxi.physics.behaviors.AttractionBehavior;
 
 public class FlyingDude extends ParticleSystem {
 
-	PImage dudeImage;
+	private PImage dudeImage;
 
-	float[][] greyLevels;
+	private float[][] greyLevels;
 
-	int counter = 0;
+	private int counter = 0;
+
+	private int imageHeight;
+	private int imageWidth;
+
+	private boolean imageLoadedAndParticlesSpawned = false;
 
 	public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
 			float z) {
@@ -65,13 +70,18 @@ public class FlyingDude extends ParticleSystem {
 
 			}
 		}
+
+		imageHeight = greyLevels.length;
+		imageWidth = greyLevels[0].length;
 	}
 
 	public void spawnNew() {
 
+		System.out.println("spawn Dude");
+
 		counter = 0;
 		bigParticle.clear();
-	//	cleanSytstem();
+		// cleanSytstem();
 
 		shockwave = true;
 
@@ -83,9 +93,6 @@ public class FlyingDude extends ParticleSystem {
 
 		// spread must be at least 1
 		int spread = 5;
-
-		int imageHeight = greyLevels.length;
-		int imageWidth = greyLevels[0].length;
 
 		// initial spread
 		int iSize = 5;
@@ -104,9 +111,9 @@ public class FlyingDude extends ParticleSystem {
 
 					ShapedParticle newPart = new ShapedParticle(e.p, x()
 							+ e.p.random(-iSize, iSize), y()
-							+ e.p.random(-iSize, iSize)-100, z()
-							+ e.p.random(-iSize, iSize), trailLength,
-							decay, greyLevels[i][j]);
+							+ e.p.random(-iSize, iSize) - 100, z()
+							+ e.p.random(-iSize, iSize), trailLength, decay,
+							greyLevels[i][j]);
 
 					newPart.setWeight(e.p.random(0.3f));
 
@@ -117,13 +124,14 @@ public class FlyingDude extends ParticleSystem {
 
 					// System.out.println(" y pos "+yPos);
 
-					VerletParticle targetPoint = new VerletParticle(x() + xPos,
-							y() + yPos, z());
-					targetPoint.lock();
+					newPart.storeTargetPoint(new VerletParticle(x() + xPos, y()
+							+ yPos, z()));
+					newPart.getTargetPoint().lock();
 
 					// maybe replacxe with low force spring to reduce bouncing
 					VerletSpring toxicForce = new VerletSpring(newPart,
-							targetPoint, 0, e.p.random(getSpringPower()));
+							newPart.getTargetPoint(), 0,
+							e.p.random(getSpringPower()));
 					// physics.addParticle(targetPoint);
 					physics.addParticle(newPart);
 					physics.addSpring(toxicForce);
@@ -135,19 +143,31 @@ public class FlyingDude extends ParticleSystem {
 					bigParticle.add(newPart);
 
 				}
-				// physics.addParticle(newPart);
-
-				/*
-				 * newPart = new Particle(p, mySize / 2, f.c.x+x, f.c.y+y,
-				 * f.c.z+z); bigParticle.add(newPart);
-				 * physics.addParticle(newPart);
-				 */
 			}
 		}
 
 		initSprites();
 		// sprites.setSpriteSize(50, 200);
 		initTrails();
+
+		imageLoadedAndParticlesSpawned = true;
+
+	}
+
+	void updateTargets() {
+
+		if (imageLoadedAndParticlesSpawned) {
+
+
+			for (int i = 0; i < bigParticle.size(); i++) {
+
+				
+				bigParticle.get(i).getTargetPoint().x-=5;
+				
+	//			System.out.println(bigParticle.get(i).getTargetPoint());
+
+			}
+		}
 
 	}
 
@@ -171,11 +191,13 @@ public class FlyingDude extends ParticleSystem {
 
 		// System.out.println(bigParticle.get(10).y);
 		super.update();
+
 	}
 
 	@Override
 	public void draw(GLGraphics g) {
 
+		updateTargets();
 		e.setPointSize(2);
 
 		super.draw(g);

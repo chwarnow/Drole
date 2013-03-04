@@ -112,7 +112,7 @@ public class ToxicSystem extends ParticleSystem {
 		float theDecay = decay;
 		int count=0;
 		
-		System.out.println("start spawning");
+		System.out.println("toxic start spawning");
 
 		
 		
