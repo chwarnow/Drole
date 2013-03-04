@@ -68,7 +68,7 @@ void main() {
 	vec4 color = preLightColor * ambient;
  
 	if(numLights > 0) {
-		// for(int i = 0; i < numLights; i++) color += pointLight(i);
+		for(int i = 0; i < numLights; i++) color += pointLight(i);
 	}
 	
     gl_FragColor = color;
