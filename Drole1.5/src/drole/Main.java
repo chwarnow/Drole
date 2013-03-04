@@ -63,7 +63,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	private float rotY = radians(0);
 
 	/* Users Head */
-	private PVector stdHeadPosition = new PVector(0, 0, 3000);
+	private PVector stdHeadPosition = new PVector(0, 0 - (Settings.KINECT_Y_FUNCTION * 3000), 3000);
 	private PVector head = new PVector(0, 0, 0);
 	private long headTransitionTime = 1400;
 	private long headTransiotionStart = 0;
@@ -165,7 +165,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		else logLn("FREEMODE was NOT forced, checking the kinect!");
 		
 		kinect = new Kinect(this, Kinect.VERBOSE, FREEMODE);
-
+		kinect.setYFunction(Settings.KINECT_Y_FUNCTION);
 		kinect.addUserEventListener(this);
 		
 		/* CONTENT */
@@ -532,6 +532,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 
 		}
 	
+		pinLog("HEAD Y", kinect.getJoint(Kinect.SKEL_HEAD));
 	}
 
 
@@ -581,29 +582,36 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		}
 		
 		switch (keyCode) {
-		case LEFT:
-			rotY += 0.1f;
-			
-			break;
-		case RIGHT:
-			// zoom out
-			rotY -= 0.1f;
-			break;
-		case UP:
-			if (keyEvent.isShiftDown())
-				zoomF += 0.1f;
-			else
-				rotX += 0.1f;
-			break;
-		case DOWN:
-			if (keyEvent.isShiftDown()) {
-				zoomF -= 0.01f;
-				if (zoomF < 0.01f)
-					zoomF = 0.01f;
-			} else
-				rotX -= 0.1f;
-			break;
+			case LEFT:
+				rotY += 0.1f;
+				
+				break;
+			case RIGHT:
+				// zoom out
+				rotY -= 0.1f;
+				break;
+			case UP:
+				if (keyEvent.isShiftDown())
+					zoomF += 0.1f;
+				else
+					rotX += 0.1f;
+				break;
+			case DOWN:
+				if (keyEvent.isShiftDown()) {
+					zoomF -= 0.01f;
+					if (zoomF < 0.01f)
+						zoomF = 0.01f;
+				} else
+					rotX -= 0.1f;
+				break;
+			case ENTER:
+				pinLog("Y LOWER LIMIT", kinect.getJoint(Kinect.SKEL_HEAD));
+				break;
+			case SHIFT:
+				pinLog("Y UPPER LIMIT", kinect.getJoint(Kinect.SKEL_HEAD));
+				break;				
 		}
+			
 	}
 
 	public void drawMainScene() {

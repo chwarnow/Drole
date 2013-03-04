@@ -39,6 +39,8 @@ public class Kinect implements SimpleOpenNIConstants {
 	private boolean fakeMode;
 	
 	public static PVector IGNORED_POSITION = new PVector(PositionalMovementInput.IGNORED_VALUE, PositionalMovementInput.IGNORED_VALUE, PositionalMovementInput.IGNORED_VALUE);
+
+	private float yFunction = 0.0f;
 	
 	public Kinect(EngineApplet p, short logLevel) {
 		this(p, logLevel, false);
@@ -65,6 +67,11 @@ public class Kinect implements SimpleOpenNIConstants {
 			
 			c.setMirror(true);
 		}
+	}
+	
+	public void setYFunction(float yFunction) {
+		this.yFunction = yFunction;
+		p.logLn("[Kinect]: Setting Y-Correction to "+yFunction);
 	}
 	
 	public void addUserEventListener(KinectUserEventListener l) {
@@ -112,13 +119,18 @@ public class Kinect implements SimpleOpenNIConstants {
 		if(c != null) {
 			 if(currentUser != NO_USER) {
 				 c.getJointPositionSkeleton(currentUser, joint, std);
+				 std = yCorrection(std.get());
 				 lastPositions.put(joint, std.get());
 			 } else {
 				 std = IGNORED_POSITION.get();
 			 }
 		}
 		
-		return std;
+		return  std;
+	}
+	
+	private PVector yCorrection(PVector v) {
+		return new PVector(v.x, v.y - (v.z * yFunction), v.z);
 	}
 	
 	public PVector getLastPosition(int joint, PVector std) {
