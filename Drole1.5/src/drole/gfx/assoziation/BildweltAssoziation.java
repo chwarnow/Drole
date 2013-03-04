@@ -28,7 +28,7 @@ public class BildweltAssoziation extends Drawable {
 		pensees = new BildweltAssoziationPensee[imagePaths.length];
 		for(int i=0;i<imagePaths.length;i++) {
 			BildweltAssoziationPensee pensee = new BildweltAssoziationPensee(e, imagePaths[i], dimension.x*scale.x, 3.0f, new PVector(0, 0, 0), new PVector(0, 0, 0));
-			pensee.loadPensee();
+			// pensee.loadPensee();
 			pensee.setLooping(false);
 			pensee.stop();
 			pensee.setDelayTime(0);
@@ -50,7 +50,10 @@ public class BildweltAssoziation extends Drawable {
 		}
 		
 		// update pensees
-		for(BildweltAssoziationPensee pensee:pensees) pensee.update();
+		for(BildweltAssoziationPensee pensee:pensees) {
+			// update pensee when being on screen
+			pensee.update();
+		}
 
 	}
 	
@@ -67,14 +70,30 @@ public class BildweltAssoziation extends Drawable {
 	@Override
 	public void fadeIn(float time) {
 		super.fadeIn(time);
+		// load pensees
+		int penseeIndex = 0;
+		for(BildweltAssoziationPensee p:pensees) {
+			p.fadeIn(time);
+			if(!p.isReady()) {
+				p.loadNewImage(
+					imagePaths[penseeIndex++], dimension.x*scale.x, new PVector(0, 0, 0), new PVector(0, 0, 0)
+				);
+			}
+		}
 		pensees[activePensee].showMe();
+		
 	}
 	
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
 		pensees[activePensee].hideMe();
+		for(BildweltAssoziationPensee p:pensees) {
+			p.fadeOut(time);
+		}
 	}
+	
+	// TODO: in update function unload pensee when not visible
 
 	@Override
 	public void draw() {
@@ -87,7 +106,14 @@ public class BildweltAssoziation extends Drawable {
 		g.rotateY(smoothedRotation);
 		
 		// draw sculpture
-		for(BildweltAssoziationPensee pensee:pensees) if(pensee.isVisible()) pensee.draw();
+		for(BildweltAssoziationPensee pensee:pensees) {
+			// clear pensee data when being offline
+			if(fade == 0 && pensee.mode() == pensee.FADING_OUT) {
+				if(!pensee.isCleared()) pensee.clear();
+				System.out.println("clear pensee");
+			}
+			if(pensee.isVisible()) pensee.draw();
+		}
 		
 		/*
 		g.noFill();

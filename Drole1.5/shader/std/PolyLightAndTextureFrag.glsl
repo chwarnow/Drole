@@ -61,11 +61,11 @@ void main() {
 	if(numTextures >= 6) textureColor *= texture2D(texture5, gl_TexCoord[5].st);
 	if(numTextures == 7) textureColor *= texture2D(texture6, gl_TexCoord[6].st);
 
-	if(numTextures > 0) preLightColor = vec4(textureColor.rgb * gl_Color.rgb, textureColor.a);
+	if(numTextures > 0) preLightColor = vec4(textureColor.rgb * gl_Color.rgb, textureColor.a * gl_Color.a);
 	else preLightColor = gl_Color;
 
 	// Calculate Light color
-	vec4 color = preLightColor * ambient;
+	vec4 color = preLightColor;// * ambient;
  
 	if(numLights > 0) {
 		for(int i = 0; i < numLights; i++) color += pointLight(i);

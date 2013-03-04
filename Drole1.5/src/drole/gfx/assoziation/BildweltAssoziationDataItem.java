@@ -37,7 +37,9 @@ public class BildweltAssoziationDataItem extends Thread {
 	@Override
 	public void run() {
 		while(running) {
-			initData();
+			while(!Thread.currentThread().isInterrupted()) {
+				initData();
+			}
 			running = false;
 		}
 	}
@@ -72,7 +74,6 @@ public class BildweltAssoziationDataItem extends Thread {
 	
 	private void initData() {
 		isAvailable = false;
-		
 		// GLTexture content = new GLTexture(e.p, imagePath);
 		
 		// init agents based on images pixels
@@ -85,6 +86,8 @@ public class BildweltAssoziationDataItem extends Thread {
 				}
 			}
 		}
+		
+		if(agents != null) agents = null;//for(int i=0;i<agents.length;i++) if(agents[i] != null) agents[i] = null;
 		
 		agents = new BildweltAssoziationAgent[agentsCount];
 
@@ -113,6 +116,7 @@ public class BildweltAssoziationDataItem extends Thread {
 		}
 		
 		isAvailable = true;
+		quit();
 	}
 	
 	// TODO: be able to reload an image which resets agents
@@ -131,5 +135,12 @@ public class BildweltAssoziationDataItem extends Thread {
 	
 	public BildweltAssoziationAgent[] getAgentsData() {
 		return agents;
+	}
+	
+	/**
+	 * set data to null, to be cleared by garbage collector
+	 */
+	public void clear() {
+		agents = null;
 	}
 }

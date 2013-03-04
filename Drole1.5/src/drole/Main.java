@@ -7,7 +7,6 @@ import java.awt.event.MouseWheelListener;
 
 import codeanticode.glgraphics.GLConstants;
 
-import com.christopherwarnow.bildwelten.BildweltOptik;
 import com.madsim.engine.Engine;
 import com.madsim.engine.EngineApplet;
 import com.madsim.engine.drawable.Drawable;
@@ -25,11 +24,12 @@ import com.madsim.fakebildwelten.BildweltMicroMacro;
 import com.madsim.tracking.kinect.Kinect;
 import com.madsim.tracking.kinect.KinectGFXUtils;
 import com.madsim.tracking.kinect.KinectUserEventListener;
-import com.madsim.ui.kinetics.PositionalMovementInput;
 import com.marctiedemann.spektakel.Spektakel;
 
+import drole.gfx.architecture.BildweltArchitecture;
 import drole.gfx.assoziation.BildweltAssoziation;
 import drole.gfx.room.Room;
+import drole.gfx.sehstrahlen.BildweltOptik;
 import drole.menu.Menu;
 import drole.settings.Settings;
 
@@ -45,8 +45,6 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	private String DEBUG 				= "DEBUG";
 	private String FORCED_DEBUG 		= "FORCED_DEBUG";
 	private String LIVE 				= "LIVE";
-	private String ZOOMING 				= "ZOOMING";
-	private String ROTATING 			= "ROTATING";
 	private String MODE 				= DEBUG;
 
 	private boolean FREEMODE			= !Settings.USE_KINECT;
@@ -87,18 +85,6 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 
 	private int fakeActiveWorld = 0;
 	
-	private float rotationSpeedY = 0.0f;
-	private float lastHandsZL = 0, lastHandsZR = 0;
-	private PVector lastRightHand = new PVector(0, 0, 0);
-	private PVector lastLeftHand = new PVector(0, 0, 0);
-	private PVector rightHandSpeedDir = new PVector(0, 0, 0);
-	private boolean isRotating = false;
-	private boolean isScaling = false;
-	private float scaling = 0.0f;
-	private boolean backRotationBlock = false;
-	private boolean isInGoBackGesture = false;
-	private int ticksInGoBackGesture = 0;
-	
 	private PFont mainFont;
 	
 	/* Bildwelten */
@@ -109,6 +95,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	private BildweltAssoziation bildweltAssoziation;
 	private BildweltOptik bildweltOptik;
 	private BildweltFabric bildweltFabric;
+	private BildweltArchitecture bildweltArchitecture;
 	private Spektakel bildweltSpektakel;
 	
 	public void setup() {
@@ -179,7 +166,9 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		
 		setupAssoziationWorld();
 		
-		setupFabricWorld();
+//		setupFabricWorld();
+		
+		setupArchitectureWorld();
 		
 		setupWorlds();
 		
@@ -191,7 +180,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	}
 	
 	private void setupWorlds() {
-		worlds[0] = bildweltFabric;
+		worlds[0] = bildweltArchitecture;
 		worlds[1] = bildweltAssoziation;
 		worlds[2] = bildweltMicroMacro;
 		worlds[3] = bildweltOptik;
@@ -240,7 +229,14 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 		
 		engine.addDrawable("MicroMacro", bildweltMicroMacro);
 //		engine.addDrawable("MicroMacro", new Drop(engine));
-	}	
+	}
+	
+
+	private void setupArchitectureWorld() {
+		bildweltArchitecture = new BildweltArchitecture(engine, new PVector(Settings.MENU_GLOBE_POSITION_X, Settings.MENU_GLOBE_POSITION_Y, Settings.MENU_GLOBE_POSITION_Z), new PVector(Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM, Settings.MENU_GLOBE_RADIUS_MM));
+		
+		engine.addDrawable("ArchitectureWorld", bildweltArchitecture);
+	}
 	
 	private void setupOptikWorld() {
 		logLn("Initializing world 'Optik' ...");
@@ -348,6 +344,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	}
 	
 	public void draw() {
+		// println(frameRate);
 		// Update the cam
 		kinect.update();
 

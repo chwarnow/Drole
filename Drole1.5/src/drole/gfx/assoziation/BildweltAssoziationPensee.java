@@ -28,7 +28,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	BildweltAssoziationDataItem dataItem;
 
 	// model vars
-	private float noiseScale = 250, noiseStrength = 20; 
+	public float noiseScale = 250, noiseStrength = 20; 
 	private int vertexCount = 0;
 	private GLTexture content;
 	private GLModel imageQuadModel;
@@ -51,6 +51,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	private boolean isRunning = true;
 	private boolean isHiding = false;
 	private boolean isVisible = false;
+	private boolean isCleared = false;
 	
 	// lookup table
 	private int cosDetail = 25;
@@ -60,7 +61,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		super(e);
 		this.e = e;
 		this.quadHeight = quadHeight;
-		e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+		// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 		e.p.noiseSeed((long)e.p.random(1000));
 
 		// create data
@@ -73,15 +74,54 @@ public class BildweltAssoziationPensee extends Drawable {
 		}
 
 	}
+	
+	/**
+	 * alternative constructor with position steps amount
+	 * @param e
+	 * @param imagePath
+	 * @param sphereConstraintRadius
+	 * @param quadHeight
+	 * @param penseeCenter
+	 * @param constraintCenter
+	 * @param positionSteps
+	 */
+	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter, int positionSteps) {
+		super(e);
+		this.positionSteps = positionSteps;
+		stopFrame = positionSteps;
+		
+		this.e = e;
+		this.quadHeight = quadHeight;
+		// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+		e.p.noiseSeed((long)e.p.random(1000));
 
+		// create data
+		if(imagePath.length() > 0) {
+			dataItem = new BildweltAssoziationDataItem();
+			dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+		}
+		
+		// create cos lookup table
+		for(int i=0;i<cosDetail;i++) {
+			cosLUT[i] = PApplet.cos(((float)i/cosDetail)*PApplet.PI);
+		}
+	}
+	@Override
 	public void update() {
+		super.update();
 		if(!isAgents) {
+			if(dataItem != null) {
 			if(dataItem.isAvailable()) {
+				
 				isAgents = true;
 				isVisible = true;
+				isCleared = false;
 				agents = dataItem.getAgentsData();
 				agentsCount = dataItem.getAgentsCount();
 				vertexCount = dataItem.getVertexCount();
+				// clear data item and free it for garbage collector
+				dataItem.clear();
+				dataItem = null;
 				
 				// clear existing glmodel
 				if(imageQuadModel != null) imageQuadModel.delete();
@@ -90,6 +130,8 @@ public class BildweltAssoziationPensee extends Drawable {
 				imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
 				imageQuadModel.initColors();
 				imageQuadModel.initNormals();
+				
+				// System.out.println(imageQuadModel + " " + agents + " " + agentsCount + " " + vertexCount);
 				
 				// when beginning in the middle, update the first agent position
 				if(currPosition != 0) {
@@ -101,6 +143,7 @@ public class BildweltAssoziationPensee extends Drawable {
 					}
 				}
 				isAnimationDone = false;
+			}
 			}
 		} else {
 			if(isRunning) {
@@ -138,7 +181,6 @@ public class BildweltAssoziationPensee extends Drawable {
 	}
 	
 	public void draw() {
-
 		// update glmodel
 
 		// extract agents vertices
@@ -155,7 +197,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		oldEasedIndex = easedIndex;
 
 		// cosinus from lookup table
-		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))];// * fade;
+		float ratio = cosLUT[(int)(e.p.min(cosDetail-1, (easedPosition/(positionSteps-positionSteps*.15f)) * cosDetail))] * fade;
 		// for (Agent agent:agents) {
 		for(int i=0;i<agentsCount;i++) {
 			
@@ -255,11 +297,14 @@ public class BildweltAssoziationPensee extends Drawable {
 
 		}
 
-		imageQuadModel.updateVertices(floatQuadVertices);
-		imageQuadModel.updateColors(floatQuadColors);
-		imageQuadModel.updateNormals(floatQuadVertices);
-
-		imageQuadModel.render();
+		try {
+			imageQuadModel.updateVertices(floatQuadVertices);
+			imageQuadModel.updateColors(floatQuadColors);
+			imageQuadModel.updateNormals(floatQuadVertices);
+			imageQuadModel.render();
+		} catch(Exception e) {
+			// System.out.println("error drawing a glmodel: " + e.getMessage());
+		}
 		}
 
 	}
@@ -293,13 +338,24 @@ public class BildweltAssoziationPensee extends Drawable {
 	}
 	
 	public void loadNewImage(String imagePath, float sphereConstraintRadius, PVector penseeCenter, PVector constraintCenter) {
-		e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 		isAnimationDone = false;
 		isAgents = false;
-		dataItem = null;
-		dataItem = new BildweltAssoziationDataItem();
-		dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
-		loadPensee();
+		// remove exiting thread
+		if(dataItem != null) {
+			if(!dataItem.isAlive()) {
+				// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+				dataItem = new BildweltAssoziationDataItem();
+				dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+				loadPensee();
+			} else {
+				dataItem.quit();
+			}
+		} else {
+			// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
+			dataItem = new BildweltAssoziationDataItem();
+			dataItem.createPenseeData(e, new GLTexture(e.p, imagePath), sphereConstraintRadius, quadHeight, penseeCenter, constraintCenter, positionSteps, noiseScale, noiseStrength);
+			loadPensee();
+		}
 	}
 	
 	public void showMe() {
@@ -324,6 +380,17 @@ public class BildweltAssoziationPensee extends Drawable {
 		isVisible = true;
 	}
 	
+	/**
+	 * clear glModel data / free up memory
+	 */
+	public void clear() {
+		isCleared = true;
+		isAgents = false;
+		if(imageQuadModel != null) imageQuadModel.delete();
+		agents = null;
+		vertexCount = 0;
+	}
+	
 	public void stop() {
 		isRunning = false;
 	}
@@ -334,5 +401,17 @@ public class BildweltAssoziationPensee extends Drawable {
 	
 	public boolean isVisible() {
 		return this.isVisible;
+	}
+	
+	public boolean isCleared() {
+		return isCleared;
+	}
+	
+	public boolean isShowing() {
+		return isShowing;
+	}
+	
+	public boolean isRunning() {
+		return isRunning;
 	}
 }
