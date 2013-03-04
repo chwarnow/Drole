@@ -71,7 +71,7 @@ public class FlyingDude extends ParticleSystem {
 
 		counter = 0;
 		bigParticle.clear();
-		cleanSytstem();
+	//	cleanSytstem();
 
 		shockwave = true;
 

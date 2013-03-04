@@ -95,7 +95,7 @@ public class ToxicSystem extends ParticleSystem {
 	public void spawnNew(boolean randomDecay) {
 
 		bigParticle.clear();
-		cleanSytstem();
+	//	cleanSytstem();
 		
 		resetPowers();
 		

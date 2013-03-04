@@ -394,7 +394,8 @@ public class ParticleSystem extends Particle {
 			cleanParticleForces(i);
 		}
 
-		// model.delete();
+		sprites.delete();
+		trails.delete();
 	}
 
 	private void cleanParticleForces(int num) {
