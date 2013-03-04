@@ -34,6 +34,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	private GLModel imageQuadModel;
 	private float quadHeight = 1.0f;
 	private boolean isAgents = false;
+	private String imagePath = "";
 	
 	// animation values
 	public float currPosition = 0;
@@ -61,6 +62,7 @@ public class BildweltAssoziationPensee extends Drawable {
 		super(e);
 		this.e = e;
 		this.quadHeight = quadHeight;
+		this.imagePath = imagePath;
 		// e.p.logLn("[Assoziation]: Load Bildwelt Assoziation: " + imagePath);
 		e.p.noiseSeed((long)e.p.random(1000));
 
@@ -88,6 +90,8 @@ public class BildweltAssoziationPensee extends Drawable {
 	public BildweltAssoziationPensee(Engine e, String imagePath, float sphereConstraintRadius, float quadHeight, PVector penseeCenter, PVector constraintCenter, int positionSteps) {
 		super(e);
 		this.positionSteps = positionSteps;
+		this.imagePath = imagePath;
+		
 		stopFrame = positionSteps;
 		
 		this.e = e;
@@ -134,6 +138,7 @@ public class BildweltAssoziationPensee extends Drawable {
 				// System.out.println(imageQuadModel + " " + agents + " " + agentsCount + " " + vertexCount);
 				
 				// when beginning in the middle, update the first agent position
+				e.p.println("not here: " + imagePath + " " + currPosition);
 				if(currPosition != 0) {
 					for(int i=0;i<agentsCount;i++) {
 						BildweltAssoziationAgent agent = agents[i];
@@ -323,6 +328,15 @@ public class BildweltAssoziationPensee extends Drawable {
 		easedPosition = (int)currPosition;
 		oldEasedIndex = (int)currPosition;
 		stopFrame = (int)currPosition - 1;
+		
+		if(agents != null) {
+			for(int i=0;i<agentsCount;i++) {
+				BildweltAssoziationAgent agent = agents[i];
+				agent.update((int)currPosition);
+				agent.update((int)currPosition);
+				agent.update((int)currPosition);
+			}
+		}
 	}
 	
 	public void setLooping(boolean isLooping) {
@@ -338,6 +352,7 @@ public class BildweltAssoziationPensee extends Drawable {
 	}
 	
 	public void loadNewImage(String imagePath, float sphereConstraintRadius, PVector penseeCenter, PVector constraintCenter) {
+		this.imagePath = imagePath;
 		isAnimationDone = false;
 		isAgents = false;
 		// remove exiting thread

@@ -156,18 +156,17 @@ public class BildweltArchitecture extends Drawable {
 		top.stop();
 		left.stop();
 		right.stop();
+		
+		back.setPosition(.5f);
+		bottom.setPosition(.5f);
+		top.setPosition(.5f);
+		left.setPosition(.5f);
+		right.setPosition(.5f);
 	}
 
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
-		/*
-		back.currPosition = 0;
-		bottom.currPosition = 0;
-		top.currPosition = 0;
-		left.currPosition = 0;
-		right.currPosition = 0;
-		*/
 		
 		if(back.isShowing()) back.hideMe();
 		if(bottom.isShowing()) bottom.hideMe();
@@ -175,8 +174,6 @@ public class BildweltArchitecture extends Drawable {
 		if(left.isShowing()) left.hideMe();
 		if(right.isShowing()) right.hideMe();
 
-		// TODO: fade out highres quads via alpha
-		// CURRENT_MODE = MODE_VOID;
 	}
 
 	@Override
@@ -253,7 +250,6 @@ public class BildweltArchitecture extends Drawable {
 
 		g.translate(position.x, position.y, position.z);
 		g.scale(scale.x*.5f, scale.y*.5f, scale.z*.5f);
-		// g.rotateY(e.p.frameCount*.01f);
 
 		// set shader for pensees
 		e.startShader("JustColor");
@@ -308,9 +304,8 @@ public class BildweltArchitecture extends Drawable {
 		e.startShader("PolyLightAndTexture");
 
 		float introThreshold = .75f;
+		
 		// back
-		// if(wallID == 0) {
-		System.out.println(back.currPosition);
 		if(back.currPosition > 0) {
 			float alpha = (back.currPosition < (back.positionSteps()*(1-introThreshold))) ? 0 : (back.currPosition - back.positionSteps()*(introThreshold)) / (back.positionSteps()*((1-introThreshold)));
 			g.pushMatrix();
