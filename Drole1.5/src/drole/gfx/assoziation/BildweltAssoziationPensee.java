@@ -408,6 +408,11 @@ public class BildweltAssoziationPensee extends Drawable {
 		isRunning = false;
 	}
 	
+	public void play() {
+		isRunning = true;
+		this.currPosition = 0;
+	}
+	
 	public void setDelayTime(int delayTime) {
 		this.delayTime = delayTime;
 	}

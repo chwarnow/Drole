@@ -70,7 +70,7 @@ public class BildweltOptik extends Drawable {
 				new PVector(0, 0, 0)
 			);
 		floorPenseeSwarm.setDelayTime(0);
-		
+		floorPenseeSwarm.setLooping(true);
 	}
 
 	@Override
@@ -112,6 +112,7 @@ public class BildweltOptik extends Drawable {
 		sehenderAkteur.fadeIn(time);
 		floorPensee.fadeIn(time);
 		floorPenseeSwarm.fadeIn(time);
+		floorPenseeSwarm.setLooping(true);
 	}
 	
 	@Override
@@ -131,8 +132,7 @@ public class BildweltOptik extends Drawable {
 		
 		// reload floor swarm
 		if(mode() == this.ON_SCREEN) {
-			if(floorPenseeSwarm.isReady() && floorPenseeSwarm.currPosition == 0) {
-				// System.out.println(floorPenseeSwarm.is);
+			if(floorPenseeSwarm.isReady() && floorPenseeSwarm.currPosition == floorPenseeSwarm.positionSteps()-1) {
 				floorPenseeSwarm.stop();
 				
 				System.out.println("reload floor swarm");
@@ -140,7 +140,8 @@ public class BildweltOptik extends Drawable {
 						dimension.x*scale.x,
 						new PVector(0, 0, -96),
 						new PVector(0, 0, 0));
-				floorPenseeSwarm.showMe();
+				// floorPenseeSwarm.showMe();
+				floorPenseeSwarm.play();
 			}
 		}
 	}
