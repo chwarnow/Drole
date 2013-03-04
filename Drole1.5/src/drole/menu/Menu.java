@@ -39,7 +39,7 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 	private float a = 0.0f;
 	private float radius;
 	
-	float distanceBetweenWorlds;
+	private float distanceBetweenWorlds;
 
 	private GLTexture[] tex = new GLTexture[(int)NUM_WORLDS];
 	
@@ -56,6 +56,10 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 	private TwoHandPushInterpreter pushi;
 	
 	private AngleDetection angleDetectionLeft, angleDetectionRight;
+	
+	/* SCALING */
+	private float armLength = 0.0f;
+	private float scaling = 0.0f;
 	
 	private PVector bodyMovement = new PVector(0, 0, 0);
 	private PVector lastBodyPosition = new PVector(0, 0, 0);
@@ -157,32 +161,34 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 		}
 	}
 	
+	private void calculateScaling() {
+		if(armLength > 0.0f) {
+			float dist = kinect.getJoint(Kinect.SKEL_LEFT_HAND).dist(kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
+			scaling = PApplet.map(dist, 0, armLength, 0, 1);
+		}
+	}
+	
 	public void update() {
 		updateBodyMovement();
 		checkBodyMovement();
+		
+		calculateScaling();
 		
 		ripi.update();
 		pushi.update();
 		angleDetectionLeft.update();
 		angleDetectionRight.update();
-
-		
-//		a = (e.p.frameCount / 100.0f) % PApplet.TWO_PI;
-		
-		calculateActiveWorld();
-		
-		float goal = getActiveWorldA();
 		
 		a = ri.get()[0];
 		
-//		a = PApplet.lerp(a, goal, worldGravity);
-		
-		/*
-		if(PApplet.abs(a - aa) > 0.001f) a = PApplet.lerp(a, aa, worldGravity);		
-		a = getActiveWorldA();
-		*/
-		
-		menuGlobe.setGestureRotation(a);
+		if(!inWorld) {
+			calculateActiveWorld();
+			
+			menuGlobe.setGestureRotation(a);
+		} else {
+			worlds[activeWorld].setGestureRotation(a);
+			worlds[activeWorld].setGestureScaling(scaling);
+		}
 	}
 	
 	public void draw() {
@@ -223,6 +229,11 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 		float z = (r * PApplet.cos(zca)) - r;
 		
 		return new PVector(x, y, z);
+	}
+	
+	public void backToMenu() {
+		e.transitionBetweenDrawables(worlds[activeWorld], menuGlobe);
+		inWorld = false;
 	}
 
 	@Override
@@ -269,8 +280,7 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && angleDetectionRight.status() == AngleDetection.IN_ANGLE && inWorld) {
 			e.p.logLn("Two hand push occured!");
 			ripi.forceCooldown();
-			e.transitionBetweenDrawables(worlds[activeWorld], menuGlobe);
-			inWorld = false;
+			backToMenu();
 		}
 	}
 
@@ -280,6 +290,9 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 		pushi.lock();
 		angleDetectionLeft.unlock();
 		angleDetectionRight.unlock();
+		
+		armLength = kinect.getJoint(Kinect.SKEL_LEFT_HAND).dist(kinect.getJoint(Kinect.SKEL_LEFT_ELBOW))+kinect.getJoint(Kinect.SKEL_LEFT_ELBOW).dist(kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
+		e.p.pinLog("Arm Length", armLength);
 	}
 
 	@Override
@@ -288,6 +301,10 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 		pushi.lock();
 		angleDetectionLeft.lock();
 		angleDetectionRight.lock();
+		
+		if(inWorld) {
+			backToMenu();
+		}
 	}
 	
 }
