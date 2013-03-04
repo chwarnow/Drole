@@ -180,8 +180,8 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	}
 	
 	private void setupWorlds() {
-		worlds[1] = bildweltArchitecture;
 		worlds[0] = bildweltAssoziation;
+		worlds[1] = bildweltArchitecture;
 		worlds[2] = bildweltMicroMacro;
 		worlds[3] = bildweltOptik;
 		worlds[4] = bildweltSpektakel;
@@ -538,7 +538,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	
 	public static void main(String args[]) {
 		PApplet.main(new String[] {
-//			"--present",
+			"--present",
 			"--bgcolor=#000000",
 			"--present-stop-color=#000000", 
 //			"--display=0",
