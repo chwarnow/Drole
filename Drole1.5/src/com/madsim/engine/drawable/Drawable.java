@@ -241,9 +241,16 @@ public abstract class Drawable {
 	}
 
 	public void fadeIn(float time) {
-		fadeTime = time;
-		currentFadeTime = 0;
-		fade = 0;
+		if(mode() == Drawable.FADING_IN) {
+			fadeTime = time;	
+		}
+		
+		if(mode() == Drawable.OFF_SCREEN) {
+			fadeTime = time;
+			currentFadeTime = 0;
+			fade = 0;			
+		}
+
 		visible = true;
 		mode(FADING_IN);
 	}
