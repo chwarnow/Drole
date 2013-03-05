@@ -1,5 +1,11 @@
 package com.marctiedemann.spektakel;
 
+<<<<<<< HEAD
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+=======
+>>>>>>> projektions_maschine
 
 import com.madsim.engine.Engine;
 
@@ -7,7 +13,13 @@ import codeanticode.glgraphics.GLGraphics;
 import codeanticode.glgraphics.GLTexture;
 
 import processing.core.PImage;
+<<<<<<< HEAD
+import toxi.geom.Spline3D;
+import toxi.geom.Vec3D;
+import toxi.geom.mesh.Face;
+=======
 
+>>>>>>> projektions_maschine
 import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletSpring;
@@ -15,7 +27,11 @@ import toxi.physics.behaviors.AttractionBehavior;
 
 public class FlyingDude extends ParticleSystem {
 
+<<<<<<< HEAD
+	private PImage dudeImage;
+=======
 	GLTexture dudeImage;
+>>>>>>> projektions_maschine
 
 	private float[][] greyLevels;
 
@@ -26,6 +42,7 @@ public class FlyingDude extends ParticleSystem {
 
 	private boolean imageLoadedAndParticlesSpawned = false;
 
+	private List<Vec3D> path;
 	int pathID = 0;
 
 	public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
@@ -152,7 +169,20 @@ public class FlyingDude extends ParticleSystem {
 
 	}
 
-	
+	void setRandomPath() {
+
+		ArrayList<Vec3D> points = new ArrayList<Vec3D>();
+
+		for (int i = 0; i < 5; i++) {
+			Vec3D p = new Vec3D(e.p.random(0, -100), e.p.random(0, -100),
+					e.p.random(-100, 100));
+			points.add(p);
+		}
+
+		Spline3D s = new Spline3D(points);
+		s.computeVertices(10);
+		path = s.getDecimatedVertices(4);
+	}
 
 	void updateTargets() {
 
@@ -199,7 +229,6 @@ public class FlyingDude extends ParticleSystem {
 		}
 		counter += steps;
 
-		setSpriteColors();
 
 		//setSpriteColors();
 
