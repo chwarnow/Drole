@@ -24,12 +24,27 @@ public class ToxicSystem extends ParticleSystem {
 	private TriangleMesh toxiMesh = new TriangleMesh();
 	
 
+			protected int meshSize = 15; 
+			
+			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
+
+			
+			
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
 			float y, float z) {
 
 		super(e, _physics, x, y, z);
 		
-		trailLength=20;
+		trailLength=15;
+		
+		trailAlpha=0.4f;
+		
+		decay = 0.90f;
+		
+		 boomFalloff = 0.1f;
+		 springFallOff = 0.05f;
+		 setSpringPower(0.0002f);
+		 setBoomPower(-3.5f);
 
 		spawnNew();
 	}
@@ -85,7 +100,15 @@ public class ToxicSystem extends ParticleSystem {
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
-			//the actual partzicle
+		
+
+			//longest particle can't have lower decay then system
+			//also 1st particle needs to be lonest so we know where we can hook up the light
+			
+			
+			if(randomDecay && count!=0) theDecay =e.p.random(decay,2);
+			
+			//the actual particle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
 					z() + face.a.z - targetAngle.x / 2,trailLength);

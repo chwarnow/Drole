@@ -25,5 +25,6 @@
 	<classpathentry kind="lib" path="lib/controlP5.jar"/>
 	<classpathentry kind="lib" path="lib/volumeutils.jar"/>
 	<classpathentry kind="lib" path="lib/simutils.jar"/>
+	<classpathentry kind="lib" path="lib/Ess.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
