@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
-import com.madsim.engine.drawable.Drawlist;
 
 import drole.gfx.assoziation.BildweltAssoziationPensee;
 import drole.gfx.ribbon.RibbonGroup;
@@ -87,19 +86,11 @@ public class MenuGlobe extends Drawable {
 					i); // id
 			drawables.add( b );
 		}
-		
-		useLights();
-		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		
-		setAmbient(1.0f, 1.0f, 1.0f);
 	}
 	
-	/*
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
-		hide();
 	}
 	
 	public void hide() {
@@ -120,10 +111,6 @@ public class MenuGlobe extends Drawable {
 				rG.dieOut();
 			}
 		}
-	}
-	
-	public void show() {
-		super.show();
 	}
 
 	@Override
@@ -157,21 +144,35 @@ public class MenuGlobe extends Drawable {
 			}
 		}
 	}
-	*/
 	
 	public void update() {
 		super.update();
 		for(Drawable d : drawables) d.update();
-		
-		useLights();
-		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		
-		setAmbient(1.0f, 1.0f, 1.0f);
 	}
 	
 	@Override
 	public void draw() {
+		// Lights
+		// TODO: set that globally
+		useLights();
+		
+		setAmbient(0.4f, 0.4f, 0.4f);
+		
+		float basicLightValueX = 586.0f - e.p.noise(e.p.frameCount*.005f)*250f;
+		float basicLightValueY = 426.0f + e.p.noise(e.p.frameCount*.005f + 100)*150f;
+		
+		PVector basicLightPosition = new PVector(
+				basicLightValueX,
+				basicLightValueY,
+				-1600 + e.p.noise(e.p.frameCount*.005f)*550f);
+		
+		setPointLight(0, basicLightPosition.x, basicLightPosition.y, basicLightPosition.z, 255, 255, 255, 0.5f, 0.0001f, 0.0f);
+
+		setPointLight(1, basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450, 255, 255, 255, 0.5f, 0.0001f, 0.0f);
+
+		setPointLight(2, basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450, 255, 255, 255, 0.5f, 0.0001f, 0.01f);
+		
+		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -201,9 +202,6 @@ public class MenuGlobe extends Drawable {
 			
 			g.fill(255, fade*255);
 			g.noStroke();
-			
-//			e.startShader("PolyLightAndColor");
-//			e.setLights();
 			
 			int drawableIndex = 0;
 			float penseeRotation = .0f;

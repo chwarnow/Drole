@@ -69,6 +69,10 @@ public class Kinect implements SimpleOpenNIConstants {
 		}
 	}
 	
+	public boolean isFake() {
+		return fakeMode;
+	}
+	
 	public void setYFunction(float yFunction) {
 		this.yFunction = yFunction;
 		p.logLn("[Kinect]: Setting Y-Correction to "+yFunction);
@@ -88,19 +92,23 @@ public class Kinect implements SimpleOpenNIConstants {
 	}
 	
 	public int[] getDepthMap() {
-		return c.depthMap();
+		if(c != null) return c.depthMap();
+		return null;
 	}
 
 	public int depthWidth() {
-		return c.depthWidth();
+		if(c != null) return c.depthWidth();
+		return 0;
 	}
 	
 	public int depthHeight() {
-		return c.depthHeight();
+		if(c != null) return c.depthHeight();
+		return 0;
 	}
 	
 	public PVector[] depthMapRealWorld() {
-		return c.depthMapRealWorld();
+		if(c != null) return c.depthMapRealWorld();
+		return null;
 	}
 	
 	public int getCurrentUserID() {

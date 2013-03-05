@@ -84,24 +84,26 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 		
 //		mouseXY = new MouseXYInput();
 //		e.p.addMouseMotionListener(mouseXY);
-		
-		kiRightHand = new KinectInput(kinect, Kinect.SKEL_RIGHT_HAND);
-		kiLeftHand = new KinectInput(kinect, Kinect.SKEL_LEFT_HAND);
-		
-		ri = new RotationInterpreter(kiRightHand, 0);
-		ri.lock();
-		
-		ripi = new RipInterpreter(this, kiLeftHand, -1, 2);
-		ripi.lock();
-		
-		pushi = new TwoHandPushInterpreter(this, kiLeftHand, kiRightHand, 1, 2);
-		pushi.lock();
-		
-		angleDetectionLeft = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, -1400f, 1);
-		angleDetectionLeft.addListener(this);
-		
-		angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, -1400f, 1);
-		angleDetectionRight.addListener(this);
+
+		if(!kinect.isFake()) {
+			kiRightHand = new KinectInput(kinect, Kinect.SKEL_RIGHT_HAND);
+			kiLeftHand = new KinectInput(kinect, Kinect.SKEL_LEFT_HAND);
+			
+			ri = new RotationInterpreter(kiRightHand, 0);
+			ri.lock();
+			
+			ripi = new RipInterpreter(this, kiLeftHand, -1, 2);
+			ripi.lock();
+			
+			pushi = new TwoHandPushInterpreter(this, kiLeftHand, kiRightHand, 1, 2);
+			pushi.lock();
+			
+			angleDetectionLeft = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, -1400f, 1);
+			angleDetectionLeft.addListener(this);
+			
+			angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, -1400f, 1);
+			angleDetectionRight.addListener(this);
+		}
 		
 		calculateActiveWorld();
 	}
@@ -169,25 +171,27 @@ public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandP
 	}
 	
 	public void update() {
-		updateBodyMovement();
-		checkBodyMovement();
-		
-		calculateScaling();
-		
-		ripi.update();
-		pushi.update();
-		angleDetectionLeft.update();
-		angleDetectionRight.update();
-		
-		a = ri.get()[0];
-		
-		if(!inWorld) {
-			calculateActiveWorld();
+		if(!kinect.isFake()) {
+			updateBodyMovement();
+			checkBodyMovement();
 			
-			menuGlobe.setGestureRotation(a);
-		} else {
-			worlds[activeWorld].setGestureRotation(a);
-			worlds[activeWorld].setGestureScaling(scaling);
+			calculateScaling();
+			
+			ripi.update();
+			pushi.update();
+			angleDetectionLeft.update();
+			angleDetectionRight.update();
+			
+			a = ri.get()[0];
+			
+			if(!inWorld) {
+				calculateActiveWorld();
+				
+				menuGlobe.setGestureRotation(a);
+			} else {
+				worlds[activeWorld].setGestureRotation(a);
+				worlds[activeWorld].setGestureScaling(scaling);
+			}
 		}
 	}
 	

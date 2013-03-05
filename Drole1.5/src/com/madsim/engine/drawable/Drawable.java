@@ -270,10 +270,7 @@ public abstract class Drawable {
 
 	public void update() {
 	    if(mode() == FADING_IN && currentFadeTime == fadeTime) mode(ON_SCREEN);
-	    if(mode() == FADING_OUT && currentFadeTime == 0) {
-	    	e.p.logLn("FADING OUT DONE");
-	    	mode(OFF_SCREEN);
-	    }
+	    if(mode() == FADING_OUT && currentFadeTime == 0) mode(OFF_SCREEN);
 	    
 	    if(mode() == FADING_IN) currentFadeTime++;
 	    if(mode() == FADING_OUT) currentFadeTime--;

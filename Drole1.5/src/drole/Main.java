@@ -500,6 +500,7 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 	}
 	
 	public void mouseMoved(MouseEvent e) {
+		/*
 		if(FREEMODE) {
 			mouseHead.x = map(e.getX(), width, 0, -offCenterOptik.realScreenDim.x/2f, offCenterOptik.realScreenDim.x/2f);
 			mouseHead.y = map(e.getY(), 0, height, offCenterOptik.realScreenPos.y+Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM, offCenterOptik.realScreenPos.y+offCenterOptik.realScreenDim.y);
@@ -508,8 +509,8 @@ public class Main extends EngineApplet implements MouseWheelListener, KinectUser
 			
 			//needs to be hooked to hand gesture
 			bildweltSpektakel.updateRotaion(e.getY());
-	//		println(e.getY());
 		}
+		*/
 	}
 	
 	@Override

@@ -23,9 +23,8 @@ import codeanticode.glgraphics.GLTexture;
 import drole.settings.Settings;
 
 public class Engine {
-
-	public EngineApplet p;
 	
+	public EngineApplet p;
 	public GLGraphics g;
 	
 	public GL gl;
@@ -107,8 +106,6 @@ public class Engine {
 	
 	public void update(String name) {
 		Drawable dl = drawables.get(name);
-		
-//		p.pinLog("Drawbale "+dl.name(), dl.mode());
 		
 		if(
 			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
@@ -251,46 +248,6 @@ public class Engine {
 	}
 	
 	private void setupLights(Drawable d) {
-		// TODO: set that globally
-		/*
-		float basicLightValueX = 586.0f - p.noise(p.frameCount*.005f)*250f;
-		float basicLightValueY = 426.0f + p.noise(p.frameCount*.005f + 100)*150f;
-		
-		PVector basicLightPosition = new PVector(
-				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
-				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
-				-1600 + p.noise(p.frameCount*.005f)*550f);
-		
-			g.pushMatrix();
-				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);
-				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
-				g.noStroke();
-				g.fill(255, 255, 255);
-				// g.sphere(10);
-			g.popMatrix();
-		
-			g.pushMatrix();
-				g.translate(basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450);
-				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				pointLight(255, 255, 255, 0, 0, 0);
-				g.noStroke();
-				g.fill(255, 255, 255);
-				//  g.sphere(10);
-			g.popMatrix();
-			
-		*/
-		/*
-		g.pushMatrix();
-				g.translate(basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450);
-				g.lightFalloff(0.5f, 0.01f, 0.0f);
-				g.pointLight(255, 255, 255, 0, 0, 0);
-				g.noStroke();
-				g.fill(255, 255, 255);
-				// g.sphere(10);
-		g.popMatrix();
-		*/
-		
 		updateTransition();
 		
 		g.noLights();
@@ -307,24 +264,28 @@ public class Engine {
 				ambientLight[1] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[1], 0f);
 				ambientLight[2] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[2], 0f);
 				ambientLight[3] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, 1.0f, 0f);
+				
+				p.pinLog("Active Ambient of "+tweeningOut.name(), ambientLight[0]+":"+ambientLight[1]+":"+ambientLight[2]+":"+ambientLight[3]);
 			}
 			
 			if(tweeningIn.mode() == Drawable.FADING_IN) {
 				p.pinLog("FADING IN", tweeningIn.fade());
 					
 				if(tweeningIn.usesLights()) lights = tweeningIn.getLights();
-					
+				
 				ambientLight[0] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[0]);
 				ambientLight[1] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[1]);
 				ambientLight[2] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[2]);
 				ambientLight[3] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, 1.0f);
+				
+				p.pinLog("Active Ambient of "+tweeningIn.name(), ambientLight[0]+":"+ambientLight[1]+":"+ambientLight[2]+":"+ambientLight[3]);
 			}
 			
 		} else {
 			if(d.usesLights()) {
 				lights = d.getLights();
 				ambientLight = d.ambient();
-				p.pinLog("UL:"+d.name()+":"+d.mode(), d.ambient()[0]+":"+d.ambient()[1]+":"+d.ambient()[2]);
+				p.pinLog("Active Ambient of "+d.name(), ambientLight[0]+":"+ambientLight[1]+":"+ambientLight[2]+":"+ambientLight[3]);
 			}
 		}
 		
