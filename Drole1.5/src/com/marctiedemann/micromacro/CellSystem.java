@@ -21,7 +21,7 @@ public class CellSystem extends VerletParticle{
 	
 	private float greyLevel =0;
 	
-	private int maxCells = 10;
+	private int maxCells = 15;
 	private int gridSize = 0;
 	private int numCells = 0;
 	
@@ -40,7 +40,7 @@ public CellSystem(Engine e, float greyLevel,int gridSize, float x, float y, floa
 	this.greyLevel = greyLevel;
 	this.gridSize = gridSize;
 	
-	numCells = (int)(greyLevel * maxCells);
+	numCells = (int)((1-greyLevel) * maxCells);
 	
 	cell = new ArrayList<Cell>();
 	texCoords = new ArrayList<PVector>();
@@ -63,7 +63,7 @@ public void spawn(){
 	
 	
 	for(int i=0;i<numCells;i++){
-	Cell newCell = new Cell(e.p.random(-gridSize/2,gridSize/2),e.p.random(-gridSize/2,gridSize/2),-500,e.p.random(gridSize)/2);
+	Cell newCell = new Cell(e.p.random(-gridSize/2,gridSize/2),e.p.random(-gridSize/2,gridSize/2),-500,e.p.random(gridSize)*(1-greyLevel));
 	
 	buildQuad(newCell,i);
 	

@@ -25,7 +25,7 @@ public class BildweltNewMicroMacro extends Drawable {
 	public BildweltNewMicroMacro(Engine e) {
 		super(e);
 
-		bigWorldTex = e.requestTexture("images/Mikro_Makro_BigWorld.png");
+		bigWorldTex = e.requestTexture("images/Mikro_Makro_BigCentered1200.png");
 
 		g.imageMode(EngineApplet.CENTER);
 
@@ -37,7 +37,7 @@ public class BildweltNewMicroMacro extends Drawable {
 		int imageCenterX = bigWorldTex.width/2;
 		int imageCenterY = bigWorldTex.height/2;
 		
-		int steps = 50;
+		int steps = 30;
 		
 		for(int i=-steps;i<steps+1;i++){
 			for(int j=-steps;j<steps+1;j++){
@@ -47,8 +47,10 @@ public class BildweltNewMicroMacro extends Drawable {
 						
 				float greyLevel = greyLevels[xPos][yPos];
 				
+				if(greyLevel<0.9f){
 				CellSystem newSystem = new CellSystem(e,greyLevel,gridSize,i*gridSize,j*gridSize,0);
 				cellSystem.add(newSystem);
+				}
 
 				
 			}
