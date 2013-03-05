@@ -6,8 +6,6 @@ import java.util.Map.Entry;
 
 import javax.media.opengl.GL;
 
-import penner.easing.Quad;
-
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PVector;
@@ -46,9 +44,9 @@ public class Engine {
 	
 	private HashMap<String, GLTexture> textures = new HashMap<String, GLTexture>();
 	
-	private float[][] lights		= 	new float[8][10];
-	private int activeLights 		= 	0;
-	private float[] ambientLight 	= 	new float[]{1.0f, 1.0f, 1.0f, 1.0f};
+	private float[][] 	lights	= 	new float[8][10];
+	private int activeLights = 0;
+	private float[] ambientLight = new float[]{1.0f, 1.0f, 1.0f, 1.0f};
 	
 	private float pointSize = 1.0f;
 	private boolean usePoints = false;
@@ -56,11 +54,6 @@ public class Engine {
 	private GLTexture environmentMap;
 	
 	public boolean drawStarted = false;
-	
-	public boolean tweening = false, tweenedIn = false;
-	private Drawable tweeningOut, tweeningIn;
-	
-	private GLModel mog;
 	
 	public Engine(EngineApplet p) {
 		this.p = p;
@@ -101,15 +94,11 @@ public class Engine {
 	}
 	
 	public void addDrawable(String name, Drawable dl) {
-		dl.setName(name);
 		this.drawables.put(name, dl);
 	}
 	
 	public void update(String name) {
 		Drawable dl = drawables.get(name);
-		
-//		p.pinLog("Drawbale "+dl.name(), dl.mode());
-		
 		if(
 			dl.updateMode() == Drawable.ONANDOFFSCREEN ||
 			(dl.updateMode() == Drawable.ONLY_ONSCREEN && dl.mode() != Drawable.OFF_SCREEN)
@@ -178,7 +167,7 @@ public class Engine {
 		if(activeShader() != null) {
 			// Set texture informations for the shader
 			activeShader().glsl().setIntUniform("numTextures", 0);
-			activeShader().glsl().setFloatUniform("pointSize", 0.0f);
+			activeShader().glsl().setFloatUniform("pointSize", 1.0f);
 			if(usePoints) {
 				gl.glEnable(GL.GL_POINT_SPRITE);
 				gl.glEnable(GL.GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -226,7 +215,7 @@ public class Engine {
 		g.popMatrix();
 			
 		g.pushMatrix();
-		g.translate(50, -(g.height/2)+35, -1);
+		g.translate(200, -(g.height/2)+35, -1);
 			int i = 0;
 			for(Entry<String, String> es : p.pinLog.entrySet()) {
 				g.text(es.getKey(), 0, 17*i);
@@ -236,18 +225,6 @@ public class Engine {
 		g.popMatrix();		
 		
 		useOptik(ao);
-	}
-	
-	private void resetLights() {
-		lights = new float[8][10];
-		lights[0] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		lights[1] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		lights[2] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		lights[3] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		lights[4] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		lights[5] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		lights[6] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		lights[7] = new float[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	}
 	
 	private void setupLights(Drawable d) {
@@ -291,43 +268,8 @@ public class Engine {
 		g.popMatrix();
 		*/
 		
-		updateTransition();
-		
-		g.noLights();
-		
-		if(tweening) {
-			g.noLights();
-			
-			if(tweeningOut.mode() == Drawable.FADING_OUT) {
-				p.pinLog("FADING OUT", tweeningOut.fade());
-					
-				if(tweeningOut.usesLights()) lights = tweeningOut.getLights();
-					
-				ambientLight[0] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[0], 0f);
-				ambientLight[1] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[1], 0f);
-				ambientLight[2] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, tweeningOut.ambient()[2], 0f);
-				ambientLight[3] = PApplet.map(tweeningOut.fade(), 1.0f, 0.0f, 1.0f, 0f);
-			}
-			
-			if(tweeningIn.mode() == Drawable.FADING_IN) {
-				p.pinLog("FADING IN", tweeningIn.fade());
-					
-				if(tweeningIn.usesLights()) lights = tweeningIn.getLights();
-					
-				ambientLight[0] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[0]);
-				ambientLight[1] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[1]);
-				ambientLight[2] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, tweeningIn.ambient()[2]);
-				ambientLight[3] = PApplet.map(tweeningIn.fade(), 0.0f, 1.0f, 0f, 1.0f);
-			}
-			
-		} else {
-			if(d.usesLights()) {
-				lights = d.getLights();
-				ambientLight = d.ambient();
-				p.pinLog("UL:"+d.name()+":"+d.mode(), d.ambient()[0]+":"+d.ambient()[1]+":"+d.ambient()[2]);
-			}
-		}
-		
+		if(d.usesLights()) lights = d.getLights();
+
 		activeLights = 0;
 		
 		for(int i = 0; i < lights.length; i++) {
@@ -340,34 +282,8 @@ public class Engine {
 				activeLights++;
 			}
 		}
-		p.pinLog("Active Lights "+d.name(), activeLights);
-		
-		g.lights();
 		
 		setLights();
-	}
-	
-	private void updateTransition() {
-		if(tweening) {
-			if(tweeningOut.mode() == Drawable.OFF_SCREEN && !tweenedIn) {
-				tweeningIn.fadeIn(30);
-				tweenedIn = true;
-			}
-			if(tweeningOut.mode() == Drawable.OFF_SCREEN && tweeningIn.mode() == Drawable.ON_SCREEN) {
-				p.logLn(tweeningOut.name()+" : "+tweeningOut.mode());
-				p.logLn(tweeningIn.name()+" : "+tweeningIn.mode());
-				tweening = false;
-			}
-		}
-	}
-	
-	public void transitionBetweenDrawables(Drawable out, Drawable in) {
-		tweening = true;
-		tweenedIn = false;
-		tweeningOut = out;
-		tweeningOut.fadeOut(30);
-		
-		tweeningIn = in;
 	}
 	
 	public void drawContent() {
@@ -384,8 +300,6 @@ public class Engine {
 				resetShader();
 				
 				setupLights(dl);
-				
-				p.pinLog("D: "+dl.name(), dl.mode());
 				
 				// Draw
 				g.pushStyle();
@@ -447,12 +361,54 @@ public class Engine {
 		
 		g.background(0);
 		
-		ambient(ambientLight[0], ambientLight[1], ambientLight[2]);
+		ambient(0.8f, 0.8f, 0.8f);
 		
 		useOptik("OffCenter");
 		activeOptik().calculate();
 		activeOptik().set();
 		
+		startShader("JustColor");
+		
+		// TODO: set that globally
+		float basicLightValueX = 586.0f - p.noise(p.frameCount*.005f)*250f;
+		float basicLightValueY = 426.0f + p.noise(p.frameCount*.005f + 100)*150f;
+		
+		PVector basicLightPosition = new PVector(
+				PApplet.map(basicLightValueX, 0, g.width, -2000, 2000),
+				PApplet.map(basicLightValueY, 0, g.width, -2000, 2000),
+				-1600 + p.noise(p.frameCount*.005f)*250f);
+		
+			g.pushMatrix();
+				g.translate(basicLightPosition.x, basicLightPosition.y, basicLightPosition.z);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				// Edit by chris: it says pointlight is no function?
+				// pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+			g.popMatrix();
+		
+			g.pushMatrix();
+				g.translate(basicLightPosition.x, basicLightPosition.y + 700, basicLightPosition.z + 450);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				// Edit by chris: it says pointlight is no function?
+				// pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				//  g.sphere(10);
+			g.popMatrix();
+			
+			g.pushMatrix();
+				g.translate(basicLightPosition.x - 500, basicLightPosition.y + 100, basicLightPosition.z + 450);
+				g.lightFalloff(0.5f, 0.01f, 0.0f);
+				// Edit by chris: it says pointlight is no function?
+				// pointLight(255, 255, 255, 0, 0, 0);
+				g.noStroke();
+				g.fill(255, 255, 255);
+				// g.sphere(10);
+		g.popMatrix();
+		
+		stopShader();
 		/*
 		startShader("PolyLightAndTextureAndEM");
 		

@@ -2,15 +2,22 @@ package drole.gfx.assoziation;
 
 
 import processing.core.PVector;
+import processing.core.PApplet;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
+
+import codeanticode.glgraphics.GLGraphics;
+import drole.Main;
 
 public class BildweltAssoziation extends Drawable {
 
 	private String[] imagePaths = {"data/images/menuAssoziationA.png", "data/images/menuAssoziationB.png", "data/images/menuAssoziationC.png", "data/images/menuAssoziationD.png", "data/images/menuAssoziationE.png"};
 	private BildweltAssoziationPensee[] pensees;
 	
+	public float rotation 						= 0;
+	private float smoothedRotation 				= 0;
+	private float smoothedRotationSpeed 		= .1f;
 	private int activePensee					= 0;
 	
 	public BildweltAssoziation(Engine e, PVector position, PVector dimension) {
@@ -36,12 +43,12 @@ public class BildweltAssoziation extends Drawable {
 	@Override
 	public void update() {
 		super.update();
+		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
 		// set active slide
 		int newSliceID = (int) (gestureScaling * (pensees.length-1));
-		e.p.pinLog("New Slice ID : ", newSliceID);
 		if(newSliceID != activePensee) setPensee(newSliceID);
-		
+
 		// update pensees
 		for(BildweltAssoziationPensee pensee:pensees) {
 			// update pensee when being on screen
@@ -96,12 +103,12 @@ public class BildweltAssoziation extends Drawable {
 
 		g.translate(position.x, position.y, position.z + dimension.x*scale.x*.5f);
 		g.scale(scale.x, scale.y, scale.z);
-		g.rotateY(gestureRotation);
+		g.rotateY(smoothedRotation);
 		
 		// draw sculpture
 		for(BildweltAssoziationPensee pensee:pensees) {
 			// clear pensee data when being offline
-			if(fade == 0 && pensee.mode() == Drawable.FADING_OUT) {
+			if(fade == 0 && pensee.mode() == pensee.FADING_OUT) {
 				if(!pensee.isCleared()) pensee.clear();
 				System.out.println("clear pensee");
 			}

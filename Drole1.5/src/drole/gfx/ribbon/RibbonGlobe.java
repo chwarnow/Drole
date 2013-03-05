@@ -1,4 +1,4 @@
-package drole.menu;
+package drole.gfx.ribbon;
 
 /**
  * 
@@ -10,21 +10,25 @@ package drole.menu;
  * 
  */
 
-import java.util.ArrayList;
-
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 import com.madsim.engine.drawable.Drawlist;
 
 import drole.gfx.assoziation.BildweltAssoziationPensee;
-import drole.gfx.ribbon.RibbonGroup;
 
-import processing.core.PApplet;
 import processing.core.PVector;
 
-public class MenuGlobe extends Drawable {
+public class RibbonGlobe extends Drawlist {
 	
-	private ArrayList<Drawable> drawables 		= new ArrayList<Drawable>();
+	public static short MENU					= 10;
+	public static short LIGHTS					= 20;
+	
+	private short menuMode 						= RibbonGlobe.MENU;
+	
+	public float rotation 						= 0;
+	public float rotationSpeed 					= 0.04f;
+	private float smoothedRotation 				= 0;
+	private float smoothedRotationSpeed 		= .1f;
 
 	private int numRibbonHandler 				= 4;
 	private float[] ribbonSeeds 				= new float[numRibbonHandler];
@@ -47,7 +51,7 @@ public class MenuGlobe extends Drawable {
 		"data/images/menuAssoziationM.png"
 	};
 	
-	public MenuGlobe(Engine e, PVector position, PVector dimension) {
+	public RibbonGlobe(Engine e, PVector position, PVector dimension) {
 		super(e);
 
 		position(position);
@@ -87,23 +91,11 @@ public class MenuGlobe extends Drawable {
 					i); // id
 			drawables.add( b );
 		}
-		
-		useLights();
-		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		
-		setAmbient(1.0f, 1.0f, 1.0f);
 	}
 	
-	/*
 	@Override
 	public void fadeOut(float time) {
 		super.fadeOut(time);
-		hide();
-	}
-	
-	public void hide() {
-		super.hide();
 		
 		// set all ribbons to die mode
 		int drawableIndex = 0;
@@ -111,21 +103,17 @@ public class MenuGlobe extends Drawable {
 			// draw associations
 			if(drawableIndex++ < associationsAmount) {
 				BildweltAssoziationPensee p = (BildweltAssoziationPensee) drawables.get(i);
-				p.fadeOut(200);
+				p.fadeOut(time);
 				p.hideMe();
 			} else {
 				RibbonGroup rG = (RibbonGroup)drawables.get(i);
-				rG.fadeOut(200);
+				rG.fadeOut(time);
 				//  menu swarms
 				rG.dieOut();
 			}
 		}
 	}
 	
-	public void show() {
-		super.show();
-	}
-
 	@Override
 	public void fadeIn(float time) {
 		super.fadeIn(time);
@@ -157,21 +145,50 @@ public class MenuGlobe extends Drawable {
 			}
 		}
 	}
-	*/
 	
-	public void update() {
-		super.update();
-		for(Drawable d : drawables) d.update();
+	public void switchToLights() {
+		e.p.logLn("[Globe]: Switching to mode LIGHTS!");
+		/*
+		int i = 0;
+		for(int x = 0; x < 5; x++) {
+			for(int y = 0; y < 5; y++) {
+				RibbonGroup r = (RibbonGroup)drawables.get(i++);
+//				r.easeToScale(new PVector(.1f, .1f, .1f), 300);
+				//r.easeToPosition(-2500+(x*500), -1000, -2500+(y*500), 300);
+//				r.easeToPosition(-1250+(x*500), -900, -2500+(y*500), 300);
+				r.createPivotAt(0, 0, 0);
+			}
+		}
+		*/
+		menuMode = RibbonGlobe.LIGHTS;
 		
-		useLights();
-		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		setPointLight(1,  700, 0,   0, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		
-		setAmbient(1.0f, 1.0f, 1.0f);
+	}
+	
+	public void switchToMenu() {
+		e.p.logLn("[Globe]: Switching to mode MENU!");
+		/*
+		for(Drawable d : drawables) {
+			RibbonGroup r = (RibbonGroup)d;
+//			r.easeToScale(new PVector(1f, 1f, 1f), 300);
+//			r.easeToPosition(0f, 0f, 0f, 300);
+			r.deletePivot();
+		}
+		*/
+		menuMode = RibbonGlobe.MENU;		
+	}
+	
+	public short menuMode(short menuMode) {
+		this.menuMode = menuMode;
+		return menuMode();
+	}
+
+	public short menuMode() {
+		return menuMode;
 	}
 	
 	@Override
 	public void draw() {
+		
 		// load pensees now
 		for(int i=0;i<associationsAmount;i++) {
 			// draw associations
@@ -187,7 +204,7 @@ public class MenuGlobe extends Drawable {
 								e.p.random(-randomRadius, randomRadius)),
 						new PVector(0, 0, 0));
 			}
-			if(p.mode() == Drawable.OFF_SCREEN) {
+			if(p.mode() == p.OFF_SCREEN) {
 				if(!p.isCleared()) p.clear();
 			}
 		}
@@ -197,13 +214,13 @@ public class MenuGlobe extends Drawable {
 		
 			g.translate(position.x, position.y, position.z);
 			g.scale(scale.x, scale.y, scale.z);
-			g.rotateY(gestureRotation);
+			g.rotateY(smoothedRotation);
 			
 			g.fill(255, fade*255);
 			g.noStroke();
 			
-//			e.startShader("PolyLightAndColor");
-//			e.setLights();
+			e.startShader("PolyLightAndColor");
+			e.setLights();
 			
 			int drawableIndex = 0;
 			float penseeRotation = .0f;
@@ -213,22 +230,23 @@ public class MenuGlobe extends Drawable {
 				if(drawableIndex++ < associationsAmount) {
 					g.pushMatrix();
 					g.rotateY(penseeRotation);
-					
-					g.translate(0, PApplet.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
+					g.translate(0, e.p.cos(e.p.frameCount*.03f + penseeRotation)*50f, 0);
 
 					BildweltAssoziationPensee p = (BildweltAssoziationPensee)drawables.get(drawableIndex-1);
-					
-					p.draw();
-					
+					if(p.isVisible() && r.mode() != p.OFF_SCREEN) p.draw();
 					g.popMatrix();
 					
 					penseeRotation += 10f;
 				} else {
 					// draw menu swarms
-					r.draw();
+					if(r.mode() != r.OFF_SCREEN) r.draw();
 				}
 			}
-
+			
+			// e.stopShader();
+			
+			
+			
 		g.popMatrix();
 		g.popStyle();
 	}

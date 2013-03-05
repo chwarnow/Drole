@@ -21,47 +21,17 @@ import toxi.physics.behaviors.AttractionBehavior;
 
 public class ToxicSystem extends ParticleSystem {
 
-	protected TriangleMesh toxiMesh = new TriangleMesh();
+	private TriangleMesh toxiMesh = new TriangleMesh();
 	
-	
-	//size and shooting angle
-	
-	
-		
-	
-			protected int targetSize = 3;
-			protected int targetYOffset = 200;
 
-			protected int meshSize = 12; 
-			
-			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
-
-			
-			
 	public ToxicSystem(Engine e, VerletPhysics _physics, float mySize, float x,
 			float y, float z) {
 
 		super(e, _physics, x, y, z);
 		
-		trailLength=15;
-		
-		trailAlpha=0.4f;
-		
-		decay = 0.95f;
-		
-		 boomFalloff = 0.1f;
-		 springFallOff = 0.05f;
-		 setSpringPower(0.0002f);
-		 setBoomPower(-3.5f);
+		trailLength=20;
 
-		
-	}
-	
-	public void init(){
-       
-		randomizeShootingVector();
-		
-		spawnNew(true);
+		spawnNew();
 	}
 
 	public void update() {
@@ -81,23 +51,18 @@ public class ToxicSystem extends ParticleSystem {
 			m[i] = (int) e.p.random(20);
 		}
 		SurfaceMeshBuilder b = new SurfaceMeshBuilder(new SphericalHarmonics(m));
-		toxiMesh = (TriangleMesh) b.createMesh(null, meshSize, 100);
+		toxiMesh = (TriangleMesh) b.createMesh(null, 24, 100);
 	}
 
-	protected void randomizeShootingVector(){
-
-		targetAngle = new Vec3D(e.p.random(-1, 1)*targetYOffset ,
-				e.p.random(-1, 1)*targetYOffset , e.p.random(-1, 1)*targetYOffset
-						);
-	}
-	
-
-	public void spawnNew(boolean randomDecay) {
+	public void spawnNew() {
 
 		bigParticle.clear();
-	//	cleanSytstem();
+		cleanSytstem();
 		
-		resetPowers();
+		setBoomPower(initalBoomPower);
+		setSpringPower(initalSpringPower);
+		
+	
 		
 		shockwave = true;
 		
@@ -109,34 +74,28 @@ public class ToxicSystem extends ParticleSystem {
 		randomizeMesh();
 
 		
-		float theDecay = decay;
-		int count=0;
-		
-		System.out.println("toxic start spawning");
+		//size and shooting angle
+		int targetSize = 3;
+		int targetYOffset = 200;
 
-		
-		
+		Vec3D targetAngle = new Vec3D(e.p.random(-1, 1)*targetYOffset ,
+				e.p.random(-1, 1)*targetYOffset , e.p.random(-1, 1)*targetYOffset
+						);
+
 		for (Iterator i = toxiMesh.faces.iterator(); i.hasNext();) {
 			Face face = (Face) i.next();
 
-		
-			//longest particle can't have lower decay then system
-			//also 1st particle needs to be lonest so we know where we can hook up the light
-			
-			
-			if(randomDecay && count!=0) theDecay =e.p.random(decay,2);
-			
-			//the actual particle
+			//the actual partzicle
 			ShapedParticle newPart = new ShapedParticle(e.p, x() + face.a.x
 					- targetAngle.x / 2, y() + face.a.y - targetAngle.y / 2,
-					z() + face.a.z - targetAngle.z / 2,trailLength,theDecay,1);
+					z() + face.a.z - targetAngle.x / 2,trailLength);
 
 			// p.println("x "+f.a.x+" y "+f.a.y+" z "+f.a.z);
 
 			//the Target
 			Vec3D toxicTarget = new Vec3D(x() + targetAngle.x + face.a.x
-					* targetSize, y() + targetAngle.y + face.a.y * targetSize,
-					z() + targetAngle.z + face.a.z * targetSize);
+					* targetSize, y() + targetAngle.x + face.a.y * targetSize,
+					z() + targetAngle.x + face.a.z * targetSize);
 
 			VerletParticle targetPoint = new VerletParticle(toxicTarget);
 			targetPoint.lock();
@@ -153,9 +112,11 @@ public class ToxicSystem extends ParticleSystem {
 
 			bigParticle.add(newPart);
 		
-//			System.out.println("spawning particle "+count);
 
-			count++;
+			/*
+			 * newPart = new Particle(p, mySize / 2, f.c.x+x, f.c.y+y, f.c.z+z);
+			 * bigParticle.add(newPart); physics.addParticle(newPart);
+			 */
 		}
 		
 		numPoints = bigParticle.size();
@@ -166,8 +127,6 @@ public class ToxicSystem extends ParticleSystem {
 		initSprites();
 		initTrails();
 
-		
-		
 	}
 
 	

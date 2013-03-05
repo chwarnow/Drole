@@ -13,8 +13,8 @@ public class BildweltFabric extends Drawable {
 		
 		useLights();
 		
-		setPointLight(0, -(Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)+10, -900, position.z, 253, 100, 240, 1.0f, 0.001f, 0.0f);
-		setPointLight(1, (Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)-10, 700, position.z, 244, 244, 244, 1.0f, 0.001f, 0.0f);
+		setPointLight(-(Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)+10, -900, position.z, 0, 253, 100, 240, 1.0f, 0.001f, 0.0f);
+		setPointLight((Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)-10, 700, position.z, 0, 244, 244, 244, 1.0f, 0.001f, 0.0f);
 	}
 
 	@Override

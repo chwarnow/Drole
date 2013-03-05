@@ -18,8 +18,6 @@ public class Particle extends VerletParticle {
 	
 	public EngineApplet p;
 	
-	protected boolean hidden = false;
-	
 	public Particle(EngineApplet p,float x, float y , float z){
 		
 		super(x,y,z);
@@ -31,83 +29,58 @@ public class Particle extends VerletParticle {
 		
 	protected void bounce() {
 
-		int boundsX = (int)Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2;
-		int boundsY = (int)Settings.VIRTUAL_ROOM_DIMENSIONS_HEIGHT_MM/2;
+		int boundsX = (int)Settings.REAL_SCREEN_DIMENSIONS_WIDTH_MM/2;
+		int boundsY = (int)Settings.REAL_SCREEN_DIMENSIONS_HEIGHT_MM/2;
 		int boundsZ = (int)Settings.VIRTUAL_ROOM_DIMENSIONS_DEPTH_MM;
 		
 //		p.println("z depth "+boundsZ);
 
 		Vec3D vel = getVelocity();
 
-		float drag = 0.9f;
-		float friction = 0.98f;
-		
-		
-		
 		if (x() > boundsX) {
 			clearVelocity();
-	//		x = boundsX;
-			addVelocity(new Vec3D(-vel.x * drag, vel.y*friction, vel.z*friction));
+			x = boundsX;
+			addVelocity(new Vec3D(-vel.x / 2, vel.y / 2, vel.z / 2));
 		}
 
 		if (x() < -boundsX) {
 			clearVelocity();
-//			x = -boundsX;
-			addVelocity(new Vec3D(-vel.x * drag, vel.y*friction, vel.z*friction ));
+			x = -boundsX;
+			addVelocity(new Vec3D(-vel.x / 2, vel.y / 2, vel.z / 2));
 		}
 
 		if (y() > boundsY) {
-		
 			clearVelocity();
 
-		//	y = boundsY;
-			
-	//		vel = new Vec3D(vel.x/friction, -vel.y/10000, vel.z/friction);
-			
-			addVelocity(new Vec3D(vel.x*drag, -vel.y*0.5f, vel.z*drag));
+			y = boundsY;
+			addVelocity(new Vec3D(vel.x / 2, -vel.y / 100, vel.z / 2));
 		}
 
-		/*
 		if (z() > 0) {
 			clearVelocity();
 			z = 0;
-			addVelocity(new Vec3D(vel.x*friction, vel.y*friction  ,-vel.z * drag));
+			addVelocity(new Vec3D(vel.x / 2, vel.y / 2, -vel.z / 2));
 		}
 
 		if (z() < -boundsZ) {
 			clearVelocity();
-		//	z = -boundsZ;
-			addVelocity(new Vec3D(vel.x*friction, vel.y*friction , -vel.z * drag));
+			z = -boundsZ;
+			addVelocity(new Vec3D(vel.x / 2, vel.y / 2, -vel.z / 2));
 		}
-		*/
 
 //
 		
 //		p.println(" x "+x +" y "+y+" z "+z);
 		
 	}
-	
-	public void hideAndLock(){
-		lock();
-		hidden = true;
-	}
-	
-	public void unHideAndLock(){
-		unlock();
-		hidden=false;
-	}
-	
 
 	public void update(){
 		super.update();
-		if(lifeSpan>1)
 		lifeSpan-=decay;
-		if(lifeSpan<1)lifeSpan=0;
-		
 	}
 	
 	public boolean isDead(){
-		if(lifeSpan<1)return true;
+		if(lifeSpan<0.5f)return true;
 		else return false;
 	}
 	
