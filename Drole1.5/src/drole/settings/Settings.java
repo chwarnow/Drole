@@ -3,7 +3,7 @@ package drole.settings;
 public class Settings {
 
 	// Some standard settings
-	public static boolean USE_KINECT						= 	false;
+	public static boolean USE_KINECT						= 	true;
 	
 	public static boolean USE_GESTURES						= 	false;
 	
@@ -11,7 +11,7 @@ public class Settings {
 	
 	public static boolean DRAW_LOGS							=	true;
 	
-	public static boolean MOUSE_IS_HAND						= 	true;
+	public static boolean MOUSE_IS_HAND						= 	false;
 	
 	// Kinect
 	public static float KINECT_Y_FUNCTION					= 	0.44547f;

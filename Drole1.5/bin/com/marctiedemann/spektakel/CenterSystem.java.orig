@@ -27,12 +27,21 @@ public class CenterSystem extends ToxicSystem {
 
 		targetAngle = new Vec3D(0, -targetYOffset * 2, 0);
 
+<<<<<<< HEAD
 		trailLength = 100;
 		meshSize = 24;
+=======
+		
+		targetAngle = new Vec3D(0,-targetYOffset*2,0);
+		
+		trailLength = 200;
+		meshSize = 20;
+>>>>>>> projektions_maschine
 
 		setBoomPower(-4);
 		setSpringPower(0.00009f);
 
+<<<<<<< HEAD
 		boomFalloff = 0.005f;
 
 		springFallOff = -0.008f;
@@ -44,6 +53,23 @@ public class CenterSystem extends ToxicSystem {
 
 		spriteSize = 20;
 
+=======
+		
+		
+	     boomFalloff = 0.005f;
+
+		 springFallOff = -0.008f;
+		 decay=0.7f;
+		 
+		 trailAlpha=0.7f;
+		 
+		 spriteAlpha = 1.0f;
+		 
+		 spriteSize=20;
+
+		 
+		 
+>>>>>>> projektions_maschine
 	}
 
 	@Override
@@ -82,6 +108,7 @@ public class CenterSystem extends ToxicSystem {
 		updateNormals();
 
 	}
+<<<<<<< HEAD
 
 	protected void updateNormals() {
 
@@ -140,6 +167,18 @@ public class CenterSystem extends ToxicSystem {
 		if (newDrag < 2.0f)
 			physics.setDrag(newDrag);
 
+=======
+	
+	@Override
+	public void update(){
+		
+	
+		
+		float newDrag = -1.0f/getBoomPower();
+//		newDrag = 2.0f;
+			
+		physics.setDrag(newDrag);
+>>>>>>> projektions_maschine
 		super.update();
 
 		// updateNormals();
@@ -150,7 +189,11 @@ public class CenterSystem extends ToxicSystem {
 		e.setPointSize(5);
 
 		renderer.pushMatrix();
-		renderer.translate(0, 0, -1000);
+<<<<<<< HEAD
+		renderer.translate(0, 0, -900);
+=======
+		renderer.translate(0, 0,-200);
+>>>>>>> projektions_maschine
 
 		renderer.rotateY(rotationY);
 
@@ -161,8 +204,7 @@ public class CenterSystem extends ToxicSystem {
 	public void setRotation(float rotation) {
 
 		// should be between -1 & 1
-//		rotationY = rotation * EngineApplet.PI;
-		rotationY = rotation;
+		rotationY = rotation * EngineApplet.PI;
 
 	}
 
