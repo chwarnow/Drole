@@ -95,8 +95,6 @@ public class BildweltAssoziation extends Drawable {
 			p.fadeOut(time);
 		}
 	}
-	
-	// TODO: in update function unload pensee when not visible
 
 	@Override
 	public void draw() {
@@ -117,27 +115,7 @@ public class BildweltAssoziation extends Drawable {
 			}
 			if(pensee.isVisible()) pensee.draw();
 		}
-		
-		/*
-		g.noFill();
-		g.stroke(155, 100);
-		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
-		
-		g.pushMatrix();
-		g.rotateY(PApplet.HALF_PI + PApplet.HALF_PI/2);
-		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
-		g.popMatrix();
-		
-		g.pushMatrix();
-		g.rotateY(PApplet.HALF_PI - PApplet.HALF_PI/2);
-		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
-		g.popMatrix();
-		
-		g.pushMatrix();
-		g.rotateY(PApplet.HALF_PI);
-		g.ellipse(0, 0, dimension.x*scale.x*2, dimension.x*scale.x*2);
-		g.popMatrix();
-		*/
+
 		g.popMatrix();
 		g.popStyle();
 		
