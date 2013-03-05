@@ -67,19 +67,24 @@ public class Particle extends VerletParticle {
 			addVelocity(new Vec3D(vel.x*drag, -vel.y*0.5f, vel.z*drag));
 		}
 
+	
 		/*
 		if (z() > 0) {
 			clearVelocity();
 			z = 0;
 			addVelocity(new Vec3D(vel.x*friction, vel.y*friction  ,-vel.z * drag));
 		}
+		
+		*/
 
 		if (z() < -boundsZ) {
 			clearVelocity();
 		//	z = -boundsZ;
 			addVelocity(new Vec3D(vel.x*friction, vel.y*friction , -vel.z * drag));
 		}
-		*/
+		
+		
+
 
 //
 		
