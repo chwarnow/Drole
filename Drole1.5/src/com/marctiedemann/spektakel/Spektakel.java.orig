@@ -69,10 +69,14 @@ public class Spektakel extends Drawable {
 		centerSystem = new CenterSystem(e, physics2, 50, 0, 0, 0);
 
 
+<<<<<<< HEAD
+	 	useLights();
+=======
 		e.requestTexture("images/particle4.png");
 		e.requestTexture("images/flyingDude_150px.png");
 		
 		useLights();
+>>>>>>> projektions_maschine
 		// i x y z r g b f1 f2 f3
 
 
@@ -159,7 +163,11 @@ public class Spektakel extends Drawable {
 		float falloff = 0.004f;
 
 		if (centerSpawned) {
+<<<<<<< HEAD
+			falloff = EngineApplet.map(centerSystem.getTimeToLife(), 255, 0, 0.0005f, 0.0006f);
+=======
 			falloff = EngineApplet.map(centerSystem.getTimeToLife(), 255, 0, 0.0006f, 0.0006f);
+>>>>>>> projektions_maschine
 
 			setPointLight(0, 0, 0, -900, 120, 225, 255, 0.3f,
 					falloff + e.p.random(-0.00015f, 0.00015f), 0.0f);

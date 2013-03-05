@@ -30,7 +30,7 @@ public class ParticleSystem extends Particle {
 
 	protected float springFallOff = 0.01f;
 
-	protected float trailAlpha = 0.3f;
+	protected float trailAlpha = 0.5f;
 
 	protected float spriteAlpha = 1.0f;
 
@@ -396,8 +396,13 @@ public class ParticleSystem extends Particle {
 		physics.removeBehavior(boomForce);
 	//	physics.remo
 
+<<<<<<< HEAD
 		sprites.delete();
 		trails.delete();
+=======
+	//	 sprites.
+	//	 trails.delete();
+>>>>>>> projektions_maschine
 	}
 
 	private void cleanParticleForces(int num) {

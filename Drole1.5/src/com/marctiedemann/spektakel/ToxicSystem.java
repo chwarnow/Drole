@@ -32,7 +32,7 @@ public class ToxicSystem extends ParticleSystem {
 			protected int targetSize = 3;
 			protected int targetYOffset = 200;
 
-			protected int meshSize = 12; 
+			protected int meshSize = 15; 
 			
 			protected Vec3D targetAngle = new Vec3D(0,-targetYOffset/2,0);
 
@@ -47,7 +47,7 @@ public class ToxicSystem extends ParticleSystem {
 		
 		trailAlpha=0.4f;
 		
-		decay = 0.95f;
+		decay = 0.90f;
 		
 		 boomFalloff = 0.1f;
 		 springFallOff = 0.05f;
@@ -120,6 +120,7 @@ public class ToxicSystem extends ParticleSystem {
 			Face face = (Face) i.next();
 
 		
+
 			//longest particle can't have lower decay then system
 			//also 1st particle needs to be lonest so we know where we can hook up the light
 			
