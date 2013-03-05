@@ -46,9 +46,10 @@ public class BildweltAssoziation extends Drawable {
 		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
 		
 		// set active slide
-		int newSliceID = (int) (gestureScaling * (pensees.length-1));
-		if(newSliceID != activePensee) setPensee(newSliceID);
-
+		if(!Float.isNaN(gestureScaling)) {
+			int newSliceID = (int) (gestureScaling * (pensees.length-1));
+			if(newSliceID != activePensee) setPensee(newSliceID);
+		}
 		// update pensees
 		for(BildweltAssoziationPensee pensee:pensees) {
 			// update pensee when being on screen
@@ -62,6 +63,8 @@ public class BildweltAssoziation extends Drawable {
 	 * @param activeID
 	 */
 	private void setPensee(int activeID) {
+		// constrain id to pensee array length
+		activeID = e.p.constrain(activeID, 0, pensees.length-1);
 		pensees[activePensee].hideMe();
 		activePensee = activeID;
 		pensees[activePensee].showMe();
