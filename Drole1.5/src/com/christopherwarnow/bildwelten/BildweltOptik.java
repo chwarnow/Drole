@@ -11,6 +11,7 @@ import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
 
 import drole.gfx.assoziation.BildweltAssoziationPensee;
+import drole.settings.Settings;
 
 public class BildweltOptik extends Drawable {
 
@@ -34,6 +35,12 @@ public class BildweltOptik extends Drawable {
 	public BildweltOptik(Engine e, PVector position, PVector dimension) {
 		super(e);
 
+		useLights();
+		setAmbient(0.8f, 0.8f, 0.8f);
+		setPointLight(0, -(Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)+10, -300, position.z, 253, 255, 240, 1.0f, 0.001f, 0.0f);
+		setPointLight(1, (Settings.VIRTUAL_ROOM_DIMENSIONS_WIDTH_MM/2)-10, 300, position.z, 244, 244, 244, 1.0f, 0.001f, 0.0f);
+		setPointLight(2, 0, -200, position.z+500, 244, 244, 200, 1.0f, 0.0001f, 0.0f);
+		
 		position(position);
 		dimension(dimension);
 		
@@ -105,7 +112,7 @@ public class BildweltOptik extends Drawable {
 
 		float rectSize = 500;
 		
-		e.startShader("PolyLightAndColor"); // RoomShader
+//		e.startShader("PolyLightAndColor"); // RoomShader
 		
 		g.tint(255);
 		g.stroke(105, 90, 97, fade*255);
@@ -296,7 +303,7 @@ public class BildweltOptik extends Drawable {
 		g.text("R", 0, 0);
 		g.popMatrix();
 		
-		e.startShader("PolyLightAndColor"); // RoomShader
+		e.startShader("RoomShader");
 		
 		// sehender akteur
 		g.pushMatrix();

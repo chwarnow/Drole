@@ -4,6 +4,7 @@ import com.madsim.engine.EngineApplet;
 
 import toxi.geom.Vec3D;
 
+import toxi.physics.VerletParticle;
 import toxi.physics.VerletPhysics;
 import toxi.physics.VerletSpring;
 import toxi.physics.behaviors.AttractionBehavior;
@@ -13,11 +14,14 @@ public class ShapedParticle extends Particle {
 
 
 	private VerletSpring shapeForce;
+	private VerletParticle targetPoint;
 
-	private int tailSize ;
+
+	private int tailSize =0;
 	private Vec3D[] tailPoint;
 
 	public float myAlpha = 1.0f;
+
 
 	public ShapedParticle(EngineApplet p, float x, float y, float z,int tailSize) {
 		super(p, x, y, z);
@@ -38,23 +42,33 @@ public class ShapedParticle extends Particle {
 	}
 
 	public void update() {
-
+		super.update();
 		bounce();
 
-			for (int i = tailSize - 1; i > 0; i--) {
-				tailPoint[i].x = tailPoint[i - 1].x;
-				tailPoint[i].y = tailPoint[i - 1].y;
-				tailPoint[i].z = tailPoint[i - 1].z;
-				// p.println("i "+i+" x "+tailPoint[i].x);
-			}
-
-			tailPoint[0].x = this.x;
-			tailPoint[0].y = this.y;
-			tailPoint[0].z = this.z;
+		
+		
+		updateTrails();
+		
 		
 
-		super.update();
+	
 
+	}
+	
+	void updateTrails(){
+		
+		for (int i = tailSize - 1; i > 0; i--) {
+			tailPoint[i].x = tailPoint[i - 1].x;
+			tailPoint[i].y = tailPoint[i - 1].y;
+			tailPoint[i].z = tailPoint[i - 1].z;
+			// p.println("i "+i+" x "+tailPoint[i].x);
+		}
+
+		tailPoint[0].x = this.x;
+		tailPoint[0].y = this.y;
+		tailPoint[0].z = this.z;
+		
+		
 	}
 
 	
@@ -72,8 +86,21 @@ public class ShapedParticle extends Particle {
 		shapeForce.setStrength(newStrenght);
 	}
 	
+	public float getBehaviorStrenght() {
+		return shapeForce.getStrength();
+	}
+	
 	public VerletSpring getSpring(){
 		return shapeForce;
+	}
+	
+	public void storeTargetPoint(VerletParticle newTarget){
+		this.targetPoint = newTarget;
+		
+	}
+	
+	public VerletParticle getTargetPoint(){
+		return targetPoint;
 	}
 	
 }

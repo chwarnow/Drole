@@ -18,10 +18,6 @@ public class BildweltOptik extends Drawable {
 	float ro = 150;//random offset
 
 	PFont font;
-
-	public float rotation 						= 0;
-	private float smoothedRotation 				= 0;
-	private float smoothedRotationSpeed 		= .1f;
 	
 	// sehender akteur pensee
 	private BildweltAssoziationPensee sehenderAkteur;
@@ -118,7 +114,7 @@ public class BildweltOptik extends Drawable {
 	@Override
 	public void update() {
 		super.update();
-		smoothedRotation += (rotation - smoothedRotation) * smoothedRotationSpeed;
+		
 		sehenderAkteur.update();
 		floorPensee.update();
 		floorPenseeSwarm.update();
@@ -157,11 +153,11 @@ public class BildweltOptik extends Drawable {
 
 		g.translate(position.x, position.y + e.p.cos(e.p.frameCount*.02f)*10f, position.z);
 		g.scale(scale.x+1.0f, scale.y+1.0f, scale.z+1.0f);
-		g.rotateY(smoothedRotation);
+		g.rotateY(gestureRotation);
 
 		float rectSize = 500;
 
-		e.startShader("PolyLightAndColor");
+//		e.startShader("PolyLightAndColor");
 		
 		g.tint(255);
 		g.stroke(105, 90, 97, fade*255);
@@ -268,7 +264,7 @@ public class BildweltOptik extends Drawable {
 		g.endShape();
 		g.popMatrix();
 
-		e.stopShader();
+//		e.stopShader();
 		
 		g.fill(0, 255*fade);
 		

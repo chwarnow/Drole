@@ -1,134 +1,310 @@
 package drole.menu;
 
+
 import processing.core.PApplet;
-import codeanticode.glgraphics.GLModel;
+import processing.core.PVector;
+import codeanticode.glgraphics.GLTexture;
 
 import com.madsim.engine.Engine;
 import com.madsim.engine.drawable.Drawable;
+import com.madsim.tracking.kinect.Kinect;
+import com.madsim.tracking.kinect.KinectUserEventListener;
+import com.madsim.ui.kinetics.KinectInput;
+import com.madsim.ui.kinetics.MouseXYInput;
+import com.madsim.ui.kinetics.gestures.AngleDetection;
+import com.madsim.ui.kinetics.gestures.AngleDetectionListener;
+import com.madsim.ui.kinetics.gestures.RipInterpreter;
+import com.madsim.ui.kinetics.gestures.RipMotionListener;
+import com.madsim.ui.kinetics.gestures.RotationInterpreter;
+import com.madsim.ui.kinetics.gestures.TwoHandPushInterpreter;
+import com.madsim.ui.kinetics.gestures.TwoHandPushListener;
 
-public class Menu extends Drawable {
 
-	private short NUM_WORLDS = 5;
+public class Menu implements RipMotionListener, AngleDetectionListener, TwoHandPushListener, KinectUserEventListener {
+
+	private Engine e;
 	
-	private float r = 500;
+	private Kinect kinect;
 	
-	public static int NO_ACTIVE_WORLD = -1;
+	private Drawable[] worlds;
 	
-	private int activeWorld = NO_ACTIVE_WORLD;
+	private MenuGlobe menuGlobe;
 	
-	private GLModel[] worlds = new GLModel[NUM_WORLDS];
+	private float NUM_WORLDS = 5;
 	
-	private float[] worldAngles = new float[NUM_WORLDS];
+	private int activeWorld;
 	
 	public boolean inWorld = false;
 	
-	public Menu(Engine e) {
-		super(e);
-		
-		useLights();
-		setPointLight(0, -800, 0, -1000, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		setPointLight(1,  700, 0,   -800, 255, 255, 255, 1.0f, 0.0001f, 0.0f);
-		
-		for(int i = 0; i < NUM_WORLDS; i++) {
-			worlds[i] = new GLModel(e.p, 4, GLModel.QUADS, GLModel.STATIC);
-			
-//			worlds[i].initTextures(1);
-//			worlds[i].setTexture(0, e.requestTexture("data/images/MenuTestTarget.png"));
-			
-			worlds[i].beginUpdateVertices();
+	private float a = 0.0f;
+	private float radius;
+	
+	private float distanceBetweenWorlds;
 
-//					worlds[i].beginUpdateTexCoords(0);
-					
-						float l = ((r * PApplet.cos((PApplet.TWO_PI/NUM_WORLDS)+0.2f)) - (r * PApplet.cos((PApplet.TWO_PI/NUM_WORLDS)-0.2f)))/2f;
-						
-						worldAngles[i] = ((PApplet.TWO_PI/NUM_WORLDS)*i);
-						
-						float a = ((PApplet.TWO_PI/NUM_WORLDS)*i)-0.2f;
-						float x = r * PApplet.cos(a);
-						float y = r * PApplet.sin(a);				
-						worlds[i].updateVertex(0, x, y, l);
-//						worlds[i].updateTexCoord(0, 0, 1);
-						
-						a = ((PApplet.TWO_PI/NUM_WORLDS)*i)+0.2f;
-						x = r * PApplet.cos(a);
-						y = r * PApplet.sin(a);
-						worlds[i].updateVertex(1, x, y, l);
-//						worlds[i].updateTexCoord(1, 1, 1);
-						
-						a = ((PApplet.TWO_PI/NUM_WORLDS)*i)+0.2f;
-						x = r * PApplet.cos(a);
-						y = r * PApplet.sin(a);
-						worlds[i].updateVertex(2, x, y, -l);
-//						worlds[i].updateTexCoord(2, 1, 0);
-						
-						a = ((PApplet.TWO_PI/NUM_WORLDS)*i)-0.2f;
-						x = r * PApplet.cos(a);
-						y = r * PApplet.sin(a);				
-						worlds[i].updateVertex(3, x, y, -l);
-//						worlds[i].updateTexCoord(3, 0, 0);
-					
-//					worlds[i].endUpdateTexCoords();
+	private GLTexture[] tex = new GLTexture[(int)NUM_WORLDS];
+	
+	private float worldGravity = 0.1f;
 
-			worlds[i].endUpdateVertices();
-			
-			worlds[i].initColors();
-			worlds[i].setColors(200);
-			
-	//		worlds[i].initNormals();
-		}
+	private MouseXYInput mouseXY;
+	
+	private KinectInput kiLeftHand, kiRightHand;
+	
+	private RotationInterpreter ri;
+
+	private RipInterpreter ripi;
+	
+	private TwoHandPushInterpreter pushi;
+	
+	private AngleDetection angleDetectionLeft, angleDetectionRight;
+	
+	/* SCALING */
+	private float armLength = 0.0f;
+	private float scaling = 0.0f;
+	
+	private PVector bodyMovement = new PVector(0, 0, 0);
+	private PVector lastBodyPosition = new PVector(0, 0, 0);
+	private PVector bodyMovementThreshold = new PVector(30.0f, 30.0f, 30.0f);
+	
+	private boolean bodyLockdown = false;
+	
+	public Menu(Engine e, Kinect kinect, MenuGlobe menuGlobe, PVector position, float radius, Drawable[] worlds) {
+		this.e = e;
+		
+		this.worlds = worlds;
+		NUM_WORLDS = worlds.length;
+		
+		this.kinect = kinect;
+		kinect.addUserEventListener(this);
+		
+		this.menuGlobe = menuGlobe;
+		
+		this.radius = radius;
+		
+		a = e.p.random(0, PApplet.TWO_PI);
+		
+//		mouseXY = new MouseXYInput();
+//		e.p.addMouseMotionListener(mouseXY);
+		
+		kiRightHand = new KinectInput(kinect, Kinect.SKEL_RIGHT_HAND);
+		kiLeftHand = new KinectInput(kinect, Kinect.SKEL_LEFT_HAND);
+		
+		ri = new RotationInterpreter(kiRightHand, 0);
+		ri.lock();
+		
+		ripi = new RipInterpreter(this, kiLeftHand, -1, 2);
+		ripi.lock();
+		
+		pushi = new TwoHandPushInterpreter(this, kiLeftHand, kiRightHand, 1, 2);
+		pushi.lock();
+		
+		angleDetectionLeft = new AngleDetection("LEFT_HAND", kinect, Kinect.SKEL_LEFT_HAND, Kinect.SKEL_LEFT_SHOULDER, -1400f, 1);
+		angleDetectionLeft.addListener(this);
+		
+		angleDetectionRight = new AngleDetection("RIGHT_HAND", kinect, Kinect.SKEL_RIGHT_HAND, Kinect.SKEL_RIGHT_SHOULDER, -1400f, 1);
+		angleDetectionRight.addListener(this);
+		
+		calculateActiveWorld();
 	}
 	
 	public int getActiveWorld() {
 		return activeWorld;
 	}
 
-	@Override
-	public void update() {
-		super.update();
+	private void calculateActiveWorld() {
+		float dist = 99999999;
+		int cWorld = 0;
 		
-		if(!inWorld) {
-			int tmpActiveWorld = -1;
-			float curY = (((rotation.z+PApplet.HALF_PI)%PApplet.TWO_PI))*-1;
-			for(int i = 0; i < NUM_WORLDS; i++) {
-				if(worldAngles[i] >= curY-0.2f &&  worldAngles[i] <= curY+0.2f) {
-					
-					worlds[i].setColors(200, 0, 0);
-					
-					tmpActiveWorld = i;
-				} else {
-					worlds[i].setColors(200*(1.0f/i));
-				}
-				e.p.pinLog("World"+i, worldAngles[i]);
+		for(int i = 0; i < NUM_WORLDS; i++) {
+			PVector pos = getPointOnCircleXZ(radius, a, i, 0, 1, 0);
+	
+			float cDist = pos.dist(new PVector(0, 0, 0));
+			if(cDist < dist) {
+				dist = cDist;
+				cWorld = i;
 			}
-			
-			e.p.pinLog("RotationY", curY);
-			
-			activeWorld = tmpActiveWorld;
+		}
+		
+		if(cWorld != activeWorld) {
+			activeWorld = cWorld;
+			e.p.pinLog("Active World", activeWorld);
+			e.p.logLn("Active World: "+activeWorld);
 		}
 	}
 	
-	@Override
-	public void draw() {
-		g.pushMatrix();
-		g.pushStyle();
-			
-			g.translate(position.x, position.y, position.z);
-			g.rotateX(PApplet.radians(-90));
+	private float getWorldA(int world) {
+		return PApplet.TWO_PI-((PApplet.TWO_PI/NUM_WORLDS) * world);
+	}
+	
+	private float getActiveWorldA() {
+		return getWorldA(activeWorld);
+	}
+	
+	private void updateBodyMovement() {
+		bodyMovement = PVector.sub(lastBodyPosition, kinect.getJoint(Kinect.SKEL_TORSO));
+		lastBodyPosition = kinect.getJoint(Kinect.SKEL_TORSO);
+		e.p.pinLog("Body Movement", bodyMovement);
+	}
+	
+	private void checkBodyMovement() {
+		if(
+			Math.abs(bodyMovement.x) > bodyMovementThreshold.x || 
+			Math.abs(bodyMovement.y) > bodyMovementThreshold.y ||
+			Math.abs(bodyMovement.z) > bodyMovementThreshold.z
+		) {
+			e.p.pinLog("BODY LOCK DOWN", "ON");
+			bodyLockdown = true;
+//			ri.lock();
+//			ripi.lock();
+		} else {
+			e.p.pinLog("BODY LOCK DOWN", "OFF");
+			bodyLockdown = false;
+		}
+	}
+	
+	private void calculateScaling() {
+		if(armLength > 0.0f) {
+			float dist = kinect.getJoint(Kinect.SKEL_LEFT_HAND).dist(kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
+			scaling = PApplet.map(dist, 0, armLength, 0, 1);
+		}
+	}
+	
+	public void update() {
+		updateBodyMovement();
+		checkBodyMovement();
 		
-			g.pushMatrix();
-			g.rotateX(rotation.x);
-			g.rotateY(rotation.y);
-			g.rotateZ(rotation.z);
+		calculateScaling();
+		
+		ripi.update();
+		pushi.update();
+		angleDetectionLeft.update();
+		angleDetectionRight.update();
+		
+		a = ri.get()[0];
+		
+		if(!inWorld) {
+			calculateActiveWorld();
+			
+			menuGlobe.setGestureRotation(a);
+		} else {
+			worlds[activeWorld].setGestureRotation(a);
+			worlds[activeWorld].setGestureScaling(scaling);
+		}
+	}
+	
+	public void draw() {
+		if(menuGlobe.mode() == Drawable.ON_SCREEN) {
+			e.g.pushMatrix();
+		
+				e.g.translate(0, 0, -1500);
+			
+				e.g.noStroke();
 			
 				for(int i = 0; i < NUM_WORLDS; i++) {
-					e.setupModel(worlds[i]);
-					worlds[i].render();
+					if(i == activeWorld) e.g.fill(200, 0, 0);
+					else e.g.fill(255);
+					
+					PVector p1 = getPointOnCircleXZ(radius, a, i, 0, 1, 0);
+					e.g.pushMatrix();
+						e.g.translate(p1.x, p1.y, p1.z);
+						e.g.sphere(20);
+					e.g.popMatrix();
 				}
 			
-			g.popMatrix();
-			
-		g.popStyle();
-		g.popMatrix();
+				e.g.fill(200);
+				e.g.pushMatrix();
+					e.g.translate(0, 0, 0);
+					e.g.ellipse(0, 0, 10, 10);
+				e.g.popMatrix();
+		
+			e.g.popMatrix();
+		}
+	}
+	
+	public PVector getPointOnCircleXZ(float r, float a, float world, float d, float xOff, float yOff) {
+		float xca = a + (((PApplet.TWO_PI / NUM_WORLDS) + (d * xOff)) * world);
+		float zca = a + ((PApplet.TWO_PI / NUM_WORLDS) * world);
+
+		float x = r * PApplet.sin(xca);
+		float y = yOff;
+		float z = (r * PApplet.cos(zca)) - r;
+		
+		return new PVector(x, y, z);
+	}
+	
+	public void backToMenu() {
+		e.transitionBetweenDrawables(worlds[activeWorld], menuGlobe);
+		inWorld = false;
+	}
+
+	@Override
+	public void ripGestureFound() {
+		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && !inWorld) {
+			e.p.logLn("Pull Gesture found");
+			e.transitionBetweenDrawables(menuGlobe, worlds[activeWorld]);
+			inWorld = true;
+		}
+	}
+
+	@Override
+	public void inAngle(String id) {
+		e.p.pinLog("Angle "+id, "IN");
+		
+		if(id == "LEFT_HAND" && !bodyLockdown) {
+			ripi.unlock();
+			pushi.unlock();
+		}
+		
+		if(id == "RIGHT_HAND" && !bodyLockdown) {
+			ri.unlock();
+			pushi.unlock();
+		}
+	}
+
+	@Override
+	public void lostAngle(String id) {
+		e.p.pinLog("Angle "+id, "OUT");
+		
+		if(id == "LEFT_HAND") {
+			ripi.lock();
+			pushi.lock();
+		}
+		
+		if(id == "RIGHT_HAND") {
+			ri.lock();
+			pushi.lock();
+		}
+	}
+
+	@Override
+	public void pushGestureFound() {
+		if(angleDetectionLeft.status() == AngleDetection.IN_ANGLE && angleDetectionRight.status() == AngleDetection.IN_ANGLE && inWorld) {
+			e.p.logLn("Two hand push occured!");
+			ripi.forceCooldown();
+			backToMenu();
+		}
+	}
+
+	@Override
+	public void trackingUser() {
+		ripi.lock();
+		pushi.lock();
+		angleDetectionLeft.unlock();
+		angleDetectionRight.unlock();
+		
+		armLength = kinect.getJoint(Kinect.SKEL_LEFT_HAND).dist(kinect.getJoint(Kinect.SKEL_LEFT_ELBOW))+kinect.getJoint(Kinect.SKEL_LEFT_ELBOW).dist(kinect.getJoint(Kinect.SKEL_LEFT_SHOULDER));
+		e.p.pinLog("Arm Length", armLength);
+	}
+
+	@Override
+	public void lostUser() {
+		ripi.lock();
+		pushi.lock();
+		angleDetectionLeft.lock();
+		angleDetectionRight.lock();
+		
+		if(inWorld) {
+			backToMenu();
+		}
 	}
 	
 }

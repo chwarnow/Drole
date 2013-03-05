@@ -1,11 +1,13 @@
 package com.madsim.tracking.kinect;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import processing.core.PVector;
 
 import com.madsim.engine.EngineApplet;
+import com.madsim.ui.kinetics.PositionalMovementInput;
 
 import SimpleOpenNI.SimpleOpenNI;
 import SimpleOpenNI.SimpleOpenNIConstants;
@@ -22,15 +24,23 @@ public class Kinect implements SimpleOpenNIConstants {
 	
 	private SimpleOpenNI c;
 	
+	private ArrayList<KinectUserEventListener> userEventListener = new ArrayList<KinectUserEventListener>();
+	
 	private HashMap<Integer, PVector> stdMotionData = new HashMap<Integer, PVector>();
+	
+	private HashMap<Integer, PVector> lastPositions = new HashMap<Integer, PVector>();
 	
 	private boolean autoCalib = true;
 
-	private static int NO_USER = 9999999;
+	public static int NO_USER = 9999999;
 	
 	private int currentUser = 0;
 
 	private boolean fakeMode;
+	
+	public static PVector IGNORED_POSITION = new PVector(PositionalMovementInput.IGNORED_VALUE, PositionalMovementInput.IGNORED_VALUE, PositionalMovementInput.IGNORED_VALUE);
+
+	private float yFunction = 0.0f;
 	
 	public Kinect(EngineApplet p, short logLevel) {
 		this(p, logLevel, false);
@@ -56,6 +66,17 @@ public class Kinect implements SimpleOpenNIConstants {
 			if(logLevel >= 1) p.logLn("[Kinect]: User tracking is running.");
 			
 			c.setMirror(true);
+		}
+	}
+	
+	public void setYFunction(float yFunction) {
+		this.yFunction = yFunction;
+		p.logLn("[Kinect]: Setting Y-Correction to "+yFunction);
+	}
+	
+	public void addUserEventListener(KinectUserEventListener l) {
+		if(!userEventListener.contains(l)) {
+			userEventListener.add(l);
 		}
 	}
 	
@@ -98,9 +119,23 @@ public class Kinect implements SimpleOpenNIConstants {
 		if(c != null) {
 			 if(currentUser != NO_USER) {
 				 c.getJointPositionSkeleton(currentUser, joint, std);
+				 std = yCorrection(std.get());
+				 lastPositions.put(joint, std.get());
+			 } else {
+				 std = IGNORED_POSITION.get();
 			 }
 		}
-		return std;
+		
+		return  std;
+	}
+	
+	private PVector yCorrection(PVector v) {
+		return new PVector(v.x, v.y - (v.z * yFunction), v.z);
+	}
+	
+	public PVector getLastPosition(int joint, PVector std) {
+		if(lastPositions.containsKey(joint)) return lastPositions.get(joint);
+		else return std;
 	}
 
 	// Handle Users
@@ -171,10 +206,12 @@ public class Kinect implements SimpleOpenNIConstants {
 		if(currentUser != NO_USER && newUser == NO_USER) {
 			currentUser = newUser;
 			if(logLevel >= 1) p.logLn("[Kinect]: No user to track ...");
+			for(KinectUserEventListener l : userEventListener) l.lostUser();
 		}
 		if(newUser != NO_USER && newUser != currentUser) {
 			currentUser = newUser;
 			if(logLevel >= 1) p.logLn("[Kinect]: Giving control to user ("+currentUser+")");
+			for(KinectUserEventListener l : userEventListener) l.trackingUser();
 		}
 	}
 	
