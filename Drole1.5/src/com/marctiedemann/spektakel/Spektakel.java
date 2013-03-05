@@ -184,7 +184,7 @@ public class Spektakel extends Drawable {
 					centerSpawned=true;
 					
 					
-					ToxicSystem newOne = new ToxicSystem(e, physics, 50,  0, 0, -900);
+					ToxicSystem newOne = new ToxicSystem(e, physics, 50,  0, 0, -1000);
 					newOne.init();
 
 					ermitters.add(newOne);

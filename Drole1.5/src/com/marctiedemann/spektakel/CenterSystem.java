@@ -28,9 +28,9 @@ public class CenterSystem extends ToxicSystem {
 		targetAngle = new Vec3D(0, -targetYOffset * 2, 0);
 
 		trailLength = 100;
-		meshSize = 20;
+		meshSize = 24;
 
-		setBoomPower(-5);
+		setBoomPower(-4);
 		setSpringPower(0.00009f);
 
 		boomFalloff = 0.005f;
@@ -150,7 +150,7 @@ public class CenterSystem extends ToxicSystem {
 		e.setPointSize(5);
 
 		renderer.pushMatrix();
-		renderer.translate(0, 0, -900);
+		renderer.translate(0, 0, -1000);
 
 		renderer.rotateY(rotationY);
 
