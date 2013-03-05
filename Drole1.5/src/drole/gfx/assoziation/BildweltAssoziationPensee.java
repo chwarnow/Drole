@@ -128,7 +128,10 @@ public class BildweltAssoziationPensee extends Drawable {
 				dataItem = null;
 				
 				// clear existing glmodel
-				if(imageQuadModel != null) imageQuadModel.delete();
+				// by Chris: thought i need to do this for the garbage collector
+				// but it caused a null pointer exception and it seems to be cleared anyways
+				// tested it with visualvm
+				// if(imageQuadModel != null) imageQuadModel.delete();
 				
 				// create a model that uses quads
 				imageQuadModel = new GLModel(e.p, vertexCount*4, PApplet.QUADS, GLModel.DYNAMIC);
@@ -165,7 +168,6 @@ public class BildweltAssoziationPensee extends Drawable {
 							isShowing = false;
 							if(!isLooping) isRunning = false;
 						} else if ( delay++ == delayTime) {
-							System.out.println("this is good: " + this.imagePath);
 							currPosition = 0;
 							delay = 0;
 						}
@@ -209,19 +211,18 @@ public class BildweltAssoziationPensee extends Drawable {
 			
 			BildweltAssoziationAgent agent = agents[i];
 			// set agents position
-			// TODO: improve updating performance
 			if(isUpdate) agent.update(easedIndex);
 
 			// create quads from ribbons
 			PVector[] agentsVertices = agent.getVertices();
 			int agentVertexNum = agentsVertices.length;
-
+			
 			for(int j=0;j<agentVertexNum-1;j++) {
 				
 				PVector thisP = agentsVertices[j];
 				PVector nextP = agentsVertices[j+1];
 				//PVector thirdP = agentsVertices[j+1];
-
+				
 				// create quad from above vertices and save in glmodel, then add colors
 				floatQuadVertices[quadVertexIndex++] = thisP.x;
 				floatQuadVertices[quadVertexIndex++] = thisP.y;
@@ -306,7 +307,8 @@ public class BildweltAssoziationPensee extends Drawable {
 			imageQuadModel.updateNormals(floatQuadVertices);
 			imageQuadModel.render();
 		} catch(Exception e) {
-			// System.out.println("error drawing a glmodel: " + e.getMessage());
+			// System.out.println("error drawing a glmodel: " + e.getMessage() + " " + imageQuadModel.getDescription() + " " + floatQuadVertices.length + " " + this.imagePath + " " + agentsCount);
+			// e.printStackTrace();
 		}
 		}
 
