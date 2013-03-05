@@ -26,7 +26,6 @@ public class FlyingDude extends ParticleSystem {
 
 	private boolean imageLoadedAndParticlesSpawned = false;
 
-	private List<Vec3D> path;
 	int pathID = 0;
 
 	public FlyingDude(Engine e, VerletPhysics _physics, float x, float y,
@@ -153,20 +152,7 @@ public class FlyingDude extends ParticleSystem {
 
 	}
 
-	void setRandomPath() {
-
-		ArrayList<Vec3D> points = new ArrayList<Vec3D>();
-
-		for (int i = 0; i < 5; i++) {
-			Vec3D p = new Vec3D(e.p.random(0, -100), e.p.random(0, -100),
-					e.p.random(-100, 100));
-			points.add(p);
-		}
-
-		Spline3D s = new Spline3D(points);
-		s.computeVertices(10);
-		path = s.getDecimatedVertices(4);
-	}
+	
 
 	void updateTargets() {
 

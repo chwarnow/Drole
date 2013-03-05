@@ -28,7 +28,7 @@ public class CenterSystem extends ToxicSystem {
 		targetAngle = new Vec3D(0, -targetYOffset * 2, 0);
 
 		trailLength = 100;
-		meshSize = 24;
+		meshSize = 20;
 
 		setBoomPower(-5);
 		setSpringPower(0.00009f);
